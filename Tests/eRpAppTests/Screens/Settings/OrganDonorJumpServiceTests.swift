@@ -25,12 +25,15 @@ import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
 import Nimble
+import Synchronization
 import XCTest
 
 @MainActor
 final class OrganDonorJumpServiceTests: XCTestCase {
+    @available(iOS 18.0, *)
     @MainActor
     func testLoggedInJump() async throws {
+        let openedURL = Mutex<URL?>(nil)
         let sut = OrganDonorJumpService.liveValue
 
         let userDataStore = MockUserDataStore()
@@ -39,25 +42,26 @@ final class OrganDonorJumpServiceTests: XCTestCase {
         let profile = Profile(name: "Bob", gIdEntry: .init(name: "Alice", identifier: "ABC123"))
         userSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        let resourceHandler = MockResourceHandler()
-        resourceHandler.canOpenURLReturnValue = true
-
         let expected = "iss=ABC123"
 
         try await withDependencies { dependencies in
             dependencies.userDataStore = userDataStore
             dependencies.userSession = userSession
-            dependencies.resourceHandler = resourceHandler
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
         } operation: {
             try await sut.jump()
 
-            expect(resourceHandler.canOpenURLCallsCount).to(equal(1))
-            expect(resourceHandler.canOpenURLReceivedUrl?.absoluteString).to(contain(expected))
+            expect(openedURL.withLock { $0 }?.absoluteString).to(contain(expected))
         }
     }
 
+    @available(iOS 18.0, *)
     @MainActor
     func testLoggedOutJump() async throws {
+        let openedURL = Mutex<URL?>(nil)
         let sut = OrganDonorJumpService.liveValue
 
         let userDataStore = MockUserDataStore()
@@ -66,20 +70,19 @@ final class OrganDonorJumpServiceTests: XCTestCase {
         let profile = Profile(name: "Bob", gIdEntry: nil)
         userSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        let resourceHandler = MockResourceHandler()
-        resourceHandler.canOpenURLReturnValue = true
-
         let expected = URL(string: "https://www.organspende-info.de/")!
 
         try await withDependencies { dependencies in
             dependencies.userDataStore = userDataStore
             dependencies.userSession = userSession
-            dependencies.resourceHandler = resourceHandler
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
         } operation: {
             try await sut.jump()
 
-            expect(resourceHandler.canOpenURLCallsCount).to(equal(1))
-            expect(resourceHandler.canOpenURLReceivedUrl).to(equal(expected))
+            expect(openedURL.withLock { $0 }).to(equal(expected))
         }
     }
 }

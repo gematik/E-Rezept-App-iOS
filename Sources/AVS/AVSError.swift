@@ -20,30 +20,31 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 import HTTPClient
 
-// sourcery: CodedError = "540"
+@CodedError("540")
 public enum AVSError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     /// In case of HTTP/Connection error
     case network(error: HTTPClientError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     /// When failed to create an AVSMessage
     case invalidAVSMessageInput
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     /// When an X509 certificate was of unexpected format
     case invalidX509Input
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     /// Conversion error when trying to cast to `AVSError` but error type was different
     case unspecified(error: Swift.Error)
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     /// Internal error
     case `internal`(error: InternalError)
 
-    // sourcery: CodedError = "541"
+    @CodedError("541")
     public enum InternalError: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case cmsContentCreation
     }
 }

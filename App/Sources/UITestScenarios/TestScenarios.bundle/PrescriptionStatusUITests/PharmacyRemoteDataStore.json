@@ -1,5 +1,5 @@
 {
-    "searchPharmaciesByPositionFilterRecordings":
+    "searchPharmaciesRecordings":
     {
         "type": "repeated",
         "payload":
@@ -22,6 +22,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -61,6 +63,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -110,6 +114,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -159,6 +165,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -208,6 +216,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -249,6 +259,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -290,6 +302,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -331,6 +345,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -382,6 +398,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -435,6 +453,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -489,6 +509,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -544,6 +566,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -587,6 +611,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -641,6 +667,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -695,6 +723,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -745,6 +775,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -796,6 +828,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -848,6 +882,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -902,6 +938,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -955,6 +993,8 @@
                             ]
                         }
                     ],
+                    "specialClosingHours": [],
+                    "emergencyServiceHours": [],
                     "position":
                     {
                         "longitude": 52.5226398750957,
@@ -981,18 +1021,10 @@
                 }
             ]
     },
-    "fetchPharmacyByRecordings":
+    "fetchPharmacyRecordings":
     {
         "type": "queue",
         "payload":
         []
-    },
-    "loadAvsCertificatesForRecordings":
-    {
-        "type": "repeated",
-        "payload":
-        [
-            "MIIFJzCCBA+gAwIBAgIHAJb1ak/1UTANBgkqhkiG9w0BAQsFADCBmjELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxSDBGBgNVBAsMP0luc3RpdHV0aW9uIGRlcyBHZXN1bmRoZWl0c3dlc2Vucy1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLlNNQ0ItQ0E0MSBURVNULU9OTFkwHhcNMjMwMTI1MjMwMDAwWhcNMjgwMTI1MjI1OTU5WjCB+jELMAkGA1UEBhMCREUxDDAKBgNVBAgMA1VsbTEUMBIGA1UEBwwLSW5nb2xmc3RhZHQxDjAMBgNVBBEMBTEyMzQ2MRUwEwYDVQQJDAxIYXVwdHN0ci4gMTExITAfBgNVBAoMGDMtMi0yMDIzMDEyNC0zIE5PVC1WQUxJRDEgMB4GA1UEBRMXMTYuODAyNzYwMDEwMTE2OTk5MDIzMDMxFDASBgNVBAQMC1VsbWVuZG9yZmVyMRIwEAYDVQQqDAlDaHJpc3RpbmUxMTAvBgNVBAMMKEFwb3RoZWtlIENocmlzdGluZSBVbG1lbmRvcmZlciBURVNULU9OTFkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDZQ+OentdaXh3wfIbaS2wIuC6YmAan1MtZTIayg1x27Y1wC1TnM9o5JTyV+uzJYZQ9oDgwSoSgx0WZpxR3pqkqAIDyuA0vxzEKOoa1p1VxqQTHHdTcBX/JyKmd9E3vP4i46vODa6DopP2sIWpMuJJ5hMgukLNTkR+XV9vhTa1jL410JQrmdB17KLcisURR2IU5pnlSZs4WoFdOQpARwYv5RniMNl2aZZ3+aiNB1YQXi/CFATKtmwsqARtLWXZ5vBC29a6sM5SDnZ6z6a47TDMAmxRv4gDayHvN/Da24jTV9vFWLMbIyvBdzwdMzqL9rWh/hb9dhrALdz4ZSvaAUWpZAgMBAAGjggEOMIIBCjAfBgNVHSMEGDAWgBS6+DpYEfaG6gSibcR667mz+ktvwjAdBgNVHQ4EFgQUT1N70P4fxHDfauH5ioif/4QxkLQwDAYDVR0TAQH/BAIwADA4BggrBgEFBQcBAQQsMCowKAYIKwYBBQUHMAGGHGh0dHA6Ly9laGNhLmdlbWF0aWsuZGUvb2NzcC8wTgYFKyQIAwMERTBDMEEwPzA9MDswFwwVw5ZmZmVudGxpY2hlIEFwb3RoZWtlMAkGByqCFABMBDYTFTMtMDEuMi4yMDIzMDAxLjE2LjEwMzAOBgNVHQ8BAf8EBAMCBDAwIAYDVR0gBBkwFzAKBggqghQATASBIzAJBgcqghQATARMMA0GCSqGSIb3DQEBCwUAA4IBAQBX6P+IOjlSv0RdxWlOg/NaepVak0UYVDwr2g1d0aF9dj4qH0g74/CfF5jvcyd41ii399YFmSUWITglD2VUfT3Apwq6y5omcJnB+L1t9ohPQe9NhLzFdgpI5lt/adC6owRgp9en1ZvJv1RL669EaerlQXbZ6nR9eku0JVQzV8Iuy1MV5sYTnyin88E1tTk9vn/j9TMtGyebBMSdEt1PyrlWQhsirk34uZGRW9/T5bgQKtBB8FJt8nGmkR5wffci2vEqHKDkU9YCPl58uvuFPime48Ry8twskZvyTOcl75PJzNMhCAYXMxKkGYNHb7CXUhlevJgLRxaTDKvomED1RQr/"
-        ]
     }
 }

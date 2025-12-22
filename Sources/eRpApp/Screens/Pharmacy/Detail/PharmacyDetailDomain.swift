@@ -26,6 +26,8 @@ import ComposableArchitecture
 import Contacts
 import eRpKit
 import eRpLocalStorage
+import eRpResources
+import FeatureHelpers
 import IDP
 import MapKit
 import OpenSSL
@@ -52,6 +54,9 @@ struct PharmacyDetailDomain {
         @Shared var prescriptions: [Prescription]
         /// A storage for the prescriptions that have been selected to be redeemed or are loaded from this domain
         @Shared var selectedPrescriptions: [Prescription]
+
+        @Shared(.selectedProfileId) var profileId
+
         /// View can be called within the redeeming process or from the tab-bar.
         /// Boolean is true when called within redeeming process
         var inRedeemProcess: Bool
@@ -153,7 +158,7 @@ struct PharmacyDetailDomain {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
     @Dependency(\.redeemOrderService) var redeemOrderService: RedeemOrderService
-    @Dependency(\.feedbackReceiver) var feedbackReceiver
+    @Dependency(\.hapticFeedbackGenerator) var hapticFeedback
     @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
     @Dependency(\.date) var date
     @Dependency(\.calendar) var calendar
@@ -171,7 +176,7 @@ struct PharmacyDetailDomain {
         switch action {
         case .task:
             return .merge(
-                loadPrescriptionsPublisher(),
+                loadPrescriptionsPublisher(profileId: state.profileId),
                 .run { [pharmacy = state.pharmacy] send in
                     let provider = try await redeemOrderService.redeemOptionProvider(pharmacy: pharmacy)
                     await send(.response(.redeemOptionProviderReceived(provider)))
@@ -277,36 +282,34 @@ struct PharmacyDetailDomain {
         case .toggleIsFavorite:
             var pharmacyViewModel = state.pharmacyViewModel
             pharmacyViewModel.pharmacyLocation.isFavorite.toggle()
-            return .publisher(
-                pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
-                    .first()
-                    .receive(on: schedulers.main.animation())
-                    .map { _ in pharmacyViewModel }
-                    .catchToPublisher()
-                    .map { .response(.toggleIsFavoriteReceived($0)) }
-                    .eraseToAnyPublisher
-            )
+            return .run { [pharmacyViewModel = pharmacyViewModel] send in
+                do {
+                    _ = try await pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
+                    await send(.response(.toggleIsFavoriteReceived(.success(pharmacyViewModel))))
+                } catch let error as PharmacyRepositoryError {
+                    await send(.response(.toggleIsFavoriteReceived(.failure(error))))
+                }
+            }
         case let .setIsFavorite(value):
             var pharmacyViewModel = state.pharmacyViewModel
             guard value != pharmacyViewModel.pharmacyLocation.isFavorite else {
                 // give haptic feedback even if nothing actually changed
-                feedbackReceiver.hapticFeedbackSuccess()
+                hapticFeedback.success()
                 return .none
             }
             pharmacyViewModel.pharmacyLocation.isFavorite = value
-            return .publisher(
-                pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
-                    .first()
-                    .receive(on: schedulers.main.animation())
-                    .map { _ in pharmacyViewModel }
-                    .catchToPublisher()
-                    .map { .response(.toggleIsFavoriteReceived($0)) }
-                    .eraseToAnyPublisher
-            )
+            return .run { [pharmacyViewModel = pharmacyViewModel] send in
+                do {
+                    _ = try await pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
+                    await send(.response(.toggleIsFavoriteReceived(.success(pharmacyViewModel))))
+                } catch let error as PharmacyRepositoryError {
+                    await send(.response(.toggleIsFavoriteReceived(.failure(error))))
+                }
+            }
         case let .response(.toggleIsFavoriteReceived(result)):
             switch result {
             case let .success(viewModel):
-                feedbackReceiver.hapticFeedbackSuccess()
+                hapticFeedback.success()
                 state.pharmacyViewModel = viewModel
             case let .failure(error):
                 state.destination = .alert(.init(for: error))
@@ -364,9 +367,9 @@ extension PharmacyDetailDomain {
             .init(style: .simple(L10n.phaDetailTxtNoPrescriptionToast.key))
     }
 
-    func loadPrescriptionsPublisher() -> Effect<PharmacyDetailDomain.Action> {
+    func loadPrescriptionsPublisher(profileId: UUID) -> Effect<PharmacyDetailDomain.Action> {
         .publisher(
-            prescriptionRepository.loadLocal()
+            prescriptionRepository.loadLocal(for: profileId)
                 .first()
                 .receive(on: schedulers.main.animation())
                 .catchToPublisher()

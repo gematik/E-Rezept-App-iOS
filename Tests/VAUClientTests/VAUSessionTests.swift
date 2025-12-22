@@ -30,7 +30,7 @@ import TrustStore
 import XCTest
 
 final class VAUSessionTests: XCTestCase {
-    func testSessionRetainsCurrentUserPseudonym() throws {
+    func testSessionRetainsCurrentUserPseudonym() async throws {
         // given
         let url = URL(string: "http://some-service.com")!
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
@@ -44,9 +44,8 @@ final class VAUSessionTests: XCTestCase {
         mockVAUCrypto.encryptReturnValue = Data()
         let mockVAUCryptoProvider = MockVAUCryptoProvider()
         mockVAUCryptoProvider.provideForVauCertificateBearerTokenReturnValue = mockVAUCrypto
-        let trustStoreSession = MockTrustStoreSession()
-        trustStoreSession.loadVauCertificateReturnValue = Just(Self.defaultVauCertificate)
-            .setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
+        let trustStoreSession = TrustStoreSessionMock()
+        trustStoreSession.vauCertificateX509ReturnValue = Self.defaultVauCertificate
 
         let sut = VAUSession(
             vauServer: url,
@@ -78,11 +77,9 @@ final class VAUSessionTests: XCTestCase {
             headerFields: userPseudonymHeaders1
         )!
         chain.response = response1
-        interceptor.interceptPublisher(chain: chain)
-            .test(expectations: { _ in
-                expect(currentVauEndpoints.count) == 2
-                expect(currentVauEndpoints[1]?.absoluteString) == "\(url)/VAU/pseudo1"
-            })
+        _ = try? await interceptor.intercept(chain: chain)
+        expect(currentVauEndpoints.count) == 2
+        expect(currentVauEndpoints[1]?.absoluteString) == "\(url)/VAU/pseudo1"
 
         // Mock second response containing another user pseudonym for further use
         let userPseudonymHeaders2 = ["userpseudonym": "pseudo2"]
@@ -93,11 +90,9 @@ final class VAUSessionTests: XCTestCase {
             headerFields: userPseudonymHeaders2
         )!
         chain.response = response2
-        interceptor.interceptPublisher(chain: chain)
-            .test(expectations: { _ in
-                expect(currentVauEndpoints.count) == 3
-                expect(currentVauEndpoints[2]?.absoluteString) == "\(url)/VAU/pseudo2"
-            })
+        _ = try? await interceptor.intercept(chain: chain)
+        expect(currentVauEndpoints.count) == 3
+        expect(currentVauEndpoints[2]?.absoluteString) == "\(url)/VAU/pseudo2"
 
         currentVauEndpointSubscriber.cancel()
     }

@@ -23,11 +23,13 @@
 import Combine
 import CombineSchedulers
 import CoreData
+import Dependencies
 import eRpKit
 @testable import eRpLocalStorage
 import eRpRemoteStorage
 import Foundation
 import Nimble
+import Sharing
 import TestUtils
 import XCTest
 
@@ -53,27 +55,43 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     private func loadFactory() -> CoreDataControllerFactory {
         guard let factory = coreDataFactory else {
-            #if os(macOS)
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
+            let factory: CoreDataControllerFactory = .init(databaseUrl: { self.databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
 
-            #else
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
+                let fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: self.databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
             coreDataFactory = factory
             return factory
         }
         return factory
     }
 
-    private func loadErxCoreDataStore(for profileId: UUID? = nil) -> ErxTaskCoreDataStore {
+    private func loadErxCoreDataStore() -> ErxTaskCoreDataStore {
         DefaultErxTaskCoreDataStore(
-            profileId: profileId,
             coreDataControllerFactory: loadFactory(),
             foregroundQueue: .immediate,
             backgroundQueue: .main,
@@ -115,7 +133,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         )
         try store.add(tasks: [task])
 
-        _ = try awaitPublisher(store.delete(tasks: [task]))
+        _ = try awaitPublisher(store.delete(tasks: [task], in: nil))
     }
 
     func testSavingTaskWithAllPropertiesSet() throws {
@@ -140,7 +158,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedFetchResult).toEventually(nodiff(taskToFetch))
 
         cancellable.cancel()
-        _ = try awaitPublisher(store.delete(tasks: [taskToFetch]))
+        _ = try awaitPublisher(store.delete(tasks: [taskToFetch], in: nil))
     }
 
     func testUpdatingPreviouslySavedTask() throws {
@@ -164,7 +182,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try store.add(tasks: [updatedTask])
 
         var receivedListAllTasksValues = [[ErxTask]]()
-        let cancellable = store.listAllTasks()
+        let cancellable = store.listAllTasks(of: nil)
             .sink(receiveCompletion: { _ in
                 fail("did not expect completion")
             }, receiveValue: { erxTasks in
@@ -180,11 +198,10 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         cancellable.cancel()
     }
 
-    func testSaveTasksWithFailingLoadingDatabase() throws {
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerThrowableError = LocalStoreError.notImplemented
+    func testSaveTasksWithFailingLoadingDatabase() {
+        let factory = CoreDataControllerFactory(databaseUrl: { self.databaseFile },
+                                                loadCoreDataController: { throw LocalStoreError.notImplemented })
         let store = DefaultErxTaskCoreDataStore(
-            profileId: nil,
             coreDataControllerFactory: factory,
             foregroundQueue: AnyScheduler.main,
             backgroundQueue: .main,
@@ -194,7 +211,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedSaveResults = [Bool]()
 
-        let cancellable = store.save(tasks: [task1], updateProfileLastAuthenticated: false)
+        let cancellable = store.save(tasks: [task1], in: nil, updateProfileLastAuthenticated: false)
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)
             }, receiveValue: { result in
@@ -204,8 +221,6 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         expect(receivedSaveResults.count).toEventually(equal(0))
         expect(receivedSaveCompletions.count).toEventually(equal(1))
-        expect(receivedSaveCompletions.first) ==
-            .failure(LocalStoreError.initialization(error: factory.loadCoreDataControllerThrowableError!))
 
         cancellable.cancel()
     }
@@ -281,11 +296,11 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let testProfile = Profile(name: "TestProfile")
         let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
                      ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
-        try prepareStores(with: tasks, profiles: [testProfile])
+        try prepareStores(with: tasks, profiles: [testProfile], profileId: testProfile.id)
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let taskRelatedToProfile = ErxTask(identifier: "id3", status: .ready, flowType: .pharmacyOnly)
-        try store.add(tasks: [taskRelatedToProfile])
+        try store.add(tasks: [taskRelatedToProfile], profileId: testProfile.id)
 
         // when
         var receivedValue: ErxTask?
@@ -304,12 +319,13 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     func testFetchTaskByIdWhichDoesNotBelongToProfile() throws {
         // given
+        let testProfile = Profile(name: "TestProfile")
         let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
                      ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
-        try prepareStores(with: tasks, profiles: [])
+        try prepareStores(with: tasks, profiles: [], profileId: testProfile.id)
 
         // when setting the profile of the store
-        let store = loadErxCoreDataStore(for: Profile(name: "TestProfile").identifier)
+        let store = loadErxCoreDataStore()
 
         var receivedValue: ErxTask?
         let cancellable = store.fetchTask(by: tasks[0].identifier, accessCode: nil)
@@ -334,8 +350,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, patient: patient)]
 
         // when
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(tasks: tasks)
+        let store = loadErxCoreDataStore()
+        try store.add(tasks: tasks, profileId: testProfile.id)
 
         var receivedProfile: Profile?
         let cancellable = profileStore.fetchProfile(by: testProfile.id)
@@ -353,14 +369,16 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     func testListAllTasks() throws {
         // given
+        let testProfile = Profile(name: "Anna")
+        try prepareStores(profiles: [testProfile])
         let store = loadErxCoreDataStore()
         let task = ErxTask(identifier: "id", status: .ready, flowType: .pharmacyOnly, accessCode: "access")
-        try store.add(tasks: [task])
+        try store.add(tasks: [task], profileId: testProfile.id)
 
         // when
         var receivedValues = [[ErxTask]]()
         var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
-        let cancellable = store.listAllTasks()
+        let cancellable = store.listAllTasks(of: testProfile.id)
             .sink(receiveCompletion: { completion in
                 receivedCompletions.append(completion)
             }, receiveValue: { list in
@@ -371,17 +389,22 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedCompletions.count) == 0
 
         // then
-        expect(receivedValues.first?[0]) == task
+        expect(receivedValues.first) == [task]
 
         cancellable.cancel()
     }
 
     func testFetchingLatestTask() throws {
-        let store = loadErxCoreDataStore()
         // given
-        try store.add(tasks: [task1, task2, ErxTask(identifier: "taskId_3", status: .ready, flowType: .pharmacyOnly)])
+        let testProfile = Profile(name: "Anna")
+        try prepareStores(profiles: [testProfile])
+        let store = loadErxCoreDataStore()
+        try store.add(
+            tasks: [task1, task2, ErxTask(identifier: "taskId_3", status: .ready, flowType: .pharmacyOnly)],
+            profileId: testProfile.id
+        )
         var receivedLatesValues = [String?]()
-        _ = store.fetchLatestLastModifiedForErxTasks()
+        _ = store.fetchLatestLastModifiedForErxTasks(of: nil)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { timestamp in
@@ -394,7 +417,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // verify that two erxTasks have been in store
         var receivedValues = [[ErxTask]]()
-        let cancellable = store.listAllTasks()
+        let cancellable = store.listAllTasks(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { erxTasks in
@@ -412,15 +435,16 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let testProfile = Profile(name: "TestProfile")
         try prepareStores(
             with: [task2, ErxTask(identifier: "taskId_3", status: .ready, flowType: .pharmacyOnly)],
-            profiles: [testProfile]
+            profiles: [testProfile],
+            profileId: testProfile.id
         )
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(tasks: [task1])
+        let store = loadErxCoreDataStore()
+        try store.add(tasks: [task1], profileId: testProfile.id)
 
         // when
         var receivedLatesValues = [String?]()
-        _ = store.fetchLatestLastModifiedForErxTasks()
+        _ = store.fetchLatestLastModifiedForErxTasks(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { timestamp in
@@ -430,31 +454,32 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         // then lastModified of the task with a relationship is returned even though
         // there is a newer task in store
         expect(receivedLatesValues.count).toEventually(equal(1))
-        expect(receivedLatesValues.first) == communication1.timestamp
+        expect(receivedLatesValues.first) == task2.lastModified
         expect(self.task1.lastModified?.date) < task2.lastModified!.date!
     }
 
     func testListingOnlyTasksWithRelationshipToProfile() throws {
         // given having a profile in store
         let testProfile = Profile(name: "TestProfile")
+        let otherProfile = Profile(name: "OtherProfile")
         // and having tasks that do not belong to that profile
         let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
                      ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
-        try prepareStores(with: tasks, profiles: [testProfile])
+        try prepareStores(with: tasks, profiles: [testProfile, otherProfile], profileId: otherProfile.id)
 
         // when accessing the store with a profile and saving a task to that profile
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let taskWithProfile = ErxTask(
             identifier: "id3",
             status: .ready,
             flowType: .pharmacyOnly,
             accessCode: "accessCode3"
         )
-        try store.add(tasks: [taskWithProfile])
+        try store.add(tasks: [taskWithProfile], profileId: testProfile.id)
 
         // then listing tasks for that profile
         var receivedListAllValues = [[ErxTask]]()
-        let cancellable = store.listAllTasks()
+        let cancellable = store.listAllTasks(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
             }, receiveValue: { tasks in
@@ -484,16 +509,16 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
                 authoredOn: "2021-07-12T10:55:04+02:00"
             ),
         ]
-        try prepareStores(with: tasks, profiles: [testProfile])
+        try prepareStores(with: tasks, profiles: [testProfile], profileId: nil)
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let taskWithProfile = ErxTask(
             identifier: "id3",
             status: .ready,
             flowType: .pharmacyOnly,
             accessCode: "accessCode3"
         )
-        try store.add(tasks: [taskWithProfile])
+        try store.add(tasks: [taskWithProfile], profileId: testProfile.id)
 
         var receivedListAllValues = [[ErxTask]]()
         let cancellable = store.listAllTasksWithoutProfile()
@@ -714,7 +739,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // when
         var receivedLatesValues = [String?]()
-        _ = store.fetchLatestTimestampForCommunications()
+        _ = store.fetchLatestTimestampForCommunications(of: nil)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { timestamp in
@@ -745,14 +770,17 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let testProfile = Profile(name: "TestProfile")
         try prepareStores(profiles: [testProfile], communications: [communication2, communication3])
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let task = ErxTask(identifier: communication1.taskId, status: .ready, flowType: .pharmacyOnly)
-        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
+        try store
+            .add(tasks: [task],
+                 profileId: testProfile
+                     .id) // there must be a related task with a relationship to the profil, testProfile.ide
         try store.add(communications: [communication1])
 
         // when
         var receivedLatesValues = [String?]()
-        _ = store.fetchLatestTimestampForCommunications()
+        _ = store.fetchLatestTimestampForCommunications(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { timestamp in
@@ -770,9 +798,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let testProfile = Profile(name: "TestProfile")
         try prepareStores(profiles: [testProfile], communications: [])
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let task = ErxTask(identifier: communication1.taskId, status: .ready, flowType: .pharmacyOnly)
-        try store.add(tasks: [task])
+        try store.add(tasks: [task], profileId: testProfile.id)
         try store.add(communications: [communication0, communication1])
 
         var receivedValues = [ErxTask.Communication]()
@@ -793,9 +821,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let testProfile = Profile(name: "TestProfile")
         try prepareStores(profiles: [testProfile], communications: [])
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let task = ErxTask(identifier: communication1.taskId, status: .ready, flowType: .pharmacyOnly)
-        try store.add(tasks: [task])
+        try store.add(tasks: [task], profileId: testProfile.id)
         try store.add(communications: [communication0])
 
         var receivedValues = [ErxTask.Communication]()
@@ -831,7 +859,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
 
         // listen to any changes in store
-        let cancellable = store.listAllMedicationDispenses()
+        let cancellable = store.listAllMedicationDispenses(of: nil)
             .dropFirst() // remove the subscription call
             .sink(receiveCompletion: { completion in
                 receivedCompletions.append(completion)
@@ -899,7 +927,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // verify that two medicationDispenses have been in store
         var receivedValues = [ErxMedicationDispense]()
-        let cancellable = store.listAllMedicationDispenses()
+        let cancellable = store.listAllMedicationDispenses(of: nil)
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
             }, receiveValue: { medicationDispense in
@@ -916,14 +944,17 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try prepareStores(profiles: [testProfile], medicationDispenses: [ErxTask.Fixtures.medicationDispenseWithPZN])
         let medicationDispense = ErxTask.Fixtures.medicationDispense
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
         let task = ErxTask(identifier: medicationDispense.taskId, status: .ready, flowType: .pharmacyOnly)
         try store.add(medicationDispenses: [ErxTask.Fixtures.medicationDispense])
-        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
+        try store
+            .add(tasks: [task],
+                 profileId: testProfile
+                     .id) // there must be a related task with a relationship to the profil, testProfile.ide
 
         // when
         var receivedValues = [ErxMedicationDispense]()
-        _ = store.listAllMedicationDispenses()
+        _ = store.listAllMedicationDispenses(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { result in
@@ -944,7 +975,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try prepareStores(profiles: [testProfile], medicationDispenses: [ErxTask.Fixtures.medicationDispense])
 
         // when accessing the store with a profile and saving a communication to that profile
-        let store = loadErxCoreDataStore(for: testProfile.id)
+        let store = loadErxCoreDataStore()
 
         let task = ErxTask(
             identifier: ErxTask.Fixtures.medicationDispenseWithPZN.taskId,
@@ -952,11 +983,14 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             flowType: .pharmacyOnly
         )
         try store.add(medicationDispenses: [ErxTask.Fixtures.medicationDispenseWithPZN])
-        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
+        try store
+            .add(tasks: [task],
+                 profileId: testProfile
+                     .id) // there must be a related task with a relationship to the profil, testProfile.ide
 
         // then listing medicationDispense for that profile
         var receivedListAllValues = [[ErxMedicationDispense]]()
-        let cancellable = store.listAllMedicationDispenses()
+        let cancellable = store.listAllMedicationDispenses(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
             }, receiveValue: { medicationDispenses in
@@ -983,7 +1017,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         )
         try store.add(chargeItems: [item])
 
-        _ = try awaitPublisher(store.delete(chargeItems: [item]))
+        _ = try awaitPublisher(store.delete(of: nil, chargeItems: [item]))
     }
 
     func testSavingSparseChargeItem() throws {
@@ -994,7 +1028,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // when
         var receivedFetchResult = [ErxSparseChargeItem]()
-        let cancellable = store.listAllChargeItems()
+        let cancellable = store.listAllChargeItems(of: nil)
             .sink(receiveCompletion: { completion in
                 expect(completion) == .finished
             }, receiveValue: { result in
@@ -1006,7 +1040,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         cancellable.cancel()
 
-        _ = try awaitPublisher(store.delete(chargeItems: [chargeItemToFetch]))
+        _ = try awaitPublisher(store.delete(of: nil, chargeItems: [chargeItemToFetch]))
     }
 
     func testUpdatingChargeItemIsRead() throws {
@@ -1015,7 +1049,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // listen to any changes in store
         var receivedValues = [[ErxSparseChargeItem]]()
-        let cancellable = store.listAllChargeItems()
+        let cancellable = store.listAllChargeItems(of: nil)
             .dropFirst() // remove the subscription call
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
@@ -1053,7 +1087,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         cancellable.cancel()
 
-        _ = try awaitPublisher(store.delete(chargeItems: [chargeItemInStore]))
+        _ = try awaitPublisher(store.delete(of: nil, chargeItems: [chargeItemInStore]))
     }
 
     func testListingOnlyChargeItemsWithRelationshipToProfile() throws {
@@ -1063,12 +1097,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
                                                                  ErxSparseChargeItem.Fixtures.chargeItem2])
 
         // when accessing the store with a profile and saving a charge item to that profile
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem3])
+        let store = loadErxCoreDataStore()
+        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem3], profileId: testProfile.id)
 
         // then listing tasks for that profile
         var receivedListAllValues = [[ErxSparseChargeItem]]()
-        let cancellable = store.listAllChargeItems()
+        let cancellable = store.listAllChargeItems(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
             }, receiveValue: { result in
@@ -1082,8 +1116,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         cancellable.cancel()
 
-        _ = try awaitPublisher(store.delete(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
-                                                          ErxSparseChargeItem.Fixtures.chargeItem2]))
+        _ = try awaitPublisher(store.delete(of: nil, chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                                                   ErxSparseChargeItem.Fixtures.chargeItem2]))
     }
 
     func testFetchingLatestChargeItem() throws {
@@ -1094,7 +1128,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         var receivedLatesValues = [String?]()
         // when fetching the latest `enteredDate` of all `ChargeItem`s
-        _ = store.fetchLatestTimestampForChargeItems()
+        _ = store.fetchLatestTimestampForChargeItems(of: nil)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { timestamp in
@@ -1107,7 +1141,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // verify that two chargeItems have been in store
         var receivedValues = [[ErxSparseChargeItem]]()
-        let cancellable = store.listAllChargeItems()
+        let cancellable = store.listAllChargeItems(of: nil)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { chargeItems in
@@ -1119,8 +1153,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         cancellable.cancel()
 
-        _ = try awaitPublisher(store.delete(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
-                                                          ErxSparseChargeItem.Fixtures.chargeItem2]))
+        _ = try awaitPublisher(store.delete(of: nil, chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                                                   ErxSparseChargeItem.Fixtures.chargeItem2]))
     }
 
     func testFetchingLatestChargeItemWithProfileRelationship() throws {
@@ -1129,12 +1163,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try prepareStores(profiles: [testProfile], chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
                                                                  ErxSparseChargeItem.Fixtures.chargeItem2])
 
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem3])
+        let store = loadErxCoreDataStore()
+        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem3], profileId: testProfile.id)
 
         // when
         var receivedLatesValues = [String?]()
-        _ = store.fetchLatestTimestampForChargeItems()
+        _ = store.fetchLatestTimestampForChargeItems(of: testProfile.id)
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
             }, receiveValue: { timestamp in
@@ -1150,9 +1184,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             .date!
 
         _ = try awaitPublisher(store.delete(
-            chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
-                          ErxSparseChargeItem.Fixtures.chargeItem2,
-                          ErxSparseChargeItem.Fixtures.chargeItem3]
+            of: nil, chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                   ErxSparseChargeItem.Fixtures.chargeItem2,
+                                   ErxSparseChargeItem.Fixtures.chargeItem3]
         ))
     }
 
@@ -1164,7 +1198,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // when
         var receivedFetchResult: ErxSparseChargeItem?
-        let cancellable = store.fetchChargeItem(by: chargeItemToFetch.identifier)
+        let cancellable = store.fetchChargeItem(of: nil, by: chargeItemToFetch.identifier)
             .sink(receiveCompletion: { completion in
                 expect(completion) == .finished
             }, receiveValue: { result in
@@ -1178,7 +1212,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         cancellable.cancel()
 
-        _ = try awaitPublisher(store.delete(chargeItems: [chargeItemToFetch.sparseChargeItem]))
+        _ = try awaitPublisher(store.delete(of: nil, chargeItems: [chargeItemToFetch.sparseChargeItem]))
     }
 
     private func prepareStores(
@@ -1186,14 +1220,15 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         profiles: [Profile] = [],
         communications: [ErxTask.Communication] = [],
         medicationDispenses: [ErxMedicationDispense] = [],
-        chargeItems: [ErxSparseChargeItem] = []
+        chargeItems: [ErxSparseChargeItem] = [],
+        profileId: UUID? = nil
     ) throws {
         if !profiles.isEmpty {
             try loadProfileCoreDataStore().add(profiles: profiles)
         }
         let erxTaskStore = loadErxCoreDataStore()
         if !tasks.isEmpty {
-            try erxTaskStore.add(tasks: tasks)
+            try erxTaskStore.add(tasks: tasks, profileId: profileId)
         }
         if !communications.isEmpty {
             try erxTaskStore.add(communications: communications)
@@ -1208,11 +1243,11 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 }
 
 extension ErxTaskCoreDataStore {
-    func add(tasks: [ErxTask]) throws {
+    func add(tasks: [ErxTask], profileId: UUID? = nil) throws {
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedSaveResults = [Bool]()
 
-        let cancellable = save(tasks: tasks, updateProfileLastAuthenticated: false)
+        let cancellable = save(tasks: tasks, in: profileId, updateProfileLastAuthenticated: false)
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)
             }, receiveValue: { result in
@@ -1231,7 +1266,7 @@ extension ErxTaskCoreDataStore {
         var receivedResults = [Bool]()
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
 
-        let cancellable = save(communications: communications)
+        let cancellable = save(communications: communications, of: nil)
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)
             }, receiveValue: { result in
@@ -1265,11 +1300,11 @@ extension ErxTaskCoreDataStore {
         cancellable.cancel()
     }
 
-    func add(chargeItems: [ErxSparseChargeItem]) throws {
+    func add(chargeItems: [ErxSparseChargeItem], profileId: UUID? = nil) throws {
         var receivedResults = [Bool]()
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
 
-        let cancellable = save(chargeItems: chargeItems)
+        let cancellable = save(chargeItems: chargeItems, of: profileId)
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)
             }, receiveValue: { result in

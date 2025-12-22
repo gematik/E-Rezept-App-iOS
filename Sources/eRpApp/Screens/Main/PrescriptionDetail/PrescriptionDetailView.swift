@@ -33,7 +33,7 @@ struct PrescriptionDetailView: View {
         ScrollView(.vertical) {
             HeaderView(store: store)
 
-            if store.profile?.profile.insuranceType == .pKV
+            if store.profile?.profile.insuranceType.canReceiveChargeItems ?? false
                 && store.chargeItem != nil
                 || store.chargeItemConsentState != .notAuthenticated {
                 ChargeItemHintView(store: store)

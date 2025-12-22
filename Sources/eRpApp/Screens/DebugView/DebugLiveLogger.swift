@@ -23,6 +23,7 @@
 import Combine
 import Foundation
 import HTTPClient
+import Settings
 
 #if ENABLE_DEBUG_VIEW
 extension UserDefaults {
@@ -111,40 +112,12 @@ class DebugLiveLogger {
     #endif
 
     class LogInterceptor: Interceptor {
-        func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+        func intercept(chain: Chain) async throws -> HTTPResponse {
             #if ENABLE_DEBUG_VIEW
             let request = chain.request
             let sentAt = Date()
 
-            return chain.proceedPublisher(request: request)
-                .handleEvents(receiveOutput: { data, response, status in
-                                  DebugLiveLogger.shared.log(
-                                      request: request,
-                                      sentAt: sentAt,
-                                      response: (data, response, status),
-                                      receivedAt: Date()
-                                  )
-                              },
-                              receiveCancel: {
-                                  DebugLiveLogger.shared.log(
-                                      request: request,
-                                      sentAt: sentAt,
-                                      response: nil,
-                                      receivedAt: Date()
-                                  )
-                              })
-                .eraseToAnyPublisher()
-            #else
-            return chain.proceed(request: chain.request)
-            #endif
-        }
-
-        func interceptAsync(chain: Chain) async throws -> HTTPResponse {
-            #if ENABLE_DEBUG_VIEW
-            let request = chain.request
-            let sentAt = Date()
-
-            let (data, response, status) = try await chain.proceedAsync(request: request)
+            let (data, response, status) = try await chain.proceed(request: request)
             DebugLiveLogger.shared.log(
                 request: request,
                 sentAt: sentAt,
@@ -153,7 +126,7 @@ class DebugLiveLogger {
             )
             return (data, response, status)
             #else
-            return try await chain.proceedAsync(request: chain.request)
+            return try await chain.proceed(request: chain.request)
             #endif
         }
     }

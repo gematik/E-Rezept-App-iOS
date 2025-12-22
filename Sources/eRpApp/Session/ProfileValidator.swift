@@ -1,0 +1,68 @@
+//
+//  Copyright (Change Date see Readme), gematik GmbH
+//
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
+//  You may not use this work except in compliance with the Licence.
+//
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+//
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
+//
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+//
+
+import CodedError
+import Combine
+import eRpKit
+import Foundation
+import IDP
+import Profiles
+
+struct ProfileValidator: IDTokenValidator {
+    let currentProfile: Profile
+    let otherProfiles: [Profile]
+
+    func validate(idToken: TokenPayload.IDTokenPayload) -> Result<Bool, Error> {
+        if let profile = otherProfiles.first(where: { $0.insuranceId == idToken.idNummer }) {
+            return .failure(IDTokenValidatorError.profileWithInsuranceIdExists(profile.name))
+        }
+
+        guard idToken.idNummer == currentProfile.insuranceId || currentProfile.insuranceId == nil else {
+            return .failure(IDTokenValidatorError.profileNotMatchingInsuranceId(currentProfile.insuranceId))
+        }
+
+        return .success(true)
+    }
+}
+
+extension UserSession {
+    func idTokenValidator() -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
+        profileDataStore.listAllProfiles()
+            .first()
+            .mapError(IDTokenValidatorError.other(error:))
+            .flatMap { [profileId = profileId] profiles -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> in
+                guard let currentProfile = profiles.first(where: { $0.identifier == profileId }) else {
+                    return Fail(error: IDTokenValidatorError.profileNotFound).eraseToAnyPublisher()
+                }
+                let otherProfiles = profiles.filter { $0.identifier != profileId }
+                return Just(
+                    ProfileValidator(
+                        currentProfile: currentProfile,
+                        otherProfiles: otherProfiles
+                    )
+                )
+                .setFailureType(to: IDTokenValidatorError.self)
+                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+}

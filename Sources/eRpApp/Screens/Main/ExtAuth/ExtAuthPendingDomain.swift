@@ -20,11 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureHelpers
 import Foundation
 import IDP
+import Profiles
 
 @Reducer
 struct ExtAuthPendingDomain {
@@ -72,13 +75,13 @@ struct ExtAuthPendingDomain {
         }
     }
 
-    // sourcery: CodedError = "014"
     /// `ExtAuthPendingDomain` error types
+    @CodedError("014")
     enum Error: Swift.Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         /// Underlying `IDPError` for the external authentication agains `URL`
         case idpError(IDPError, URL)
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         /// Error when `Profile` validation with the given authentication fails.
         /// Error is produces within the `IDPError.unspecified` error before saving the IDPToken
         case profileValidation(error: IDTokenValidatorError)

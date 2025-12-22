@@ -73,7 +73,8 @@ struct OSDeprecationBannerViewModifier: ViewModifier {
                 onTapCallback: onTapCallback
             )
             content
-                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
+                .introspect(.navigationView(style: .stack),
+                            on: .iOS(.v15, .v16, .v17, .v18, .v26)) { navigationController in
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithOpaqueBackground()
                     if visible {
@@ -122,28 +123,25 @@ extension View {
     .frame(maxWidth: .infinity, alignment: .leading)
 }
 
-#Preview("Banner Only - iOS 16") {
+#Preview("Banner Only - iOS 16", traits: .fixedLayout(width: 250, height: 100)) {
     OSDeprecationBannerView(
         osVersion: "16",
         visible: true
     )
-    .previewLayout(.fixed(width: 250.0, height: 100.0))
 }
 
-#Preview("Banner with Message - iOS 17") {
+#Preview("Banner with Message - iOS 17", traits: .fixedLayout(width: 250, height: 200)) {
     OSDeprecationBannerView(
         osVersion: "17",
         visible: true
     )
-    .previewLayout(.fixed(width: 250.0, height: 200.0))
 }
 
-#Preview("Banner Dark Mode - Large Text") {
+#Preview("Banner Dark Mode - Large Text", traits: .fixedLayout(width: 250, height: 100)) {
     OSDeprecationBannerView(
         osVersion: "16",
         visible: true
     )
     .preferredColorScheme(.dark)
     .environment(\.sizeCategory, .extraExtraExtraLarge)
-    .previewLayout(.fixed(width: 250.0, height: 100.0))
 }

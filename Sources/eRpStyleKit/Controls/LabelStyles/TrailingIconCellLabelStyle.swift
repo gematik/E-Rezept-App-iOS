@@ -31,7 +31,7 @@ public struct TrailingIconCellLabelStyle: LabelStyle {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 16) {
                 configuration.title
-                    .foregroundColor(Color(.label))
+                    .foregroundColor(Colors.systemLabel)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 configuration.icon

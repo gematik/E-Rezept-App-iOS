@@ -59,9 +59,10 @@ extension ErxTaskScannerView {
                             .padding(.vertical, 8)
                             .background(Color(.systemGray5))
                             .cornerRadius(8)
-                            .padding()
+                            .padding([.vertical])
                     }
                 }
+                .padding(.horizontal)
 
                 InfoView(localizedTextKey: textLabel(
                     for: store.scanState,

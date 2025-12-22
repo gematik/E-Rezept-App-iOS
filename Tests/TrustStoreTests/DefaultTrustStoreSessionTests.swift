@@ -23,6 +23,7 @@
 import Combine
 import Foundation
 import Nimble
+import OpenSSL
 import TestUtils
 @testable import TrustStore
 import XCTest
@@ -71,140 +72,11 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         return try! OCSPList.from(data: json)
     }()
 
-    // TODO: test data expired ERA-7662 swiftlint:disable:this todo
-    func disabled_testLoadVauCertificateFromServer() throws {
-        // given
-        let serverURL = URL(string: "http://some-service.com/path")!
-        let trustStoreClient = TrustStoreClientMock()
-        trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorReturnValue = Just(certList)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
-        trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorReturnValue = Just(ocspList)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
-        let storage = MemStorage()
-        storage.set(certList: nil)
-        storage.set(ocspList: nil)
-        // Some hours after the OCSPResponse's producedAt value 2023-06-09 13:35:44 UTC
-        var currentDate = dateFormatter.date(from: "2023-06-09 18:00:00.0000+0000")!
-
-        let dateProvider: TrustStoreTimeProvider = {
-            currentDate
-        }
-        let expirationInterval = TimeInterval(DefaultTrustStoreSession.ocspResponseExpiration)
-
-        let sut = DefaultTrustStoreSession(
-            serverURL: serverURL,
-            trustAnchor: rootCa3TestOnlyTrustAnchor,
-            trustStoreStorage: storage,
-            trustStoreClient: trustStoreClient,
-            time: dateProvider
-        )
-        var success = false
-
-        // then
-        expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == false
-        expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == false
-
-        sut.loadVauCertificate()
-            .test(
-                expectations: { _ in
-                    expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == true
-                    expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
-                    expect(storage.certListState) == self.certList
-
-                    expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == true
-                    expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 1
-                    expect(storage.ocspListState) == self.ocspList
-                    success = true
-                }
-            )
-
-        expect(success) == true; success = false
-
-        // When saved in storage, the object will not be requested from the server again
-        sut.loadVauCertificate()
-            .test(expectations: { _ in
-                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
-                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 1
-                success = true
-            })
-
-        expect(success) == true; success = false
-
-        // Advance the time so that saved mocked OCSP responses will be invalidated
-        // The same mocked OCSP responses will be received by the client cannot be validated,
-        //  so expect a session failure.
-        // [REQ:gemSpec_Krypt:A_21218] If only OCSP responses >12h available, we must request new ones
-        currentDate = currentDate.advanced(by: TimeInterval(expirationInterval))
-        sut.loadVauCertificate()
-            .test(failure: { error in
-                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
-                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 2
-
-                expect(error) == TrustStoreError.invalidOCSPResponse
-                success = true
-
-            }) { _ in
-                fail("Expected failing test")
-            }
-        expect(success) == true
-    }
-
-    func testLoadVauCertificateFromServer_failWhenOCSPResponsesCannotBeVerified() throws {
-        // given
-        let serverURL = URL(string: "http://some-service.com/path")!
-        let trustStoreClient = TrustStoreClientMock()
-        trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorReturnValue = Just(certList)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
-        trustStoreClient
-            .loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorReturnValue =
-            Just(ocspList_NotVerifiableByTrustStore)
-                .setFailureType(to: TrustStoreError.self)
-                .eraseToAnyPublisher()
-        let storage = MemStorage()
-        storage.set(certList: nil)
-        storage.set(ocspList: nil)
-        let currentDate = dateFormatter.date(from: "2021-04-22 11:00:00.0000+0000")!
-
-        let dateProvider: TrustStoreTimeProvider = {
-            currentDate
-        }
-
-        let sut = DefaultTrustStoreSession(
-            serverURL: serverURL,
-            trustAnchor: rootCa3TestOnlyTrustAnchor,
-            trustStoreStorage: storage,
-            trustStoreClient: trustStoreClient,
-            time: dateProvider
-        )
-
-        // then
-        expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == false
-        expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == false
-
-        sut.loadVauCertificate()
-            .test(failure: { error in
-                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == true
-                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
-                expect(storage.certListState).to(beNil())
-
-                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == true
-                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 1
-                expect(storage.ocspListState) == self.ocspList_NotVerifiableByTrustStore
-
-                expect(error) == .eeCertificateOCSPStatusVerification
-            }) { _ in
-                fail("Expected failing test")
-            }
-    }
-
     func testLoadVauCertificate() async throws {
         // given
         let serverURL = URL(string: "http://some-service.com/path")!
-        let trustStoreClient = MockTrustStoreClient()
-        let trustStoreStorage = MockTrustStoreStorage()
+        let trustStoreClient = TrustStoreClientMock()
+        let trustStoreStorage = TrustStoreStorageMock()
 
         // Some hours after the OCSPResponse's producedAt value 2024-10-28 09:45:17Z
         var testDate = dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000")!
@@ -222,49 +94,50 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         )
 
         // when all certificates / OCSP responses are available in storage and valid
-        trustStoreStorage.getPKICertificatesReturnValue = Self.Fixtures.pkiCertificatesRca3TestOnly
-        trustStoreStorage.getVauCertificateReturnValue = Self.Fixtures.vauCertificateData
-        trustStoreStorage.getVauCertificateOcspResponseReturnValue = Self.Fixtures.ocspResponseData
+        trustStoreStorage.getPKICertificatesPKICertificatesReturnValue = Self.Fixtures.pkiCertificatesRca3TestOnly
+        trustStoreStorage.getVauCertificateDataReturnValue = Self.Fixtures.vauCertificateData
+        trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures.ocspResponseData
         let vauCertificate = try await sut.vauCertificate()
 
         // then
         expect(vauCertificate).toNot(beNil())
         expect(vauCertificate.derBytes) == Self.Fixtures.vauCertificateData
-        expect(trustStoreStorage.getPKICertificatesCalled) == true
-        expect(trustStoreStorage.getPKICertificatesCallsCount) == 1
-        expect(trustStoreStorage.getVauCertificateCalled) == true
-        expect(trustStoreStorage.getVauCertificateCallsCount) == 1
-        expect(trustStoreStorage.getVauCertificateOcspResponseCalled) == true
-        expect(trustStoreStorage.getVauCertificateOcspResponseCallsCount) == 1
+        expect(trustStoreStorage.getPKICertificatesPKICertificatesCalled) == true
+        expect(trustStoreStorage.getPKICertificatesPKICertificatesCallsCount) == 1
+        expect(trustStoreStorage.getVauCertificateDataCalled) == true
+        expect(trustStoreStorage.getVauCertificateDataCallsCount) == 1
+        expect(trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataCalled) == true
+        expect(trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataCallsCount) == 1
 
         // when we advance the time so that the now stored mocked OCSP response is invalid
         // and the very same mocked OCSP response is received by the client so it cannot be validated
         testDate = testDate.advanced(by: TimeInterval(TimeInterval(60 * 60 * 24)))
-        trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrReturnValue = Self.Fixtures.ocspResponseData
+        trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures
+            .ocspResponseData
 
         // then
         await expect { try await sut.vauCertificate() }.to(throwError(TrustStoreError.invalidOCSPResponse))
-        expect(trustStoreStorage.getPKICertificatesCallsCount) == 2
-        expect(trustStoreStorage.getVauCertificateCallsCount) == 2
-        expect(trustStoreStorage.getVauCertificateOcspResponseCallsCount) == 2
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCallsCount) == true
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCallsCount) == 1
+        expect(trustStoreStorage.getPKICertificatesPKICertificatesCallsCount) == 2
+        expect(trustStoreStorage.getVauCertificateDataCallsCount) == 2
+        expect(trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataCallsCount) == 2
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCalled) == true
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 1
 
         // when the client receives an updated OCSP response that has been produced more recently
-        trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrReturnValue = Self.Fixtures
+        trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures
             .ocspResponseDataMoreRecentProducedAt
-        trustStoreClient.loadPKICertificatesFromServerRootSubjectCnReturnValue = Self.Fixtures
+        trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesReturnValue = Self.Fixtures
             .pkiCertificatesRca3TestOnly
-        trustStoreClient.loadVauCertificateFromServerReturnValue = Self.Fixtures.vauCertificateData
+        trustStoreClient.loadVauCertificateFromServerDataReturnValue = Self.Fixtures.vauCertificateData
         let vauCertificate2 = try await sut.vauCertificate()
 
         // then
         expect(vauCertificate2).toNot(beNil())
         expect(vauCertificate2.derBytes) == Self.Fixtures.vauCertificateData
-        expect(trustStoreStorage.getPKICertificatesCallsCount) == 3
-        expect(trustStoreStorage.getVauCertificateCallsCount) == 3
-        expect(trustStoreStorage.getVauCertificateOcspResponseCallsCount) == 3
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCallsCount) == 2
+        expect(trustStoreStorage.getPKICertificatesPKICertificatesCallsCount) == 3
+        expect(trustStoreStorage.getVauCertificateDataCallsCount) == 3
+        expect(trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataCallsCount) == 3
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 2
     }
 
     func testLoadVauCertificate_memStorage() async throws {
@@ -272,7 +145,7 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // so only the TrustStoreClient is mocked.
         // given
         let serverURL = URL(string: "http://some-service.com/path")!
-        let trustStoreClient = MockTrustStoreClient()
+        let trustStoreClient = TrustStoreClientMock()
         let trustStoreStorage = MemStorage()
 
         // Some hours after the OCSPResponse's producedAt value  UTC
@@ -291,21 +164,22 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         )
 
         // when
-        trustStoreClient.loadPKICertificatesFromServerRootSubjectCnReturnValue = Self.Fixtures
+        trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesReturnValue = Self.Fixtures
             .pkiCertificatesRca3TestOnly
-        trustStoreClient.loadVauCertificateFromServerReturnValue = Self.Fixtures.vauCertificateData
-        trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrReturnValue = Self.Fixtures.ocspResponseData
+        trustStoreClient.loadVauCertificateFromServerDataReturnValue = Self.Fixtures.vauCertificateData
+        trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures
+            .ocspResponseData
         let vauCertificate = try await sut.vauCertificate()
 
         // then
         expect(vauCertificate).toNot(beNil())
         expect(vauCertificate.derBytes) == Self.Fixtures.vauCertificateData
-        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnCalled) == true
-        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnCallsCount) == 1
-        expect(trustStoreClient.loadVauCertificateFromServerCalled) == true
-        expect(trustStoreClient.loadVauCertificateFromServerCallsCount) == 1
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCalled) == true
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCallsCount) == 1
+        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesCalled) == true
+        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesCallsCount) == 1
+        expect(trustStoreClient.loadVauCertificateFromServerDataCalled) == true
+        expect(trustStoreClient.loadVauCertificateFromServerDataCallsCount) == 1
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCalled) == true
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 1
 
         // When already saved in storage...
         let vauCertificate2 = try await sut.vauCertificate()
@@ -313,9 +187,9 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // then the object is not be requested from the server again
         expect(vauCertificate2).toNot(beNil())
         expect(vauCertificate2.derBytes) == Self.Fixtures.vauCertificateData
-        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnCallsCount) == 1
-        expect(trustStoreClient.loadVauCertificateFromServerCallsCount) == 1
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCallsCount) == 1
+        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesCallsCount) == 1
+        expect(trustStoreClient.loadVauCertificateFromServerDataCallsCount) == 1
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 1
 
         // when we advance the time so that the now stored mocked OCSP response is invalid...
         testDate = testDate.advanced(by: TimeInterval(DefaultTrustStoreSession.ocspResponseExpiration))
@@ -323,7 +197,119 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // ... and the very same mocked OCSP response is received by the client and cannot be validated
         // then we expect a session failure.
         await expect { try await sut.vauCertificate() }.to(throwError(TrustStoreError.invalidOCSPResponse))
-        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnSerialNrCallsCount) == 2
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 2
+    }
+
+    func testVauCertificate_async_failWhenOCSPResponseTooOld() async throws {
+        // We simulate an outdated OCSP response (older than grace period) so that
+        // loading the VAU certificate fails with 'invalidOCSPResponse'.
+        // given
+        let serverURL = URL(string: "http://some-service.com/path")!
+        let trustStoreClient = TrustStoreClientMock()
+        let trustStoreStorage = MemStorage()
+
+        // Choose a date far ( >12h ) after the OCSP response's producedAt timestamp (2024-10-28 09:45:17Z)
+        // so that the response received from server is considered expired immediately.
+        let testDate = dateFormatter.date(from: "2024-10-29 23:00:00.0000+0000")!
+        let dateProvider: TrustStoreTimeProvider = { testDate }
+
+        let sut = DefaultTrustStoreSession(
+            serverURL: serverURL,
+            trustAnchor: rootCa3TestOnlyTrustAnchor,
+            trustStoreStorage: trustStoreStorage,
+            trustStoreClient: trustStoreClient,
+            time: dateProvider
+        )
+
+        // Remote responses (OCSP response too old w.r.t current time)
+        trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesReturnValue = Self.Fixtures
+            .pkiCertificatesRca3TestOnly
+        trustStoreClient.loadVauCertificateFromServerDataReturnValue = Self.Fixtures.vauCertificateData
+        trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures
+            .ocspResponseData
+
+        // then
+        await expect { try await sut.vauCertificate() }.to(throwError(TrustStoreError.invalidOCSPResponse))
+        expect(trustStoreClient.loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesCalled) == true
+        expect(trustStoreClient.loadVauCertificateFromServerDataCalled) == true
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCalled) == true
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 1
+    }
+
+    func testValidateEeCertificate_usesLocalOcsp_whenFresh() async throws {
+        // given
+        let serverURL = URL(string: "http://some-service.com/path")!
+        let trustStoreClient = TrustStoreClientMock()
+        let trustStoreStorage = TrustStoreStorageMock()
+
+        // Set time a few hours after OCSP producedAt: 2024-10-28 09:45:17Z
+        let testDate = dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000")!
+        let dateProvider: TrustStoreTimeProvider = { testDate }
+
+        let sut = DefaultTrustStoreSession(
+            serverURL: serverURL,
+            trustAnchor: rootCa3TestOnlyTrustAnchor,
+            trustStoreStorage: trustStoreStorage,
+            trustStoreClient: trustStoreClient,
+            time: dateProvider
+        )
+
+        // when local PKI and OCSP are available and fresh
+        trustStoreStorage.getPKICertificatesPKICertificatesReturnValue = Self.Fixtures.pkiCertificatesRca3TestOnly
+        trustStoreStorage.getVauCertificateDataReturnValue = Self.Fixtures.vauCertificateData
+        trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures.ocspResponseData
+
+        // Use the VAU certificate bytes as a generic EE certificate for validation
+        let eeCertificate = try X509(der: Self.Fixtures.vauCertificateData)
+        let isValid = try await sut.validate(eeCertificate: eeCertificate)
+
+        // then validation succeeds without a remote fetch
+        expect(isValid) == true
+        expect(trustStoreStorage.getPKICertificatesPKICertificatesCalled) == true
+        expect(trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataCalled) == true
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCalled) == false
+    }
+
+    func testValidateEeCertificate_fetchesRemote_whenLocalOcspOutdated() async throws {
+        // given
+        let serverURL = URL(string: "http://some-service.com/path")!
+        let trustStoreClient = TrustStoreClientMock()
+        let trustStoreStorage = TrustStoreStorageMock()
+
+        // Advance beyond grace period so the local OCSP is considered stale
+        let testDate = dateFormatter.date(from: "2024-10-29 12:00:00.0000+0000")!
+        let dateProvider: TrustStoreTimeProvider = { testDate }
+
+        let sut = DefaultTrustStoreSession(
+            serverURL: serverURL,
+            trustAnchor: rootCa3TestOnlyTrustAnchor,
+            trustStoreStorage: trustStoreStorage,
+            trustStoreClient: trustStoreClient,
+            time: dateProvider
+        )
+
+        // Local PKI is present; local OCSP exists but is too old wrt testDate
+        trustStoreStorage.getPKICertificatesPKICertificatesReturnValue = Self.Fixtures.pkiCertificatesRca3TestOnly
+        trustStoreStorage.getVauCertificateDataReturnValue = Self.Fixtures.vauCertificateData
+        trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures.ocspResponseData
+
+        // Remote returns a more recent OCSP so validation can succeed
+        trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataReturnValue = Self.Fixtures
+            .ocspResponseDataMoreRecentProducedAt
+
+        // when
+        let eeCertificate = try X509(der: Self.Fixtures.vauCertificateData)
+        let isValid = try await sut.validate(eeCertificate: eeCertificate)
+
+        // then
+        expect(isValid) == true
+        expect(trustStoreStorage.getPKICertificatesPKICertificatesCalled) == true
+        expect(trustStoreStorage.getOcspResponseIssuerCnStringSerialNrStringDataCalled) == true
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCalled) == true
+        // Note: loadOcspCheckedTrustStore() in sut.validate(eeCertificate: eeCertificate)
+        // already has called loadOcspResponseFromServerIssuerCnSerialNr() before
+        // so we expect == 2 instead of 1 here
+        expect(trustStoreClient.loadOcspResponseFromServerIssuerCnStringSerialNrStringDataCallsCount) == 2
     }
 }
 

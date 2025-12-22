@@ -21,6 +21,7 @@
 //
 
 import SwiftUI
+
 /// `ButtonStyle` for navigation buttons with a chevron. This style must be applied manually to `Button`s that should be
 /// presented as navigational buttons. This style is not meant to be used with `NavigationLink`and will probably not
 /// work with these.
@@ -46,14 +47,6 @@ public struct NavigationButtonStyle: ButtonStyle {
                 .font(.body.weight(.semibold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .foregroundColor(Color(.label))
+        .foregroundColor(Colors.systemLabel)
     }
-}
-
-extension ButtonStyle where Self == NavigationButtonStyle {
-    /// A button style that applies a navigation chevron and wraps the button with a divider.
-    ///
-    /// To apply this style to a button, or to a view that contains buttons, use
-    /// the ``View/buttonStyle(_:)`` modifier.
-    public static var simpleNavigation: NavigationButtonStyle { NavigationButtonStyle() }
 }

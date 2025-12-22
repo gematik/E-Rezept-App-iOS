@@ -24,6 +24,7 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureCardWall
 import Perception
 import Pharmacy
 import SwiftUI
@@ -442,23 +443,32 @@ extension PharmacyRedeemView {
                     .padding()
 
                 if !store.readyToRedeem {
-                    PrimaryTextButton(text: L10n.phaRedeemBtnRedeem,
-                                      a11y: A11y.pharmacyRedeem.phaRedeemBtnRedeem,
-                                      isEnabled: store.readyToRedeem) {
+                    Button {
                         store.send(.redeem)
+                    } label: {
+                        Label(L10n.phaRedeemBtnRedeem)
                     }
-                    .padding(.horizontal)
+                    .disabled(!store.readyToRedeem)
+                    .buttonStyle(.primary(isEnabled: store.readyToRedeem))
+                    .accessibilityIdentifier(A11y.pharmacyRedeem.phaRedeemBtnRedeem)
                     .accessibilityDisabledReason(
                         reasonIfDisabled: store.state.accessibilityDisabledReason,
                         isDisabled: !store.readyToRedeem
                     )
                 } else {
-                    LoadingPrimaryButton(text: L10n.phaRedeemBtnRedeem,
-                                         isLoading: store.orderResponses.inProgress || store.redeemInProgress) {
+                    Button {
                         store.send(.redeem)
+                    } label: {
+                        if store.orderResponses.inProgress || store.redeemInProgress {
+                            ProgressView()
+                                .font(.body.weight(.semibold))
+                                .foregroundColor(Color(.white))
+                        } else {
+                            Label(L10n.phaRedeemBtnRedeem)
+                        }
                     }
+                    .buttonStyle(.primary)
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
-                    .padding(.horizontal)
                 }
             }.padding(.bottom)
         }
@@ -503,8 +513,6 @@ extension ProfilePictureView {
     }
 }
 
-struct PharmacyRedeemView_Previews: PreviewProvider {
-    static var previews: some View {
-        PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.store)
-    }
+#Preview("One prescription selected, futher details required") {
+    PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.store)
 }

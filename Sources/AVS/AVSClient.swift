@@ -48,7 +48,7 @@ extension RealAVSClient: AVSClient {
         }
         request.httpBody = data
         do {
-            return try await httpClient.sendAsync(request: request)
+            return try await httpClient.send(request: request)
         } catch {
             throw error.asAVSError()
         }

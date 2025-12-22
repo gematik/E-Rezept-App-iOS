@@ -24,6 +24,7 @@ import AVS
 import BfArM
 import Combine
 import eRpKit
+import FeatureCardWall
 import Foundation
 import IDP
 import Pharmacy
@@ -42,24 +43,12 @@ extension UserMode: UserSession {
         sessionContainer.isAuthenticated
     }
 
-    var erxTaskRepository: ErxTaskRepository {
-        sessionContainer.erxTaskRepository
-    }
-
-    var entireErxTaskRepository: eRpKit.ErxTaskRepository {
-        sessionContainer.entireErxTaskRepository
-    }
-
     var ordersRepository: OrdersRepository {
         sessionContainer.ordersRepository
     }
 
     var profileDataStore: ProfileDataStore {
         sessionContainer.profileDataStore
-    }
-
-    var pharmacyRepository: PharmacyRepository {
-        sessionContainer.pharmacyRepository
     }
 
     var updateChecker: UpdateChecker {
@@ -78,13 +67,6 @@ extension UserMode: UserSession {
         sessionContainer.secureUserStore
     }
 
-    var isDemoMode: Bool {
-        if case .demo = self {
-            return true
-        }
-        return false
-    }
-
     var idpSession: IDPSession {
         sessionContainer.idpSession
     }
@@ -95,10 +77,6 @@ extension UserMode: UserSession {
 
     var pairingIdpSession: IDPSession {
         sessionContainer.pairingIdpSession
-    }
-
-    var nfcSessionProvider: NFCSignatureProvider {
-        sessionContainer.nfcSessionProvider
     }
 
     var nfcHealthCardPasswordController: NFCHealthCardPasswordController {

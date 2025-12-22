@@ -5,6 +5,7 @@ module Fastlane
     class LokaliseAction < Action
       def self.run(params)
         require 'net/http'
+        require 'json'
 
         token = params[:api_token]
         project_identifier = params[:project_identifier]
@@ -26,6 +27,7 @@ module Fastlane
           export_sort: "a_z",
           include_comments: include_comments,
           replace_breaks: replace_breaks
+          # async flag not needed for async-download endpoint
         }
 
         filter_langs = params[:languages]
@@ -38,7 +40,7 @@ module Fastlane
           body["include_tags"] = tags
         end
 
-        uri = URI("https://api.lokalise.com/api2/projects/#{project_identifier}/files/download")
+        uri = URI("https://api.lokalise.com/api2/projects/#{project_identifier}/files/async-download")
         request = Net::HTTP::Post.new(uri)
         request.body = body.to_json
         request.add_field("x-api-token", token)
@@ -47,20 +49,38 @@ module Fastlane
         http.use_ssl = true
         response = http.request(request)
 
-        jsonResponse = JSON.parse(response.body)
+        jsonResponse = JSON.parse(response.body) rescue {}
         UI.error "Bad response 🉐\n#{response.body}" unless jsonResponse.kind_of? Hash
-        if response.code == "200" && jsonResponse["bundle_url"].kind_of?(String)  then
+
+        # Expect async response with process_id
+        if response.code == "200" && jsonResponse["process_id"].kind_of?(String)
+          process_id = jsonResponse["process_id"]
+          UI.message "Async export started. Process ID: #{process_id} ⏳"
+
+          bundle_url = poll_process_for_bundle_url(
+            token: token,
+            project_identifier: project_identifier,
+            process_id: process_id,
+            max_attempts: 60,
+            interval_seconds: 5
+          )
+
+          if bundle_url.nil?
+            UI.error "Process did not finish successfully or bundle URL missing 📟"
+            return
+          end
+
           UI.message "Downloading localizations archive 📦"
           FileUtils.mkdir_p("lokalisetmp")
-          fileURL = jsonResponse["bundle_url"]
+          fileURL = bundle_url
           uri = URI(fileURL)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
           zipRequest = Net::HTTP::Get.new(uri)
           response = http.request(zipRequest)
-          if response.content_type == "application/zip" or response.content_type == "application/octet-stream" then
+          if response.content_type == "application/zip" || response.content_type == "application/octet-stream"
             FileUtils.mkdir_p("lokalisetmp")
-            open("lokalisetmp/a.zip", "wb") { |file| 
+            open("lokalisetmp/a.zip", "wb") { |file|
               file.write(response.body)
             }
             unzip_file("lokalisetmp/a.zip", destination, clean_destination)
@@ -78,6 +98,54 @@ module Fastlane
         end
       end
 
+      def self.poll_process_for_bundle_url(token:, project_identifier:, process_id:, max_attempts:, interval_seconds:)
+        require 'net/http'
+        require 'json'
+        attempts = 0
+        while attempts < max_attempts
+          attempts += 1
+            uri = URI("https://api.lokalise.com/api2/projects/#{project_identifier}/processes/#{process_id}")
+            request = Net::HTTP::Get.new(uri)
+            request.add_field("x-api-token", token)
+            request.add_field("accept", "application/json")
+            http = Net::HTTP.new(uri.host, uri.port)
+            http.use_ssl = true
+            response = http.request(request)
+
+            json = JSON.parse(response.body) rescue {}
+
+            if response.code == "200" && json["process"].kind_of?(Hash)
+              process = json["process"]
+              status = process["status"]
+              UI.message "Process #{process_id} status: #{status}"
+              case status
+              when "finished"
+                details = process["details"] || {}
+                # Try known shapes for async-download details
+                bundle_url = details["bundle_url"] ||
+                             (details["bundle"].kind_of?(Hash) ? details["bundle"]["url"] : nil) ||
+                             details["url"] ||
+                             details["download_url"]
+
+                if bundle_url.nil?
+                  UI.message "Process finished but bundle_url not found. Details: #{details}"
+                end
+                return bundle_url
+              when "failed"
+                UI.error "Process #{process_id} failed ❌"
+                return nil
+              else
+                # queued, in_progress -> continue
+              end
+            else
+              UI.message "Unexpected process response (HTTP #{response.code}), retrying…"
+            end
+
+            sleep interval_seconds
+        end
+        UI.error "Timed out waiting for process #{process_id} ⏰"
+        nil
+      end
 
       def self.unzip_file(file, destination, clean_destination)
         require 'zip'
@@ -95,6 +163,28 @@ module Fastlane
              FileUtils.rm(f_path) if File.file? f_path
              zip_file.extract(f, f_path)
            }
+
+           # Flatten new bundle structure if present (Lokalise.bundle/Contents/Resources/*)
+           bundle_resources_root = File.join(destination, 'Lokalise.bundle', 'Contents', 'Resources')
+           if Dir.exist?(bundle_resources_root)
+             UI.message "Flattening Lokalise.bundle structure (preserving existing resources) 📁"
+             Dir.children(bundle_resources_root).each do |child|
+               next unless child.end_with?('.lproj')
+               src_lang_dir = File.join(bundle_resources_root, child)
+               dest_lang_dir = File.join(destination, child)
+               FileUtils.mkdir_p(dest_lang_dir)
+               Dir.glob(File.join(src_lang_dir, '*')).each do |exported_file|
+                 fname = File.basename(exported_file)
+                 if fname =~ /^Localizable\.(strings|stringsdict)$/ || fname == 'internal_messages.json'
+                   FileUtils.rm_f(File.join(dest_lang_dir, fname))
+                   FileUtils.mv(exported_file, File.join(dest_lang_dir, fname))
+                 else
+                   # keep other existing files in dest_lang_dir; skip moving
+                 end
+               end
+             end
+             FileUtils.rm_rf(File.join(destination, 'Lokalise.bundle'))
+           end
         }
       end
 

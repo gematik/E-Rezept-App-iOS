@@ -24,6 +24,7 @@ import ComposableArchitecture
 import ComposableCoreLocation
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import Nimble
 import Pharmacy
 import XCTest

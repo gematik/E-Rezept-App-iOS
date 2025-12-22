@@ -73,7 +73,7 @@ struct HealthCardPasswordIntroductionView: View {
                             // Hint
                             VStack(spacing: 8) {
                                 store.mode.hintText
-                                    .foregroundColor(Color(.secondaryLabel))
+                                    .foregroundColor(Colors.systemLabelSecondary)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .fixedSize(horizontal: false, vertical: true)
                             }

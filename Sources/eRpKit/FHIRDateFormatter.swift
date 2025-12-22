@@ -28,10 +28,20 @@ public class FHIRDateFormatter {
     public static let shared = FHIRDateFormatter()
     private init() {}
 
-    private lazy var serverDateFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        return formatter
+    // Thread-safe immutable cache: one formatter per DateFormats
+    private static let isoDateFormatters: [DateFormats: ISO8601DateFormatter] = {
+        var dict: [DateFormats: ISO8601DateFormatter] = [:]
+        for format in DateFormats.allCases {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = format.formatOptions
+            dict[format] = formatter
+        }
+        return dict
     }()
+
+    private func isoFormatter(for format: DateFormats) -> ISO8601DateFormatter {
+        Self.isoDateFormatters[format] ?? ISO8601DateFormatter()
+    }
 
     private lazy var utcDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -47,8 +57,7 @@ public class FHIRDateFormatter {
     ///   - format: specify how detailed the format should be. The format can be one of the FHIR dates
     /// - Returns: a FHIR date string in the specified format
     public func string(from date: Date, format: DateFormats = .yearMonthDayTime) -> String {
-        serverDateFormatter.formatOptions = format.formatOptions
-        return serverDateFormatter.string(from: date)
+        isoFormatter(for: format).string(from: date)
     }
 
     /// Creates a `Date` from a string if it conforms to one of the FHIR date formats
@@ -66,9 +75,7 @@ public class FHIRDateFormatter {
         guard let dateFormat = format ?? dateFormat(for: string) else {
             return nil
         }
-
-        serverDateFormatter.formatOptions = dateFormat.formatOptions
-        return serverDateFormatter.date(from: string)
+        return isoFormatter(for: dateFormat).date(from: string)
     }
 
     /// Creates a date string with the format `2020-06-23T09:41:00+00:00`

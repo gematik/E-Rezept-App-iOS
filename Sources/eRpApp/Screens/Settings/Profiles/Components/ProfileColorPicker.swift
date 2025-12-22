@@ -31,7 +31,7 @@ struct ProfileColorPicker: View {
             ForEach(ProfileColor.allCases, id: \.self) { color in
                 Image(systemName: SFSymbolName.checkmark)
                     .font(.headline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .opacity(color == self.color ? 1 : 0.01)
                     .frame(width: 40, height: 40, alignment: .center)
                     .background(

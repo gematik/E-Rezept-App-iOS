@@ -503,6 +503,30 @@ public enum ErpCharge {
     }
 }
 
+/// https://simplifier.net/erezept-workflow-eu/
+public enum EURedeem {
+    /// Supported Versions of de.gematik.erezept.eu flow
+    public enum Version {
+        /// https://simplifier.net/packages/de.gematik.erezept.eu/1.0.0
+        case v1_0_0
+    }
+
+    /// Supported Keys for eu redeem
+    public enum Key {
+        /// Consent keys
+        public enum Consent {
+            /// Consent
+            public static let consent: [Version: String] = [
+                .v1_0_0: "https://gematik.de/fhir/erp-eu/StructureDefinition/GEM_ERPEU_PR_Consent",
+            ]
+            /// Consent Type
+            public static let consentType: [Version: String] = [
+                .v1_0_0: "https://gematik.de/fhir/erp-eu/CodeSystem/GEM_ERPEU_CS_ConsentType",
+            ]
+        }
+    }
+}
+
 /// https://simplifier.net/packages/de.abda.eRezeptAbgabedatenPKV
 public struct ABDAERezeptAbgabedaten {
     /// Available Profile Versions
@@ -785,6 +809,8 @@ public enum FHIRDirectory {
             case publicPharmacy = "1.2.276.0.76.4.54"
             /// cost-carrier (Betriebsstätte Kostenträger)
             case insuranceCompany = "1.2.276.0.76.4.59"
+            /// NCPeH Fachdienst
+            case ncpehFacility = "1.2.276.0.76.4.292"
         }
 
         /// http://terminology.hl7.org/CodeSystem
@@ -793,6 +819,10 @@ public enum FHIRDirectory {
             public static let pharmacyHealthcareSpecialty =
                 "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS"
         }
+
+        /// structure definition of speical opening times (e.g. emergency service (Notdienst))
+        public static let specialOpeningTimes =
+            "https://gematik.de/fhir/directory/StructureDefinition/SpecialOpeningTimesEX"
     }
 }
 

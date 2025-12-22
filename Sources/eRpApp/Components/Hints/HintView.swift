@@ -31,13 +31,21 @@ struct HintView<Action: Equatable>: View {
 
     var body: some View {
         HStack(alignment: hint.isTopAligned ? .top : .bottom, spacing: 0) {
-            Image(asset: hint.image.asset)
-                .font(.title3)
-                .foregroundColor(hint.actionColor)
-                .padding(.leading)
-                .padding(.top, hint.isTopAligned ? 16 : 0)
-                .accessibility(label: Text(hint.image.accessibilityName ?? ""))
-                .accessibility(hidden: hint.image.accessibilityName == nil)
+            if let image = hint.image {
+                Image(asset: image.asset)
+                    .font(.title3)
+                    .foregroundColor(hint.actionColor)
+                    .padding(.leading)
+                    .padding(.top, hint.isTopAligned ? 16 : 0)
+                    .accessibility(label: Text(image.accessibilityName ?? ""))
+                    .accessibility(hidden: image.accessibilityName == nil)
+            }
+            if let emoji = hint.emoji {
+                Text(emoji)
+                    .font(.largeTitle)
+                    .padding(.leading)
+                    .padding(.top, hint.isTopAligned ? 16 : 0)
+            }
 
             HStack(alignment: .top, spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -60,13 +68,32 @@ struct HintView<Action: Equatable>: View {
                     if let actionText = hint.actionText {
                         if let action = textAction {
                             if hint.buttonStyle == Hint.ButtonStyle.quaternary {
-                                QuaternaryButton(text: actionText, action: action)
-                            } else {
-                                if let image = hint.actionImageName {
-                                    TertiaryButton(text: actionText, imageName: image, action: action)
-                                } else {
-                                    TertiaryButton(text: actionText, action: action)
+                                Button {
+                                    action()
+                                } label: {
+                                    Text(actionText)
                                 }
+                            } else {
+                                Button {
+                                    action()
+                                } label: {
+                                    if let actionImageName = hint.actionImageName {
+                                        HStack {
+                                            if hint.actionStyle.isRightAligned {
+                                                Spacer()
+                                                Text(actionText)
+                                                Image(systemName: actionImageName)
+                                            } else {
+                                                Image(systemName: actionImageName)
+                                                Text(actionText)
+                                                Spacer()
+                                            }
+                                        }
+                                    } else {
+                                        Text(actionText)
+                                    }
+                                }
+                                .buttonStyle(.tertiary)
                             }
                         } else {
                             Text(actionText)
@@ -80,7 +107,7 @@ struct HintView<Action: Equatable>: View {
                 .padding(.horizontal)
                 .padding(.vertical)
 
-                if hint.hasCloseAction, let action = closeAction {
+                if let action = closeAction {
                     Button(action: action) {
                         Image(systemName: SFSymbolName.crossIconPlain)
                             .font(Font.subheadline.weight(.semibold))

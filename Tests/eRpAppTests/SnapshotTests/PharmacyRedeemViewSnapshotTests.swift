@@ -53,6 +53,40 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModi())
     }
 
+    func testPharmacyRedeemViewHappyPath() {
+        let initialState = PharmacyRedeemDomain.State(
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            selectedShipmentInfo: ShipmentInfo(
+                name: "Anna Maria Vetter",
+                street: "Benzelrather Str. 29",
+                addressDetail: "Postfach 11122",
+                zip: "50226",
+                city: "Frechen",
+                phone: "+491771234567",
+                mail: "anna.vetter@gematik.de",
+                deliveryInfo: "Please do not hesitate to ring the bell twice"
+            ),
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+                selectedOption: .shipment,
+                availableOptions: [.onPremise, .delivery, .shipment]
+            ),
+            hasCompleteContactData: true
+        )
+        let sut = NavigationStack {
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
+                initialState: initialState
+            ) {
+                EmptyReducer()
+            })
+        }.frame(width: 375, height: 1210, alignment: .top)
+
+        assertSnapshots(of: sut, as: snapshotModi())
+    }
+
     func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
             prescriptions: Shared(value: Prescription.Fixtures.prescriptions),

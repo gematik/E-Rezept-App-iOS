@@ -1,5 +1,6 @@
 # Error Handling
 
+  - [Error-Search](errors/error_search.html)
   - [Error-Graph](errors/error_graph.html)
-  - [List](errors/errors.html)
-  - [CSV](errors/errors.csv)
+  - [Error-Details](errors/error_details.html)
+  

@@ -65,7 +65,8 @@ extension TextField where Label == Text {
 }
 
 extension TextField where Label == Text {
-    init(
+    /// Initializes a `TextField` with a `StringAsset` as its label and an axis for layout.
+    public init(
         _ stringAsset: StringAsset,
         text: Binding<String>,
         axis: Axis

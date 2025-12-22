@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import Foundation
 
 // MARK: - EURedeemSelectionDomain
@@ -43,7 +44,7 @@ public struct EURedeemSelectionDomain {
         public var consentGiven: Bool?
 
         public init(
-            prescriptions: [EUPrescription] = [],
+            prescriptions: [EUPrescription] = EURedeemSelectionDomain.Dummies.prescriptions,
             selectedPrescriptions: [EUPrescription] = [],
             selectedCountry: Country? = nil,
             consentGiven: Bool? = nil
@@ -57,6 +58,13 @@ public struct EURedeemSelectionDomain {
 
     /// Actions for EU redemption selection
     public enum Action: Equatable {
+        /// Destination actions
+        case destination(PresentationAction<Destination.Action>)
+        /// Delegate actions
+        case delegate(Delegate)
+    }
+
+    public enum Delegate: Equatable {
         /// Select country button was tapped
         case selectCountryButtonTapped
         /// Select prescriptions button was tapped
@@ -65,10 +73,8 @@ public struct EURedeemSelectionDomain {
         case selectInstructionButtonTapped
         /// Redeem button was tapped
         case redeemButtonTapped
-        /// Set the selected prescriptions
-        case setSelectedPrescriptions([EUPrescription])
-        /// Destination actions
-        case destination(PresentationAction<Destination.Action>)
+        /// Close button was tapped
+        case close
     }
 
     /// Navigation and modal destinations
@@ -76,10 +82,6 @@ public struct EURedeemSelectionDomain {
     public enum Destination {
         /// Consent screen
         case consent(ConsentDomain)
-        /// SelectEUPrescription screen
-        case selectPrescription(SelectEUPrescriptionsDomain)
-        /// CountrySelection screen
-        case selectCountry(CountrySelectionDomain)
     }
 
     /// Initialize the domain
@@ -93,26 +95,6 @@ public struct EURedeemSelectionDomain {
 
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .selectCountryButtonTapped:
-            return .none
-
-        case .selectPrescriptionsButtonTapped:
-            state
-                .destination = .selectPrescription(.init(
-                    prescriptions: state.prescriptions,
-                    patientName: "Profile 1",
-                    selectAllEnabled: false
-                ))
-            return .none
-        case .selectInstructionButtonTapped:
-            state.destination = .selectCountry(.init(countries: [], selectedCountry: state.selectedCountry))
-            return .none
-        case .redeemButtonTapped:
-            // show introduction view
-            return .none
-        case let .setSelectedPrescriptions(selectedPrescriptions):
-            state.selectedPrescriptions = selectedPrescriptions
-            return .none
         case let .destination(.presented(.consent(.delegate(action)))):
             switch action {
             case .consentAccepted:
@@ -126,7 +108,8 @@ public struct EURedeemSelectionDomain {
             state.destination = nil
             return .none
 
-        case .destination:
+        case .destination,
+             .delegate:
             return .none
         }
     }
@@ -136,9 +119,9 @@ public struct EURedeemSelectionDomain {
 
 extension EURedeemSelectionDomain {
     /// Mock data for testing and previews
-    enum Dummies {
+    public enum Dummies {
         /// Sample prescriptions for testing
-        static let prescriptions: [EUPrescription] = [
+        public static let prescriptions: [EUPrescription] = [
             EUPrescription(
                 id: "1",
                 name: "Ibuprofen 600",
@@ -151,29 +134,35 @@ extension EURedeemSelectionDomain {
                 expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180),
                 isRedeemableInEU: true
             ),
+            EUPrescription(
+                id: "3",
+                name: "Ibuprofen 10mg/g",
+                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180),
+                isRedeemableInEU: true
+            ),
         ]
 
         /// Sample selected prescriptions for testing
-        static let selectedPrescriptions: [EUPrescription] = [
+        public static let selectedPrescriptions: [EUPrescription] = [
             prescriptions[0],
         ]
 
         /// Sample countries for testing
-        static let countries = [
-            Country(id: "DE", name: "Deutschland"),
-            Country(id: "ES", name: "Spanien"),
-            Country(id: "FR", name: "Frankreich"),
+        public static let countries = [
+            Country(id: "DE", name: "Deutschland", telematikId: "12312321"),
+            Country(id: "ES", name: "Spanien", telematikId: "12312322"),
+            Country(id: "FR", name: "Frankreich", telematikId: "12312323"),
         ]
 
         /// Sample state for testing
-        static let state = EURedeemSelectionDomain.State(
+        public static let state = EURedeemSelectionDomain.State(
             prescriptions: prescriptions,
             selectedPrescriptions: selectedPrescriptions,
             selectedCountry: countries[1]
         )
 
         /// Sample store for testing
-        static let store = Store(initialState: state) {
+        public static let store = Store(initialState: state) {
             EURedeemSelectionDomain()
         }
     }

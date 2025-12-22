@@ -66,8 +66,10 @@ extension {{ type.name }}: SmartMock {
 
 import BfArM
 import eRpKit
+import eRpLocalStorage
 import Foundation
-
+import Pharmacy
+import FHIRVZD
 #if DEBUG
 
 {% for type in types.structs where type|annotated:"SmartMockStruct" %}

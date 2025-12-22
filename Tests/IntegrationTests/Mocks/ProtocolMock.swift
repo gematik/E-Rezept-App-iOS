@@ -34,4 +34,5 @@ extension TrustStoreSession {}
 // sourcery:begin: ProtocolMock
 extension ErxLocalDataStore {}
 extension PharmacyLocalDataStore {}
+extension ProfileDataStore {}
 // sourcery:end

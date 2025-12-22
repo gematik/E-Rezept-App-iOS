@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureEURedeem
 
 @Reducer
 struct PharmacyContainerDomain {
@@ -43,13 +44,30 @@ struct PharmacyContainerDomain {
             pharmacy: PharmacyLocation,
             option: RedeemOption
         )
+        case euRedeemSelection
+        case euRedeemInstructions(_ isRedeeming: Bool)
+        case euRedeemCode
     }
 
     @Reducer(state: .equatable, action: .equatable)
     enum Path {
         // sourcery: AnalyticsScreen = pharmacySearch
         case redeem(PharmacyRedeemDomain)
+
+        /// EU redeem selection screen
+        case euRedeemSelection(EURedeemSelectionDomain)
+        /// Country selection screen
+        case countrySelection(CountrySelectionDomain)
+        /// Prescription selection screen
+        case prescriptionSelection(SelectEUPrescriptionsDomain)
+        /// Instructions screen
+        case instructions(InstructionsDomain)
+        /// Code display screen
+        case code(CodeDomain)
     }
+
+    @Dependency(\.schedulers) var schedulers
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
 
     var body: some Reducer<State, Action> {
         Scope(state: \.pharmacySearch, action: \.pharmacySearch) {
@@ -60,7 +78,7 @@ struct PharmacyContainerDomain {
             .forEach(\.path, action: \.path)
     }
 
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .pharmacySearch(.destination(.presented(
@@ -84,7 +102,6 @@ struct PharmacyContainerDomain {
             state.pharmacySearch.destination = nil
 
             return .run { send in
-                @Dependency(\.schedulers) var schedulers
                 // wait for running effects to finish
                 try await schedulers.main.sleep(for: 0.05)
                 await send(.redeem(
@@ -122,6 +139,79 @@ struct PharmacyContainerDomain {
                 )
             )))
             return .none
+        case .pharmacySearch(.delegate(.euRedeemTapped)),
+             .pharmacySearch(.destination(.presented(.pharmacyMapSearch(.delegate(.euRedeemTapped))))):
+            state.pharmacySearch.destination = nil
+            return .run { send in
+                // wait for running effects to finish
+                try await schedulers.main.sleep(for: 0.05)
+                await send(.euRedeemSelection)
+            }
+        case .euRedeemSelection:
+            state.path.append(.euRedeemSelection(.init()))
+            return .none
+        case let .euRedeemInstructions(isRedeeming):
+            state.path.append(.instructions(.init(isRedeeming: isRedeeming)))
+            return .none
+        case .euRedeemCode:
+            state.path.append(.code(.init()))
+            return .none
+        case let .path(.element(id: _, action: .countrySelection(.selectCountry(country)))):
+            state.path.removeLast()
+            guard let id = state.path.ids.last
+            else { return .none }
+            state.path[id: id, case: \.euRedeemSelection]?.selectedCountry = country
+            return .none
+        case let .path(.popFrom(id: id)):
+            // Back navigation from PrescriptionSelection to EURedeemSelection
+            if let path = state.path[id: id, case: \.prescriptionSelection] {
+                let prescriptions = path.prescriptions.filter(\.isSelected)
+                guard state.path.ids.count > 1 else { return .none }
+                let previousId = state.path.ids[state.path.index(before: state.path.endIndex - 1)]
+                state.path[id: previousId, case: \.euRedeemSelection]?.selectedPrescriptions = prescriptions
+            }
+            return .none
+        case let .path(.element(id: _, action: .euRedeemSelection(.delegate(delegate)))):
+            switch delegate {
+            case .selectPrescriptionsButtonTapped:
+                state.path.append(.prescriptionSelection(.init()))
+                return .none
+            case .selectCountryButtonTapped:
+                state.path.append(.countrySelection(.init(countries: [])))
+                return .none
+            case .selectInstructionButtonTapped:
+                return .send(.euRedeemInstructions(false))
+            case .redeemButtonTapped:
+                return .run { [userDataStore = self.userDataStore] send in
+                    let hideEURedeemInstructions = try await userDataStore.hideEURedeemInstructions.async()
+                    if hideEURedeemInstructions {
+                        await send(.euRedeemCode)
+                    } else {
+                        userDataStore.set(hideEURedeemInstructions: true)
+                        await send(.euRedeemInstructions(true))
+                    }
+                }
+            case .close:
+                state.path.removeAll()
+                return .none
+            }
+        case let .path(.element(id: _, action: .instructions(.delegate(delegate)))):
+            switch delegate {
+            case .continueButtonTapped:
+                return .send(.euRedeemCode)
+            case .close:
+                state.path.removeAll()
+                return .none
+            }
+        case let .path(.element(id: _, action: .code(.delegate(delegate)))):
+            switch delegate {
+            case .takeReceipt:
+                state.path.removeAll()
+                return .none
+            case .close:
+                state.path.removeAll()
+                return .none
+            }
         case .path, .pharmacySearch:
             return .none
         }

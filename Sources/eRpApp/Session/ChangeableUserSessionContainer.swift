@@ -24,24 +24,20 @@ import Combine
 import Dependencies
 import eRpKit
 import eRpLocalStorage
+import FeatureHelpers
 import Foundation
 import IDP
 import OSLog
+import Settings
 
 protocol UsersSessionContainer {
     var userSession: UserSession { get }
-
-    var isDemoMode: AnyPublisher<Bool, Never> { get }
 
     func switchToDemoMode()
     func switchToStandardMode()
 }
 
 class ChangeableUserSessionContainer: UsersSessionContainer {
-    var isDemoMode: AnyPublisher<Bool, Never> {
-        currentSession.map(\.isDemoMode).eraseToAnyPublisher()
-    }
-
     private var currentSession: CurrentValueSubject<UserSession, Never>
     private(set) var userSession: UserSession
 
@@ -125,8 +121,6 @@ extension DependencyValues {
 
 class DummyUserSessionContainer: UsersSessionContainer {
     var userSession: UserSession = DummySessionContainer()
-
-    var isDemoMode: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
 
     func switchToDemoMode() {}
 

@@ -125,7 +125,7 @@ struct CreatePasswordView: View {
             errorFooter()
                 .accessibilityIdentifier(A11y.settings.createPassword.cpwTxtPasswordStrengthErrorFooter)
             saveButtonAndError()
-                .padding()
+                .padding(.vertical)
         }
         .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
         .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
@@ -142,16 +142,18 @@ struct CreatePasswordView: View {
     }
 
     @ViewBuilder private func saveButtonAndError() -> some View {
-        PrimaryTextButton(
-            text: updatePassword ? L10n.cpwBtnChange : L10n.cpwBtnSave,
-            a11y: updatePassword ?
-                A11y.settings.createPassword.cpwBtnUpdate : A11y.settings.createPassword.cpwBtnSave,
-            image: nil,
-            isEnabled: store.hasValidPasswordEntries
-        ) {
+        Button {
             UIApplication.shared.dismissKeyboard()
             store.send(.saveButtonTapped)
+        } label: {
+            Label(updatePassword ? L10n.cpwBtnChange : L10n.cpwBtnSave)
         }
+        .buttonStyle(.primary(isEnabled: store.hasValidPasswordEntries))
+        .accessibilityIdentifier(
+            updatePassword ?
+                A11y.settings.createPassword.cpwBtnUpdate :
+                A11y.settings.createPassword.cpwBtnSave
+        )
     }
 }
 

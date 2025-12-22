@@ -29,7 +29,7 @@ import OpenSSL
 import Pharmacy
 
 /// The remote data source for any healthcare service request
-public struct HealthcareServiceFHIRDataSource: PharmacyRemoteDataStore {
+public struct HealthcareServiceFHIRDataSource {
     private let fhirClient: HealthcareServiceFHIRClient
     private let session: FHIRVZDSession
 
@@ -58,77 +58,17 @@ public struct HealthcareServiceFHIRDataSource: PharmacyRemoteDataStore {
         by searchTerm: String,
         position: Pharmacy.Position?,
         filter: [PharmacyRemoteDataStoreFilter]
-    ) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error> {
+    ) -> AnyPublisher<[PharmacyLocation], PharmacyRemoteStoreError> {
         Future {
             try await session.autoRefreshedToken().accessToken
         }
-        .mapError { PharmacyFHIRDataSource.Error.fhirClient(.unknown($0)) }
+        .mapError { PharmacyRemoteStoreError.fhirClient(.unknown($0)) }
         .flatMap { token in
-            self.recursiveSearchPharamcies(token: token, by: searchTerm, position: position, filter: filter, index: 0)
+            fhirClient.searchPharmacies(by: searchTerm, position: position, filter: filter, accessToken: token)
+                .mapError { PharmacyRemoteStoreError.fhirClient($0) }
+                .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
-    }
-
-    static let distances = [2, 3, 5, 10, 20, 50]
-
-    public func recursiveSearchPharamcies(
-        token: String,
-        by searchTerm: String,
-        position: Pharmacy.Position?,
-        filter: [PharmacyRemoteDataStoreFilter],
-        index: Int = 0
-    ) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error> {
-        var filter = filter
-
-        if let position {
-            let distance = Self.distances[index]
-            filter.append(PharmacyRemoteDataStoreFilter(key: "_sortby", value: "near"))
-            filter.append(PharmacyRemoteDataStoreFilter(
-                key: "location.near",
-                value: "\(position.latitude)|\(position.longitude)|\(distance)|km"
-            ))
-
-            // future api will support this syntax:
-            // filter["longitude"] = "\(position.longitude)"
-            // filter["latitude"] = "\(position.latitude)"
-            // filter["distance"] = "\(distance)"
-        }
-
-        return fhirClient.searchPharmacies(by: searchTerm, position: nil, filter: filter, accessToken: token)
-            .mapError { PharmacyFHIRDataSource.Error.fhirClient($0) }
-            .flatMap { locations in
-
-                // withouth position we have no distance information => no refinement
-                // we are at the beginning or end of the distance array we have no other options
-                guard position != nil, index < Self.distances.count - 1 else {
-                    return Just(locations)
-                        .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                        .eraseToAnyPublisher()
-                }
-                // We found a suitable number of pharmacies
-                if locations.count > 50 {
-                    return Just(locations)
-                        .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                        .eraseToAnyPublisher()
-                } else {
-                    return recursiveSearchPharamcies(
-                        token: token,
-                        by: searchTerm,
-                        position: position,
-                        filter: filter,
-                        index: index + 1
-                    )
-                    .map { nextIndexLocation in
-                        if nextIndexLocation.count == 100 {
-                            return locations
-                        } else {
-                            return nextIndexLocation
-                        }
-                    }
-                    .eraseToAnyPublisher()
-                }
-            }
-            .eraseToAnyPublisher()
     }
 
     /// Convenience function for requesting a certain pharmacy by ID
@@ -138,14 +78,14 @@ public struct HealthcareServiceFHIRDataSource: PharmacyRemoteDataStore {
     /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
     public func fetchPharmacy(
         by telematikId: String
-    ) -> AnyPublisher<PharmacyLocation?, PharmacyFHIRDataSource.Error> {
+    ) -> AnyPublisher<PharmacyLocation?, PharmacyRemoteStoreError> {
         Future {
             try await session.autoRefreshedToken().accessToken
         }
-        .mapError { PharmacyFHIRDataSource.Error.fhirClient(.unknown($0)) }
+        .mapError { PharmacyRemoteStoreError.fhirClient(.unknown($0)) }
         .flatMap { token in
             fhirClient.fetchPharmacy(by: telematikId, accessToken: token)
-                .mapError { PharmacyFHIRDataSource.Error.fhirClient($0) }
+                .mapError { PharmacyRemoteStoreError.fhirClient($0) }
                 .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
@@ -156,14 +96,14 @@ public struct HealthcareServiceFHIRDataSource: PharmacyRemoteDataStore {
     /// - Parameters:
     ///   - ikNumber: The institution (IK) identifier of the organization to be requested
     /// - Returns: `AnyPublisher` that emits the `TelematikId` or nil when not found
-    public func fetchInsurance(by ikNumber: String) -> AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error> {
+    public func fetchInsurance(by ikNumber: String) -> AnyPublisher<Insurance?, PharmacyRemoteStoreError> {
         Future {
             try await session.autoRefreshedToken().accessToken
         }
-        .mapError { PharmacyFHIRDataSource.Error.fhirClient(.unknown($0)) }
+        .mapError { PharmacyRemoteStoreError.fhirClient(.unknown($0)) }
         .flatMap { token in
             fhirClient.fetchInsurance(by: ikNumber, accessToken: token)
-                .mapError { PharmacyFHIRDataSource.Error.fhirClient($0) }
+                .mapError { PharmacyRemoteStoreError.fhirClient($0) }
                 .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
@@ -173,26 +113,33 @@ public struct HealthcareServiceFHIRDataSource: PharmacyRemoteDataStore {
     ///
     /// - Parameters:
     /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
-    public func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error> {
+    public func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyRemoteStoreError> {
         Future {
             try await session.autoRefreshedToken().accessToken
         }
-        .mapError { PharmacyFHIRDataSource.Error.fhirClient(.unknown($0)) }
+        .mapError { PharmacyRemoteStoreError.fhirClient(.unknown($0)) }
         .flatMap { token in
             fhirClient.fetchAllInsurances(accessToken: token)
-                .mapError { PharmacyFHIRDataSource.Error.fhirClient($0) }
+                .mapError { PharmacyRemoteStoreError.fhirClient($0) }
                 .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
     }
 
-    /// This operation is not supported anymore
-    @available(*, deprecated, message: "Service does no longer support loading AVS certificates")
-    public func loadAvsCertificates(for _: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error> {
-        Fail(
-            outputType: [X509].self,
-            failure: PharmacyFHIRDataSource.Error.notFound
-        )
+    /// Loads an array of `Insurance` from a remote (server).
+    ///
+    /// - Parameters:
+    /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
+    public func fetchEuCountries() -> AnyPublisher<[Country], PharmacyRemoteStoreError> {
+        Future {
+            try await session.autoRefreshedToken().accessToken
+        }
+        .mapError { PharmacyRemoteStoreError.fhirClient(.unknown($0)) }
+        .flatMap { token in
+            fhirClient.fetchEuCountries(accessToken: token)
+                .mapError { PharmacyRemoteStoreError.fhirClient($0) }
+                .eraseToAnyPublisher()
+        }
         .eraseToAnyPublisher()
     }
 
@@ -201,15 +148,19 @@ public struct HealthcareServiceFHIRDataSource: PharmacyRemoteDataStore {
     /// - Parameter filter: `PharmacyRepositoryFilter`s for filtering the pharmacy response
     /// - Returns: Key / value query parameters to use in url requests
     public func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter] {
-        filter.compactMap {
+        let filterTexts: [String] = filter.compactMap {
             switch $0 {
             case .ready:
                 return nil
             case .shipment:
-                return PharmacyRemoteDataStoreFilter(key: "specialty", value: Specialty.shipment.rawValue)
+                return "Versand"
             case .delivery:
-                return PharmacyRemoteDataStoreFilter(key: "specialty", value: Specialty.delivery.rawValue)
+                return "Botendienst"
             }
         }
+        guard !filterTexts.isEmpty else {
+            return []
+        }
+        return [PharmacyRemoteDataStoreFilter(key: "text", value: filterTexts.joined(separator: " "))]
     }
 }

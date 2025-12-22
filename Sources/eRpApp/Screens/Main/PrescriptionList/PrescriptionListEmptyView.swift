@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpResources
 import SwiftUI
 
 struct PrescriptionListEmptyView: View {

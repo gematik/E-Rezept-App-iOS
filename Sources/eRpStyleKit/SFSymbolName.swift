@@ -117,6 +117,7 @@ public enum SFSymbolName {
     public static let sunMaxCircle = "sun.max.circle"
     public static let sunsetCircle = "sunset.circle"
     public static let moonCircle = "moon.circle"
+    public static let moon = "moon"
 
     public static let numbers1circle = "1.circle"
     public static let numbers2circle = "2.circle"
@@ -190,6 +191,8 @@ public enum SFSymbolName {
     }
 
     public static let noSign = "nosign"
+    public static let scope = "scope"
+    public static let globeEU = "globe.europe.africa"
 }
 
 public enum UnicodeCharacter {

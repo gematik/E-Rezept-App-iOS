@@ -22,8 +22,12 @@
 
 import Combine
 import ComposableArchitecture
+import ConsentService
 @testable import eRpFeatures
 import eRpKit
+import ErxTaskRepository
+import FeatureCardWall
+import FeatureHelpers
 @testable import IDP
 import Nimble
 import XCTest
@@ -63,7 +67,6 @@ final class MainDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.userSession = mockUserSession
             dependencies.changeableUserSessionContainer = mockUserSessionContainer
-            dependencies.erxTaskRepository = DummySessionContainer().erxTaskRepository
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.fhirDateFormatter = FHIRDateFormatter.testValue
             dependencies.deviceSecurityManager = mockDeviceSecurityManager
@@ -72,26 +75,6 @@ final class MainDomainTests: XCTestCase {
             dependencies.serviceLocator = ServiceLocator()
             dependencies.profileSecureDataWiper = mockProfileDataWiper
             dependencies.profileDataStore = mockProfileDataStore
-        }
-    }
-
-    func testDemoModeChange() async {
-        // given
-        let sut = testStore()
-
-        // when
-        mockUserSessionContainer.underlyingIsDemoMode = Just(true).eraseToAnyPublisher()
-        await sut.send(.subscribeToDemoModeChange)
-        await sut.receive(.response(.demoModeChangeReceived(true))) { sut in
-            // then
-            sut.isDemoMode = true
-        }
-
-        // when
-        mockUserSessionContainer.underlyingIsDemoMode = Just(false).eraseToAnyPublisher()
-        await sut.send(.response(.demoModeChangeReceived(false))) { sut in
-            // then
-            sut.isDemoMode = false
         }
     }
 
@@ -221,7 +204,7 @@ final class MainDomainTests: XCTestCase {
                 .profileReturnValue = Just(Self.Fixtures
                     .privateProfileWithHidden(welcomeDrawer: true, consentDrawer: true))
                 .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-            sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
+            sut.dependencies.consentService.checkForConsent = { _, _ in .notGranted }
             await sut.send(.showDrawer)
 
             // then nothing happens
@@ -232,7 +215,7 @@ final class MainDomainTests: XCTestCase {
             mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile)
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()
-            sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
+            sut.dependencies.consentService.checkForConsent = { _, _ in .notGranted }
             await sut.send(.showDrawer)
 
             // then
@@ -260,7 +243,7 @@ final class MainDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
 
             // when
-            sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .granted }
+            sut.dependencies.consentService.checkForConsent = { _, _ in .granted }
             await sut.send(.showDrawer)
 
             // then
@@ -281,7 +264,7 @@ final class MainDomainTests: XCTestCase {
             code: "2041"
         )))
         mockPrescriptionRepository
-            .forcedLoadRemoteForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
+            .forcedLoadRemoteForForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
             .eraseToAnyPublisher()
 
         await sut.send(.refreshPrescription)
@@ -307,7 +290,7 @@ final class MainDomainTests: XCTestCase {
             code: "2000"
         )))
         mockPrescriptionRepository
-            .forcedLoadRemoteForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
+            .forcedLoadRemoteForForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
             .eraseToAnyPublisher()
         mockProfileDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
 
@@ -344,13 +327,12 @@ final class MainDomainTests: XCTestCase {
         // given
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .grantChargeItemConsentDrawer,
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
             )
         )
-        sut.dependencies.chargeItemConsentService.grantConsent = { _ in .success }
+        sut.dependencies.consentService.grantConsent = { _, _ in .success }
 
         // when
         await sut.send(.grantChargeItemsConsentActivate) { state in
@@ -367,7 +349,6 @@ final class MainDomainTests: XCTestCase {
         // given
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .toast(MainDomain.ToastStates.grantConsentSuccess),
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
@@ -385,15 +366,14 @@ final class MainDomainTests: XCTestCase {
         // given
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .grantChargeItemConsentDrawer,
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
             )
         )
-        let error = ChargeItemConsentService.Error.unexpectedGrantConsentResponse
-        sut.dependencies.chargeItemConsentService
-            .grantConsent = { _ in ChargeItemConsentService.GrantResult.error(error)
+        let error = ConsentService.Error.unexpectedGrantConsentResponse
+        sut.dependencies.consentService
+            .grantConsent = { _, _ in ConsentService.GrantResult.error(error)
             }
 
         // when
@@ -412,7 +392,6 @@ final class MainDomainTests: XCTestCase {
         // given
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .grantChargeItemConsentDrawer,
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
@@ -433,7 +412,6 @@ final class MainDomainTests: XCTestCase {
         // given
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .none,
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
@@ -456,7 +434,6 @@ final class MainDomainTests: XCTestCase {
 
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .none,
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
@@ -480,7 +457,6 @@ final class MainDomainTests: XCTestCase {
 
         let sut = testStore(
             for: .init(
-                isDemoMode: false,
                 destination: .cardWall(.init(isNFCReady: true, profileId: UUID())),
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()

@@ -44,8 +44,8 @@ struct AppAuthenticationView: View {
                         HintView<AppAuthenticationDomain.Action>(
                             hint: Hint(
                                 id: A11y.auth.authTxtFailedLoginHint,
-                                title: L10n.authTxtFailedLoginHintTitle.text,
-                                message: L10n.authTxtFailedLoginHintMsg(store.failedAuthenticationsCount).text,
+                                title: L10n.authTxtFailedLoginHintTitle,
+                                message: L10n.authTxtFailedLoginHintMsg(store.failedAuthenticationsCount),
                                 image: AccessibilityImage(asset: Asset.Illustrations.girlRedCircle),
                                 style: Hint.Style.important,
                                 imageStyle: Hint.ImageStyle.topAligned
@@ -63,7 +63,7 @@ struct AppAuthenticationView: View {
                         .padding(.bottom, 1)
 
                     Text(L10n.authTxtSubtitle)
-                        .foregroundColor(Colors.textSecondary)
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .padding(.bottom)
 
                     VStack {

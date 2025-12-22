@@ -97,7 +97,7 @@ struct ExtAuthPendingView: View {
                     })
                 }
                 .transition(.move(edge: .bottom))
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
                 .background(background)

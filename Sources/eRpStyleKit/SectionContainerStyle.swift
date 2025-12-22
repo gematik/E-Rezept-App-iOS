@@ -190,7 +190,7 @@ extension View {
     ///   - width: line width of the drawn border, defaults to 1
     ///   - cornerRadius: radius of the corners
     /// - Returns: Returns a new view with a  rounded border
-    func border<S>(_ content: S, width: CGFloat = 1, cornerRadius: CGFloat) -> some View where S: ShapeStyle {
+    public func border<S>(_ content: S, width: CGFloat = 1, cornerRadius: CGFloat) -> some View where S: ShapeStyle {
         let roundedRect = RoundedRectangle(cornerRadius: cornerRadius)
         return clipShape(roundedRect)
             .overlay(roundedRect.strokeBorder(content, lineWidth: width))

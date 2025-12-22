@@ -31,7 +31,7 @@ struct OnboardingAnalyticScreen: Screen {
                            fileID _: String = #fileID,
                            file _: String = #filePath,
                            line _: UInt = #line) async {
-        app.links["Analyse der Appverwendung"].tap(withNumberOfTaps: 3, numberOfTouches: 1)
+        app.links["Analyse der Appverwendung"].coordinate(withNormalizedOffset: .init(dx: 1.0, dy: 0.1)).tap()
 
         let analyticsDetailScren = AnalyticsDetailScren(app: app)
         await screen(analyticsDetailScren)

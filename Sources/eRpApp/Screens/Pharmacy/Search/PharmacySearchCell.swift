@@ -89,20 +89,28 @@ struct PharmacySearchCell: View {
                     Group {
                         Text(L10n.phaSearchTxtOpenUntil) +
                             Text(" \(time)")
-                    }.foregroundColor(Colors.secondary600)
+                    }.foregroundColor(openingState.foregroundColor)
                 case let .closingSoon(closingDateTime: time):
                     Group {
                         Text(L10n.phaSearchTxtClosingSoon) +
                             Text(" - \(time)")
-                    }.foregroundColor(Colors.yellow700)
+                    }.foregroundColor(openingState.foregroundColor)
                 case let .willOpen(_, openingDateTime):
                     Group {
                         Text(L10n.phaSearchTxtOpensAt) +
                             Text(" \(openingDateTime)")
-                    }.foregroundColor(Colors.yellow700)
+                    }.foregroundColor(openingState.foregroundColor)
                 case .closed:
                     Text(L10n.phaSearchTxtClosed)
-                        .foregroundColor(Colors.systemLabelSecondary)
+                        .foregroundColor(openingState.foregroundColor)
+                case let .closingButOpenLaterToday(closingDateTime: closing,
+                                                   openingDateTime: opening):
+                    Group {
+                        Text(L10n.phaSearchTxtOpenUntil) +
+                            Text(" \(closing), ") +
+                            Text(L10n.phaSearchTxtOpenAgain) +
+                            Text(" \(opening)")
+                    }.foregroundColor(openingState.foregroundColor)
                 default:
                     EmptyView()
                 }

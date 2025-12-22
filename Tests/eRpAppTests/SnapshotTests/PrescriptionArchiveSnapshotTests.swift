@@ -111,7 +111,7 @@ extension PrescriptionArchiveSnapshotTests {
             ),
 
         ].map {
-            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+            Prescription(erxTask: $0)
         }
 
         static func expiredErxTask(with status: ErxTask.Status) -> ErxTask {

@@ -20,9 +20,12 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import ErxTaskRepository
+import FeatureCardWall
 import Foundation
 import IDP
 
@@ -34,13 +37,13 @@ protocol AuditEventsService {
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>
 }
 
-// sourcery: CodedError = "028"
+@CodedError("028")
 enum AuditEventsServiceError: Error, Equatable, LocalizedError {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case missingAuthentication
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case loginHandlerError(LoginHandlerError)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case erxRepositoryError(ErxRepositoryError)
 
     var errorDescription: String? {
@@ -57,6 +60,7 @@ enum AuditEventsServiceError: Error, Equatable, LocalizedError {
 
 struct DefaultAuditEventsService: AuditEventsService {
     let userSessionProvider: UserSessionProvider
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
 
     func loadAuditEvents(for profileId: UUID,
                          locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError> {
@@ -76,10 +80,12 @@ struct DefaultAuditEventsService: AuditEventsService {
                         .eraseToAnyPublisher()
                 }
 
-                return userSession.erxTaskRepository.loadRemoteLatestAuditEvents(for: locale)
-                    .mapError(AuditEventsServiceError.erxRepositoryError)
-                    .first()
-                    .eraseToAnyPublisher()
+                return Future {
+                    try await erxTaskRepository.loadRemoteLatestAuditEvents(locale)
+                }
+                .mapError { AuditEventsServiceError.erxRepositoryError($0.asErxRepositoryError()) }
+                .first()
+                .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }
@@ -108,10 +114,12 @@ struct DefaultAuditEventsService: AuditEventsService {
                         .eraseToAnyPublisher()
                 }
 
-                return userSession.erxTaskRepository.loadRemoteAuditEventsPage(from: url, locale: locale)
-                    .mapError(AuditEventsServiceError.erxRepositoryError)
-                    .first()
-                    .eraseToAnyPublisher()
+                return Future {
+                    try await erxTaskRepository.loadRemoteAuditEvents(url, locale)
+                }
+                .mapError { AuditEventsServiceError.erxRepositoryError($0.asErxRepositoryError()) }
+                .first()
+                .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }

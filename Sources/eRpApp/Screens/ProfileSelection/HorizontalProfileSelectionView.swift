@@ -60,6 +60,7 @@ struct HorizontalProfileSelectionView: View {
                     .background(Colors.backgroundNeutral)
                     .border(Colors.systemGray6, cornerRadius: 8)
                     .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
+                    .accessibilityLabel(L10n.mainBtnAddProfile)
                     .tooltip(tooltip: MainViewTooltip.addProfile)
 
                 Spacer()

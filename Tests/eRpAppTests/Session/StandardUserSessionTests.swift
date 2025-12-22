@@ -25,6 +25,7 @@ import Combine
 import eRpKit
 import IDP
 import Nimble
+import Profiles
 import XCTest
 
 final class StandardUserSessionTests: XCTestCase {

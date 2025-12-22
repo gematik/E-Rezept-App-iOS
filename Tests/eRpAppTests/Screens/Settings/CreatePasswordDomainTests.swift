@@ -23,6 +23,8 @@
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import Nimble
 import XCTest
 

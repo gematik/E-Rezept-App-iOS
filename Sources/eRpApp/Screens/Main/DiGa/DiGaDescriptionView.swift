@@ -36,7 +36,7 @@ struct DiGaDescriptionView: View {
                 Text(store.bfarmDiGaDetails?.description ?? L10n.prscFdTxtNa.text)
                     .font(.subheadline)
                     .multilineTextAlignment(.leading)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .accessibilityIdentifier(A11y.diga.description.digaDtlDescriptionTxtDesc)
             }.padding()
                 .frame(maxWidth: .infinity, alignment: .leading)

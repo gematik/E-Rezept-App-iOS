@@ -25,6 +25,7 @@ import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import Nimble
 import Pharmacy
 import XCTest
@@ -35,14 +36,12 @@ final class OrdersDomainTests: XCTestCase {
 
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
     var mockOrdersRepository: MockOrdersRepository!
-    var mockApplication: MockResourceHandler!
     var mockInternalCommunicationProtocol: MockInternalCommunicationProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockOrdersRepository = MockOrdersRepository()
-        mockApplication = MockResourceHandler()
         mockInternalCommunicationProtocol = MockInternalCommunicationProtocol()
     }
 
@@ -52,7 +51,6 @@ final class OrdersDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.ordersRepository = mockOrdersRepository
-            dependencies.resourceHandler = mockApplication
             dependencies.internalCommunicationProtocol = mockInternalCommunicationProtocol
         }
     }
@@ -61,30 +59,6 @@ final class OrdersDomainTests: XCTestCase {
         for communicationMessage: IdentifiedArrayOf<CommunicationMessage>
     ) -> TestStore {
         testStore(for: .init(communicationMessage: communicationMessage))
-    }
-
-    private func erxTaskRepository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
-        let communicationPublisher = Just<[ErxTask.Communication]>(communications)
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        let savePublisher = Just(true)
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        return MockErxTaskRepository(listCommunications: communicationPublisher,
-                                     saveCommunications: savePublisher)
-    }
-
-    private func pharmacyRepository(with pharmacies: [PharmacyLocation]) -> MockPharmacyRepository {
-        let pharmacyPublisher = Just<PharmacyLocation?>(pharmacies.first)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-        let savePublisher = Just(true)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-        let mock = MockPharmacyRepository()
-        mock.loadCachedByReturnValue = pharmacyPublisher
-        mock.savePharmaciesReturnValue = savePublisher
-        return mock
     }
 
     func testOrdersDomainSubscriptionWithoutMessages() async {

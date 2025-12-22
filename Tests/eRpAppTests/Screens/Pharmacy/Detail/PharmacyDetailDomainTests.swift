@@ -25,6 +25,7 @@ import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
+import FeatureHelpers
 import Nimble
 import OpenSSL
 import Pharmacy
@@ -34,9 +35,7 @@ import XCTest
 class PharmacyDetailDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
     var mockUserSession: MockUserSession!
-    var mockPharmacyRepository: MockPharmacyRepository!
     var mockRedeemService: MockRedeemService!
-    var mockFeedbackReceiver: MockFeedbackReceiver!
     var mockPrescriptionRepository: MockPrescriptionRepository!
 
     typealias TestStore = TestStoreOf<PharmacyDetailDomain>
@@ -52,29 +51,31 @@ class PharmacyDetailDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockUserSession = MockUserSession()
-        mockPharmacyRepository = MockPharmacyRepository()
         mockRedeemService = MockRedeemService()
-        mockFeedbackReceiver = MockFeedbackReceiver()
         mockPrescriptionRepository = MockPrescriptionRepository()
     }
 
-    func testStore(for state: PharmacyDetailDomain.State) -> TestStore {
+    func testStore(
+        for state: PharmacyDetailDomain.State,
+        withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStore {
         TestStore(initialState: state) {
             PharmacyDetailDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.userSession = mockUserSession
-            dependencies.pharmacyRepository = mockPharmacyRepository
-            dependencies.feedbackReceiver = mockFeedbackReceiver
+            dependencies.hapticFeedbackGenerator.success = {}
             dependencies.prescriptionRepository = mockPrescriptionRepository
-            dependencies.redeemOrderService.redeemViaAVS = { @Sendable [mockRedeemService] orders in
-                try await mockRedeemService?.redeem(orders).async() ?? []
+            dependencies.redeemOrderService.redeemViaAVS = { @Sendable [mockRedeemService] orders, _ in
+                try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
             }
-            dependencies.redeemOrderService.redeemViaErxTaskRepository = { @Sendable [mockRedeemService] orders in
-                try await mockRedeemService?.redeem(orders).async() ?? []
+            dependencies.redeemOrderService.redeemViaErxTaskRepository = { @Sendable [mockRedeemService] orders, _ in
+                try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
             }
             dependencies.date = DateGenerator.constant(Date.now)
             dependencies.calendar = Calendar.autoupdatingCurrent
+
+            prepareDependencies(&dependencies)
         }
     }
 
@@ -142,15 +143,16 @@ class PharmacyDetailDomainTests: XCTestCase {
         ))
 
         // and a profile that has been logged in before (== insuranceID non nil)
-        let profile = Profile(name: "Test", insuranceId: "was logged in before", erxTasks: ErxTask.Fixtures.erxTasks)
+        let profile = Profile(
+            name: "Test",
+            insuranceId: "was logged in before",
+            erxTasks: ErxTask.Fixtures.erxTasks
+        )
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
@@ -158,7 +160,7 @@ class PharmacyDetailDomainTests: XCTestCase {
 
         // When loading the profile
         await sut.send(.task) {
-            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
+            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
             $0.$prescriptions.withLock { $0 = prescriptions }
             $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
@@ -193,7 +195,7 @@ class PharmacyDetailDomainTests: XCTestCase {
 
     func testRedeemFlowWithAProfileThatHasNotBeenLoggedInBeforeAndAPharmacyWithAVSService() async {
         // Given a pharmacy with all avs and ErxTaskRepository services
-        var pharmacyModel = allServicesPharmacy
+        let pharmacyModel = allServicesPharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
             prescriptions: Shared(value: []),
             selectedPrescriptions: Shared(value: []),
@@ -206,11 +208,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        let expectedCertResponse = [derCert]
-        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just(expectedCertResponse)
-            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
@@ -219,7 +218,7 @@ class PharmacyDetailDomainTests: XCTestCase {
 
         // When loading the profile
         await sut.send(.task) {
-            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
+            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
             $0.$prescriptions.withLock { $0 = prescriptions }
             $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
@@ -230,7 +229,6 @@ class PharmacyDetailDomainTests: XCTestCase {
             $0.hasRedeemableTasks = true
         }
 
-        pharmacyModel.pharmacyLocation.avsCertificates = [derCert]
         await sut.receive(.response(.redeemOptionProviderReceived(
             RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: pharmacyModel.pharmacyLocation)
         ))) {
@@ -265,11 +263,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
@@ -277,7 +272,7 @@ class PharmacyDetailDomainTests: XCTestCase {
 
         // When loading the profile
         await sut.send(.task) {
-            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
+            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
             $0.$prescriptions.withLock { $0 = prescriptions }
             $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
@@ -323,7 +318,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
@@ -376,7 +371,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
@@ -440,7 +435,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
@@ -490,89 +485,101 @@ class PharmacyDetailDomainTests: XCTestCase {
     }
 
     func testTogglingFavoriteState_Success() async {
-        let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared(value: []),
-            selectedPrescriptions: Shared(value: []),
-            inRedeemProcess: false,
-            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
-        ))
-
-        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-
-        var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
-        expectedResult.pharmacyLocation.isFavorite.toggle()
-
-        await sut.send(.toggleIsFavorite)
-        await sut.receive(.response(.toggleIsFavoriteReceived(.success(expectedResult)))) {
-            $0.pharmacyViewModel = expectedResult
-        }
-
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCalled).to(beTrue())
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 1
-
-        await sut.send(.toggleIsFavorite)
-        await sut
-            .receive(.response(.toggleIsFavoriteReceived(.success(PharmacyLocationViewModel.Fixtures.pharmacyA)))) {
-                $0.pharmacyViewModel = PharmacyLocationViewModel.Fixtures.pharmacyA
+        var calledCount = 0
+        await withDependencies {
+            $0.pharmacyRepository.saveMultiple = { _ in true }
+        } operation: {
+            let sut = testStore(for: PharmacyDetailDomain.State(
+                prescriptions: Shared(value: []),
+                selectedPrescriptions: Shared(value: []),
+                inRedeemProcess: false,
+                pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
+            )) { dependencies in
+                dependencies.hapticFeedbackGenerator.success = {
+                    calledCount += 1
+                }
             }
 
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 2
+            var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
+            expectedResult.pharmacyLocation.isFavorite.toggle()
+
+            await sut.send(.toggleIsFavorite)
+            await sut.receive(.response(.toggleIsFavoriteReceived(.success(expectedResult)))) {
+                $0.pharmacyViewModel = expectedResult
+            }
+
+            expect(calledCount).to(equal(1))
+
+            await sut.send(.toggleIsFavorite)
+            await sut
+                .receive(.response(.toggleIsFavoriteReceived(.success(PharmacyLocationViewModel.Fixtures.pharmacyA)))) {
+                    $0.pharmacyViewModel = PharmacyLocationViewModel.Fixtures.pharmacyA
+                }
+
+            expect(calledCount).to(equal(2))
+        }
     }
 
     func testSetFavoriteStateTrue() async {
-        let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared(value: []),
-            selectedPrescriptions: Shared(value: []),
-            inRedeemProcess: false,
-            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
-        ))
-
-        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-
-        var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
-        expectedResult.pharmacyLocation.isFavorite.toggle()
-
-        await sut.send(.setIsFavorite(true))
-        await sut.receive(.response(.toggleIsFavoriteReceived(.success(expectedResult)))) {
-            $0.pharmacyViewModel = expectedResult
-        }
-
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCalled).to(beTrue())
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 1
-
-        await sut.send(.setIsFavorite(true))
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 2
-
-        await sut.send(.setIsFavorite(false))
-        await sut
-            .receive(.response(.toggleIsFavoriteReceived(.success(PharmacyLocationViewModel.Fixtures.pharmacyA)))) {
-                $0.pharmacyViewModel = PharmacyLocationViewModel.Fixtures.pharmacyA
+        var calledCount = 0
+        await withDependencies {
+            $0.pharmacyRepository.saveMultiple = { _ in true }
+        } operation: {
+            let sut = testStore(for: PharmacyDetailDomain.State(
+                prescriptions: Shared(value: []),
+                selectedPrescriptions: Shared(value: []),
+                inRedeemProcess: false,
+                pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
+            )) { dependencies in
+                dependencies.hapticFeedbackGenerator.success = {
+                    calledCount += 1
+                }
             }
-        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 3
+
+            var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
+            expectedResult.pharmacyLocation.isFavorite.toggle()
+
+            await sut.send(.setIsFavorite(true))
+            await sut.receive(.response(.toggleIsFavoriteReceived(.success(expectedResult)))) {
+                $0.pharmacyViewModel = expectedResult
+            }
+
+            expect(calledCount).to(equal(1))
+
+            await sut.send(.setIsFavorite(true))
+            expect(calledCount).to(equal(2))
+
+            await sut.send(.setIsFavorite(false))
+            await sut
+                .receive(.response(.toggleIsFavoriteReceived(.success(PharmacyLocationViewModel.Fixtures.pharmacyA)))) {
+                    $0.pharmacyViewModel = PharmacyLocationViewModel.Fixtures.pharmacyA
+                }
+            expect(calledCount).to(equal(3))
+        }
     }
 
     func testTogglingFavoriteState_Failure() async {
-        let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared(value: []),
-            selectedPrescriptions: Shared(value: []),
-            inRedeemProcess: false,
-            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
-        ))
+        let error = PharmacyRepositoryError.local(.write(error: PharmacyCoreDataStore.Error.noMatchingEntity))
+        await withDependencies {
+            $0.pharmacyRepository.saveMultiple = { _ in throw error }
+        } operation: {
+            let sut = testStore(for: PharmacyDetailDomain.State(
+                prescriptions: Shared(value: []),
+                selectedPrescriptions: Shared(value: []),
+                inRedeemProcess: false,
+                pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
+            ))
 
-        let expectedError = PharmacyRepositoryError
-            .local(.write(error: PharmacyCoreDataStore.Error.noMatchingEntity))
-        mockPharmacyRepository
-            .savePharmaciesReturnValue = Fail(error: PharmacyRepositoryError
-                .local(.write(error: PharmacyCoreDataStore.Error.noMatchingEntity))).eraseToAnyPublisher()
+            let expectedError = PharmacyRepositoryError
+                .local(.write(error: PharmacyCoreDataStore.Error.noMatchingEntity))
 
-        var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
-        expectedResult.pharmacyLocation.isFavorite.toggle()
+            var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
+            expectedResult.pharmacyLocation.isFavorite.toggle()
 
-        await sut.send(.toggleIsFavorite)
-        await sut.receive(.response(.toggleIsFavoriteReceived(.failure(expectedError)))) {
-            $0.destination = .alert(.init(for: expectedError))
+            await sut.send(.toggleIsFavorite)
+            await sut.receive(.response(.toggleIsFavoriteReceived(.failure(expectedError)))) {
+                $0.destination = .alert(.init(for: expectedError))
+            }
         }
     }
 
@@ -590,7 +597,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPrescriptionRepository.loadLocalReturnValue = Just([])
+        mockPrescriptionRepository.loadLocalForReturnValue = Just([])
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success([])
@@ -630,34 +637,29 @@ class PharmacyDetailDomainTests: XCTestCase {
             mockUserSession.profileReturnValue = Just(profile)
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()
-            mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
-                .setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
 
-            let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1,
-                                                    date: TestDate.defaultReferenceDate,
-                                                    dateFormatter: UIDateFormatter.testValue)
+            let expectedPrescription = Prescription(
+                erxTask: ErxTask.Fixtures.erxTask1,
+                date: TestDate.defaultReferenceDate
+            )
             let nonReadyPrescriptions = [
                 Prescription(
                     erxTask: ErxTask.Fixtures.erxTask9,
-                    date: TestDate.defaultReferenceDate,
-                    dateFormatter: UIDateFormatter.testValue
+                    date: TestDate.defaultReferenceDate
                 ),
                 Prescription(
                     erxTask: ErxTask.Fixtures.erxTask10,
-                    date: TestDate.defaultReferenceDate,
-                    dateFormatter: UIDateFormatter.testValue
+                    date: TestDate.defaultReferenceDate
                 ),
                 Prescription(
                     erxTask: ErxTask.Fixtures.erxTask11,
-                    date: TestDate.defaultReferenceDate,
-                    dateFormatter: UIDateFormatter.testValue
+                    date: TestDate.defaultReferenceDate
                 ),
             ]
 
             let prescriptions = nonReadyPrescriptions + [expectedPrescription]
 
-            mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+            mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
                 .setFailureType(to: PrescriptionRepositoryError.self)
                 .eraseToAnyPublisher()
             await sut.send(.task) {
@@ -699,18 +701,15 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
 
         let prescriptions = [Prescription.Dummies.prescriptionReady, Prescription.Dummies.scanned]
 
-        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         await sut.send(.task) {
-            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
+            // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
             $0.$prescriptions.withLock { $0 = prescriptions }
             $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }

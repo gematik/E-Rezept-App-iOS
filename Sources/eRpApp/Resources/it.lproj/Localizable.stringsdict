@@ -29,11 +29,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>Password errata. Riprova tra 1 secondo.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
-			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>Password errata. Riprova tra %u secondi.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -47,7 +45,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>Per favore riprovi tra %u secondo.</string>
 			<key>other</key>
 			<string>Riprova tra %u secondi.</string>
 		</dict>
@@ -63,7 +61,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>Questa ricetta è stata riscattata %%@ nell’ambito di un trattamento per Lei.</string>
 			<key>other</key>
 			<string>Questa prescrizione è stata compilata per te il % %@ come parte di un trattamento.</string>
 		</dict>

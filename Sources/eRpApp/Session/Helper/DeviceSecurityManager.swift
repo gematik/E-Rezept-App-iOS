@@ -23,6 +23,7 @@
 import Combine
 import Dependencies
 import eRpKit
+import FeatureHelpers
 import LocalAuthentication
 
 protocol DeviceSecurityManager {
@@ -47,29 +48,19 @@ enum DeviceSecurityWarningType {
     case none
 }
 
-@objc
-protocol SecurityPolicyEvaluator: NSObjectProtocol {
-    @objc
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-}
-
-extension LAContext: SecurityPolicyEvaluator {}
-
 struct DefaultDeviceSecurityManager: DeviceSecurityManager {
     let passwordIdentifier = "de.gematik.DefaultDeviceSecurityManager"
 
-    private let laContext: SecurityPolicyEvaluator
+    @Dependency(\.securityPolicyEvaluator) var securityPolicyEvaluator: SecurityPolicyEvaluator
     private let deviceSecurityManagerSessionStorage: DeviceSecurityManagerSessionStorage
     private var userDataStore: UserDataStore
 
     init(
         userDataStore: UserDataStore,
-        sessionStorage: DeviceSecurityManagerSessionStorage = DefaultDeviceSecurityManagerSessionStorage(),
-        laContext: SecurityPolicyEvaluator = LAContext()
+        sessionStorage: DeviceSecurityManagerSessionStorage = DefaultDeviceSecurityManagerSessionStorage()
     ) {
         deviceSecurityManagerSessionStorage = sessionStorage
         self.userDataStore = userDataStore
-        self.laContext = laContext
     }
 
     // [REQ:BSI-eRp-ePA:O.Arch_6#3,O.Resi_2#3,O.Plat_1#3] calculate system risk for jailbreak and missing device pin
@@ -85,8 +76,8 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
     // [REQ:BSI-eRp-ePA:O.Plat_1#4] Missing system pin detection
     var informMissingSystemPin: AnyPublisher<Bool, Never> {
         var error: NSError?
-        let localAuthenticationEvaluationSuccess = laContext.canEvaluatePolicy(
-            .deviceOwnerAuthentication,
+        let localAuthenticationEvaluationSuccess = securityPolicyEvaluator.canEvaluatePolicy(
+            policy: .deviceOwnerAuthentication,
             error: &error
         )
         return Just(localAuthenticationEvaluationSuccess)

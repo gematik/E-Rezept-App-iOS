@@ -30,13 +30,13 @@ import Foundation
 
 
 {% macro screenBlock identifier screen %}
-  static let {{ identifier }} = {{ identifier|upperFirstLetter }}()
+  {{accessModifier}} static let {{ identifier }} = {{ identifier|upperFirstLetter }}()
 
-  struct {{ identifier|upperFirstLetter }}: AnalyticsScreen {
-    let name = "{{ screen.name }}"
+  {{accessModifier}} struct {{ identifier|upperFirstLetter }}: AnalyticsScreen {
+    {{accessModifier}} let name = "{{ screen.name }}"
 
     {% for eventName,event in screen.events %}
-    let {{ eventName|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords }}: AnalyticsEvent = "{{ event.name }}"
+    {{accessModifier}} let {{ eventName|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords }}: AnalyticsEvent = "{{ event.name }}"
     {% endfor %}
   }
   
@@ -44,7 +44,7 @@ import Foundation
 
 
 {% macro screensBlock screens %}
-  enum Screens {
+  {{accessModifier}} enum Screens {
   {% for key,screen in screens %}
     {% filter indent:2 %}
       {% call screenBlock key screen %}

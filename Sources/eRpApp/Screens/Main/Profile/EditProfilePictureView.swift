@@ -43,6 +43,8 @@ struct EditProfilePictureView: View {
                         isBorderOn: true
                     ) {}
                         .disabled(true)
+                        .accessibilityLabel(L10n.editPictureTxtPreview)
+                        .accessibilityRemoveTraits(.isButton)
 
                     if store.picture != .none || store.userImageData != Data() {
                         ResetPictureButton(
@@ -50,6 +52,7 @@ struct EditProfilePictureView: View {
                         ) {
                             store.send(.resetPictureButtonTapped)
                         }
+                        .accessibilityLabel(L10n.editPictureBtnReset)
                         .accessibility(identifier: A11y.editProfilePicture.eppBtnResetPicture)
                     }
                 }
@@ -72,7 +75,7 @@ struct EditProfilePictureView: View {
                     .padding(.horizontal)
 
                     Text(store.color.name, bundle: .module)
-                        .foregroundColor(Colors.textSecondary)
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal)
                 }
@@ -173,15 +176,17 @@ extension EditProfilePictureView {
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    Image(systemName: SFSymbolName.camera)
-                        .frame(width: 80, height: 80)
-                        .font(Font.headline.weight(.bold))
-                        .foregroundColor(Colors.text)
-                        .background(Circle().fill(isFullScreenPresented ? Colors.systemGray5 : Colors.systemGray6))
-                        .accessibility(identifier: A11y.editProfilePicture.eppBtnChooseType)
-                        .onTapGesture {
-                            store.send(.showImportAlert)
-                        }
+                    Button {
+                        store.send(.showImportAlert)
+                    } label: {
+                        Image(systemName: SFSymbolName.camera)
+                            .frame(width: 80, height: 80)
+                            .font(Font.headline.weight(.bold))
+                            .foregroundColor(Colors.systemLabel)
+                            .background(Circle().fill(isFullScreenPresented ? Colors.systemGray5 : Colors.systemGray6))
+                    }
+                    .accessibilityLabel(L10n.editPictureAddBtn)
+                    .accessibility(identifier: A11y.editProfilePicture.eppBtnChooseType)
 
                     ForEach(ProfilePicture.allCases, id: \.rawValue) { image in
                         if let displayImage = image.description, !displayImage.name.isEmpty {
@@ -213,7 +218,7 @@ extension EditProfilePictureView {
             Button(action: action) {
                 Image(systemName: SFSymbolName.trash)
                     .font(Font.caption.weight(.bold))
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .padding(8)
                     .background(
                         Circle().foregroundColor(isFullScreenPresented ? Colors.systemColorWhite : Colors.systemGray6)

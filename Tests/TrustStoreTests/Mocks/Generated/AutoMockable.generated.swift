@@ -45,42 +45,6 @@ public class TrustStoreClientMock: TrustStoreClient {
 
 
 
-    //MARK: - loadCertListFromServer
-
-    public var loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount = 0
-    public var loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled: Bool {
-        return loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount > 0
-    }
-    public var loadCertListFromServerAnyPublisherCertListTrustStoreErrorReturnValue: AnyPublisher<CertList, TrustStoreError>!
-    public var loadCertListFromServerAnyPublisherCertListTrustStoreErrorClosure: (() -> AnyPublisher<CertList, TrustStoreError>)?
-
-    public func loadCertListFromServer() -> AnyPublisher<CertList, TrustStoreError> {
-        loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount += 1
-        if let loadCertListFromServerAnyPublisherCertListTrustStoreErrorClosure = loadCertListFromServerAnyPublisherCertListTrustStoreErrorClosure {
-            return loadCertListFromServerAnyPublisherCertListTrustStoreErrorClosure()
-        } else {
-            return loadCertListFromServerAnyPublisherCertListTrustStoreErrorReturnValue
-        }
-    }
-
-    //MARK: - loadOCSPListFromServer
-
-    public var loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount = 0
-    public var loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled: Bool {
-        return loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount > 0
-    }
-    public var loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorReturnValue: AnyPublisher<OCSPList, TrustStoreError>!
-    public var loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorClosure: (() -> AnyPublisher<OCSPList, TrustStoreError>)?
-
-    public func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError> {
-        loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount += 1
-        if let loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorClosure = loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorClosure {
-            return loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorClosure()
-        } else {
-            return loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorReturnValue
-        }
-    }
-
     //MARK: - loadPKICertificatesFromServer
 
     public var loadPKICertificatesFromServerRootSubjectCnStringPKICertificatesThrowableError: (any Error)?
@@ -277,39 +241,56 @@ public class TrustStoreStorageMock: TrustStoreStorage {
         setVauCertificateDataVoidClosure?(vauCertificate)
     }
 
-    //MARK: - getVauCertificateOcspResponse
+    //MARK: - getOcspResponse
 
-    public var getVauCertificateOcspResponseDataCallsCount = 0
-    public var getVauCertificateOcspResponseDataCalled: Bool {
-        return getVauCertificateOcspResponseDataCallsCount > 0
+    public var getOcspResponseIssuerCnStringSerialNrStringDataCallsCount = 0
+    public var getOcspResponseIssuerCnStringSerialNrStringDataCalled: Bool {
+        return getOcspResponseIssuerCnStringSerialNrStringDataCallsCount > 0
     }
-    public var getVauCertificateOcspResponseDataReturnValue: Data?
-    public var getVauCertificateOcspResponseDataClosure: (() -> Data?)?
+    public var getOcspResponseIssuerCnStringSerialNrStringDataReceivedArguments: (issuerCn: String, serialNr: String)?
+    public var getOcspResponseIssuerCnStringSerialNrStringDataReceivedInvocations: [(issuerCn: String, serialNr: String)] = []
+    public var getOcspResponseIssuerCnStringSerialNrStringDataReturnValue: Data?
+    public var getOcspResponseIssuerCnStringSerialNrStringDataClosure: ((String, String) -> Data?)?
 
-    public func getVauCertificateOcspResponse() -> Data? {
-        getVauCertificateOcspResponseDataCallsCount += 1
-        if let getVauCertificateOcspResponseDataClosure = getVauCertificateOcspResponseDataClosure {
-            return getVauCertificateOcspResponseDataClosure()
+    public func getOcspResponse(issuerCn: String, serialNr: String) -> Data? {
+        getOcspResponseIssuerCnStringSerialNrStringDataCallsCount += 1
+        getOcspResponseIssuerCnStringSerialNrStringDataReceivedArguments = (issuerCn: issuerCn, serialNr: serialNr)
+        getOcspResponseIssuerCnStringSerialNrStringDataReceivedInvocations.append((issuerCn: issuerCn, serialNr: serialNr))
+        if let getOcspResponseIssuerCnStringSerialNrStringDataClosure = getOcspResponseIssuerCnStringSerialNrStringDataClosure {
+            return getOcspResponseIssuerCnStringSerialNrStringDataClosure(issuerCn, serialNr)
         } else {
-            return getVauCertificateOcspResponseDataReturnValue
+            return getOcspResponseIssuerCnStringSerialNrStringDataReturnValue
         }
     }
 
-    //MARK: - set
+    //MARK: - setOcspResponse
 
-    public var setVauCertificateOcspResponseDataVoidCallsCount = 0
-    public var setVauCertificateOcspResponseDataVoidCalled: Bool {
-        return setVauCertificateOcspResponseDataVoidCallsCount > 0
+    public var setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidCallsCount = 0
+    public var setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidCalled: Bool {
+        return setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidCallsCount > 0
     }
-    public var setVauCertificateOcspResponseDataVoidReceivedVauCertificateOcspResponse: (Data)?
-    public var setVauCertificateOcspResponseDataVoidReceivedInvocations: [(Data)?] = []
-    public var setVauCertificateOcspResponseDataVoidClosure: ((Data?) -> Void)?
+    public var setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidReceivedArguments: (issuerCn: String, serialNr: String, ocspResponse: Data?)?
+    public var setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidReceivedInvocations: [(issuerCn: String, serialNr: String, ocspResponse: Data?)] = []
+    public var setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidClosure: ((String, String, Data?) -> Void)?
 
-    public func set(vauCertificateOcspResponse: Data?) {
-        setVauCertificateOcspResponseDataVoidCallsCount += 1
-        setVauCertificateOcspResponseDataVoidReceivedVauCertificateOcspResponse = vauCertificateOcspResponse
-        setVauCertificateOcspResponseDataVoidReceivedInvocations.append(vauCertificateOcspResponse)
-        setVauCertificateOcspResponseDataVoidClosure?(vauCertificateOcspResponse)
+    public func setOcspResponse(issuerCn: String, serialNr: String, ocspResponse: Data?) {
+        setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidCallsCount += 1
+        setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidReceivedArguments = (issuerCn: issuerCn, serialNr: serialNr, ocspResponse: ocspResponse)
+        setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidReceivedInvocations.append((issuerCn: issuerCn, serialNr: serialNr, ocspResponse: ocspResponse))
+        setOcspResponseIssuerCnStringSerialNrStringOcspResponseDataVoidClosure?(issuerCn, serialNr, ocspResponse)
+    }
+
+    //MARK: - resetOcspResponses
+
+    public var resetOcspResponsesVoidCallsCount = 0
+    public var resetOcspResponsesVoidCalled: Bool {
+        return resetOcspResponsesVoidCallsCount > 0
+    }
+    public var resetOcspResponsesVoidClosure: (() -> Void)?
+
+    public func resetOcspResponses() {
+        resetOcspResponsesVoidCallsCount += 1
+        resetOcspResponsesVoidClosure?()
     }
 
 

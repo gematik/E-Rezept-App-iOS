@@ -109,7 +109,7 @@ struct PrescriptionListView<StickyHeader: View>: View {
                 if let date = store.profile?.lastSuccessfulSync {
                     RelativeTimerView(date: date)
                         .font(.footnote)
-                        .foregroundColor(Colors.textSecondary)
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
 
                 if store.hasArchivedPrescriptions {
@@ -159,7 +159,7 @@ struct PrescriptionListView<StickyHeader: View>: View {
                 .accessibilityIdentifier(store.isConnected ? A11y.mainScreen.erxBtnRefresh : A11y.mainScreen
                     .erxBtnLogin)
             }
-            .padding(.top, 38)
+            .padding(.top, 14)
             .padding(.horizontal)
         }
     }

@@ -66,11 +66,11 @@ final class RedeemUITests: XCTestCase, Sendable {
         let redeemScreen = redeemScreenNoPharm
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .tapRedeem(.pickupViaLogin)
 
         redeemScreen.editPrescriptionButton().tap()
-        expect(self.app.buttons["Bdavomilproston"].isSelected).to(beTrue())
-        expect(self.app.buttons["Adavomilproston"].isSelected).to(beTrue())
+        expect(self.app.buttons["Bdavomilproston, Noch 19 Tage einlösbar"].value as? String).to(equal("Ausgewählt"))
+        expect(self.app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].value as? String).to(equal("Ausgewählt"))
 
         app.buttons["Zurück"].tap()
 
@@ -118,11 +118,11 @@ final class RedeemUITests: XCTestCase, Sendable {
         let redeemScreen = redeemScreenNoPharm
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_02_TEST-ONLY")
-            .tapRedeem(.pickup)
+            .tapRedeem(.pickupViaLogin)
 
         redeemScreen.editPrescriptionButton().tap()
-        expect(self.app.buttons["Bdavomilproston"].isSelected).to(beTrue())
-        expect(self.app.buttons["Adavomilproston"].isSelected).to(beTrue())
+        expect(self.app.buttons["Bdavomilproston, Noch 19 Tage einlösbar"].value as? String).to(equal("Ausgewählt"))
+        expect(self.app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].value as? String).to(equal("Ausgewählt"))
 
         app.buttons["Zurück"].tap()
 
@@ -143,11 +143,11 @@ final class RedeemUITests: XCTestCase, Sendable {
         let redeemScreen = redeemScreenNoPharm
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_03_TEST-ONLY")
-            .tapRedeem(.delivery)
+            .tapRedeem(.pickupViaLogin)
 
         redeemScreen.editPrescriptionButton().tap()
-        expect(self.app.buttons["Bdavomilproston"].isSelected).to(beTrue())
-        expect(self.app.buttons["Adavomilproston"].isSelected).to(beTrue())
+        expect(self.app.buttons["Bdavomilproston, Noch 19 Tage einlösbar"].value as? String).to(equal("Ausgewählt"))
+        expect(self.app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].value as? String).to(equal("Ausgewählt"))
 
         app.buttons["Zurück"].tap()
 
@@ -172,7 +172,7 @@ final class RedeemUITests: XCTestCase, Sendable {
             .tapRedeemRemote()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .tapRedeem(.pickupViaLogin)
 
         await bridge.sendMessage(.scenarioStep(1))
 
@@ -204,7 +204,7 @@ final class RedeemUITests: XCTestCase, Sendable {
             .tapRedeemRemote()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .tapRedeem(.pickupViaLogin)
 
         await bridge.sendMessage(.scenarioStep(1))
 
@@ -243,10 +243,9 @@ final class RedeemUITests: XCTestCase, Sendable {
             .tapRedeemPharmacyButton()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .tapRedeem(.pickupViaLogin)
 
         expect(redeemScreen.editPharmacyButton().exists).to(beTrue())
-        expect(redeemScreen.redeemButton().isEnabled).to(beFalse())
 
         let prescriptions = redeemScreen.editPrescriptionButton()
         expect(prescriptions.staticTexts["Adavomilproston"]).to(exist("Adavomilproston"))
@@ -273,7 +272,7 @@ final class RedeemUITests: XCTestCase, Sendable {
             .tapRedeemPharmacyButton()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_02_TEST-ONLY")
-            .tapRedeem(.pickup)
+            .tapRedeem(.pickupViaLogin)
 
         expect(redeemScreen.editPharmacyButton().exists).to(beTrue())
         expect(redeemScreen.redeemButton().isEnabled).to(beTrue())
@@ -297,10 +296,9 @@ final class RedeemUITests: XCTestCase, Sendable {
             .tapRedeemPharmacyButton()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_03_TEST-ONLY")
-            .tapRedeem(.delivery)
+            .tapRedeem(.pickupViaLogin)
 
         expect(redeemScreen.editPharmacyButton().exists).to(beTrue())
-        expect(redeemScreen.redeemButton().isEnabled).to(beFalse())
 
         let prescriptions = redeemScreen.editPrescriptionButton()
         expect(prescriptions.staticTexts["Adavomilproston"]).to(exist("Adavomilproston"))
@@ -327,10 +325,10 @@ final class RedeemUITests: XCTestCase, Sendable {
             .tapRedeemPharmacyButton()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .tapRedeem(.pickupViaLogin)
             .tapEditPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_08_TEST-ONLY")
-            .tapRedeem(.pickup)
+            .tapRedeem(.pickupViaLogin)
             .tapServiceOption(.delivery)
             .tapServiceOption(.shipment)
 

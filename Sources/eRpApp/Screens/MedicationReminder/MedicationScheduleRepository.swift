@@ -23,10 +23,10 @@
 import Dependencies
 import eRpKit
 import eRpLocalStorage
+import ErxTaskRepository
 import Foundation
 
-extension MedicationScheduleRepository: @retroactive
-DependencyKey {
+extension MedicationScheduleRepository: DependencyKey {
     public static var liveValue: MedicationScheduleRepository {
         @Dependency(\.medicationScheduleStore) var medicationScheduleStore
         @Dependency(\.notificationScheduler) var notificationScheduler
@@ -63,24 +63,5 @@ DependencyKey {
                 try await notificationScheduler.schedule(allMedicationSchedules)
             }
         )
-    }
-
-    public static var testValue: MedicationScheduleRepository {
-        .init { _ in
-            unimplemented(".create not implemented")
-        } readAll: {
-            unimplemented(".readAll not implemented", placeholder: [])
-        } read: { _ in
-            unimplemented(".read not implemented", placeholder: nil)
-        } delete: { _ in
-            unimplemented(".delete not implemented")
-        }
-    }
-}
-
-extension DependencyValues {
-    var medicationScheduleRepository: MedicationScheduleRepository {
-        get { self[MedicationScheduleRepository.self] }
-        set { self[MedicationScheduleRepository.self] = newValue }
     }
 }

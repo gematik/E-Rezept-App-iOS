@@ -5,19 +5,23 @@ import BfArM
 import Combine
 import CombineSchedulers
 import CoreData
-import LocalAuthentication
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
+import eRpResources
+import FeatureCardWall
 import FHIRClient
 import HTTPClient
 import IdentifiedCollections
 import IDP
+import LocalAuthentication
 import OpenSSL
 import Pharmacy
+import Profiles
+import Settings
 import TrustStore
-import VAUClient
 import UIKit
+import VAUClient
 import XCTestDynamicOverlay
 
 {% macro unimplementedOptionalVariableStub variable %}

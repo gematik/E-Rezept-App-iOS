@@ -20,10 +20,13 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
+import eRpResources
+import FeatureHelpers
 import Foundation
 import IDP
 
@@ -59,6 +62,8 @@ struct EditProfileDomain {
                     return L10n.stgTxtEditProfileLabelGkvInsurance.text
                 case .pKV:
                     return L10n.stgTxtEditProfileLabelPkvInsurance.text
+                case .federalKV:
+                    return L10n.stgTxtEditProfileLabelFederalkvInsurance.text
                 case .unknown:
                     return L10n.stgTxtEditProfileLabelUnknownInsurance.text
                 }
@@ -147,6 +152,7 @@ struct EditProfileDomain {
         case copyCompleted
         case setUserToGKVInsured
         case setUserToPKVInsured
+        case setUserToFederalInsured
         case login
         case relogin
         case showDeleteBiometricPairingAlert
@@ -189,7 +195,7 @@ struct EditProfileDomain {
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
     @Dependency(\.router) var router: Routing
     @Dependency(\.pasteboardService) var pasteboardService: PasteboardService
-    @Dependency(\.feedbackReceiver) var feedbackReceiver: FeedbackReceiver
+    @Dependency(\.hapticFeedbackGenerator) var hapticFeedback
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -278,7 +284,7 @@ struct EditProfileDomain {
             )
         case let .copyKVNR(kvnr):
             pasteboardService.copy(kvnr)
-            feedbackReceiver.hapticFeedbackSuccess()
+            hapticFeedback.success()
             state.showCopySuccessInfo = true
             return .run { send in
                 // wait for 3 second to set showCopySuccessInfo to false
@@ -297,6 +303,9 @@ struct EditProfileDomain {
         case .setUserToPKVInsured:
             state.insuranceType = .pKV
             return changeInsurance(for: .pKV, with: state.profileId)
+        case .setUserToFederalInsured:
+            state.insuranceType = .federalKV
+            return changeInsurance(for: .federalKV, with: state.profileId)
         case .showDeleteProfileAlert:
             state.destination = .alert(AlertStates.deleteProfile)
             return .none

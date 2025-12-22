@@ -30,7 +30,7 @@ public struct VerticalLabeledContentStyle: LabeledContentStyle {
             configuration.label
                 .font(.subheadline)
                 .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Colors.textSecondary)
+                .foregroundColor(Colors.systemLabelSecondary)
         }
     }
 }
@@ -60,7 +60,7 @@ public struct SectionContainerLabeledContentStyle: LabeledContentStyle {
             configuration.label
                 .font(.subheadline)
                 .fixedSize(horizontal: false, vertical: true)
-                .foregroundColor(Colors.textSecondary)
+                .foregroundColor(Colors.systemLabelSecondary)
         }
         .padding(.leading)
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)

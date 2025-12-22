@@ -93,7 +93,7 @@ extension OnboardingRegisterPasswordView {
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(Colors.textSecondary, lineWidth: 0.5)
+                            .stroke(Colors.systemLabelSecondary, lineWidth: 0.5)
                     )
                     .padding(1)
                     .textContentType(.newPassword)
@@ -101,7 +101,7 @@ extension OnboardingRegisterPasswordView {
 
                 Text(L10n.cpwTxtPasswordRecommendation)
                     .font(.footnote)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.bottom, 10)
@@ -172,13 +172,13 @@ extension OnboardingRegisterPasswordView {
                     .multilineTextAlignment(.center)
                     .padding()
 
-                NavButton(
-                    text: L10n.onbAuthBtnPasswordBack,
-                    a11y: A11y.onboarding.authentication.onbAuthBtnBack,
-                    back: true
-                ) {
+                Button {
                     store.send(.delegate(.prevPage))
+                } label: {
+                    Text(L10n.onbAuthBtnPasswordBack)
                 }
+                .buttonStyle(.smallNavigation(back: true))
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnBack)
             }
             .padding(.bottom, 32)
         }

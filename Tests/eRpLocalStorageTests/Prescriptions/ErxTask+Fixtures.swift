@@ -94,7 +94,9 @@ extension ErxTask {
                 medicationDispenses: [
                     medicationDispense,
                     medicationDispenseWithEpaMedication,
-                ]
+                ],
+                isEURedeemable: true,
+                isSetEURedeemableByPatient: false
             )
 
         static let practitioner: ErxPractitioner = .init(

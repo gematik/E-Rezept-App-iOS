@@ -47,37 +47,7 @@ final class TrustStoreIntegrationTests: XCTestCase {
         }
     }
 
-    func testCompleteFlow() {
-        let storage = MemStorage()
-        let session = DefaultTrustStoreSession(
-            serverURL: environment.appConfiguration.erp,
-            trustAnchor: environment.appConfiguration.trustAnchor,
-            trustStoreStorage: storage,
-            httpClient: DefaultHTTPClient(
-                urlSessionConfiguration: .ephemeral,
-                interceptors: [
-                    AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
-                    LoggingInterceptor(log: .body),
-                ]
-            )
-        )
-        var success = false
-        session.loadVauCertificate()
-            .test(
-                timeout: 120,
-                failure: { error in
-                    fail("Failed with error: \(error)")
-                },
-                expectations: { vauCertificate in
-                    success = true
-                    Swift.print("vauCertificate", (vauCertificate.derBytes?.base64EncodedString()) ?? "")
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
-        expect(success) == true
-    }
-
-    func testCompleteFlow_async() async throws {
+    func testCompleteFlow() async throws {
         let storage = MemStorage()
         let session = DefaultTrustStoreSession(
             serverURL: environment.appConfiguration.erp,

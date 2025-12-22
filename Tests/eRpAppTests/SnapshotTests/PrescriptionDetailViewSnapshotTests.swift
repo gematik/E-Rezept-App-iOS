@@ -38,7 +38,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     ) -> StoreOf<PrescriptionDetailDomain> {
         Store(
             initialState: .init(
-                prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
+                prescription: Prescription(erxTask: erxTask),
                 profile: profile,
                 chargeItemConsentState: chargeItemConstentState,
                 chargeItem: chargeItem,

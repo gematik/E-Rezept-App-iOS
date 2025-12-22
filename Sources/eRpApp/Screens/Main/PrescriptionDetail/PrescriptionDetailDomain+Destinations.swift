@@ -22,6 +22,9 @@
 
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import FeatureEURedeem
+import FeatureHelpers
 import Foundation
 import UIKit
 
@@ -140,9 +143,22 @@ struct CoPaymentDomain {
         }
     }
 
-    enum Action: Equatable {}
+    enum Action: Equatable {
+        case delegate(DelegateAction)
+    }
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    enum DelegateAction: Equatable {
+        case close
+    }
+
+    var body: some ReducerOf<Self> {
+        Reduce { _, action in
+            switch action {
+            case .delegate:
+                return .none
+            }
+        }
+    }
 }
 
 @Reducer
@@ -163,9 +179,22 @@ struct SubstitutionInfoDomain {
         }
     }
 
-    enum Action: Equatable {}
+    enum Action: Equatable {
+        case delegate(DelegateAction)
+    }
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    enum DelegateAction: Equatable {
+        case close
+    }
+
+    var body: some ReducerOf<Self> {
+        Reduce { _, action in
+            switch action {
+            case .delegate:
+                return .none
+            }
+        }
+    }
 }
 
 @Reducer
@@ -197,9 +226,22 @@ struct PrescriptionDosageInstructionsDomain {
         }
     }
 
-    enum Action: Equatable {}
+    enum Action: Equatable {
+        case delegate(DelegateAction)
+    }
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    enum DelegateAction: Equatable {
+        case close
+    }
+
+    var body: some ReducerOf<Self> {
+        Reduce { _, action in
+            switch action {
+            case .delegate:
+                return .none
+            }
+        }
+    }
 }
 
 @Reducer
@@ -213,9 +255,22 @@ struct PrescriptionValidityDomain {
         let isMVO: Bool
     }
 
-    enum Action: Equatable {}
+    enum Action: Equatable {
+        case delegate(DelegateAction)
+    }
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    enum DelegateAction: Equatable {
+        case close
+    }
+
+    var body: some ReducerOf<Self> {
+        Reduce { _, action in
+            switch action {
+            case .delegate:
+                return .none
+            }
+        }
+    }
 }
 
 @Reducer

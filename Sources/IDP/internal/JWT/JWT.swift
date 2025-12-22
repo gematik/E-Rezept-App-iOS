@@ -20,6 +20,8 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
+import CodedError
 import Combine
 import Foundation
 
@@ -253,17 +255,17 @@ extension JWT {
 }
 
 extension JWT {
-    // sourcery: CodedError = "104"
+    @CodedError("104")
     public enum Error: Swift.Error, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case malformedJWT
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case noSignature
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case encodingError
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case invalidSignature
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case invalidExpirationDate
 
         public var errorDescription: String? {

@@ -20,11 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import Dependencies
 import eRpKit
 import eRpLocalStorage
+import FeatureHelpers
 import Foundation
+import Settings
 
 protocol UserSessionProvider {
     func userSession(for uuid: UUID) -> UserSession
@@ -34,9 +37,9 @@ protocol UserSessionProviderControl: UserSessionProvider {
     func resetSession(with config: AppConfiguration)
 }
 
-// sourcery: CodedError = "007"
+@CodedError("007")
 enum UserSessionProviderError: Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case unavailable
 }
 
@@ -53,16 +56,13 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
     var disposeBag: Set<AnyCancellable> = []
 
     let schedulers: Schedulers
-    let coreDataControllerFactory: CoreDataControllerFactory
     let profileDataStore: ProfileDataStore
 
     init(initialUserSession: UserSession,
          schedulers: Schedulers,
-         coreDataControllerFactory: CoreDataControllerFactory,
          profileDataStore: ProfileDataStore,
          appConfiguration: AppConfiguration) {
         self.schedulers = schedulers
-        self.coreDataControllerFactory = coreDataControllerFactory
         self.profileDataStore = profileDataStore
         self.appConfiguration = appConfiguration
 
@@ -74,16 +74,11 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
             return session
         }
 
-        @Dependency(\.erxTaskCoreDataStoreFactory) var erxTaskCoreDataStoreFactory: ErxTaskCoreDataStoreFactory
-        let erxTaskCoreDataStore = erxTaskCoreDataStoreFactory.construct(uuid, coreDataControllerFactory)
-        let entireCoreDataStore = erxTaskCoreDataStoreFactory.construct(nil, coreDataControllerFactory)
+        @Dependency(\.coreDataControllerFactory) var coreDataControllerFactory: CoreDataControllerFactory
 
         let session = StandardSessionContainer(
             for: uuid,
             schedulers: schedulers,
-            erxTaskCoreDataStore: erxTaskCoreDataStore,
-            entireCoreDataStore: entireCoreDataStore,
-            pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: profileDataStore,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
@@ -105,7 +100,6 @@ extension DefaultUserSessionProvider {
     static let liveValue = DefaultUserSessionProvider(
         initialUserSession: UserSessionDependency.initialValue,
         schedulers: Schedulers.liveValue,
-        coreDataControllerFactory: CoreDataControllerFactoryDependency.liveValue,
         profileDataStore: ProfileDataStoreDependency.initialValue,
         appConfiguration: UserDataStoreDependency.liveValue.appConfiguration
     )

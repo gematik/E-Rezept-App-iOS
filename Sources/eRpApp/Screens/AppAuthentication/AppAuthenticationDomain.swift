@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureHelpers
 
 @Reducer
 struct AppAuthenticationDomain {

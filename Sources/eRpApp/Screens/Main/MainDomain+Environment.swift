@@ -23,7 +23,11 @@
 import Combine
 import CombineSchedulers
 import ComposableArchitecture
+import ConsentService
 import eRpKit
+import eRpResources
+import ErxTaskRepository
+import FeatureHelpers
 import Foundation
 
 extension MainDomain {
@@ -38,66 +42,48 @@ extension MainDomain {
         var deviceSecurityManager: DeviceSecurityManager
         var profileSecureDataWiper: ProfileSecureDataWiper
         var profileDataStore: ProfileDataStore
-        var chargeItemConsentService: ChargeItemConsentService
+        var consentService: ConsentService
 
-        func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask]) -> Effect<MainDomain.Action> {
+        func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask],
+                                            profileId: UUID?) -> Effect<MainDomain.Action> {
             let authoredOn = fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
             let erxTaskRepository = self.erxTaskRepository
 
-            return .publisher(
-                checkForTaskDuplicatesInStore(sharedTasks)
-                    .flatMap { tasks -> AnyPublisher<[ErxTask], MainDomain.Error> in
-                        let erxTasks = tasks.asErxTasks(
-                            status: .ready,
-                            with: authoredOn,
-                            author: L10n.scnTxtAuthor.text
-                        ) { L10n.scnTxtMedication($0).text }
+            return .run { [profileId] send in
+                do {
+                    let tasks = try await checkForTaskDuplicatesInStore(sharedTasks)
+                    let erxTasks = tasks.asErxTasks(
+                        status: .ready,
+                        with: authoredOn,
+                        author: L10n.scnTxtAuthor.text
+                    ) { L10n.scnTxtMedication($0).text }
 
-                        return erxTaskRepository.save(
-                            erxTasks: erxTasks
-                        )
-                        .map { _ in erxTasks }
-                        .mapError(MainDomain.Error.repositoryError)
-                        .eraseToAnyPublisher()
-                    }
-                    .catchToPublisher()
-                    .map { .response(.importReceived($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
+                    try await erxTaskRepository.saveTask(erxTasks, profileId)
+                    await send(.response(.importReceived(.success(erxTasks))))
+                } catch let error as Error {
+                    await send(.response(.importReceived(.failure(error))))
+                }
+            }
         }
 
-        func checkForTaskDuplicatesInStore(_ sharedTasks: [SharedTask])
-            -> AnyPublisher<[SharedTask], MainDomain.Error> {
-            let findPublishers: [AnyPublisher<SharedTask?, Never>] = sharedTasks.map { sharedTask in
-                self.erxTaskRepository.loadLocal(by: sharedTask.id, accessCode: sharedTask.accessCode)
-                    .first()
-                    .map { erxTask -> SharedTask? in
-                        if erxTask != nil {
-                            return nil // by returning nil we sort out previously stored tasks
-                        } else {
-                            return sharedTask
-                        }
+        func checkForTaskDuplicatesInStore(_ sharedTasks: [SharedTask]) async throws -> [SharedTask] {
+            var deduplicatedTasks = [SharedTask]()
+            for task in sharedTasks {
+                do {
+                    let localTask = try await erxTaskRepository.loadLocalTask(task.id, task.accessCode).async()
+                    if localTask == nil {
+                        deduplicatedTasks.append(task)
                     }
-                    .catch { _ in Just(.none) }
-                    .eraseToAnyPublisher()
+                } catch let error as ErxRepositoryError {
+                    throw MainDomain.Error.repositoryError(error)
+                }
             }
 
-            return Publishers.MergeMany(findPublishers)
-                .collect(findPublishers.count)
-                .flatMap { optionalTasks -> AnyPublisher<[SharedTask], MainDomain.Error> in
-                    let tasks = optionalTasks.compactMap { $0 }
-                    if tasks.isEmpty {
-                        return Fail(error: MainDomain.Error.importDuplicate)
-                            .eraseToAnyPublisher()
-                    } else {
-                        return Just(tasks)
-                            .setFailureType(to: MainDomain.Error.self)
-                            .eraseToAnyPublisher()
-                    }
-                }
-                .receive(on: schedulers.main)
-                .eraseToAnyPublisher()
+            if deduplicatedTasks.isEmpty {
+                throw MainDomain.Error.importDuplicate
+            } else {
+                return deduplicatedTasks
+            }
         }
 
         func setHideWelcomeDrawerOnMainViewToTrue() async throws -> Bool {

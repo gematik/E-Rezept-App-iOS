@@ -20,9 +20,15 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import ErxTaskRepository
+import FeatureEURedeem
+import FeatureHelpers
 import IdentifiedCollections
 import SwiftUI
 
@@ -33,9 +39,9 @@ struct MatrixCodeDomain {
         MatrixCodeDomain.LoadingImageError
     >
 
-    // sourcery: CodedError = "023"
+    @CodedError("023")
     enum LoadingImageError: Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case matrixCodeGenerationFailed
     }
 
@@ -46,6 +52,8 @@ struct MatrixCodeDomain {
 
     @ObservableState
     struct State: Equatable {
+        @Shared(.selectedProfileId) var profileId
+
         let type: MatrixCodeType
         var erxTasks: [ErxTask] = []
         var erxChargeItem: ErxChargeItem?
@@ -53,6 +61,11 @@ struct MatrixCodeDomain {
         var isMatrixCodeZoomed = false
         var page = 0
         @Presents var destination: Destination.State?
+
+        var isEURedeemable: Bool {
+            @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+            return euRedeemPrescriptionsFeature && erxTasks.contains(where: \.isEURedeemable)
+        }
 
         struct IdentifiedImage: Equatable, Identifiable {
             let id: UUID
@@ -78,11 +91,16 @@ struct MatrixCodeDomain {
         case resetNavigation
         case showAlert(ShareSheetDomain.Error)
         case response(Response)
+        case delegate(Delegate)
         case destination(PresentationAction<Destination.Action>)
 
         enum Response: Equatable {
             case matrixCodeImageReceived(ImageLoadingState)
             case redeemedOnSavedReceived(Bool)
+        }
+
+        enum Delegate: Equatable {
+            case euRedeemButtonTapped
         }
     }
 
@@ -101,7 +119,7 @@ struct MatrixCodeDomain {
     // [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
     // the screen nor the state.
     @Dependency(\.erxMatrixCodeGenerator) var erxMatrixCodeGenerator: ErxMatrixCodeGenerator
-    @Dependency(\.erxTaskRepository) var taskRepository: ErxTaskRepository
+    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.dismiss) var dismiss
     @Dependency(\.uuid) var uuid
@@ -198,7 +216,7 @@ struct MatrixCodeDomain {
             case .erxTask:
                 // User story defines that scanned erxTasks should be automatically
                 // redeemed when this screen was successfully shown.
-                return redeemAndSaveErxTasks(erxTasks: state.erxTasks)
+                return redeemAndSaveErxTasks(erxTasks: state.erxTasks, profileId: state.profileId)
             case .erxChargeItem:
                 return .none
             }
@@ -227,10 +245,10 @@ struct MatrixCodeDomain {
                 )
             )
             return .none
-        case .destination:
-            return .none
         case .resetNavigation:
             state.destination = nil
+            return .none
+        case .destination, .delegate:
             return .none
         }
     }
@@ -245,7 +263,7 @@ extension MatrixCodeDomain {
         return CGSize(width: pixelDimension, height: pixelDimension)
     }
 
-    func redeemAndSaveErxTasks(erxTasks: [ErxTask])
+    func redeemAndSaveErxTasks(erxTasks: [ErxTask], profileId: UUID?)
         -> Effect<MatrixCodeDomain.Action> {
         let redeemedErxTasks = erxTasks
             .filter { $0.source == .scanner }
@@ -254,14 +272,15 @@ extension MatrixCodeDomain {
                 copy.redeemedOn = fhirDateFormatter.string(from: Date())
                 return copy
             }
-        return .publisher(
-            taskRepository.save(erxTasks: redeemedErxTasks)
-                .first()
-                .receive(on: schedulers.main)
-                .replaceError(with: false)
-                .map { .response(.redeemedOnSavedReceived($0)) }
-                .eraseToAnyPublisher
-        )
+
+        return .run { [profileId] send in
+            do {
+                try await erxTaskRepository.saveTask(redeemedErxTasks, profileId)
+                await send(.response(.redeemedOnSavedReceived(true)))
+            } catch {
+                await send(.response(.redeemedOnSavedReceived(false)))
+            }
+        }
     }
 }
 

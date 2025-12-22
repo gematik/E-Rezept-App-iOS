@@ -84,7 +84,7 @@
 		],
 		"type": "queue"
 	},
-	"fetchLatestTimestampForCommunicationsRecordings": {
+	"fetchLatestTimestampForCommunicationsOfRecordings": {
 		"type": "queue",
 		"payload": [
 			null
@@ -97,7 +97,7 @@
 		],
 		"type": "queue"
 	},
-	"listAllTasksRecordings": {
+	"listAllTasksOfRecordings": {
 		"type": "queue",
 		"payload": [
 			[
@@ -173,19 +173,19 @@
 			]
 		]
 	},
-	"saveCommunicationsRecordings": {
+	"saveCommunicationsOfRecordings": {
 		"payload": [
 			true
 		],
 		"type": "queue"
 	},
-	"saveTasksUpdateProfileLastAuthenticatedRecordings": {
+	"saveTasksInUpdateProfileLastAuthenticatedRecordings": {
 		"payload": [
 			true
 		],
 		"type": "queue"
 	},
-	"fetchLatestLastModifiedForErxTasksRecordings": {
+	"fetchLatestLastModifiedForErxTasksOfRecordings": {
 		"type": "queue",
 		"payload": [
 			null

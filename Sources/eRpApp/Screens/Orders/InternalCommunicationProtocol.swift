@@ -20,10 +20,13 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import CasePaths
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 import Foundation
 import IdentifiedCollections
 import Pharmacy
@@ -45,15 +48,15 @@ extension Swift.Error {
     }
 }
 
-// sourcery: CodedError = "038"
+@CodedError("038")
 enum InternalCommunicationError: Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case decodingError(Error)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case invalidURL
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case emptyOnboardingDate
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case unknownError
 
     var errorDescription: String? {

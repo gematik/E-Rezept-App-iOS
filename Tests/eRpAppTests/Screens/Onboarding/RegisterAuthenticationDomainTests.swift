@@ -23,6 +23,8 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
+import eRpResources
+import FeatureHelpers
 import LocalAuthentication
 import Nimble
 import XCTest
@@ -32,7 +34,6 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
     var mockAppSecurityManager: MockAppSecurityManager!
     var mockPasswordStrengthTester: MockPasswordStrengthTester!
     var mockAuthenticationChallengeProvider: MockAuthenticationChallengeProvider!
-    var mockFeedbackReceiver: MockFeedbackReceiver!
 
     typealias TestStore = TestStoreOf<RegisterAuthenticationDomain>
 
@@ -42,7 +43,6 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAppSecurityManager = MockAppSecurityManager()
         mockPasswordStrengthTester = MockPasswordStrengthTester()
         mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
-        mockFeedbackReceiver = MockFeedbackReceiver()
     }
 
     func testStore(
@@ -57,7 +57,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
             dependencies.passwordStrengthTester = passwordStrengthTester
-            dependencies.feedbackReceiver = mockFeedbackReceiver
+            dependencies.hapticFeedbackGenerator.success = {}
         }
     }
 

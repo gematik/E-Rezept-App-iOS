@@ -26,10 +26,18 @@ import FHIRClient
 import Foundation
 
 public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
-    private let fhirClient: FHIRClient
+    private var fhirClient: FHIRClient {
+        factory()
+    }
+
+    private let factory: () -> FHIRClient
 
     public init(fhirClient: FHIRClient) {
-        self.fhirClient = fhirClient
+        factory = { fhirClient }
+    }
+
+    public init(factory: @escaping () -> FHIRClient) {
+        self.factory = factory
     }
 
     // MARK: - ErxTasks

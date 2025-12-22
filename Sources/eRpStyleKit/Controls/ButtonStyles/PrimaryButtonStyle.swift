@@ -44,25 +44,48 @@ public struct PrimaryButtonStyle: ButtonStyle {
         self.width = width
     }
 
+    @Environment(\.colorScheme) var colorScheme
+
     var backgroundColor: Color {
         switch (isDestructive, isEnabled) {
         case (false, true):
             return Colors.primary
         case (false, false):
-            return Color(.systemGray5)
+            return Colors.primary.disabled(for: colorScheme)
         case (true, true):
             return Colors.red600
         case (true, false):
-            return Color(.systemGray5)
+            return Colors.red600.disabled(for: colorScheme)
+        }
+    }
+
+    var foregroundColor: Color {
+        switch isEnabled {
+        case true:
+            return Color.white
+        case false:
+            return Color.white.disabled(for: colorScheme)
+        }
+    }
+
+    var innerHorizontalPadding: CGFloat {
+        switch width {
+        case .infinite:
+            return 16
+        case .wideHugging:
+            return 64
+        case .narrowHugging:
+            return 32
         }
     }
 
     public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .font(.body.weight(.semibold))
-            .foregroundColor(isEnabled ? Color.white : Color(.systemGray))
+            .multilineTextAlignment(.center)
+            .foregroundColor(foregroundColor)
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .padding(.horizontal, (width == .narrowHugging) ? 32 : 64)
+            .padding(.horizontal, innerHorizontalPadding)
             .frame(maxWidth: (width == .infinite) ? .infinity : nil, minHeight: 52, alignment: .center)
             .background(backgroundColor)
             .cornerRadius(16)

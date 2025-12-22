@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpResources
 import Perception
 import SwiftUI
 import SwiftUIIntrospect
@@ -56,7 +57,7 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
                         .padding(.bottom, hasOpenPrescriptions ? 80 : 28)
                 }
             )
-            .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
+            .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { scrollView in
                 let refreshControl: RefreshControl
                 if let control = scrollView.refreshControl as? RefreshControl {
                     refreshControl = control
@@ -68,6 +69,7 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
                     store.send(.refresh)
                 }
                 if !store.loadingState.isLoading, refreshControl.isRefreshing {
+                    // Dispatch async to avoid mainscreen offset bug.
                     refreshControl.endRefreshing()
                 }
             }

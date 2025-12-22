@@ -22,6 +22,7 @@
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 
+import AsyncHelpers
 import Combine
 import CombineSchedulers
 import Foundation
@@ -38,7 +39,7 @@ public typealias TimeProvider = () -> Date
 public class DefaultIDPSession: IDPSession {
     private let client: IDPClient
     private let storage: IDPStorage
-    private let schedulers: IDPSchedulers
+    private let schedulers: Schedulers
     private let time: TimeProvider
     private let cryptoBox: IDPCrypto
     private let trustStoreSession: TrustStoreSession
@@ -57,7 +58,7 @@ public class DefaultIDPSession: IDPSession {
     public convenience init(
         config: Configuration,
         storage: IDPStorage,
-        schedulers: IDPSchedulers,
+        schedulers: Schedulers,
         httpClient: HTTPClient,
         trustStoreSession: TrustStoreSession,
         extAuthRequestStorage: ExtAuthRequestStorage
@@ -83,7 +84,7 @@ public class DefaultIDPSession: IDPSession {
     required init(
         client: IDPClient,
         storage: IDPStorage,
-        schedulers: IDPSchedulers,
+        schedulers: Schedulers,
         trustStoreSession: TrustStoreSession,
         extAuthRequestStorage: ExtAuthRequestStorage,
         time: @escaping TimeProvider = Date.init,
@@ -761,14 +762,15 @@ extension TrustStoreSession {
     /// - Returns: A publisher that contains an output with the check value or an failure if the check failed
     /// due to an underlying error.
     func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustStoreError> {
-        // [REQ:BSI-eRp-ePA:O.Resi_6#5|6] Discovery Document signature verification
-        validate(certificate: discoveryDocument.discKey)
+        Future {
+            // [REQ:BSI-eRp-ePA:O.Resi_6#5|6] Discovery Document signature verification
+            guard try await self.validate(eeCertificate: discoveryDocument.discKey)
+            else { return false }
             // [REQ:gemSpec_IDP_Frontend:A_20625#3|4] `C.FD.SIG`-Certificate verification
-            .zip(validate(certificate: discoveryDocument.signingCert))
-            .map { isDiscKeyValid, isSigningCertValid -> Bool in
-                isDiscKeyValid && isSigningCertValid
-            }
-            .eraseToAnyPublisher()
+            return try await self.validate(eeCertificate: discoveryDocument.signingCert)
+        }
+        .mapError { $0.asTrustStoreError() }
+        .eraseToAnyPublisher()
     }
 }
 

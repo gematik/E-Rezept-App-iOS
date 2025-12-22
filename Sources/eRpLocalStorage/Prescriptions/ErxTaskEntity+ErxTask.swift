@@ -53,6 +53,9 @@ extension ErxTaskEntity {
         quantity = ErxTaskQuantityEntity(quantity: task.medicationRequest.quantity, in: context)
         lastMedicationDispense = task.lastMedicationDispense
 
+        isEURedeemable = task.isEURedeemable
+        isSetEURedeemableByPatient = task.isSetEURedeemableByPatient
+
         accidentInfo = ErxTaskAccidentInfoEntity(
             accident: task.medicationRequest.accidentInfo,
             in: context
@@ -256,7 +259,9 @@ extension ErxTask {
                 .sorted { $0.timestamp < $1.timestamp },
             medicationDispenses: medicationDispenses
                 .sorted { $0.identifier < $1.identifier },
-            deviceRequest: ErxDeviceRequest(entity: entity.deviceRequest)
+            deviceRequest: ErxDeviceRequest(entity: entity.deviceRequest),
+            isEURedeemable: entity.isEURedeemable,
+            isSetEURedeemableByPatient: entity.isSetEURedeemableByPatient
         )
     }
 }

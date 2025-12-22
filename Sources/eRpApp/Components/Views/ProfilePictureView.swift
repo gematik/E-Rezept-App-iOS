@@ -101,11 +101,11 @@ struct ProfilePictureView: View {
     }
 
     var body: some View {
-        Button {
-            action()
-        } label: {
-            HStack {
-                ZStack(alignment: .bottomTrailing) {
+        HStack {
+            ZStack(alignment: .bottomTrailing) {
+                Button {
+                    action()
+                } label: {
                     Group {
                         if let userImageData = userImageData, !userImageData.isEmpty {
                             Image(uiImage: UIImage(data: userImageData) ?? UIImage())
@@ -120,7 +120,7 @@ struct ProfilePictureView: View {
                         } else {
                             Image(systemName: SFSymbolName.camera)
                                 .font(Font.headline.weight(.bold))
-                                .foregroundColor(Color(.secondaryLabel))
+                                .foregroundColor(Colors.systemLabelSecondary)
                         }
                     }
                     .frame(width: style.size, height: style.size, alignment: .center)
@@ -130,28 +130,30 @@ struct ProfilePictureView: View {
                         width: isBorderOn ? 4 : 0,
                         cornerRadius: style.size * 0.5
                     )
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .padding(.vertical, 8)
                     .padding(.trailing, 16)
                     .padding(.leading, style.paddingLeading)
                     .accessibilityIdentifier(A11y.mainScreen.erxBtnProfile)
+                }
+                .accessibilityLabel(L10n.mainBtnProfileSmall)
 
-                    if let connectionStatusImage {
-                        let isConnected = connection == .connected
-                        connectionStatusImage
-                            .font(.system(size: style.statusImageSize).weight(.bold))
-                            .frame(width: style.statusSize, height: style.statusSize, alignment: .center)
-                            .foregroundColor(isConnected ? Colors.secondary600 : Colors.systemGray)
-                            .background(Circle().fill(isConnected ? Colors.secondary200 : Colors.secondary))
-                            .border(Colors.systemBackground, width: 4, cornerRadius: 999)
-                            .accessibilityIdentifier(A11y.mainScreen.erxImgProfileStatus)
-                            .accessibilityLabel(isConnected ? L10n.mainTxtProfileStatusOnline : L10n
-                                .mainTxtProfileStatusOffline)
-                    }
+                if let connectionStatusImage {
+                    let isConnected = connection == .connected
+                    connectionStatusImage
+                        .font(.system(size: style.statusImageSize).weight(.bold))
+                        .frame(width: style.statusSize, height: style.statusSize, alignment: .center)
+                        .foregroundColor(isConnected ? Colors.secondary600 : Colors.systemGray)
+                        .background(Circle().fill(isConnected ? Colors.secondary200 : Colors.secondary))
+                        .border(Colors.systemBackground, width: 4, cornerRadius: 999)
+                        .accessibilityIdentifier(A11y.mainScreen.erxImgProfileStatus)
+                        .accessibilityLabel(isConnected ? L10n.mainTxtProfileStatusOnline : L10n
+                            .mainTxtProfileStatusOffline)
+                        .accessibilityHidden(style != .large)
                 }
-                if let connectionStatusText, style == .small {
-                    connectionStatusText.multilineTextAlignment(.leading).accessibilityHidden(true)
-                }
+            }
+            if let connectionStatusText, style == .small {
+                connectionStatusText.multilineTextAlignment(.leading)
             }
         }
     }

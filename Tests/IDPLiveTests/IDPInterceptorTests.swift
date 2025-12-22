@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import Foundation
 import HTTPClient
@@ -33,169 +34,72 @@ import XCTest
 let token = "test-token"
 
 final class IDPInterceptorTests: XCTestCase {
-    let trustStoreSessionMock: MockTrustStoreSession = {
-        let mock = MockTrustStoreSession()
-        mock.validateCertificateReturnValue = Just(true).setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
+    let trustStoreSessionMock: TrustStoreSessionMock = {
+        let mock = TrustStoreSessionMock()
         return mock
     }()
 
     let extAuthRequestStorageMock = MockExtAuthRequestStorage()
 
-    func testInterceptWithoutDelegate() {
+    func testInterceptAddsAuthorizationHeader() async {
         let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
-            schedulers: TestSchedulers(compute: DispatchQueue.test.eraseToAnyScheduler()),
+            schedulers: Schedulers(computeScheduler: DispatchQueue.test.eraseToAnyScheduler()),
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
 
-        let sut = IDPInterceptor(session: session, delegate: nil)
-        sut.interceptPublisher(chain: chain)
-            .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 1
-                expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
-            })
+        let sut = IDPInterceptor(session: session)
+        _ = try? await sut.intercept(chain: chain)
+        expect(chain.incomingProceedRequests.count) == 1
+        expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
     }
 
-    func testInterceptWithoutDelegateAndNoToken() {
+    func testInterceptWithoutTokenFailsWithTokenUnavailable() {
         let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(token: nil),
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
 
-        let sut = IDPInterceptor(session: session, delegate: nil)
-        sut.interceptPublisher(chain: chain)
-            .test(failure: { error in
-                expect(error.isIDPTokenUnavailable) == true // Wrong error type when false
-            }) { _, _, _ in
-                fail("Test should have failed")
+        let sut = IDPInterceptor(session: session)
+        waitUntil { done in
+            Task {
+                do {
+                    _ = try await sut.intercept(chain: chain)
+                    fail("Test should have failed")
+                } catch let err as HTTPClientError {
+                    expect(err.isIDPTokenUnavailable) == true
+                } catch {
+                    fail("Unexpected error type: \(error)")
+                }
+                done()
             }
+        }
     }
 
-    func testInterceptWithDelegate() {
-        let idpClientMock = MockIDPClient()
-        let session = DefaultIDPSession(
-            client: idpClientMock,
-            storage: MemStorage(accessToken: token),
-            schedulers: TestSchedulers(compute: DispatchQueue.test.eraseToAnyScheduler()),
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock
-        )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
-        let chain = PassThroughChain(request: request)
-        let delegate = TestDelegate()
-        delegate.shouldAuthorize = true
-
-        let sut = IDPInterceptor(session: session, delegate: delegate)
-        sut.interceptPublisher(chain: chain)
-            .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 1
-                expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
-                expect(delegate.incomingRequests.count) == 1
-                expect(delegate.incomingRequests[0]) == request
-            })
-    }
-
-    func testInterceptWithDelegateReturningTrueAndNoToken() {
-        let idpClientMock = MockIDPClient()
-        let session = DefaultIDPSession(
-            client: idpClientMock,
-            storage: MemStorage(token: nil),
-            schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock
-        )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
-        let chain = PassThroughChain(request: request)
-        let delegate = TestDelegate()
-        delegate.shouldAuthorize = true
-
-        let sut = IDPInterceptor(session: session, delegate: delegate)
-        sut.interceptPublisher(chain: chain)
-            .test(failure: { error in
-                // assert error
-                expect(error.isIDPTokenUnavailable) == true // Wrong error type when false
-                expect(delegate.incomingRequests.count) == 1
-                expect(delegate.incomingRequests[0]) == request
-            }) { _, _, _ in
-                fail("Test should have failed")
-            }
-    }
-
-    func testInterceptWithDelegateReturningFalseAndNoToken() {
-        let idpClientMock = MockIDPClient()
-        let session = DefaultIDPSession(
-            client: idpClientMock,
-            storage: NoTokenStorage(),
-            schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock
-        )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
-        let chain = PassThroughChain(request: request)
-        let delegate = TestDelegate()
-        delegate.shouldAuthorize = false
-
-        let sut = IDPInterceptor(session: session, delegate: delegate)
-        sut.interceptPublisher(chain: chain)
-            .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 1
-                expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]).to(beNil())
-                expect(delegate.incomingRequests[0]) == request
-                expect(delegate.incomingRequests.count) == 1
-            })
-    }
-
-    func testInterceptWithDelegateReturningFalse() {
-        let idpClientMock = MockIDPClient()
-        let session = DefaultIDPSession(
-            client: idpClientMock,
-            storage: MemStorage(accessToken: token),
-            schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock
-        )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
-        let chain = PassThroughChain(request: request)
-        let delegate = TestDelegate()
-        delegate.shouldAuthorize = false
-
-        let sut = IDPInterceptor(session: session, delegate: delegate)
-        sut.interceptPublisher(chain: chain)
-            .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 1
-                expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]).to(beNil())
-                expect(delegate.incomingRequests[0]) == request
-                expect(delegate.incomingRequests.count) == 1
-            })
-    }
-
-    func testCallWith401UnauthorizedResponseInvalidatesAccessToken() {
+    func testCallWith401UnauthorizedResponseInvalidatesAccessToken() async {
         let idpClientMock = MockIDPClient()
         let storage = MemStorage(accessToken: token)
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
-        let delegate = TestDelegate()
-        delegate.shouldAuthorize = true
-
-        let sut = IDPInterceptor(session: session, delegate: delegate)
+        let sut = IDPInterceptor(session: session)
 
         storage.token.first().test(expectations: { token in
             expect(token).toNot(beNil())
@@ -207,13 +111,9 @@ final class IDPInterceptorTests: XCTestCase {
             status: HTTPStatusCode.unauthorized
         )
 
-        sut.interceptPublisher(chain: chain)
-            .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 1
-                expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
-                expect(delegate.incomingRequests[0]) == request
-                expect(delegate.incomingRequests.count) == 1
-            })
+        _ = try? await sut.intercept(chain: chain)
+        expect(chain.incomingProceedRequests.count) == 1
+        expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
 
         storage.token.first().test(expectations: { token in
             expect(token).to(beNil())
@@ -249,17 +149,5 @@ extension HTTPClientError {
             return false
         }
         return true
-    }
-}
-
-extension IDPInterceptorTests {
-    class TestDelegate: IDPSessionDelegate {
-        var incomingRequests = [URLRequest]()
-        var shouldAuthorize = false
-
-        func shouldAuthorize(request: URLRequest) -> Bool {
-            incomingRequests.append(request)
-            return shouldAuthorize
-        }
     }
 }

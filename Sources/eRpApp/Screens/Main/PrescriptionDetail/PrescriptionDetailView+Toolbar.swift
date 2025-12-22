@@ -39,10 +39,11 @@ extension PrescriptionDetailView {
                         .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnToolbarItem)
                     }
                 }
-                .sheet(item: $store
-                    .scope(state: \.destination?.sharePrescription,
-                           action: \.destination.sharePrescription)) { store in
-                        ShareViewController(store: store)
+                .sheet(item: $store.scope(
+                    state: \.destination?.sharePrescription,
+                    action: \.destination.sharePrescription
+                )) { store in
+                    ShareViewController(store: store)
                 }
         }
 
@@ -56,6 +57,17 @@ extension PrescriptionDetailView {
                         label: { Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share) }
                     )
                     .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnShare)
+
+                    if store.isEURedeemable {
+                        Button(
+                            action: { store.send(.delegate(.euRedeemButtonTapped)) },
+                            label: {
+                                Label(L10n.dtlBtnRedeemEuPrsc, systemImage: SFSymbolName.globeEU)
+                            }
+                        )
+                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnRedeemEuPrsc)
+                    }
+
                     if store.prescription.type == .scanned {
                         Button(
                             action: { store.send(.toggleRedeemPrescription) },

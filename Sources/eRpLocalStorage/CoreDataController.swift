@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import CoreData
 import eRpKit
@@ -129,9 +130,9 @@ public class CoreDataController {
 }
 
 extension CoreDataController {
-    // sourcery: CodedError = "500"
+    @CodedError("500")
     public enum Error: Swift.Error, LocalizedError, Equatable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case initialization(error: Swift.Error)
 
         public var errorDescription: String? {

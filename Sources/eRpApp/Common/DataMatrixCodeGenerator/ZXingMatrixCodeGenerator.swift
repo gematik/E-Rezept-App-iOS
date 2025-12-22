@@ -20,14 +20,15 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import eRpKit
 import ZXingCpp
 
 class ZXingMatrixCodeGenerator: MatrixCodeGenerator {
-    // sourcery: CodedError = "009"
+    @CodedError("009")
     enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case cgImageConversion(String)
     }
 

@@ -33,7 +33,7 @@ public struct SectionContainerColoredIconLabelStyle: LabelStyle {
                 .frame(width: 22, height: 22, alignment: .center)
                 .font(.body.weight(.semibold))
             configuration.title
-                .foregroundColor(Color(.label))
+                .foregroundColor(Colors.systemLabel)
         }
         .padding(.leading, padding ? 16 : 0)
     }

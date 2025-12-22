@@ -36,7 +36,6 @@ class DemoProfileDataStore: ProfileDataStore {
     private var dummyProfiles: [Profile] = [
         anna,
     ]
-
     init() {}
 
     var profilesPublisher: CurrentValueSubject<[Profile], Never> = CurrentValueSubject([anna])

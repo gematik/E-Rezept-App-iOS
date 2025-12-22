@@ -49,55 +49,23 @@ final class PharmacyIntegrationTests: XCTestCase {
         }
     }
 
-    func testCompleteFlow() {
-        withDependencies {
+    func testCompleteFlow() async {
+        await withDependencies {
             $0.context = .live
+            $0.pharmacyRepository.loadLocalCount = { _ in [] }
         } operation: {
-            let mockPharmacyLocalDataStore = MockPharmacyLocalDataStore()
-            mockPharmacyLocalDataStore.listPharmaciesCountReturnValue = Just([])
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-
-            let sut: PharmacyRepository = DefaultPharmacyRepository(
-                disk: mockPharmacyLocalDataStore,
-                cloud: HealthcareServiceFHIRDataSource(
-                    fhirClient: FHIRClient(
-                        server: environment.appConfiguration.fhirVzd,
-                        httpClient: DefaultHTTPClient(
-                            urlSessionConfiguration: .ephemeral,
-                            interceptors: [
-                                AdditionalHeaderInterceptor(
-                                    additionalHeader: environment.appConfiguration.fhirVzdAdditionalHeader
-                                ),
-                                LoggingInterceptor(log: .body),
-                            ]
-                        ),
-                        // use a receiveQueue that is not main since that one is blocked by the test()'s semaphore
-                        receiveQueue: DispatchQueue.global().eraseToAnyScheduler()
-                    ),
-                    session: DefaultFHIRVZDSession(
-                        config: FHIRVZDClient.Configuration(
-                            eRezeptAPIServer: environment.appConfiguration.eRezept,
-                            eRezeptAdditionalHeader: environment.appConfiguration.eRezeptAdditionalHeader
-                        )
-                    )
-                )
-            )
+            let sut = PharmacyRepository.liveValue
 
             var success = false
-            sut.searchRemote(searchTerm: "Adler", position: nil, filter: [])
-                .test(
-                    timeout: 120,
-                    failure: { error in
-                        fail("Failed with error: \(error)")
-                    },
-                    expectations: { pharmacyLocations in
-                        if !pharmacyLocations.isEmpty {
-                            success = true
-                        }
-                        Swift.print("pharmacyLocations", pharmacyLocations)
-                    }
-                )
+            do {
+                let pharmacyLocations = try await sut.searchRemote("Adler", nil, [])
+                if !pharmacyLocations.isEmpty {
+                    success = true
+                }
+                Swift.print("pharmacyLocations", pharmacyLocations)
+            } catch {
+                fail("Failed with error: \(error)")
+            }
             expect(success) == true
         }
     }

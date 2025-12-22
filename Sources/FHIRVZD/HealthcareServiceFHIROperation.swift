@@ -44,6 +44,8 @@ public enum HealthcareServiceFHIROperation<Value, Handler: FHIRResponseHandler> 
     case fetchInsurance(ikNumber: String, accessToken: String?, handler: Handler)
     /// Get all organizations related to DiGa
     case fetchAllInsurances(accessToken: String?, handler: Handler)
+    ///
+    case fetchEuCountries(accessToken: String?, handler: Handler)
 }
 
 extension HealthcareServiceFHIROperation: FHIRClientOperation {
@@ -52,45 +54,59 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         case let .searchPharmacies(_, _, _, _, handler),
              let .fetchPharmacy(_, _, handler),
              let .fetchInsurance(_, _, handler),
-             let .fetchAllInsurances(_, handler):
+             let .fetchAllInsurances(_, handler),
+             let .fetchEuCountries(_, handler):
             return try handler.handle(response: response)
         }
     }
 
     public var relativeUrlString: String? {
         var queryItems: [URLQueryItem] = []
-        queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
-        queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:location"))
-        queryItems.append(URLQueryItem(name: "organization.active", value: "true"))
 
         switch self {
         case let .searchPharmacies(searchTerm, position, filter, _, _):
             queryItems.append(URLQueryItem(name: "_count", value: "100"))
-            queryItems
-                .append(URLQueryItem(name: "organization.type",
-                                     value: FHIRDirectory.Key.OrganizationProfession.publicPharmacy.rawValue))
 
-            if !searchTerm.isEmpty {
-                // Sanitize search term for special search characters (double quote, dot)
-                let sanatizedSearchTerm = searchTerm
-                    .replacingOccurrences(of: "\"", with: "", options: .literal)
-                    .replacingOccurrences(of: ".", with: "", options: .literal)
-                queryItems.append(URLQueryItem(
-                    name: "_text",
-                    value: sanatizedSearchTerm
-                ))
-            }
-            if position != nil, let latitude = position?.latitude, let longitude = position?.longitude {
-                queryItems.append(URLQueryItem(name: "_sortby", value: "near"))
-                queryItems.append(URLQueryItem(name: "location.near", value: "\(latitude)|\(longitude)|20|km"))
+            // Sanitize search term for special search characters (double quote, dot)
+            let sanatizedSearchTerm = searchTerm.isEmpty ? nil : searchTerm
+                .replacingOccurrences(of: "\"", with: "", options: .literal)
+                .replacingOccurrences(of: ".", with: "", options: .literal)
+
+            if let position = position {
+                // Use nearPharmacy operation for radius search sorted by distance
+                // Per FHIR_VZD_HOWTO_Search.adoc section 5.1: uses "text" parameter (not "_text")
+                queryItems.append(URLQueryItem(name: "_query", value: "nearPharmacy"))
+                queryItems.append(URLQueryItem(name: "longitude", value: "\(position.longitude)"))
+                queryItems.append(URLQueryItem(name: "latitude", value: "\(position.latitude)"))
+                queryItems.append(URLQueryItem(name: "distance", value: "100"))
+                if let sanatizedSearchTerm = sanatizedSearchTerm {
+                    queryItems.append(URLQueryItem(name: "text", value: sanatizedSearchTerm))
+                }
+            } else {
+                // Standard FHIR search without location uses "_text" parameter
+                if let sanatizedSearchTerm = sanatizedSearchTerm {
+                    queryItems.append(URLQueryItem(name: "_text", value: sanatizedSearchTerm))
+                }
+                queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
+                queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:location"))
+                queryItems
+                    .append(URLQueryItem(name: "organization.type",
+                                         value: FHIRDirectory.Key.OrganizationProfession.publicPharmacy.rawValue))
+                queryItems.append(URLQueryItem(name: "organization.active", value: "true"))
             }
             queryItems.append(contentsOf: filter.map { filter in
                 URLQueryItem(name: filter.key, value: filter.value)
             })
         case let .fetchPharmacy(telematikId, _, _):
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:location"))
+            queryItems.append(URLQueryItem(name: "organization.active", value: "true"))
             queryItems.append(URLQueryItem(name: "_count", value: "1"))
             queryItems.append(URLQueryItem(name: "organization.identifier", value: "\(telematikId)"))
         case let .fetchInsurance(ikNumber, _, _):
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:location"))
+            queryItems.append(URLQueryItem(name: "organization.active", value: "true"))
             queryItems.append(URLQueryItem(name: "_count", value: "1"))
             // Set type for only insurance companies
             queryItems
@@ -108,6 +124,9 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
                 .append(URLQueryItem(name: "organization.identifier",
                                      value: "https://gematik.de/fhir/sid/telematik-id|"))
         case .fetchAllInsurances:
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:location"))
+            queryItems.append(URLQueryItem(name: "organization.active", value: "true"))
             // Set type for only insurance companies
             queryItems
                 .append(URLQueryItem(name: "organization.type",
@@ -117,6 +136,19 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
             queryItems
                 .append(URLQueryItem(name: "organization.identifier",
                                      value: "https://gematik.de/fhir/sid/telematik-id|"))
+        case .fetchEuCountries:
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
+            queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:location"))
+            queryItems.append(URLQueryItem(name: "organization.active", value: "true"))
+            queryItems.append(URLQueryItem(name: "_count", value: "100"))
+
+            queryItems
+                .append(URLQueryItem(name: "organization.type",
+                                     value: FHIRDirectory.Key.OrganizationProfession.ncpehFacility.rawValue))
+
+            queryItems
+                .append(URLQueryItem(name: "specialty",
+                                     value: "57833-6"))
         }
 
         var urlComps = URLComponents(string: "fdv/search/HealthcareService")
@@ -132,7 +164,8 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         case let .searchPharmacies(_, _, _, token, _),
              let .fetchPharmacy(_, token, _),
              let .fetchInsurance(_, token, _),
-             let .fetchAllInsurances(token, _):
+             let .fetchAllInsurances(token, _),
+             let .fetchEuCountries(token, _):
             if let token {
                 headers["Authorization"] = "Bearer \(token)"
             }
@@ -156,7 +189,8 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         case let .searchPharmacies(_, _, _, _, handler),
              let .fetchPharmacy(_, _, handler),
              let .fetchInsurance(_, _, handler),
-             let .fetchAllInsurances(_, handler):
+             let .fetchAllInsurances(_, handler),
+             let .fetchEuCountries(_, handler):
             return handler.acceptFormat
         }
     }

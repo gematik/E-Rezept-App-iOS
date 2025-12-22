@@ -36,7 +36,7 @@ extension DiGaDetailView {
 
                 Text(store.patientInfoText)
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
 
                 ProgressListView(store: store)
 
@@ -64,19 +64,19 @@ extension DiGaDetailView {
                             HStack(spacing: 4) {
                                 Text(L10n.digaDtlTxtOverviewRefreshUpdate.text)
                                     .font(.subheadline)
-                                    .foregroundColor(Color(.secondaryLabel))
+                                    .foregroundColor(Colors.systemLabelSecondary)
                                 let localizedString = uiDateFormatter.relativeTime(
                                     from: refreshTime,
                                     formattingContext: .middleOfSentence
                                 )
                                 Text(localizedString)
                                     .font(.subheadline)
-                                    .foregroundColor(Color(.secondaryLabel))
+                                    .foregroundColor(Colors.systemLabelSecondary)
                             }
                             Text(L10n.digaDtlTxtOverviewRefreshWait)
                                 .font(.subheadline)
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(Color(.secondaryLabel))
+                                .foregroundColor(Colors.systemLabelSecondary)
                         }
                     }.frame(maxWidth: .infinity, alignment: .center)
                 }

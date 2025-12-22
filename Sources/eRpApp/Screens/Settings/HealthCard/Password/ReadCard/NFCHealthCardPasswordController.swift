@@ -20,10 +20,12 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import CombineSchedulers
 import CoreNFC
 import Dependencies
+import eRpResources
 import HealthCardControl
 import NFCCardReaderProvider
 
@@ -88,21 +90,21 @@ enum NFCHealthCardPasswordControllerResponse: Equatable {
     }
 }
 
-// sourcery: CodedError = "026"
+@CodedError("026")
 enum NFCHealthCardPasswordControllerError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case cardError(NFCTagReaderSession.Error)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case openSecureSession(Swift.Error)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case resetRetryCounter(Swift.Error)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case wrongCan
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     case changeReferenceData(Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     case couldNotInitializeSession
-    // sourcery: errorCode = "07"
+    @ErrorCode("07")
     /// Any error regarding the communication with the NFC health card itself
     /// or sending/receiving data (operation execution)
     case nfcHealthCardSession(NFCHealthCardSessionError)

@@ -26,11 +26,13 @@ import Dependencies
 @testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
+import FeatureHelpers
 import Foundation
 import IdentifiedCollections
 import Nimble
 import OpenSSL
 import Pharmacy
+import Profiles
 import TestUtils
 import XCTest
 
@@ -58,7 +60,7 @@ final class AVSRedeemServiceTests: XCTestCase {
         let order3: OrderRequest = .Fixtures.order3
 
         var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
-        let cancellable = sut.redeem([order1, order2, order3])
+        let cancellable = sut.redeem([order1, order2, order3], profileId: UUID())
             .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
             .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
             .sink { completion in
@@ -121,7 +123,7 @@ final class AVSRedeemServiceTests: XCTestCase {
         let order3: OrderRequest = .Fixtures.order3
 
         var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
-        let cancellable = sut.redeem([order1, order2, order3])
+        let cancellable = sut.redeem([order1, order2, order3], profileId: UUID())
             .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
             .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
             .sink { completion in
@@ -186,7 +188,7 @@ final class AVSRedeemServiceTests: XCTestCase {
             let order3: OrderRequest = .Fixtures.order3
 
             var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
-            let cancellable = sut.redeem([order1, order2, order3])
+            let cancellable = sut.redeem([order1, order2, order3], profileId: UUID())
                 .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
                 .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
                 .sink { completion in
@@ -235,7 +237,7 @@ final class AVSRedeemServiceTests: XCTestCase {
 
         let order: OrderRequest = .Fixtures.orderNoEndpoint
 
-        let cancellable = sut.redeem([order])
+        let cancellable = sut.redeem([order], profileId: UUID())
             .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
             .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
             .sink { completion in
@@ -274,7 +276,7 @@ final class AVSRedeemServiceTests: XCTestCase {
         let orders: [OrderRequest] = OrderRequest.Fixtures.orders(with: orderId)
 
         // redeem once
-        let cancellable = sut.redeem(orders)
+        let cancellable = sut.redeem(orders, profileId: UUID())
             .sink { completion in
                 switch completion {
                 case .finished:

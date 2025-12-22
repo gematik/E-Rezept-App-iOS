@@ -20,6 +20,8 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
+import CodedError
 import Combine
 import CombineSchedulers
 import Foundation
@@ -27,20 +29,20 @@ import HTTPClient
 import ModelsR4
 
 extension FHIRClient {
-    // sourcery: CodedError = "520"
     /// Error cases when using the `FHIRClient`
+    @CodedError("520")
     public enum Error: Swift.Error, Equatable, CustomStringConvertible, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case internalError(String)
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         /// When the server returned a successful response with inconsistent response data.
         /// E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.
         case inconsistentResponse
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case decoding(Swift.Error)
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         case unknown(Swift.Error)
-        // sourcery: errorCode = "07"
+        @ErrorCode("07")
         case http(FHIRClientHttpError)
 
         public var description: String {
@@ -121,29 +123,31 @@ public class FHIRClient {
         if let bodyData = operation.httpBody {
             request.httpBody = bodyData
         }
-        return httpClient.sendPublisher(request: request)
-            .receive(on: receiveQueue)
-            .tryMap { data, urlResponse, status in
-                let response = FHIRClient.Response.from(response: urlResponse, status: status, data: data)
+        return Future {
+            try await self.httpClient.send(request: request)
+        }
+        .receive(on: receiveQueue)
+        .tryMap { data, urlResponse, status in
+            let response = FHIRClient.Response.from(response: urlResponse, status: status, data: data)
 
-                guard response.status.isSuccessful else {
-                    let urlError = URLError(
-                        URLError.Code(rawValue: response.status.rawValue),
-                        userInfo: ["body": response.body]
-                    )
-                    let outcome = try? JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: response.body)
+            guard response.status.isSuccessful else {
+                let urlError = URLError(
+                    URLError.Code(rawValue: response.status.rawValue),
+                    userInfo: ["body": response.body]
+                )
+                let outcome = try? JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: response.body)
 
-                    throw Error.http(
-                        FHIRClientHttpError(httpClientError: .httpError(urlError), operationOutcome: outcome)
-                    )
-                }
-
-                return try operation.handle(response: response)
+                throw Error.http(
+                    FHIRClientHttpError(httpClientError: .httpError(urlError), operationOutcome: outcome)
+                )
             }
-            .mapError { error in
-                error.asFHIRClientError()
-            }
-            .eraseToAnyPublisher()
+
+            return try operation.handle(response: response)
+        }
+        .mapError { error in
+            error.asFHIRClientError()
+        }
+        .eraseToAnyPublisher()
     }
 }
 

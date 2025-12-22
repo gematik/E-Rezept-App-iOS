@@ -14,6 +14,10 @@ import TestUtils
 import TrustStore
 import VAUClient
 import ZXingCpp
+import FeatureHelpers
+import FeatureCardWall
+import Profiles
+import eRpResources
 
 @testable import eRpFeatures
 
@@ -537,21 +541,636 @@ final class MockERPDateFormatter: ERPDateFormatter {
 }
 
 
-// MARK: - MockFeedbackReceiver -
+// MARK: - MockErxLocalDataStore -
 
-final class MockFeedbackReceiver: FeedbackReceiver {
+final class MockErxLocalDataStore: ErxLocalDataStore {
     
-   // MARK: - hapticFeedbackSuccess
+   // MARK: - fetchTask
 
-    var hapticFeedbackSuccessCallsCount = 0
-    var hapticFeedbackSuccessCalled: Bool {
-        hapticFeedbackSuccessCallsCount > 0
+    var fetchTaskByAccessCodeCallsCount = 0
+    var fetchTaskByAccessCodeCalled: Bool {
+        fetchTaskByAccessCodeCallsCount > 0
     }
-    var hapticFeedbackSuccessClosure: (() -> Void)?
+    var fetchTaskByAccessCodeReceivedArguments: (id: ErxTask.ID, accessCode: String?)?
+    var fetchTaskByAccessCodeReceivedInvocations: [(id: ErxTask.ID, accessCode: String?)] = []
+    var fetchTaskByAccessCodeReturnValue: AnyPublisher<ErxTask?, LocalStoreError>!
+    var fetchTaskByAccessCodeClosure: ((ErxTask.ID, String?) -> AnyPublisher<ErxTask?, LocalStoreError>)?
 
-    func hapticFeedbackSuccess() {
-        hapticFeedbackSuccessCallsCount += 1
-        hapticFeedbackSuccessClosure?()
+    func fetchTask(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, LocalStoreError> {
+        fetchTaskByAccessCodeCallsCount += 1
+        fetchTaskByAccessCodeReceivedArguments = (id: id, accessCode: accessCode)
+        fetchTaskByAccessCodeReceivedInvocations.append((id: id, accessCode: accessCode))
+        return fetchTaskByAccessCodeClosure.map({ $0(id, accessCode) }) ?? fetchTaskByAccessCodeReturnValue
+    }
+    
+   // MARK: - listAllTasks
+
+    var listAllTasksOfCallsCount = 0
+    var listAllTasksOfCalled: Bool {
+        listAllTasksOfCallsCount > 0
+    }
+    var listAllTasksOfReceivedProfileId: UUID?
+    var listAllTasksOfReceivedInvocations: [UUID?] = []
+    var listAllTasksOfReturnValue: AnyPublisher<[ErxTask], LocalStoreError>!
+    var listAllTasksOfClosure: ((UUID?) -> AnyPublisher<[ErxTask], LocalStoreError>)?
+
+    func listAllTasks(of profileId: UUID?) -> AnyPublisher<[ErxTask], LocalStoreError> {
+        listAllTasksOfCallsCount += 1
+        listAllTasksOfReceivedProfileId = profileId
+        listAllTasksOfReceivedInvocations.append(profileId)
+        return listAllTasksOfClosure.map({ $0(profileId) }) ?? listAllTasksOfReturnValue
+    }
+    
+   // MARK: - fetchLatestLastModifiedForErxTasks
+
+    var fetchLatestLastModifiedForErxTasksOfCallsCount = 0
+    var fetchLatestLastModifiedForErxTasksOfCalled: Bool {
+        fetchLatestLastModifiedForErxTasksOfCallsCount > 0
+    }
+    var fetchLatestLastModifiedForErxTasksOfReceivedProfileId: UUID?
+    var fetchLatestLastModifiedForErxTasksOfReceivedInvocations: [UUID?] = []
+    var fetchLatestLastModifiedForErxTasksOfReturnValue: AnyPublisher<String?, LocalStoreError>!
+    var fetchLatestLastModifiedForErxTasksOfClosure: ((UUID?) -> AnyPublisher<String?, LocalStoreError>)?
+
+    func fetchLatestLastModifiedForErxTasks(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
+        fetchLatestLastModifiedForErxTasksOfCallsCount += 1
+        fetchLatestLastModifiedForErxTasksOfReceivedProfileId = profileId
+        fetchLatestLastModifiedForErxTasksOfReceivedInvocations.append(profileId)
+        return fetchLatestLastModifiedForErxTasksOfClosure.map({ $0(profileId) }) ?? fetchLatestLastModifiedForErxTasksOfReturnValue
+    }
+    
+   // MARK: - save
+
+    var saveTasksInUpdateProfileLastAuthenticatedCallsCount = 0
+    var saveTasksInUpdateProfileLastAuthenticatedCalled: Bool {
+        saveTasksInUpdateProfileLastAuthenticatedCallsCount > 0
+    }
+    var saveTasksInUpdateProfileLastAuthenticatedReceivedArguments: (tasks: [ErxTask], profileId: UUID?, updateProfileLastAuthenticated: Bool)?
+    var saveTasksInUpdateProfileLastAuthenticatedReceivedInvocations: [(tasks: [ErxTask], profileId: UUID?, updateProfileLastAuthenticated: Bool)] = []
+    var saveTasksInUpdateProfileLastAuthenticatedReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var saveTasksInUpdateProfileLastAuthenticatedClosure: (([ErxTask], UUID?, Bool) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func save(tasks: [ErxTask], in profileId: UUID?, updateProfileLastAuthenticated: Bool) -> AnyPublisher<Bool, LocalStoreError> {
+        saveTasksInUpdateProfileLastAuthenticatedCallsCount += 1
+        saveTasksInUpdateProfileLastAuthenticatedReceivedArguments = (tasks: tasks, profileId: profileId, updateProfileLastAuthenticated: updateProfileLastAuthenticated)
+        saveTasksInUpdateProfileLastAuthenticatedReceivedInvocations.append((tasks: tasks, profileId: profileId, updateProfileLastAuthenticated: updateProfileLastAuthenticated))
+        return saveTasksInUpdateProfileLastAuthenticatedClosure.map({ $0(tasks, profileId, updateProfileLastAuthenticated) }) ?? saveTasksInUpdateProfileLastAuthenticatedReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteTasksInCallsCount = 0
+    var deleteTasksInCalled: Bool {
+        deleteTasksInCallsCount > 0
+    }
+    var deleteTasksInReceivedArguments: (tasks: [ErxTask], profileId: UUID?)?
+    var deleteTasksInReceivedInvocations: [(tasks: [ErxTask], profileId: UUID?)] = []
+    var deleteTasksInReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var deleteTasksInClosure: (([ErxTask], UUID?) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func delete(tasks: [ErxTask], in profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        deleteTasksInCallsCount += 1
+        deleteTasksInReceivedArguments = (tasks: tasks, profileId: profileId)
+        deleteTasksInReceivedInvocations.append((tasks: tasks, profileId: profileId))
+        return deleteTasksInClosure.map({ $0(tasks, profileId) }) ?? deleteTasksInReturnValue
+    }
+    
+   // MARK: - listAllTasksWithoutProfile
+
+    var listAllTasksWithoutProfileCallsCount = 0
+    var listAllTasksWithoutProfileCalled: Bool {
+        listAllTasksWithoutProfileCallsCount > 0
+    }
+    var listAllTasksWithoutProfileReturnValue: AnyPublisher<[ErxTask], LocalStoreError>!
+    var listAllTasksWithoutProfileClosure: (() -> AnyPublisher<[ErxTask], LocalStoreError>)?
+
+    func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], LocalStoreError> {
+        listAllTasksWithoutProfileCallsCount += 1
+        return listAllTasksWithoutProfileClosure.map({ $0() }) ?? listAllTasksWithoutProfileReturnValue
+    }
+    
+   // MARK: - listAllCommunications
+
+    var listAllCommunicationsForCallsCount = 0
+    var listAllCommunicationsForCalled: Bool {
+        listAllCommunicationsForCallsCount > 0
+    }
+    var listAllCommunicationsForReceivedProfile: ErxTask.Communication.Profile?
+    var listAllCommunicationsForReceivedInvocations: [ErxTask.Communication.Profile] = []
+    var listAllCommunicationsForReturnValue: AnyPublisher<[ErxTask.Communication], LocalStoreError>!
+    var listAllCommunicationsForClosure: ((ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError>)?
+
+    func listAllCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
+        listAllCommunicationsForCallsCount += 1
+        listAllCommunicationsForReceivedProfile = profile
+        listAllCommunicationsForReceivedInvocations.append(profile)
+        return listAllCommunicationsForClosure.map({ $0(profile) }) ?? listAllCommunicationsForReturnValue
+    }
+    
+   // MARK: - fetchLatestTimestampForCommunications
+
+    var fetchLatestTimestampForCommunicationsOfCallsCount = 0
+    var fetchLatestTimestampForCommunicationsOfCalled: Bool {
+        fetchLatestTimestampForCommunicationsOfCallsCount > 0
+    }
+    var fetchLatestTimestampForCommunicationsOfReceivedProfileId: UUID?
+    var fetchLatestTimestampForCommunicationsOfReceivedInvocations: [UUID?] = []
+    var fetchLatestTimestampForCommunicationsOfReturnValue: AnyPublisher<String?, LocalStoreError>!
+    var fetchLatestTimestampForCommunicationsOfClosure: ((UUID?) -> AnyPublisher<String?, LocalStoreError>)?
+
+    func fetchLatestTimestampForCommunications(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
+        fetchLatestTimestampForCommunicationsOfCallsCount += 1
+        fetchLatestTimestampForCommunicationsOfReceivedProfileId = profileId
+        fetchLatestTimestampForCommunicationsOfReceivedInvocations.append(profileId)
+        return fetchLatestTimestampForCommunicationsOfClosure.map({ $0(profileId) }) ?? fetchLatestTimestampForCommunicationsOfReturnValue
+    }
+    
+   // MARK: - save
+
+    var saveCommunicationsOfCallsCount = 0
+    var saveCommunicationsOfCalled: Bool {
+        saveCommunicationsOfCallsCount > 0
+    }
+    var saveCommunicationsOfReceivedArguments: (communications: [ErxTask.Communication], profileId: UUID?)?
+    var saveCommunicationsOfReceivedInvocations: [(communications: [ErxTask.Communication], profileId: UUID?)] = []
+    var saveCommunicationsOfReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var saveCommunicationsOfClosure: (([ErxTask.Communication], UUID?) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func save(communications: [ErxTask.Communication], of profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        saveCommunicationsOfCallsCount += 1
+        saveCommunicationsOfReceivedArguments = (communications: communications, profileId: profileId)
+        saveCommunicationsOfReceivedInvocations.append((communications: communications, profileId: profileId))
+        return saveCommunicationsOfClosure.map({ $0(communications, profileId) }) ?? saveCommunicationsOfReturnValue
+    }
+    
+   // MARK: - allUnreadCommunications
+
+    var allUnreadCommunicationsOfForCallsCount = 0
+    var allUnreadCommunicationsOfForCalled: Bool {
+        allUnreadCommunicationsOfForCallsCount > 0
+    }
+    var allUnreadCommunicationsOfForReceivedArguments: (profileId: UUID?, profile: ErxTask.Communication.Profile)?
+    var allUnreadCommunicationsOfForReceivedInvocations: [(profileId: UUID?, profile: ErxTask.Communication.Profile)] = []
+    var allUnreadCommunicationsOfForReturnValue: AnyPublisher<[ErxTask.Communication], LocalStoreError>!
+    var allUnreadCommunicationsOfForClosure: ((UUID?, ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError>)?
+
+    func allUnreadCommunications(of profileId: UUID?, for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
+        allUnreadCommunicationsOfForCallsCount += 1
+        allUnreadCommunicationsOfForReceivedArguments = (profileId: profileId, profile: profile)
+        allUnreadCommunicationsOfForReceivedInvocations.append((profileId: profileId, profile: profile))
+        return allUnreadCommunicationsOfForClosure.map({ $0(profileId, profile) }) ?? allUnreadCommunicationsOfForReturnValue
+    }
+    
+   // MARK: - listAllMedicationDispenses
+
+    var listAllMedicationDispensesOfCallsCount = 0
+    var listAllMedicationDispensesOfCalled: Bool {
+        listAllMedicationDispensesOfCallsCount > 0
+    }
+    var listAllMedicationDispensesOfReceivedProfileId: UUID?
+    var listAllMedicationDispensesOfReceivedInvocations: [UUID?] = []
+    var listAllMedicationDispensesOfReturnValue: AnyPublisher<[ErxMedicationDispense], LocalStoreError>!
+    var listAllMedicationDispensesOfClosure: ((UUID?) -> AnyPublisher<[ErxMedicationDispense], LocalStoreError>)?
+
+    func listAllMedicationDispenses(of profileId: UUID?) -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
+        listAllMedicationDispensesOfCallsCount += 1
+        listAllMedicationDispensesOfReceivedProfileId = profileId
+        listAllMedicationDispensesOfReceivedInvocations.append(profileId)
+        return listAllMedicationDispensesOfClosure.map({ $0(profileId) }) ?? listAllMedicationDispensesOfReturnValue
+    }
+    
+   // MARK: - save
+
+    var saveMedicationDispensesCallsCount = 0
+    var saveMedicationDispensesCalled: Bool {
+        saveMedicationDispensesCallsCount > 0
+    }
+    var saveMedicationDispensesReceivedMedicationDispenses: [ErxMedicationDispense]?
+    var saveMedicationDispensesReceivedInvocations: [[ErxMedicationDispense]] = []
+    var saveMedicationDispensesReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var saveMedicationDispensesClosure: (([ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
+        saveMedicationDispensesCallsCount += 1
+        saveMedicationDispensesReceivedMedicationDispenses = medicationDispenses
+        saveMedicationDispensesReceivedInvocations.append(medicationDispenses)
+        return saveMedicationDispensesClosure.map({ $0(medicationDispenses) }) ?? saveMedicationDispensesReturnValue
+    }
+    
+   // MARK: - fetchChargeItem
+
+    var fetchChargeItemOfByCallsCount = 0
+    var fetchChargeItemOfByCalled: Bool {
+        fetchChargeItemOfByCallsCount > 0
+    }
+    var fetchChargeItemOfByReceivedArguments: (profileId: UUID?, chargeItemID: ErxSparseChargeItem.ID)?
+    var fetchChargeItemOfByReceivedInvocations: [(profileId: UUID?, chargeItemID: ErxSparseChargeItem.ID)] = []
+    var fetchChargeItemOfByReturnValue: AnyPublisher<ErxSparseChargeItem?, LocalStoreError>!
+    var fetchChargeItemOfByClosure: ((UUID?, ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError>)?
+
+    func fetchChargeItem(of profileId: UUID?, by chargeItemID: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
+        fetchChargeItemOfByCallsCount += 1
+        fetchChargeItemOfByReceivedArguments = (profileId: profileId, chargeItemID: chargeItemID)
+        fetchChargeItemOfByReceivedInvocations.append((profileId: profileId, chargeItemID: chargeItemID))
+        return fetchChargeItemOfByClosure.map({ $0(profileId, chargeItemID) }) ?? fetchChargeItemOfByReturnValue
+    }
+    
+   // MARK: - fetchLatestTimestampForChargeItems
+
+    var fetchLatestTimestampForChargeItemsOfCallsCount = 0
+    var fetchLatestTimestampForChargeItemsOfCalled: Bool {
+        fetchLatestTimestampForChargeItemsOfCallsCount > 0
+    }
+    var fetchLatestTimestampForChargeItemsOfReceivedProfileId: UUID?
+    var fetchLatestTimestampForChargeItemsOfReceivedInvocations: [UUID?] = []
+    var fetchLatestTimestampForChargeItemsOfReturnValue: AnyPublisher<String?, LocalStoreError>!
+    var fetchLatestTimestampForChargeItemsOfClosure: ((UUID?) -> AnyPublisher<String?, LocalStoreError>)?
+
+    func fetchLatestTimestampForChargeItems(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
+        fetchLatestTimestampForChargeItemsOfCallsCount += 1
+        fetchLatestTimestampForChargeItemsOfReceivedProfileId = profileId
+        fetchLatestTimestampForChargeItemsOfReceivedInvocations.append(profileId)
+        return fetchLatestTimestampForChargeItemsOfClosure.map({ $0(profileId) }) ?? fetchLatestTimestampForChargeItemsOfReturnValue
+    }
+    
+   // MARK: - listAllChargeItems
+
+    var listAllChargeItemsOfCallsCount = 0
+    var listAllChargeItemsOfCalled: Bool {
+        listAllChargeItemsOfCallsCount > 0
+    }
+    var listAllChargeItemsOfReceivedProfileId: UUID?
+    var listAllChargeItemsOfReceivedInvocations: [UUID?] = []
+    var listAllChargeItemsOfReturnValue: AnyPublisher<[ErxSparseChargeItem], LocalStoreError>!
+    var listAllChargeItemsOfClosure: ((UUID?) -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError>)?
+
+    func listAllChargeItems(of profileId: UUID?) -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError> {
+        listAllChargeItemsOfCallsCount += 1
+        listAllChargeItemsOfReceivedProfileId = profileId
+        listAllChargeItemsOfReceivedInvocations.append(profileId)
+        return listAllChargeItemsOfClosure.map({ $0(profileId) }) ?? listAllChargeItemsOfReturnValue
+    }
+    
+   // MARK: - save
+
+    var saveChargeItemsOfCallsCount = 0
+    var saveChargeItemsOfCalled: Bool {
+        saveChargeItemsOfCallsCount > 0
+    }
+    var saveChargeItemsOfReceivedArguments: (chargeItems: [ErxSparseChargeItem], profileId: UUID?)?
+    var saveChargeItemsOfReceivedInvocations: [(chargeItems: [ErxSparseChargeItem], profileId: UUID?)] = []
+    var saveChargeItemsOfReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var saveChargeItemsOfClosure: (([ErxSparseChargeItem], UUID?) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func save(chargeItems: [ErxSparseChargeItem], of profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        saveChargeItemsOfCallsCount += 1
+        saveChargeItemsOfReceivedArguments = (chargeItems: chargeItems, profileId: profileId)
+        saveChargeItemsOfReceivedInvocations.append((chargeItems: chargeItems, profileId: profileId))
+        return saveChargeItemsOfClosure.map({ $0(chargeItems, profileId) }) ?? saveChargeItemsOfReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteOfChargeItemsCallsCount = 0
+    var deleteOfChargeItemsCalled: Bool {
+        deleteOfChargeItemsCallsCount > 0
+    }
+    var deleteOfChargeItemsReceivedArguments: (profileId: UUID?, chargeItems: [ErxSparseChargeItem])?
+    var deleteOfChargeItemsReceivedInvocations: [(profileId: UUID?, chargeItems: [ErxSparseChargeItem])] = []
+    var deleteOfChargeItemsReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var deleteOfChargeItemsClosure: ((UUID?, [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func delete(of profileId: UUID?, chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+        deleteOfChargeItemsCallsCount += 1
+        deleteOfChargeItemsReceivedArguments = (profileId: profileId, chargeItems: chargeItems)
+        deleteOfChargeItemsReceivedInvocations.append((profileId: profileId, chargeItems: chargeItems))
+        return deleteOfChargeItemsClosure.map({ $0(profileId, chargeItems) }) ?? deleteOfChargeItemsReturnValue
+    }
+    
+   // MARK: - update
+
+    var updateDiGaInfoCallsCount = 0
+    var updateDiGaInfoCalled: Bool {
+        updateDiGaInfoCallsCount > 0
+    }
+    var updateDiGaInfoReceivedDiGaInfo: DiGaInfo?
+    var updateDiGaInfoReceivedInvocations: [DiGaInfo] = []
+    var updateDiGaInfoReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var updateDiGaInfoClosure: ((DiGaInfo) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError> {
+        updateDiGaInfoCallsCount += 1
+        updateDiGaInfoReceivedDiGaInfo = diGaInfo
+        updateDiGaInfoReceivedInvocations.append(diGaInfo)
+        return updateDiGaInfoClosure.map({ $0(diGaInfo) }) ?? updateDiGaInfoReturnValue
+    }
+}
+
+
+// MARK: - MockErxRemoteDataStore -
+
+final class MockErxRemoteDataStore: ErxRemoteDataStore {
+    
+   // MARK: - fetchTask
+
+    var fetchTaskByAccessCodeCallsCount = 0
+    var fetchTaskByAccessCodeCalled: Bool {
+        fetchTaskByAccessCodeCallsCount > 0
+    }
+    var fetchTaskByAccessCodeReceivedArguments: (id: ErxTask.ID, accessCode: String?)?
+    var fetchTaskByAccessCodeReceivedInvocations: [(id: ErxTask.ID, accessCode: String?)] = []
+    var fetchTaskByAccessCodeReturnValue: AnyPublisher<ErxTask?, RemoteStoreError>!
+    var fetchTaskByAccessCodeClosure: ((ErxTask.ID, String?) -> AnyPublisher<ErxTask?, RemoteStoreError>)?
+
+    func fetchTask(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        fetchTaskByAccessCodeCallsCount += 1
+        fetchTaskByAccessCodeReceivedArguments = (id: id, accessCode: accessCode)
+        fetchTaskByAccessCodeReceivedInvocations.append((id: id, accessCode: accessCode))
+        return fetchTaskByAccessCodeClosure.map({ $0(id, accessCode) }) ?? fetchTaskByAccessCodeReturnValue
+    }
+    
+   // MARK: - listAllTasks
+
+    var listAllTasksAfterCallsCount = 0
+    var listAllTasksAfterCalled: Bool {
+        listAllTasksAfterCallsCount > 0
+    }
+    var listAllTasksAfterReceivedReferenceDate: String?
+    var listAllTasksAfterReceivedInvocations: [String?] = []
+    var listAllTasksAfterReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    var listAllTasksAfterClosure: ((String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+
+    func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listAllTasksAfterCallsCount += 1
+        listAllTasksAfterReceivedReferenceDate = referenceDate
+        listAllTasksAfterReceivedInvocations.append(referenceDate)
+        return listAllTasksAfterClosure.map({ $0(referenceDate) }) ?? listAllTasksAfterReturnValue
+    }
+    
+   // MARK: - listTasksNextPage
+
+    var listTasksNextPageOfCallsCount = 0
+    var listTasksNextPageOfCalled: Bool {
+        listTasksNextPageOfCallsCount > 0
+    }
+    var listTasksNextPageOfReceivedPreviousPage: PagedContent<[ErxTask]>?
+    var listTasksNextPageOfReceivedInvocations: [PagedContent<[ErxTask]>] = []
+    var listTasksNextPageOfReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    var listTasksNextPageOfClosure: ((PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+
+    func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listTasksNextPageOfCallsCount += 1
+        listTasksNextPageOfReceivedPreviousPage = previousPage
+        listTasksNextPageOfReceivedInvocations.append(previousPage)
+        return listTasksNextPageOfClosure.map({ $0(previousPage) }) ?? listTasksNextPageOfReturnValue
+    }
+    
+   // MARK: - listDetailedTasks
+
+    var listDetailedTasksForCallsCount = 0
+    var listDetailedTasksForCalled: Bool {
+        listDetailedTasksForCallsCount > 0
+    }
+    var listDetailedTasksForReceivedTasks: PagedContent<[ErxTask]>?
+    var listDetailedTasksForReceivedInvocations: [PagedContent<[ErxTask]>] = []
+    var listDetailedTasksForReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    var listDetailedTasksForClosure: ((PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+
+    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listDetailedTasksForCallsCount += 1
+        listDetailedTasksForReceivedTasks = tasks
+        listDetailedTasksForReceivedInvocations.append(tasks)
+        return listDetailedTasksForClosure.map({ $0(tasks) }) ?? listDetailedTasksForReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteTasksCallsCount = 0
+    var deleteTasksCalled: Bool {
+        deleteTasksCallsCount > 0
+    }
+    var deleteTasksReceivedTasks: [ErxTask]?
+    var deleteTasksReceivedInvocations: [[ErxTask]] = []
+    var deleteTasksReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    var deleteTasksClosure: (([ErxTask]) -> AnyPublisher<Bool, RemoteStoreError>)?
+
+    func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError> {
+        deleteTasksCallsCount += 1
+        deleteTasksReceivedTasks = tasks
+        deleteTasksReceivedInvocations.append(tasks)
+        return deleteTasksClosure.map({ $0(tasks) }) ?? deleteTasksReturnValue
+    }
+    
+   // MARK: - redeem
+
+    var redeemOrderCallsCount = 0
+    var redeemOrderCalled: Bool {
+        redeemOrderCallsCount > 0
+    }
+    var redeemOrderReceivedOrder: ErxTaskOrder?
+    var redeemOrderReceivedInvocations: [ErxTaskOrder] = []
+    var redeemOrderReturnValue: AnyPublisher<ErxTaskOrder, RemoteStoreError>!
+    var redeemOrderClosure: ((ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>)?
+
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
+        redeemOrderCallsCount += 1
+        redeemOrderReceivedOrder = order
+        redeemOrderReceivedInvocations.append(order)
+        return redeemOrderClosure.map({ $0(order) }) ?? redeemOrderReturnValue
+    }
+    
+   // MARK: - listAllCommunications
+
+    var listAllCommunicationsAfterForCallsCount = 0
+    var listAllCommunicationsAfterForCalled: Bool {
+        listAllCommunicationsAfterForCallsCount > 0
+    }
+    var listAllCommunicationsAfterForReceivedArguments: (referenceDate: String?, profile: ErxTask.Communication.Profile)?
+    var listAllCommunicationsAfterForReceivedInvocations: [(referenceDate: String?, profile: ErxTask.Communication.Profile)] = []
+    var listAllCommunicationsAfterForReturnValue: AnyPublisher<[ErxTask.Communication], RemoteStoreError>!
+    var listAllCommunicationsAfterForClosure: ((String?, ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError>)?
+
+    func listAllCommunications(after referenceDate: String?, for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
+        listAllCommunicationsAfterForCallsCount += 1
+        listAllCommunicationsAfterForReceivedArguments = (referenceDate: referenceDate, profile: profile)
+        listAllCommunicationsAfterForReceivedInvocations.append((referenceDate: referenceDate, profile: profile))
+        return listAllCommunicationsAfterForClosure.map({ $0(referenceDate, profile) }) ?? listAllCommunicationsAfterForReturnValue
+    }
+    
+   // MARK: - fetchAuditEvent
+
+    var fetchAuditEventByCallsCount = 0
+    var fetchAuditEventByCalled: Bool {
+        fetchAuditEventByCallsCount > 0
+    }
+    var fetchAuditEventByReceivedId: ErxAuditEvent.ID?
+    var fetchAuditEventByReceivedInvocations: [ErxAuditEvent.ID] = []
+    var fetchAuditEventByReturnValue: AnyPublisher<ErxAuditEvent?, RemoteStoreError>!
+    var fetchAuditEventByClosure: ((ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError>)?
+
+    func fetchAuditEvent(by id: ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
+        fetchAuditEventByCallsCount += 1
+        fetchAuditEventByReceivedId = id
+        fetchAuditEventByReceivedInvocations.append(id)
+        return fetchAuditEventByClosure.map({ $0(id) }) ?? fetchAuditEventByReturnValue
+    }
+    
+   // MARK: - listAllAuditEvents
+
+    var listAllAuditEventsAfterForCallsCount = 0
+    var listAllAuditEventsAfterForCalled: Bool {
+        listAllAuditEventsAfterForCallsCount > 0
+    }
+    var listAllAuditEventsAfterForReceivedArguments: (referenceDate: String?, locale: String?)?
+    var listAllAuditEventsAfterForReceivedInvocations: [(referenceDate: String?, locale: String?)] = []
+    var listAllAuditEventsAfterForReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
+    var listAllAuditEventsAfterForClosure: ((String?, String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
+
+    func listAllAuditEvents(after referenceDate: String?, for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        listAllAuditEventsAfterForCallsCount += 1
+        listAllAuditEventsAfterForReceivedArguments = (referenceDate: referenceDate, locale: locale)
+        listAllAuditEventsAfterForReceivedInvocations.append((referenceDate: referenceDate, locale: locale))
+        return listAllAuditEventsAfterForClosure.map({ $0(referenceDate, locale) }) ?? listAllAuditEventsAfterForReturnValue
+    }
+    
+   // MARK: - listAuditEventsNextPage
+
+    var listAuditEventsNextPageFromLocaleCallsCount = 0
+    var listAuditEventsNextPageFromLocaleCalled: Bool {
+        listAuditEventsNextPageFromLocaleCallsCount > 0
+    }
+    var listAuditEventsNextPageFromLocaleReceivedArguments: (url: URL, locale: String?)?
+    var listAuditEventsNextPageFromLocaleReceivedInvocations: [(url: URL, locale: String?)] = []
+    var listAuditEventsNextPageFromLocaleReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
+    var listAuditEventsNextPageFromLocaleClosure: ((URL, String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
+
+    func listAuditEventsNextPage(from url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        listAuditEventsNextPageFromLocaleCallsCount += 1
+        listAuditEventsNextPageFromLocaleReceivedArguments = (url: url, locale: locale)
+        listAuditEventsNextPageFromLocaleReceivedInvocations.append((url: url, locale: locale))
+        return listAuditEventsNextPageFromLocaleClosure.map({ $0(url, locale) }) ?? listAuditEventsNextPageFromLocaleReturnValue
+    }
+    
+   // MARK: - listMedicationDispenses
+
+    var listMedicationDispensesForCallsCount = 0
+    var listMedicationDispensesForCalled: Bool {
+        listMedicationDispensesForCallsCount > 0
+    }
+    var listMedicationDispensesForReceivedId: ErxTask.ID?
+    var listMedicationDispensesForReceivedInvocations: [ErxTask.ID] = []
+    var listMedicationDispensesForReturnValue: AnyPublisher<[ErxMedicationDispense], RemoteStoreError>!
+    var listMedicationDispensesForClosure: ((ErxTask.ID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError>)?
+
+    func listMedicationDispenses(for id: ErxTask.ID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
+        listMedicationDispensesForCallsCount += 1
+        listMedicationDispensesForReceivedId = id
+        listMedicationDispensesForReceivedInvocations.append(id)
+        return listMedicationDispensesForClosure.map({ $0(id) }) ?? listMedicationDispensesForReturnValue
+    }
+    
+   // MARK: - fetchChargeItem
+
+    var fetchChargeItemByCallsCount = 0
+    var fetchChargeItemByCalled: Bool {
+        fetchChargeItemByCallsCount > 0
+    }
+    var fetchChargeItemByReceivedId: ErxChargeItem.ID?
+    var fetchChargeItemByReceivedInvocations: [ErxChargeItem.ID] = []
+    var fetchChargeItemByReturnValue: AnyPublisher<ErxChargeItem?, RemoteStoreError>!
+    var fetchChargeItemByClosure: ((ErxChargeItem.ID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError>)?
+
+    func fetchChargeItem(by id: ErxChargeItem.ID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
+        fetchChargeItemByCallsCount += 1
+        fetchChargeItemByReceivedId = id
+        fetchChargeItemByReceivedInvocations.append(id)
+        return fetchChargeItemByClosure.map({ $0(id) }) ?? fetchChargeItemByReturnValue
+    }
+    
+   // MARK: - listAllChargeItems
+
+    var listAllChargeItemsAfterCallsCount = 0
+    var listAllChargeItemsAfterCalled: Bool {
+        listAllChargeItemsAfterCallsCount > 0
+    }
+    var listAllChargeItemsAfterReceivedReferenceDate: String?
+    var listAllChargeItemsAfterReceivedInvocations: [String?] = []
+    var listAllChargeItemsAfterReturnValue: AnyPublisher<[ErxChargeItem], RemoteStoreError>!
+    var listAllChargeItemsAfterClosure: ((String?) -> AnyPublisher<[ErxChargeItem], RemoteStoreError>)?
+
+    func listAllChargeItems(after referenceDate: String?) -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
+        listAllChargeItemsAfterCallsCount += 1
+        listAllChargeItemsAfterReceivedReferenceDate = referenceDate
+        listAllChargeItemsAfterReceivedInvocations.append(referenceDate)
+        return listAllChargeItemsAfterClosure.map({ $0(referenceDate) }) ?? listAllChargeItemsAfterReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteChargeItemsCallsCount = 0
+    var deleteChargeItemsCalled: Bool {
+        deleteChargeItemsCallsCount > 0
+    }
+    var deleteChargeItemsReceivedChargeItems: [ErxChargeItem]?
+    var deleteChargeItemsReceivedInvocations: [[ErxChargeItem]] = []
+    var deleteChargeItemsReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    var deleteChargeItemsClosure: (([ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>)?
+
+    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
+        deleteChargeItemsCallsCount += 1
+        deleteChargeItemsReceivedChargeItems = chargeItems
+        deleteChargeItemsReceivedInvocations.append(chargeItems)
+        return deleteChargeItemsClosure.map({ $0(chargeItems) }) ?? deleteChargeItemsReturnValue
+    }
+    
+   // MARK: - fetchConsents
+
+    var fetchConsentsCallsCount = 0
+    var fetchConsentsCalled: Bool {
+        fetchConsentsCallsCount > 0
+    }
+    var fetchConsentsReturnValue: AnyPublisher<[ErxConsent], RemoteStoreError>!
+    var fetchConsentsClosure: (() -> AnyPublisher<[ErxConsent], RemoteStoreError>)?
+
+    func fetchConsents() -> AnyPublisher<[ErxConsent], RemoteStoreError> {
+        fetchConsentsCallsCount += 1
+        return fetchConsentsClosure.map({ $0() }) ?? fetchConsentsReturnValue
+    }
+    
+   // MARK: - grantConsent
+
+    var grantConsentCallsCount = 0
+    var grantConsentCalled: Bool {
+        grantConsentCallsCount > 0
+    }
+    var grantConsentReceivedConsent: ErxConsent?
+    var grantConsentReceivedInvocations: [ErxConsent] = []
+    var grantConsentReturnValue: AnyPublisher<ErxConsent?, RemoteStoreError>!
+    var grantConsentClosure: ((ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError>)?
+
+    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
+        grantConsentCallsCount += 1
+        grantConsentReceivedConsent = consent
+        grantConsentReceivedInvocations.append(consent)
+        return grantConsentClosure.map({ $0(consent) }) ?? grantConsentReturnValue
+    }
+    
+   // MARK: - revokeConsent
+
+    var revokeConsentCallsCount = 0
+    var revokeConsentCalled: Bool {
+        revokeConsentCallsCount > 0
+    }
+    var revokeConsentReceivedCategory: ErxConsent.Category?
+    var revokeConsentReceivedInvocations: [ErxConsent.Category] = []
+    var revokeConsentReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    var revokeConsentClosure: ((ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError>)?
+
+    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError> {
+        revokeConsentCallsCount += 1
+        revokeConsentReceivedCategory = category
+        revokeConsentReceivedInvocations.append(category)
+        return revokeConsentClosure.map({ $0(category) }) ?? revokeConsentReturnValue
     }
 }
 
@@ -1126,48 +1745,6 @@ final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController
 }
 
 
-// MARK: - MockNFCSignatureProvider -
-
-final class MockNFCSignatureProvider: NFCSignatureProvider {
-    
-   // MARK: - sign
-
-    var signCanPinChallengeCallsCount = 0
-    var signCanPinChallengeCalled: Bool {
-        signCanPinChallengeCallsCount > 0
-    }
-    var signCanPinChallengeReceivedArguments: (can: String, pin: String, challenge: IDPChallengeSession)?
-    var signCanPinChallengeReceivedInvocations: [(can: String, pin: String, challenge: IDPChallengeSession)] = []
-    var signCanPinChallengeReturnValue: Result<SignedChallenge, NFCSignatureProviderError>!
-    var signCanPinChallengeClosure: ((String, String, IDPChallengeSession) -> Result<SignedChallenge, NFCSignatureProviderError>)?
-
-    func sign(can: String, pin: String, challenge: IDPChallengeSession) -> Result<SignedChallenge, NFCSignatureProviderError> {
-        signCanPinChallengeCallsCount += 1
-        signCanPinChallengeReceivedArguments = (can: can, pin: pin, challenge: challenge)
-        signCanPinChallengeReceivedInvocations.append((can: can, pin: pin, challenge: challenge))
-        return signCanPinChallengeClosure.map({ $0(can, pin, challenge) }) ?? signCanPinChallengeReturnValue
-    }
-    
-   // MARK: - signForBiometrics
-
-    var signForBiometricsCanPinChallengeRegisterDataProviderInCallsCount = 0
-    var signForBiometricsCanPinChallengeRegisterDataProviderInCalled: Bool {
-        signForBiometricsCanPinChallengeRegisterDataProviderInCallsCount > 0
-    }
-    var signForBiometricsCanPinChallengeRegisterDataProviderInReceivedArguments: (can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, pairingSession: PairingSession)?
-    var signForBiometricsCanPinChallengeRegisterDataProviderInReceivedInvocations: [(can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, pairingSession: PairingSession)] = []
-    var signForBiometricsCanPinChallengeRegisterDataProviderInReturnValue: Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>!
-    var signForBiometricsCanPinChallengeRegisterDataProviderInClosure: ((String, String, IDPChallengeSession, SecureEnclaveSignatureProvider, PairingSession) -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>)?
-
-    func signForBiometrics(can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, in pairingSession: PairingSession) -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
-        signForBiometricsCanPinChallengeRegisterDataProviderInCallsCount += 1
-        signForBiometricsCanPinChallengeRegisterDataProviderInReceivedArguments = (can: can, pin: pin, challenge: challenge, registerDataProvider: registerDataProvider, pairingSession: pairingSession)
-        signForBiometricsCanPinChallengeRegisterDataProviderInReceivedInvocations.append((can: can, pin: pin, challenge: challenge, registerDataProvider: registerDataProvider, pairingSession: pairingSession))
-        return signForBiometricsCanPinChallengeRegisterDataProviderInClosure.map({ $0(can, pin, challenge, registerDataProvider, pairingSession) }) ?? signForBiometricsCanPinChallengeRegisterDataProviderInReturnValue
-    }
-}
-
-
 // MARK: - MockOrdersRepository -
 
 final class MockOrdersRepository: OrdersRepository {
@@ -1250,336 +1827,62 @@ final class MockPasswordStrengthTester: PasswordStrengthTester {
 }
 
 
-// MARK: - MockPharmacyRepository -
-
-final class MockPharmacyRepository: PharmacyRepository {
-    
-   // MARK: - updateFromRemote
-
-    var updateFromRemoteByCallsCount = 0
-    var updateFromRemoteByCalled: Bool {
-        updateFromRemoteByCallsCount > 0
-    }
-    var updateFromRemoteByReceivedTelematikId: String?
-    var updateFromRemoteByReceivedInvocations: [String] = []
-    var updateFromRemoteByReturnValue: AnyPublisher<PharmacyLocation, PharmacyRepositoryError>!
-    var updateFromRemoteByClosure: ((String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError>)?
-
-    func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
-        updateFromRemoteByCallsCount += 1
-        updateFromRemoteByReceivedTelematikId = telematikId
-        updateFromRemoteByReceivedInvocations.append(telematikId)
-        return updateFromRemoteByClosure.map({ $0(telematikId) }) ?? updateFromRemoteByReturnValue
-    }
-    
-   // MARK: - loadCached
-
-    var loadCachedByCallsCount = 0
-    var loadCachedByCalled: Bool {
-        loadCachedByCallsCount > 0
-    }
-    var loadCachedByReceivedTelematikId: String?
-    var loadCachedByReceivedInvocations: [String] = []
-    var loadCachedByReturnValue: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>!
-    var loadCachedByClosure: ((String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>)?
-
-    func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
-        loadCachedByCallsCount += 1
-        loadCachedByReceivedTelematikId = telematikId
-        loadCachedByReceivedInvocations.append(telematikId)
-        return loadCachedByClosure.map({ $0(telematikId) }) ?? loadCachedByReturnValue
-    }
-    
-   // MARK: - searchRemote
-
-    var searchRemoteSearchTermPositionFilterCallsCount = 0
-    var searchRemoteSearchTermPositionFilterCalled: Bool {
-        searchRemoteSearchTermPositionFilterCallsCount > 0
-    }
-    var searchRemoteSearchTermPositionFilterReceivedArguments: (searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter])?
-    var searchRemoteSearchTermPositionFilterReceivedInvocations: [(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter])] = []
-    var searchRemoteSearchTermPositionFilterReturnValue: AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>!
-    var searchRemoteSearchTermPositionFilterClosure: ((String, Position?, [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>)?
-
-    func searchRemote(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        searchRemoteSearchTermPositionFilterCallsCount += 1
-        searchRemoteSearchTermPositionFilterReceivedArguments = (searchTerm: searchTerm, position: position, filter: filter)
-        searchRemoteSearchTermPositionFilterReceivedInvocations.append((searchTerm: searchTerm, position: position, filter: filter))
-        return searchRemoteSearchTermPositionFilterClosure.map({ $0(searchTerm, position, filter) }) ?? searchRemoteSearchTermPositionFilterReturnValue
-    }
-    
-   // MARK: - loadLocal
-
-    var loadLocalByCallsCount = 0
-    var loadLocalByCalled: Bool {
-        loadLocalByCallsCount > 0
-    }
-    var loadLocalByReceivedTelematikId: String?
-    var loadLocalByReceivedInvocations: [String] = []
-    var loadLocalByReturnValue: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>!
-    var loadLocalByClosure: ((String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>)?
-
-    func loadLocal(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
-        loadLocalByCallsCount += 1
-        loadLocalByReceivedTelematikId = telematikId
-        loadLocalByReceivedInvocations.append(telematikId)
-        return loadLocalByClosure.map({ $0(telematikId) }) ?? loadLocalByReturnValue
-    }
-    
-   // MARK: - loadLocal
-
-    var loadLocalCountCallsCount = 0
-    var loadLocalCountCalled: Bool {
-        loadLocalCountCallsCount > 0
-    }
-    var loadLocalCountReceivedCount: Int?
-    var loadLocalCountReceivedInvocations: [Int?] = []
-    var loadLocalCountReturnValue: AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>!
-    var loadLocalCountClosure: ((Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>)?
-
-    func loadLocal(count: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        loadLocalCountCallsCount += 1
-        loadLocalCountReceivedCount = count
-        loadLocalCountReceivedInvocations.append(count)
-        return loadLocalCountClosure.map({ $0(count) }) ?? loadLocalCountReturnValue
-    }
-    
-   // MARK: - save
-
-    var savePharmaciesCallsCount = 0
-    var savePharmaciesCalled: Bool {
-        savePharmaciesCallsCount > 0
-    }
-    var savePharmaciesReceivedPharmacies: [PharmacyLocation]?
-    var savePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
-    var savePharmaciesReturnValue: AnyPublisher<Bool, PharmacyRepositoryError>!
-    var savePharmaciesClosure: (([PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>)?
-
-    func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
-        savePharmaciesCallsCount += 1
-        savePharmaciesReceivedPharmacies = pharmacies
-        savePharmaciesReceivedInvocations.append(pharmacies)
-        return savePharmaciesClosure.map({ $0(pharmacies) }) ?? savePharmaciesReturnValue
-    }
-    
-   // MARK: - delete
-
-    var deletePharmaciesCallsCount = 0
-    var deletePharmaciesCalled: Bool {
-        deletePharmaciesCallsCount > 0
-    }
-    var deletePharmaciesReceivedPharmacies: [PharmacyLocation]?
-    var deletePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
-    var deletePharmaciesReturnValue: AnyPublisher<Bool, PharmacyRepositoryError>!
-    var deletePharmaciesClosure: (([PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>)?
-
-    func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
-        deletePharmaciesCallsCount += 1
-        deletePharmaciesReceivedPharmacies = pharmacies
-        deletePharmaciesReceivedInvocations.append(pharmacies)
-        return deletePharmaciesClosure.map({ $0(pharmacies) }) ?? deletePharmaciesReturnValue
-    }
-    
-   // MARK: - loadAvsCertificates
-
-    var loadAvsCertificatesForCallsCount = 0
-    var loadAvsCertificatesForCalled: Bool {
-        loadAvsCertificatesForCallsCount > 0
-    }
-    var loadAvsCertificatesForReceivedId: String?
-    var loadAvsCertificatesForReceivedInvocations: [String] = []
-    var loadAvsCertificatesForReturnValue: AnyPublisher<[X509], PharmacyRepositoryError>!
-    var loadAvsCertificatesForClosure: ((String) -> AnyPublisher<[X509], PharmacyRepositoryError>)?
-
-    func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
-        loadAvsCertificatesForCallsCount += 1
-        loadAvsCertificatesForReceivedId = id
-        loadAvsCertificatesForReceivedInvocations.append(id)
-        return loadAvsCertificatesForClosure.map({ $0(id) }) ?? loadAvsCertificatesForReturnValue
-    }
-    
-   // MARK: - fetchInsurance
-
-    var fetchInsuranceIkNumberCallsCount = 0
-    var fetchInsuranceIkNumberCalled: Bool {
-        fetchInsuranceIkNumberCallsCount > 0
-    }
-    var fetchInsuranceIkNumberReceivedIkNumber: String?
-    var fetchInsuranceIkNumberReceivedInvocations: [String] = []
-    var fetchInsuranceIkNumberReturnValue: AnyPublisher<Insurance?, PharmacyRepositoryError>!
-    var fetchInsuranceIkNumberClosure: ((String) -> AnyPublisher<Insurance?, PharmacyRepositoryError>)?
-
-    func fetchInsurance(ikNumber: String) -> AnyPublisher<Insurance?, PharmacyRepositoryError> {
-        fetchInsuranceIkNumberCallsCount += 1
-        fetchInsuranceIkNumberReceivedIkNumber = ikNumber
-        fetchInsuranceIkNumberReceivedInvocations.append(ikNumber)
-        return fetchInsuranceIkNumberClosure.map({ $0(ikNumber) }) ?? fetchInsuranceIkNumberReturnValue
-    }
-    
-   // MARK: - fetchAllInsurances
-
-    var fetchAllInsurancesCallsCount = 0
-    var fetchAllInsurancesCalled: Bool {
-        fetchAllInsurancesCallsCount > 0
-    }
-    var fetchAllInsurancesReturnValue: AnyPublisher<[Insurance], PharmacyRepositoryError>!
-    var fetchAllInsurancesClosure: (() -> AnyPublisher<[Insurance], PharmacyRepositoryError>)?
-
-    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyRepositoryError> {
-        fetchAllInsurancesCallsCount += 1
-        return fetchAllInsurancesClosure.map({ $0() }) ?? fetchAllInsurancesReturnValue
-    }
-}
-
-
 // MARK: - MockPrescriptionRepository -
 
 final class MockPrescriptionRepository: PrescriptionRepository {
     
    // MARK: - loadLocal
 
-    var loadLocalCallsCount = 0
-    var loadLocalCalled: Bool {
-        loadLocalCallsCount > 0
+    var loadLocalForCallsCount = 0
+    var loadLocalForCalled: Bool {
+        loadLocalForCallsCount > 0
     }
-    var loadLocalReturnValue: AnyPublisher<[Prescription], PrescriptionRepositoryError>!
-    var loadLocalClosure: (() -> AnyPublisher<[Prescription], PrescriptionRepositoryError>)?
+    var loadLocalForReceivedProfileId: UUID?
+    var loadLocalForReceivedInvocations: [UUID] = []
+    var loadLocalForReturnValue: AnyPublisher<[Prescription], PrescriptionRepositoryError>!
+    var loadLocalForClosure: ((UUID) -> AnyPublisher<[Prescription], PrescriptionRepositoryError>)?
 
-    func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
-        loadLocalCallsCount += 1
-        return loadLocalClosure.map({ $0() }) ?? loadLocalReturnValue
+    func loadLocal(for profileId: UUID) -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
+        loadLocalForCallsCount += 1
+        loadLocalForReceivedProfileId = profileId
+        loadLocalForReceivedInvocations.append(profileId)
+        return loadLocalForClosure.map({ $0(profileId) }) ?? loadLocalForReturnValue
     }
     
    // MARK: - forcedLoadRemote
 
-    var forcedLoadRemoteForCallsCount = 0
-    var forcedLoadRemoteForCalled: Bool {
-        forcedLoadRemoteForCallsCount > 0
+    var forcedLoadRemoteForForCallsCount = 0
+    var forcedLoadRemoteForForCalled: Bool {
+        forcedLoadRemoteForForCallsCount > 0
     }
-    var forcedLoadRemoteForReceivedLocale: String?
-    var forcedLoadRemoteForReceivedInvocations: [String?] = []
-    var forcedLoadRemoteForReturnValue: AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>!
-    var forcedLoadRemoteForClosure: ((String?) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>)?
+    var forcedLoadRemoteForForReceivedArguments: (locale: String?, profileId: UUID)?
+    var forcedLoadRemoteForForReceivedInvocations: [(locale: String?, profileId: UUID)] = []
+    var forcedLoadRemoteForForReturnValue: AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>!
+    var forcedLoadRemoteForForClosure: ((String?, UUID) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>)?
 
-    func forcedLoadRemote(for locale: String?) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
-        forcedLoadRemoteForCallsCount += 1
-        forcedLoadRemoteForReceivedLocale = locale
-        forcedLoadRemoteForReceivedInvocations.append(locale)
-        return forcedLoadRemoteForClosure.map({ $0(locale) }) ?? forcedLoadRemoteForReturnValue
+    func forcedLoadRemote(for locale: String?, for profileId: UUID) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
+        forcedLoadRemoteForForCallsCount += 1
+        forcedLoadRemoteForForReceivedArguments = (locale: locale, profileId: profileId)
+        forcedLoadRemoteForForReceivedInvocations.append((locale: locale, profileId: profileId))
+        return forcedLoadRemoteForForClosure.map({ $0(locale, profileId) }) ?? forcedLoadRemoteForForReturnValue
     }
     
    // MARK: - silentLoadRemote
 
-    var silentLoadRemoteForCallsCount = 0
-    var silentLoadRemoteForCalled: Bool {
-        silentLoadRemoteForCallsCount > 0
+    var silentLoadRemoteForForCallsCount = 0
+    var silentLoadRemoteForForCalled: Bool {
+        silentLoadRemoteForForCallsCount > 0
     }
-    var silentLoadRemoteForReceivedLocale: String?
-    var silentLoadRemoteForReceivedInvocations: [String?] = []
-    var silentLoadRemoteForReturnValue: AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>!
-    var silentLoadRemoteForClosure: ((String?) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>)?
+    var silentLoadRemoteForForReceivedArguments: (locale: String?, profileId: UUID)?
+    var silentLoadRemoteForForReceivedInvocations: [(locale: String?, profileId: UUID)] = []
+    var silentLoadRemoteForForReturnValue: AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>!
+    var silentLoadRemoteForForClosure: ((String?, UUID) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>)?
 
-    func silentLoadRemote(for locale: String?) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
-        silentLoadRemoteForCallsCount += 1
-        silentLoadRemoteForReceivedLocale = locale
-        silentLoadRemoteForReceivedInvocations.append(locale)
-        return silentLoadRemoteForClosure.map({ $0(locale) }) ?? silentLoadRemoteForReturnValue
-    }
-}
-
-
-// MARK: - MockProfileBasedSessionProvider -
-
-final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
-    
-   // MARK: - idpSession
-
-    var idpSessionForCallsCount = 0
-    var idpSessionForCalled: Bool {
-        idpSessionForCallsCount > 0
-    }
-    var idpSessionForReceivedProfileId: UUID?
-    var idpSessionForReceivedInvocations: [UUID] = []
-    var idpSessionForReturnValue: IDPSession!
-    var idpSessionForClosure: ((UUID) -> IDPSession)?
-
-    func idpSession(for profileId: UUID) -> IDPSession {
-        idpSessionForCallsCount += 1
-        idpSessionForReceivedProfileId = profileId
-        idpSessionForReceivedInvocations.append(profileId)
-        return idpSessionForClosure.map({ $0(profileId) }) ?? idpSessionForReturnValue
-    }
-    
-   // MARK: - biometrieIdpSession
-
-    var biometrieIdpSessionForCallsCount = 0
-    var biometrieIdpSessionForCalled: Bool {
-        biometrieIdpSessionForCallsCount > 0
-    }
-    var biometrieIdpSessionForReceivedProfileId: UUID?
-    var biometrieIdpSessionForReceivedInvocations: [UUID] = []
-    var biometrieIdpSessionForReturnValue: IDPSession!
-    var biometrieIdpSessionForClosure: ((UUID) -> IDPSession)?
-
-    func biometrieIdpSession(for profileId: UUID) -> IDPSession {
-        biometrieIdpSessionForCallsCount += 1
-        biometrieIdpSessionForReceivedProfileId = profileId
-        biometrieIdpSessionForReceivedInvocations.append(profileId)
-        return biometrieIdpSessionForClosure.map({ $0(profileId) }) ?? biometrieIdpSessionForReturnValue
-    }
-    
-   // MARK: - userDataStore
-
-    var userDataStoreForCallsCount = 0
-    var userDataStoreForCalled: Bool {
-        userDataStoreForCallsCount > 0
-    }
-    var userDataStoreForReceivedProfileId: UUID?
-    var userDataStoreForReceivedInvocations: [UUID] = []
-    var userDataStoreForReturnValue: SecureUserDataStore!
-    var userDataStoreForClosure: ((UUID) -> SecureUserDataStore)?
-
-    func userDataStore(for profileId: UUID) -> SecureUserDataStore {
-        userDataStoreForCallsCount += 1
-        userDataStoreForReceivedProfileId = profileId
-        userDataStoreForReceivedInvocations.append(profileId)
-        return userDataStoreForClosure.map({ $0(profileId) }) ?? userDataStoreForReturnValue
-    }
-    
-   // MARK: - idTokenValidator
-
-    var idTokenValidatorForCallsCount = 0
-    var idTokenValidatorForCalled: Bool {
-        idTokenValidatorForCallsCount > 0
-    }
-    var idTokenValidatorForReceivedProfileId: UUID?
-    var idTokenValidatorForReceivedInvocations: [UUID] = []
-    var idTokenValidatorForReturnValue: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
-    var idTokenValidatorForClosure: ((UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError>)?
-
-    func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
-        idTokenValidatorForCallsCount += 1
-        idTokenValidatorForReceivedProfileId = profileId
-        idTokenValidatorForReceivedInvocations.append(profileId)
-        return idTokenValidatorForClosure.map({ $0(profileId) }) ?? idTokenValidatorForReturnValue
-    }
-    
-   // MARK: - signatureProvider
-
-    var signatureProviderForCallsCount = 0
-    var signatureProviderForCalled: Bool {
-        signatureProviderForCallsCount > 0
-    }
-    var signatureProviderForReceivedProfileId: UUID?
-    var signatureProviderForReceivedInvocations: [UUID] = []
-    var signatureProviderForReturnValue: SecureEnclaveSignatureProvider!
-    var signatureProviderForClosure: ((UUID) -> SecureEnclaveSignatureProvider)?
-
-    func signatureProvider(for profileId: UUID) -> SecureEnclaveSignatureProvider {
-        signatureProviderForCallsCount += 1
-        signatureProviderForReceivedProfileId = profileId
-        signatureProviderForReceivedInvocations.append(profileId)
-        return signatureProviderForClosure.map({ $0(profileId) }) ?? signatureProviderForReturnValue
+    func silentLoadRemote(for locale: String?, for profileId: UUID) -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
+        silentLoadRemoteForForCallsCount += 1
+        silentLoadRemoteForForReceivedArguments = (locale: locale, profileId: profileId)
+        silentLoadRemoteForForReceivedInvocations.append((locale: locale, profileId: profileId))
+        return silentLoadRemoteForForClosure.map({ $0(locale, profileId) }) ?? silentLoadRemoteForForReturnValue
     }
 }
 
@@ -1766,38 +2069,38 @@ final class MockRedeemService: RedeemService {
     
    // MARK: - redeem
 
-    var redeemCallsCount = 0
-    var redeemCalled: Bool {
-        redeemCallsCount > 0
+    var redeemProfileIdCallsCount = 0
+    var redeemProfileIdCalled: Bool {
+        redeemProfileIdCallsCount > 0
     }
-    var redeemReceivedOrders: [OrderRequest]?
-    var redeemReceivedInvocations: [[OrderRequest]] = []
-    var redeemReturnValue: AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>!
-    var redeemClosure: (([OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)?
+    var redeemProfileIdReceivedArguments: (orders: [OrderRequest], profileId: UUID)?
+    var redeemProfileIdReceivedInvocations: [(orders: [OrderRequest], profileId: UUID)] = []
+    var redeemProfileIdReturnValue: AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>!
+    var redeemProfileIdClosure: (([OrderRequest], UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)?
 
-    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
-        redeemCallsCount += 1
-        redeemReceivedOrders = orders
-        redeemReceivedInvocations.append(orders)
-        return redeemClosure.map({ $0(orders) }) ?? redeemReturnValue
+    func redeem(_ orders: [OrderRequest], profileId: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+        redeemProfileIdCallsCount += 1
+        redeemProfileIdReceivedArguments = (orders: orders, profileId: profileId)
+        redeemProfileIdReceivedInvocations.append((orders: orders, profileId: profileId))
+        return redeemProfileIdClosure.map({ $0(orders, profileId) }) ?? redeemProfileIdReturnValue
     }
     
    // MARK: - redeemDiGa
 
-    var redeemDiGaCallsCount = 0
-    var redeemDiGaCalled: Bool {
-        redeemDiGaCallsCount > 0
+    var redeemDiGaProfileIdCallsCount = 0
+    var redeemDiGaProfileIdCalled: Bool {
+        redeemDiGaProfileIdCallsCount > 0
     }
-    var redeemDiGaReceivedOrders: [OrderDiGaRequest]?
-    var redeemDiGaReceivedInvocations: [[OrderDiGaRequest]] = []
-    var redeemDiGaReturnValue: AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>!
-    var redeemDiGaClosure: (([OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>)?
+    var redeemDiGaProfileIdReceivedArguments: (orders: [OrderDiGaRequest], profileId: UUID)?
+    var redeemDiGaProfileIdReceivedInvocations: [(orders: [OrderDiGaRequest], profileId: UUID)] = []
+    var redeemDiGaProfileIdReturnValue: AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>!
+    var redeemDiGaProfileIdClosure: (([OrderDiGaRequest], UUID) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>)?
 
-    func redeemDiGa(_ orders: [OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
-        redeemDiGaCallsCount += 1
-        redeemDiGaReceivedOrders = orders
-        redeemDiGaReceivedInvocations.append(orders)
-        return redeemDiGaClosure.map({ $0(orders) }) ?? redeemDiGaReturnValue
+    func redeemDiGa(_ orders: [OrderDiGaRequest], profileId: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
+        redeemDiGaProfileIdCallsCount += 1
+        redeemDiGaProfileIdReceivedArguments = (orders: orders, profileId: profileId)
+        redeemDiGaProfileIdReceivedInvocations.append((orders: orders, profileId: profileId))
+        return redeemDiGaProfileIdClosure.map({ $0(orders, profileId) }) ?? redeemDiGaProfileIdReturnValue
     }
 }
 
@@ -2473,6 +2776,14 @@ final class MockUserDataStore: UserDataStore {
     }
     var underlyingHideWelcomeMessage: AnyPublisher<Bool, Never>!
     
+   // MARK: - hideEURedeemInstructions
+
+    var hideEURedeemInstructions: AnyPublisher<Bool, Never> {
+        get { underlyingHideEURedeemInstructions }
+        set(value) { underlyingHideEURedeemInstructions = value }
+    }
+    var underlyingHideEURedeemInstructions: AnyPublisher<Bool, Never>!
+    
    // MARK: - set
 
     var setOnboardingDateCallsCount = 0
@@ -2672,6 +2983,23 @@ final class MockUserDataStore: UserDataStore {
         setHideWelcomeMessageReceivedInvocations.append(hideWelcomeMessage)
         setHideWelcomeMessageClosure?(hideWelcomeMessage)
     }
+    
+   // MARK: - set
+
+    var setHideEURedeemInstructionsCallsCount = 0
+    var setHideEURedeemInstructionsCalled: Bool {
+        setHideEURedeemInstructionsCallsCount > 0
+    }
+    var setHideEURedeemInstructionsReceivedHideEURedeemInstructions: Bool?
+    var setHideEURedeemInstructionsReceivedInvocations: [Bool] = []
+    var setHideEURedeemInstructionsClosure: ((Bool) -> Void)?
+
+    func set(hideEURedeemInstructions: Bool) {
+        setHideEURedeemInstructionsCallsCount += 1
+        setHideEURedeemInstructionsReceivedHideEURedeemInstructions = hideEURedeemInstructions
+        setHideEURedeemInstructionsReceivedInvocations.append(hideEURedeemInstructions)
+        setHideEURedeemInstructionsClosure?(hideEURedeemInstructions)
+    }
 }
 
 
@@ -2805,14 +3133,6 @@ final class MockUsersSessionContainer: UsersSessionContainer {
         set(value) { underlyingUserSession = value }
     }
     var underlyingUserSession: UserSession!
-    
-   // MARK: - isDemoMode
-
-    var isDemoMode: AnyPublisher<Bool, Never> {
-        get { underlyingIsDemoMode }
-        set(value) { underlyingIsDemoMode = value }
-    }
-    var underlyingIsDemoMode: AnyPublisher<Bool, Never>!
     
    // MARK: - switchToDemoMode
 

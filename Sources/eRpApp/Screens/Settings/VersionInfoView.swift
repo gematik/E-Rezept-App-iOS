@@ -21,6 +21,7 @@
 //
 
 import eRpStyleKit
+import Settings
 import SwiftUI
 
 struct VersionInfoView: View {
@@ -49,7 +50,7 @@ struct VersionInfoView: View {
         .frame(maxWidth: .infinity)
         .multilineTextAlignment(.center)
         .font(.subheadline)
-        .foregroundColor(Color(.secondaryLabel))
+        .foregroundColor(Colors.systemLabelSecondary)
     }
 }
 

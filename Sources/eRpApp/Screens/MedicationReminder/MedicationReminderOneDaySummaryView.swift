@@ -23,6 +23,7 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import ErxTaskRepository
 import Perception
 import SwiftUI
 
@@ -94,17 +95,12 @@ struct MedicationReminderOneDaySummaryView: View {
         var body: some View {
             VStack(alignment: .center, spacing: 40) {
                 VStack(spacing: 0) {
-                    Capsule()
-                        .foregroundColor(Colors.systemLabelQuarternary)
-                        .frame(width: 32, height: 8, alignment: .center)
-
                     HStack(spacing: 0) {
                         Spacer()
 
                         CloseButton(action: closeButtonAction)
                             .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnOneDaySummaryCloseButton)
                     }
-                    .padding(.horizontal)
                 }
 
                 Text(L10n.medReminderTxtOneDaySummaryTitle)
@@ -112,20 +108,6 @@ struct MedicationReminderOneDaySummaryView: View {
                     .fontWeight(.bold)
             }
             .padding(.top, 8)
-        }
-
-        struct CloseButton: View {
-            let action: () -> Void
-
-            var body: some View {
-                Button(action: action) {
-                    Image(systemName: SFSymbolName.crossIconPlain)
-                        .font(Font.caption.weight(.bold))
-                        .foregroundColor(Color(.secondaryLabel))
-                        .padding(6)
-                        .background(Circle().foregroundColor(Color(.systemGray6)))
-                }
-            }
         }
     }
 

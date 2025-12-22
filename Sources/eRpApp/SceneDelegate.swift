@@ -24,6 +24,8 @@ import ComposableArchitecture
 import ContentsquareModule
 import eRpKit
 import eRpLocalStorage
+import eRpResources
+import FeatureHelpers
 import IDP
 import SwiftUI
 import UIKit
@@ -116,8 +118,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             mainWindow = UIWindow(windowScene: windowScene)
         }
         parseUserActivities(connectionOptions.userActivities)
-
-        UITextField.appearance().clearButtonMode = .whileEditing
 
         UNUserNotificationCenter.current().delegate = notificationDelegate
 

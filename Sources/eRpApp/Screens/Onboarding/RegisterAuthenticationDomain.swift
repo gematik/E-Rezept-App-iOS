@@ -23,6 +23,8 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import LocalAuthentication
 import SwiftUI
 import Zxcvbn
@@ -70,7 +72,7 @@ struct RegisterAuthenticationDomain {
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
-    @Dependency(\.feedbackReceiver) var feedbackReceiver
+    @Dependency(\.hapticFeedbackGenerator) var hapticFeedback
 
     var body: some Reducer<State, Action> {
         Reduce(core)
@@ -110,7 +112,7 @@ struct RegisterAuthenticationDomain {
                 }
             case let .success(result):
                 guard result == true else { return .none }
-                feedbackReceiver.hapticFeedbackSuccess()
+                hapticFeedback.success()
                 return .run { [timeout = state.timeout] send in
                     try await schedulers.main.sleep(for: timeout)
                     await send(.delegate(.nextPage))

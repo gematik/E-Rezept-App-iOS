@@ -44,12 +44,10 @@ final class AppDomainTests: XCTestCase {
                 pharmacy: Self.Fixtures.pharmacyContainerState,
                 orders: Self.Fixtures.ordersDomainState,
                 settings: SettingsDomain.State(
-                    isDemoMode: false,
                     destination: nil
                 ),
                 unreadOrderMessageCount: 0,
-                unreadInternalCommunicationCount: 0,
-                isDemoMode: false
+                unreadInternalCommunicationCount: 0
             )
         ) {
             AppDomain()
@@ -67,12 +65,10 @@ final class AppDomainTests: XCTestCase {
                 pharmacy: Self.Fixtures.pharmacyContainerState,
                 orders: Self.Fixtures.ordersDomainState,
                 settings: SettingsDomain.State(
-                    isDemoMode: false,
                     destination: .healthCardPasswordForgotPin(.init(mode: .forgotPin))
                 ),
                 unreadOrderMessageCount: 0,
-                unreadInternalCommunicationCount: 0,
-                isDemoMode: false
+                unreadInternalCommunicationCount: 0
             )
         ) {
             AppDomain()
@@ -80,7 +76,6 @@ final class AppDomainTests: XCTestCase {
 
         await testStore.send(.setNavigation(.settings)) {
             $0.settings = SettingsDomain.State(
-                isDemoMode: false,
                 destination: nil
             )
         }
@@ -94,7 +89,6 @@ final class AppDomainTests: XCTestCase {
                 pharmacy: Self.Fixtures.pharmacyContainerState,
                 orders: Self.Fixtures.ordersDomainState,
                 settings: SettingsDomain.State(
-                    isDemoMode: false,
                     destination: .healthCardPasswordForgotPin(HealthCardPasswordIntroductionDomain.State(
                         mode: .forgotPin,
                         destination: .can(HealthCardPasswordCanDomain.State(
@@ -109,8 +103,7 @@ final class AppDomainTests: XCTestCase {
                     ))
                 ),
                 unreadOrderMessageCount: 0,
-                unreadInternalCommunicationCount: 0,
-                isDemoMode: false
+                unreadInternalCommunicationCount: 0
             )
         ) {
             AppDomain()
@@ -118,7 +111,6 @@ final class AppDomainTests: XCTestCase {
 
         await testStore.send(.setNavigation(.settings)) {
             $0.settings = SettingsDomain.State(
-                isDemoMode: false,
                 destination: nil
             )
         }

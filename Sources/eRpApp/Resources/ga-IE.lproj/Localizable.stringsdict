@@ -13,15 +13,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%u braitheadh ​​iarrachtaí logáil isteach nár éirigh leo</string>
 			<key>many</key>
-			<string></string>
+			<string>%u braitheadh ​​iarrachtaí logáil isteach nár éirigh leo</string>
 			<key>one</key>
 			<string>Braitheadh ​​iarracht logáil isteach nár éirigh leis</string>
 			<key>other</key>
 			<string>%u braitheadh ​​iarrachtaí logáil isteach nár éirigh leo</string>
 			<key>two</key>
-			<string></string>
+			<string>%u braitheadh ​​iarrachtaí logáil isteach nár éirigh leo</string>
 		</dict>
 	</dict>
 	<key>auth_txt_password_failure_please_retry_with_delay</key>
@@ -34,12 +34,16 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>few</key>
+			<string>Focal faire mícheart. Déan iarracht arís i gceann %u soicind.</string>
+			<key>many</key>
+			<string>Focal faire mícheart. Déan iarracht arís i gceann %u soicind.</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>Focal faire mícheart. Déan iarracht arís i gceann 1 soicind le do thoil.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
-			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>Focal faire mícheart. Déan iarracht arís i gceann %u soicind.</string>
+			<key>two</key>
+			<string>Focal faire mícheart. Déan iarracht arís i gceann %u soicind.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -53,15 +57,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Déan iarracht arís i gceann %u soicind.</string>
 			<key>many</key>
-			<string></string>
+			<string>Déan iarracht arís i gceann %u soicind.</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>Bain triail as arís i gceann %u soicind, le do thoil.</string>
 			<key>other</key>
 			<string>Déan iarracht arís i gceann %u soicind.</string>
 			<key>two</key>
-			<string></string>
+			<string>Déan iarracht arís i gceann %u soicind.</string>
 		</dict>
 	</dict>
 	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
@@ -75,15 +79,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Líonadh an t-oideas seo duit ar % %@ mar chuid de chóireáil.</string>
 			<key>many</key>
-			<string></string>
+			<string>Líonadh an t-oideas seo duit ar % %@ mar chuid de chóireáil.</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>Díoladh an t-oideas seo %%@ mar chuid de chóireáil duit.</string>
 			<key>other</key>
 			<string>Líonadh an t-oideas seo duit ar % %@ mar chuid de chóireáil.</string>
 			<key>two</key>
-			<string></string>
+			<string>Líonadh an t-oideas seo duit ar % %@ mar chuid de chóireáil.</string>
 		</dict>
 	</dict>
 	<key>erx_txt_accepted_until</key>
@@ -97,15 +101,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Fós infhuascailte ar feadh %u lá</string>
 			<key>many</key>
-			<string></string>
+			<string>Fós infhuascailte ar feadh %u lá</string>
 			<key>one</key>
 			<string>Ní féidir a fhuascailt ach amárach</string>
 			<key>other</key>
 			<string>Fós infhuascailte ar feadh %u lá</string>
 			<key>two</key>
-			<string></string>
+			<string>Fós infhuascailte ar feadh %u lá</string>
 		</dict>
 	</dict>
 	<key>erx_txt_deleted_at</key>
@@ -119,15 +123,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Scriosta ar: %% @</string>
 			<key>many</key>
-			<string></string>
+			<string>Scriosta ar: %% @</string>
 			<key>one</key>
 			<string>Scriosta: %% @</string>
 			<key>other</key>
 			<string>Scriosta ar: %% @</string>
 			<key>two</key>
-			<string></string>
+			<string>Scriosta ar: %% @</string>
 		</dict>
 	</dict>
 	<key>erx_txt_expires_in</key>
@@ -141,15 +145,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Is féidir é a fhuascailt fós mar fhéiníocóir ar feadh %u lá</string>
 			<key>many</key>
-			<string></string>
+			<string>Is féidir é a fhuascailt fós mar fhéiníocóir ar feadh %u lá</string>
 			<key>one</key>
 			<string>Ní féidir é a fhuascailt ach amárach mar fhéiníocóir</string>
 			<key>other</key>
 			<string>Is féidir é a fhuascailt fós mar fhéiníocóir ar feadh %u lá</string>
 			<key>two</key>
-			<string></string>
+			<string>Is féidir é a fhuascailt fós mar fhéiníocóir ar feadh %u lá</string>
 		</dict>
 	</dict>
 	<key>ord_detail_txt_presc</key>
@@ -163,15 +167,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>oidis</string>
 			<key>many</key>
-			<string></string>
+			<string>oidis</string>
 			<key>one</key>
 			<string>oideas</string>
 			<key>other</key>
 			<string>oidis</string>
 			<key>two</key>
-			<string></string>
+			<string>oidis</string>
 		</dict>
 	</dict>
 	<key>ord_list_status_count</key>
@@ -185,15 +189,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%lu Oidis</string>
 			<key>many</key>
-			<string></string>
+			<string>%lu Oidis</string>
 			<key>one</key>
 			<string>%lu oideas</string>
 			<key>other</key>
-			<string>%lu</string>
+			<string>%lu Oidis</string>
 			<key>two</key>
-			<string></string>
+			<string>%lu Oidis</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>
@@ -207,15 +211,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Níorbh fhéidir %li oideas a fhuascailt</string>
 			<key>many</key>
-			<string></string>
+			<string>Níorbh fhéidir %li oideas a fhuascailt</string>
 			<key>one</key>
 			<string>Níorbh fhéidir an t-oideas roghnaithe a fhuascailt</string>
 			<key>other</key>
 			<string>Níorbh fhéidir %li oideas a fhuascailt</string>
 			<key>two</key>
-			<string></string>
+			<string>Níorbh fhéidir %li oideas a fhuascailt</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
@@ -229,15 +233,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Ní féidir oidis a fhuascailt</string>
 			<key>many</key>
-			<string></string>
+			<string>Ní féidir oidis a fhuascailt</string>
 			<key>one</key>
 			<string>Ní féidir oideas a fhuascailt</string>
 			<key>other</key>
 			<string>Ní féidir oidis a fhuascailt</string>
 			<key>two</key>
-			<string></string>
+			<string>Ní féidir oidis a fhuascailt</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
@@ -251,15 +255,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Ní féidir na oidis seo a leanas a fhuascailt a thuilleadh: %% @. Seans gur fhuascailt tú iad ar bhealach eile cheana féin nó b’fhéidir gur scriosadh iad.</string>
 			<key>many</key>
-			<string></string>
+			<string>Ní féidir na oidis seo a leanas a fhuascailt a thuilleadh: %% @. Seans gur fhuascailt tú iad ar bhealach eile cheana féin nó b’fhéidir gur scriosadh iad.</string>
 			<key>one</key>
 			<string>Ní féidir an oideas %% @ a fhuascailt a thuilleadh. Seans go bhfuil sé fuascailte agat cheana féin ar bhealach eile nó b’fhéidir gur scriosadh é.</string>
 			<key>other</key>
 			<string>Ní féidir na oidis seo a leanas a fhuascailt a thuilleadh: %% @. Seans gur fhuascailt tú iad ar bhealach eile cheana féin nó b’fhéidir gur scriosadh iad.</string>
 			<key>two</key>
-			<string></string>
+			<string>Ní féidir na oidis seo a leanas a fhuascailt a thuilleadh: %% @. Seans gur fhuascailt tú iad ar bhealach eile cheana féin nó b’fhéidir gur scriosadh iad.</string>
 		</dict>
 	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
@@ -273,15 +277,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Leigheas a fuarthas</string>
 			<key>many</key>
-			<string></string>
+			<string>Leigheas a fuarthas</string>
 			<key>one</key>
 			<string>Fuair ​​​​cógas</string>
 			<key>other</key>
 			<string>Leigheas a fuarthas</string>
 			<key>two</key>
-			<string></string>
+			<string>Leigheas a fuarthas</string>
 		</dict>
 	</dict>
 	<key>scn_btn_scanning_done</key>
@@ -295,15 +299,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Arna dhéanamh, cuir oideas</string>
 			<key>many</key>
-			<string></string>
+			<string>Arna dhéanamh, cuir oideas</string>
 			<key>one</key>
 			<string>Arna dhéanamh, cuir oideas</string>
 			<key>other</key>
 			<string>Arna dhéanamh, cuir oideas</string>
 			<key>two</key>
-			<string></string>
+			<string>Arna dhéanamh, cuir oideas</string>
 		</dict>
 	</dict>
 	<key>self_payer_warning_txt_message</key>
@@ -317,15 +321,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>na hoideas</string>
 			<key>many</key>
-			<string></string>
+			<string>na hoideas</string>
 			<key>one</key>
 			<string>an t-oideas</string>
 			<key>other</key>
 			<string>na hoideas</string>
 			<key>two</key>
-			<string></string>
+			<string>na hoideas</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
@@ -339,15 +343,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Tá %u iarracht fós agat an UAP reatha a chur isteach.</string>
 			<key>many</key>
-			<string></string>
+			<string>Tá %u iarracht fós agat an UAP reatha a chur isteach.</string>
 			<key>one</key>
 			<string>Tá iarracht amháin eile agat an UAP reatha a chur isteach.</string>
 			<key>other</key>
 			<string>Tá %u iarracht fós agat an UAP reatha a chur isteach.</string>
 			<key>two</key>
-			<string></string>
+			<string>Tá %u iarracht fós agat an UAP reatha a chur isteach.</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
@@ -361,15 +365,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Tá %u iarracht fós agat dul isteach sa PUK.</string>
 			<key>many</key>
-			<string></string>
+			<string>Tá %u iarracht fós agat dul isteach sa PUK.</string>
 			<key>one</key>
 			<string>Tá iarracht amháin eile agat dul isteach sa PUK.</string>
 			<key>other</key>
 			<string>Tá %u iarracht fós agat dul isteach sa PUK.</string>
 			<key>two</key>
-			<string></string>
+			<string>Tá %u iarracht fós agat dul isteach sa PUK.</string>
 		</dict>
 	</dict>
 </dict>

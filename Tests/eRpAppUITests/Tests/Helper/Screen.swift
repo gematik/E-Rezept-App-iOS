@@ -25,3 +25,10 @@ import XCTest
 protocol Screen {
     var app: XCUIApplication { get }
 }
+
+extension Screen {
+    func wait() -> Self {
+        sleep(1)
+        return self
+    }
+}

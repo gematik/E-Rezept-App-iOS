@@ -134,4 +134,12 @@ public protocol UserDataStore: AnyObject {
     /// The new value is published through `hideWelcomeMessage`
     /// - Parameter hideWelcomeMessage: `true`if it should be hidden, otherwise `false`
     func set(hideWelcomeMessage: Bool)
+
+    /// Indicates if the instructions should be shown while redeeming a EU prescription
+    var hideEURedeemInstructions: AnyPublisher<Bool, Never> { get }
+
+    /// Set the hideEURedeemInstructions
+    /// The new value is published through `hideEURedeemInstructions`
+    /// - Parameter hideEURedeemInstructions: `true`if it should be hidden, otherwise `false`
+    func set(hideEURedeemInstructions: Bool)
 }

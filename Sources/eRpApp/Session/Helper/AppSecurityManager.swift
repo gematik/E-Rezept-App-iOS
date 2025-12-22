@@ -20,13 +20,16 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import CryptoKit
 import Darwin
 import Dependencies
 import eRpKit
+import eRpResources
 import Foundation
 import IDP // for generateSecureRandom
 import LocalAuthentication
+import Profiles
 
 protocol AppSecurityManager {
     func save(password: String) throws -> Bool
@@ -123,7 +126,7 @@ struct DefaultAppSecurityManager: AppSecurityManager {
             let failedAttempts: Int = failedAttemptsData.withUnsafeBytes { $0.load(as: Int.self) }
             let newFailedAttempts = failedAttempts + 1
             let newFailedAttemptsData = withUnsafeBytes(of: newFailedAttempts) { Data($0) }
-            let bool = try keychainAccess.setGenericPassword(
+            _ = try keychainAccess.setGenericPassword(
                 newFailedAttemptsData,
                 for: Self.passwordFailedAttemptsCountIdentifier
             )
@@ -262,17 +265,17 @@ extension DefaultAppSecurityManager {
     }
 }
 
-// sourcery: CodedError = "044"
+@CodedError("044")
 enum AppSecurityManagerError: Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case savePasswordFailed
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case retrievePasswordFailed
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case localAuthenticationContext(NSError?)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case migrationFailed
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     case passwordDelayInfoIOFailed
 
     var errorDescription: String? {

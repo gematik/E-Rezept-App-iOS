@@ -34,26 +34,55 @@ struct PharmacyPrescriptionSelectionView: View {
     var body: some View {
         VStack {
             ScrollView {
-                SingleElementSectionContainer(header: {
+                SectionContainer(header: {
                     if let profile = store.profile {
-                        HStack {
+                        HStack(spacing: 16) {
                             ProfilePictureView(profile: profile)
                                 .frame(width: 40, height: 40, alignment: .center)
+                                .accessibilityHidden(true)
                             Text(profile.name).bold()
                         }
+                        .padding(.leading, 8)
                     }
                 }, content: {
+                    Button(
+                        action: { store.send(.selectAllPrescriptionsButtonTapped) },
+                        label: {
+                            Label {
+                                SubTitle(title: L10n.phaRedeemTxtSelectAll)
+                            } icon: {
+                                store.allPrescriptionsSelected ?
+                                    Image(systemName: SFSymbolName.checkmarkCircleFill) :
+                                    Image(systemName: SFSymbolName.circle)
+                            }
+                        }
+                    )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier(A11y.pharmacyPrescriptionList
+                        .phaPrescriptionListBtnSelectAll)
+                    .accessibilityValue(
+                        store.allPrescriptionsSelected ? L10n
+                            .sectionTxtIsActiveValue.text : L10n.sectionTxtIsInactiveValue.text
+                    )
+
                     ForEach(Array(store.prescriptions.enumerated()), id: \.element) { index, prescription in
-                        Button(action: { store.send(.didSelect(prescription.id)) },
-                               label: {
-                                   TitleWithSubtitleCellView(
-                                       title: prescription.title,
-                                       subtitle: "",
-                                       isSelected: store.selectedPrescriptionsCopy.contains(prescription)
-                                   ).multilineTextAlignment(.leading)
-                               })
-                            .sectionContainerIsLastElement(index == store.prescriptions.count - 1)
-                            .padding(.horizontal)
+                        Button(
+                            action: { store.send(.didSelect(prescription.id)) },
+                            label: {
+                                TitleWithSubtitleCellView(
+                                    title: prescription.title,
+                                    subtitle: prescription.statusMessage,
+                                    isSelected: store.selectedPrescriptionsCopy.contains(prescription)
+                                )
+                                .multilineTextAlignment(.leading)
+                            }
+                        )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityValue(
+                            store.selectedPrescriptionsCopy.contains(prescription) ? L10n
+                                .sectionTxtIsActiveValue.text : L10n.sectionTxtIsInactiveValue.text
+                        )
+                        .buttonStyle(.simple(showSeparator: index != store.prescriptions.count - 1))
                     }
                 })
             }
@@ -72,6 +101,22 @@ struct PharmacyPrescriptionSelectionView: View {
                     Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
                 })
                     .accessibility(identifier: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave)
+            }
+        }
+    }
+
+    private struct TitleWithSubtitleCellView: View {
+        var title: String
+        var subtitle: String
+        var isSelected: Bool
+        var imageName: String = SFSymbolName.circle
+        var selectedImageName: String = SFSymbolName.checkmarkCircleFill
+
+        var body: some View {
+            Label {
+                SubTitle(title: title, description: subtitle)
+            } icon: {
+                isSelected ? Image(systemName: selectedImageName) : Image(systemName: imageName)
             }
         }
     }

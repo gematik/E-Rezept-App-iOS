@@ -42,7 +42,7 @@ public struct SectionContainerLabelStyle: LabelStyle {
 
             VStack(alignment: .leading, spacing: 0) {
                 configuration.title
-                    .foregroundColor(Color(.label))
+                    .foregroundColor(Colors.systemLabel)
                     .padding([.bottom, .trailing, .top])
 
                 if !isLastElement, showSeparator {

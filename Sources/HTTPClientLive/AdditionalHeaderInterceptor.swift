@@ -32,23 +32,13 @@ public class AdditionalHeaderInterceptor: Interceptor {
 
     let additionalHeader: [String: String]
 
-    public func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    public func intercept(chain: Chain) async throws -> HTTPResponse {
         var request = chain.request
 
         for (header, value) in additionalHeader {
             request.setValue(value, forHTTPHeaderField: header)
         }
 
-        return chain.proceedPublisher(request: request)
-    }
-
-    public func interceptAsync(chain: Chain) async throws -> HTTPResponse {
-        var request = chain.request
-
-        for (header, value) in additionalHeader {
-            request.setValue(value, forHTTPHeaderField: header)
-        }
-
-        return try await chain.proceedAsync(request: request)
+        return try await chain.proceed(request: request)
     }
 }

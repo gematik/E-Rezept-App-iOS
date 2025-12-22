@@ -62,7 +62,9 @@ struct OnboardingRegisterPasswordScreen: Screen {
             file: file,
             line: line
         )
-        textField.tap()
+        if !textField.hasFocus {
+            textField.tap()
+        }
         textField.typeText(password)
     }
 

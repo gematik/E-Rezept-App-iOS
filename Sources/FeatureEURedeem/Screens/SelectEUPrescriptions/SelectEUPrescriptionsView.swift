@@ -21,62 +21,74 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
-struct SelectEUPrescriptionsView: View {
-    let store: StoreOf<SelectEUPrescriptionsDomain>
+public struct SelectEUPrescriptionsView: View {
+    var store: StoreOf<SelectEUPrescriptionsDomain>
 
-    var body: some View {
-        List {
-            patientSection
-
-            prescriptionsSection
-        }
-        .navigationTitle("Rezepte")
+    public init(store: StoreOf<SelectEUPrescriptionsDomain>) {
+        self.store = store
     }
 
-    private var patientSection: some View {
-        Section {
-            HStack {
-                Circle()
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 40, height: 40)
-                    .overlay(
-                        Text(String(store.patientName.prefix(1)))
-                            .foregroundColor(.primary)
-                    )
+    public var body: some View {
+        List {
+            Section(content: {
+                selectAllPrescriptionCell
+                prescriptionCells
+            }, header: {
+                patientHeader
+            })
+                .headerProminence(.increased)
+        }
+        .navigationTitle(L10n.euredeemPrscSelectionTitle)
+        .navigationBarTitleDisplayMode(.inline)
+    }
 
-                Text(store.patientName)
-                    .font(.headline)
+    private var patientHeader: some View {
+        HStack {
+            Circle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 40, height: 40)
+                .overlay(
+                    Text(String(store.patientName.prefix(1)))
+                        .foregroundColor(.primary)
+                )
 
+            Text(store.patientName)
+                .font(.headline)
+
+            Spacer()
+        }
+        .listRowInsets(.init(top: 16, leading: 0, bottom: 16, trailing: 0))
+    }
+
+    private var selectAllPrescriptionCell: some View {
+        Button {
+            store.send(.toggleSelectAll)
+        } label: {
+            HStack(alignment: .center, spacing: 16) {
+                SelectionCheckmark(isSelected: store.selectAllEnabled)
+                Text(L10n.euredeemPrscSelectionTxtSelectAll)
+                    .font(.body)
                 Spacer()
             }
-            .padding(.vertical, 8)
-
-            Button {
-                store.send(.toggleSelectAll)
-            } label: {
-                HStack {
-                    SelectionCircle(isSelected: store.selectAllEnabled)
-                    Text("Alle Rezepte wählen")
-                        .font(.body)
-                    Spacer()
-                }
-            }
-            .buttonStyle(.plain)
         }
+        .padding(.vertical, 8)
+        .buttonStyle(.plain)
+        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
     }
 
-    private var prescriptionsSection: some View {
+    private var prescriptionCells: some View {
         ForEach(store.prescriptions) { prescription in
             Button {
                 store.send(.togglePrescription(prescription))
             } label: {
-                HStack(alignment: .top) {
+                HStack(alignment: .center, spacing: 16) {
                     if prescription.isRedeemableInEU {
-                        SelectionCircle(isSelected: prescription.isSelected)
+                        SelectionCheckmark(isSelected: prescription.isSelected)
                     } else {
-                        Image(systemName: "xmark")
+                        Image(systemName: SFSymbolName.crossIconPlain)
                             .foregroundColor(.red)
                             .frame(width: 24, height: 24)
                     }
@@ -87,7 +99,9 @@ struct SelectEUPrescriptionsView: View {
                             .foregroundColor(.primary)
 
                         if prescription.isRedeemableInEU, let expiresOn = prescription.expiresOn {
-                            Text("Im EU Ausland einlösbar bis \(formatDate(expiresOn))")
+                            Text(L10n.euredeemPrscSelectionTxtRedeemUntil(
+                                expiresOn.formatted(date: .numeric, time: .omitted)
+                            ))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         } else if let reason = prescription.notRedeemableReason {
@@ -101,33 +115,23 @@ struct SelectEUPrescriptionsView: View {
                 }
             }
             .buttonStyle(.plain)
-            .opacity(prescription.isRedeemableInEU ? 1.0 : 0.8)
-            .disabled(!prescription.isRedeemableInEU)
-            .contentShape(Rectangle())
         }
-    }
-
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy"
-        return formatter.string(from: date)
     }
 }
 
-struct SelectionCircle: View {
+struct SelectionCheckmark: View {
     let isSelected: Bool
 
     var body: some View {
-        ZStack {
-            Circle()
-                .strokeBorder(isSelected ? Color.accentColor : Color.gray, lineWidth: 2)
+        if isSelected {
+            Image(systemName: SFSymbolName.checkmarkCircleFill)
+                .resizable()
                 .frame(width: 24, height: 24)
-
-            if isSelected {
-                Circle()
-                    .fill(Color.accentColor)
-                    .frame(width: 12, height: 12)
-            }
+                .foregroundColor(Color.accentColor)
+        } else {
+            Circle()
+                .strokeBorder(Color.accentColor, lineWidth: 2)
+                .frame(width: 24, height: 24)
         }
     }
 }

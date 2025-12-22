@@ -31,15 +31,31 @@ public struct CodeDomain {
     @ObservableState
     public struct State: Equatable {
         var displayMode = DisplayMode.manual
-        var insuranceNumber = "M123456789"
-        var exchangeCode = "A1b2C3"
+        var insuranceNumber: String
+        var exchangeCode: String
         var qrCodeImage: UIImage?
         var isExpired = false
         var expirationDate: Date?
 
-        enum DisplayMode: Equatable {
+        public enum DisplayMode: Equatable {
             case manual
             case qrCode
+        }
+
+        public init(
+            displayMode: DisplayMode = DisplayMode.manual,
+            insuranceNumber: String = "M123456789",
+            exchangeCode: String = "A1b2C3",
+            qrCodeImage: UIImage? = nil,
+            isExpired: Bool = false,
+            expirationDate: Date? = nil
+        ) {
+            self.displayMode = displayMode
+            self.insuranceNumber = insuranceNumber
+            self.exchangeCode = exchangeCode
+            self.qrCodeImage = qrCodeImage
+            self.isExpired = isExpired
+            self.expirationDate = expirationDate
         }
     }
 
@@ -156,8 +172,7 @@ public struct CodeDomain {
     private func generateRandomInsuranceNumber() -> String {
         let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         let numbers = "0123456789"
-        guard let randomLetter = letters.randomElement(),
-              let randomNumbers = (0 ..< 9).compactMap({ _ in numbers.randomElement() }).map(String.init).first else {
+        guard let randomLetter = letters.randomElement() else {
             return "M123456789" // Fallback
         }
         let numbersString = (0 ..< 9).compactMap { _ in numbers.randomElement() }.map(String.init).joined()

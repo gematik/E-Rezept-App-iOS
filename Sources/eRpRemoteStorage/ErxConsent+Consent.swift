@@ -36,8 +36,17 @@ extension ErxConsent {
         return try encoder.encode(consent)
     }
 
+    // swiftlint:disable:next function_body_length
     private func createFHIRConsent() throws -> Consent {
-        guard let chargeConsent = ErpCharge.Key.Consent.consent[.v1_0_0]?.asFHIRCanonicalPrimitive(for: "1.0") else {
+        let chargeConsent: FHIRPrimitive<Canonical>?
+
+        switch category {
+        case .chargcons:
+            chargeConsent = ErpCharge.Key.Consent.consent[.v1_1_0]?.asFHIRCanonicalPrimitive(for: "1.1")
+        case .euDispense:
+            chargeConsent = EURedeem.Key.Consent.consent[.v1_0_0]?.asFHIRCanonicalPrimitive(for: "1.0")
+        }
+        guard let chargeConsent else {
             throw ErxConsent.Error.unableToConstructConsentRequest
         }
         let meta = Meta(profile: [chargeConsent])
@@ -46,7 +55,13 @@ extension ErxConsent {
             throw ErxConsent.Error.unableToConstructConsentRequest
         }
 
-        let categoryUri = ErpCharge.Key.Consent.consentType[.v1_0_0]?.asFHIRURIPrimitive()
+        let categoryUri: FHIRPrimitive<FHIRURI>?
+        switch category {
+        case .chargcons:
+            categoryUri = ErpCharge.Key.Consent.consentType[.v1_1_0]?.asFHIRURIPrimitive()
+        case .euDispense:
+            categoryUri = EURedeem.Key.Consent.consentType[.v1_0_0]?.asFHIRURIPrimitive()
+        }
         let category = CodeableConcept(coding: [
             Coding(
                 code: category.rawValue.asFHIRStringPrimitive(),
@@ -54,7 +69,13 @@ extension ErxConsent {
             ),
         ])
 
-        let patientUri = Workflow.Key.pkvIDKeys[.v1_2_0]?.asFHIRURIPrimitive()
+        let patientUri: FHIRPrimitive<FHIRURI>?
+        switch self.category {
+        case .chargcons:
+            patientUri = Workflow.Key.unifiedKvIDKeys[.v1_4_3]?.asFHIRURIPrimitive()
+        case .euDispense:
+            patientUri = Workflow.Key.unifiedKvIDKeys[.v1_5_2]?.asFHIRURIPrimitive()
+        }
         let patient = Identifier(
             system: patientUri,
             value: insuranceId.asFHIRStringPrimitive()

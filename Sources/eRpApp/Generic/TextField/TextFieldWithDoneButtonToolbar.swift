@@ -56,7 +56,7 @@ private struct TextFieldWithDoneButtonToolbar: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18)) { textField in
+            .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textField in
                 let toolBar = textField
                     .inputAccessoryView as? UIToolbar ??
                     UIToolbar(frame: CGRect(x: 0, y: 0, width: textField.frame.size.width, height: 44))

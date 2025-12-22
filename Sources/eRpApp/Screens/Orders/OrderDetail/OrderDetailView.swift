@@ -247,9 +247,13 @@ struct OrderDetailView: View {
                         .padding(.horizontal, 16)
                         .padding(.bottom, 24)
 
-                    PrimaryTextButton(text: L10n.ordDetailShipmentLinkBtn, a11y: "") {
+                    Button {
                         store.send(.openUrl(url: store.openUrlSheetUrl))
+                    } label: {
+                        Label(L10n.ordDetailShipmentLinkBtn)
                     }
+                    .buttonStyle(.primary)
+                    .accessibilityIdentifier("")
                     .padding(.horizontal, 32)
                 }
                 .navigationBarItems(trailing: CloseButton { store.send(.showOpenUrlSheet(url: nil)) })

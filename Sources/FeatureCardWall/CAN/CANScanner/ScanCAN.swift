@@ -1,0 +1,43 @@
+//
+//  Copyright (Change Date see Readme), gematik GmbH
+//
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
+//  You may not use this work except in compliance with the Licence.
+//
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+//
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
+//
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+//
+
+import Foundation
+/// Represent a CAN number
+///
+/// Format should be a number with a count of 6 digits.
+public struct ScanCAN {
+    /// The CAN value as a string
+    public let value: String
+
+    /// Initializes a new ScanCAN with the given value
+    /// - Parameter value: The CAN value as a string
+    public init(value: String) {
+        self.value = value
+    }
+}
+
+extension ScanCAN {
+    /// Validates a CAN and checks for length and digits.
+    public var isValid: Bool {
+        value.allSatisfy(Set("0123456789").contains) && value.count == 6
+    }
+}

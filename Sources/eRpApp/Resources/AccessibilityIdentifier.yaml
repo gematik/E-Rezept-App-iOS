@@ -330,6 +330,7 @@ redeem:
     - rdm_txt_pharmacy_subtitle
     - rdm_btn_pharmacy_tile
     - rdm_btn_delivery_tile
+    - rdm_btn_redeem_eu_prsc
     - rdm_btn_close_button
 orders:
   list:
@@ -380,6 +381,7 @@ mainScreen:
   - erx_txt_tooltips_scan
   - erx_btn_consent_drawer_activate
   - erx_btn_consent_drawer_cancel
+  - erx_btn_consent_drawer_close
   - erx_txt_consent_drawer_title
   - erx_txt_consent_drawer_message
 prescriptionArchive:
@@ -389,6 +391,7 @@ prescriptionArchive:
 welcomedrawer:
   - wlcd_btn_pkv_user
   - wlcd_btn_gkv_user
+  - wlcd_btn_federalkv_user
 profileSelection:
   - pro_txt_selection_profile_list
   - pro_txt_selection_profile_list_entry
@@ -411,6 +414,7 @@ prescriptionDetails:
   - prsc_dtl_btn_toolbar_item
   - prsc_dtl_toolbar_menu_btn_share
   - prsc_dtl_toolbar_menu_btn_redeem
+  - prsc_dtl_toolbar_menu_btn_redeem_eu_prsc
   - prsc_dtl_toolbar_menu_btn_delete
   - prsc_dtl_btn_error_info
   - prsc_dtl_btn_substitution_info
@@ -561,6 +565,7 @@ pharmacySearch:
   - pha_filter_open_filter
   - pha_filter_filter_list
   - pha_search_switch_result_map
+  - pha_search_hint_eu_redeem
 pharmacySearchStart:
   - pha_search_txt_quick_filter_title
   - pha_search_btn_quick_filter_nearby
@@ -639,6 +644,7 @@ pharmacyRedeem:
   - pha_redeem_txt_add_pharmacy
   - pha_redeem_btn_add_pharmacy
 pharmacyPrescriptionList:
+  - pha_prescription_list_btn_select_all
   - pha_prescription_list_btn_save
 pharmacyContact:
   - pha_contact_address_name
@@ -668,6 +674,7 @@ matrixCode:
   - dmc_img_loading_indicator
   - dmc_img_matrixcode
   - dmc_btn_share
+  - dmc_btn_redeem_eu_prsc
 medicationReminder:
   - med_reminder_btn_activation_toggle
   - med_reminder_btn_dosage_instruction

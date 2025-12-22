@@ -20,15 +20,16 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
-import OpenSSL
+@preconcurrency import OpenSSL
 
-public struct TrustAnchor: Equatable {
+public struct TrustAnchor: Equatable, Sendable {
     let certificate: X509
 
-    // sourcery: CodedError = "562"
+    @CodedError("562")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case invalidPEM
     }
 

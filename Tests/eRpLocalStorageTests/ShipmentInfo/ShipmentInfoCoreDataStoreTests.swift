@@ -27,6 +27,7 @@ import eRpKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble
+import Sharing
 import XCTest
 
 final class ShipmentInfoCoreDataStoreTests: XCTestCase {
@@ -54,19 +55,35 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
 
     private func loadFactory() -> CoreDataControllerFactory {
         guard let factory = factory else {
-            #if os(macOS)
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
-            #else
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
-            self.factory = factory
-            return factory
+            return .init(databaseUrl: { self.databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
+
+                var fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: self.databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
         }
 
         return factory

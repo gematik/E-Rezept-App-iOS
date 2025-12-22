@@ -24,6 +24,8 @@ import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureCardWall
+import FeatureHelpers
 import IDP
 import Nimble
 import XCTest
@@ -37,8 +39,6 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     var mockUserSession: MockUserSession!
     var mockUserSessionProvider: MockUserSessionProvider!
     var mockSecureEnclaveSignatureProvider: MockSecureEnclaveSignatureProvider!
-    var mockNFCSignatureProvider: MockNFCSignatureProvider!
-    var mockSessionProvider: MockProfileBasedSessionProvider!
     var mockRegisteredDevicesService: MockRegisteredDevicesService!
     let uidateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
 
@@ -49,8 +49,6 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         mockUserSession = MockUserSession()
         mockUserSessionProvider = MockUserSessionProvider()
         mockSecureEnclaveSignatureProvider = MockSecureEnclaveSignatureProvider()
-        mockNFCSignatureProvider = MockNFCSignatureProvider()
-        mockSessionProvider = MockProfileBasedSessionProvider()
         mockRegisteredDevicesService = MockRegisteredDevicesService()
     }
 
@@ -71,7 +69,6 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     func testLoadDevicesTriggersCardwall() async {
         let store = testStore(for: .init(profileId: testProfileId))
         let cardWallState = CardWallCANDomain.State(
-            isDemoModus: false,
             profileId: testProfileId,
             can: ""
         )
@@ -104,7 +101,6 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     func testWhenReturningFromCardwallThatReloadIsTriggered() async {
         let store = testStore(for: .init(profileId: testProfileId))
         let cardWallState = CardWallCANDomain.State(
-            isDemoModus: false,
             profileId: testProfileId,
             can: ""
         )

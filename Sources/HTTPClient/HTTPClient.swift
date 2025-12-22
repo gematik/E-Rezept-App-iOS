@@ -20,7 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
+import CodedError
 import Foundation
 
 // swiftlint:disable large_tuple
@@ -45,19 +45,9 @@ public protocol HTTPClient {
     /// - Parameter request: The request to be (modified and) sent.
     /// - Parameter interceptors: per request interceptors.
     /// - Parameter handler: handler that should be called in case of redirect.
-    /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    @available(*, deprecated, message: "Use async version instead")
-    func sendPublisher(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
-        -> AnyPublisher<HTTPResponse, HTTPClientError>
-
-    /// Send the given request. The request will be processed by the list of `Interceptors`.
-    ///
-    /// - Parameter request: The request to be (modified and) sent.
-    /// - Parameter interceptors: per request interceptors.
-    /// - Parameter handler: handler that should be called in case of redirect.
     /// - Note: Only `HTTPClientError`s are supposed to be thrown.
     /// - Returns: The response as `HTTPResponse`
-    func sendAsync(
+    func send(
         request: URLRequest,
         interceptors: [Interceptor],
         redirect handler: RedirectHandler?
@@ -72,49 +62,18 @@ extension HTTPClient {
     ///
     /// - Parameter request: The request to be (modified and) sent.
     /// - Parameter interceptors: per request interceptors.
-    /// - Parameter handler: handler that should be called in case of redirect.
-    /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    @available(
-        *,
-        deprecated,
-        renamed: "sendPublisher(request:interceptors:redirect:)",
-        message: "Use async version instead"
-    )
-    func send(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
-        -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        sendPublisher(request: request, interceptors: interceptors, redirect: handler)
-    }
-}
-
-extension HTTPClient {
-    /// Send the given request. The request will be processed by the list of `Interceptors`.
-    ///
-    /// - Parameter request: The request to be (modified and) sent.
-    /// - Parameter interceptors: per request interceptors.
-    /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    @available(*, deprecated, message: "Use async version instead")
-    public func sendPublisher(request: URLRequest,
-                              interceptors: [Interceptor]) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        send(request: request, interceptors: interceptors, redirect: nil)
-    }
-
-    /// Send the given request.
-    ///
-    /// - Parameter request: The request to be (modified and) sent.
-    /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    @available(*, deprecated, message: "Use async version instead")
-    public func sendPublisher(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        sendPublisher(request: request, interceptors: [])
-    }
-
-    /// Send the given request. The request will be processed by the list of `Interceptors`.
-    ///
-    /// - Parameter request: The request to be (modified and) sent.
-    /// - Parameter interceptors: per request interceptors.
     /// - Note: Only `HTTPClientError`s are supposed to be thrown.
     /// - Returns: The response as `HTTPResponse`
-    public func sendAsync(request: URLRequest, interceptors: [Interceptor]) async throws -> HTTPResponse {
-        try await sendAsync(request: request, interceptors: interceptors, redirect: nil)
+    public func send(request: URLRequest, interceptors: [Interceptor]) async throws -> HTTPResponse {
+        do {
+            return try await send(request: request, interceptors: interceptors, redirect: nil)
+        } catch let httpError as HTTPClientError {
+            throw httpError
+        } catch let urlError as URLError {
+            throw HTTPClientError.httpError(urlError)
+        } catch {
+            throw HTTPClientError.unknown(error)
+        }
     }
 
     /// Send the given request. The request will be processed by the list of `Interceptors`.
@@ -122,30 +81,38 @@ extension HTTPClient {
     /// - Parameter request: The request to be (modified and) sent.
     /// - Note: Only `HTTPClientError`s are supposed to be thrown.
     /// - Returns: The response as `HTTPResponse`
-    public func sendAsync(request: URLRequest) async throws -> HTTPResponse {
-        try await sendAsync(request: request, interceptors: [])
+    public func send(request: URLRequest) async throws -> HTTPResponse {
+        do {
+            return try await send(request: request, interceptors: [])
+        } catch let httpError as HTTPClientError {
+            throw httpError
+        } catch let urlError as URLError {
+            throw HTTPClientError.httpError(urlError)
+        } catch {
+            throw HTTPClientError.unknown(error)
+        }
     }
 }
 
-// sourcery: CodedError = "530"
 /// HTTP Error
+@CodedError("530")
 public enum HTTPClientError: Swift.Error, Equatable, LocalizedError {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     /// Internal error in the request/chain handling
     case internalError(String)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     /// The server responded with an error
     case httpError(URLError)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     /// The connection to the server has gone bad
     case networkError(String)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     /// Authentication error
     case authentication(Swift.Error)
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     /// Error emitted by the VAU client
     case vauError(Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     /// Unclassified error
     case unknown(Swift.Error)
 

@@ -34,6 +34,7 @@ struct PharmacyPrescriptionSelectionDomain {
 
         // copy to enable discarding the changes
         var selectedPrescriptionsCopy: [Prescription]
+        @Shared(.selectedProfileId) var profileId
         var profile: Profile?
 
         init(
@@ -46,10 +47,17 @@ struct PharmacyPrescriptionSelectionDomain {
             selectedPrescriptionsCopy = selectedPrescriptions.wrappedValue
             self.profile = profile
         }
+
+        var allPrescriptionsSelected: Bool {
+            prescriptions.allSatisfy { prescription in
+                selectedPrescriptionsCopy.contains { $0.id == prescription.id }
+            }
+        }
     }
 
     enum Action: Equatable {
         case didSelect(String)
+        case selectAllPrescriptionsButtonTapped
         case saveSelection([Prescription])
         case updateRedeemablePrescriptions
 
@@ -70,7 +78,7 @@ struct PharmacyPrescriptionSelectionDomain {
         switch action {
         case .updateRedeemablePrescriptions:
             return .publisher(
-                prescriptionRepository.loadLocal()
+                prescriptionRepository.loadLocal(for: state.profileId)
                     .first()
                     .receive(on: schedulers.main.animation())
                     .catchToPublisher()
@@ -84,6 +92,18 @@ struct PharmacyPrescriptionSelectionDomain {
                 } else {
                     state.selectedPrescriptionsCopy.append(prescriptions)
                 }
+            }
+            return .none
+        case .selectAllPrescriptionsButtonTapped:
+            if state.allPrescriptionsSelected {
+                // Deselect all selected prescriptions
+                state.selectedPrescriptionsCopy.removeAll()
+            } else {
+                // Add prescriptions to selection that are not already selected
+                let prescriptionsToSelect = state.prescriptions.filter { prescription in
+                    !state.selectedPrescriptionsCopy.contains(where: { $0.id == prescription.id })
+                }
+                state.selectedPrescriptionsCopy.append(contentsOf: prescriptionsToSelect)
             }
             return .none
         case let .response(.loadLocalPrescriptionsReceived(.success(prescriptions))):
@@ -104,7 +124,8 @@ extension PharmacyPrescriptionSelectionDomain {
     enum Dummies {
         static let state = State(
             prescriptions: Shared(value: [Prescription.Dummies.prescriptionReady]),
-            selectedPrescriptions: Shared(value: [])
+            selectedPrescriptions: Shared(value: []),
+            profile: Profile(name: "Marta Maquise")
         )
 
         static let store = Store(

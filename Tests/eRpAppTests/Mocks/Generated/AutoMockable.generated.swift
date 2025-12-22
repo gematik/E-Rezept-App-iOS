@@ -51,40 +51,6 @@ import ZXingCpp
 
 
 
-public class JWTSignerMock: JWTSigner {
-
-    public init() {}
-
-
-
-    //MARK: - sign
-
-    public var signMessageDataDataThrowableError: (any Error)?
-    public var signMessageDataDataCallsCount = 0
-    public var signMessageDataDataCalled: Bool {
-        return signMessageDataDataCallsCount > 0
-    }
-    public var signMessageDataDataReceivedMessage: (Data)?
-    public var signMessageDataDataReceivedInvocations: [(Data)] = []
-    public var signMessageDataDataReturnValue: Data!
-    public var signMessageDataDataClosure: ((Data) async throws -> Data)?
-
-    public func sign(message: Data) async throws -> Data {
-        signMessageDataDataCallsCount += 1
-        signMessageDataDataReceivedMessage = message
-        signMessageDataDataReceivedInvocations.append(message)
-        if let error = signMessageDataDataThrowableError {
-            throw error
-        }
-        if let signMessageDataDataClosure = signMessageDataDataClosure {
-            return try await signMessageDataDataClosure(message)
-        } else {
-            return signMessageDataDataReturnValue
-        }
-    }
-
-
-}
 class SearchHistoryMock: SearchHistory {
 
 

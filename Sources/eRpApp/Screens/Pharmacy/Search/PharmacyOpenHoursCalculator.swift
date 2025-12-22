@@ -21,8 +21,11 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
+import eRpStyleKit
 import Foundation
+import SwiftUI
 
 struct PharmacyOpenHoursCalculator {
     enum TodaysOpeningState: Hashable, Equatable {
@@ -31,21 +34,39 @@ struct PharmacyOpenHoursCalculator {
         case open(closingDateTime: String)
         case closingSoon(closingDateTime: String)
         case willOpen(minutesTilOpen: Int?, openingDateTime: String)
+        case closingButOpenLaterToday(closingDateTime: String, openingDateTime: String)
 
         var isOpen: Bool {
-            if case .open = self {
-                return true
+            switch self {
+            case .open, .closingButOpenLaterToday, .closingSoon:
+                true
+            case .willOpen, .unknown, .closed:
+                false
             }
-            return false
+        }
+
+        var foregroundColor: Color {
+            switch self {
+            case .open:
+                Colors.secondary600
+            case .closingButOpenLaterToday, .closingSoon, .willOpen:
+                Colors.yellow700
+            case .unknown, .closed:
+                Colors.systemLabelSecondary
+            }
         }
     }
 
     static let minimumOpenMinutesLeftBeforeWarn = 30
 
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func determineOpeningState(for date: Date,
                                hoursOfOperation: [PharmacyLocation.HoursOfOperation],
-                               timeOnlyFormatter: ERPDateFormatter)
+                               specialClosings: [PharmacyLocation.SpecialOperationHours] = [],
+                               emergencyServiceHours: [PharmacyLocation.SpecialOperationHours] = [])
         -> TodaysOpeningState {
+        @Dependency(\.uiDateFormatter) var uiDateFormatter
+
         let timeFormatter = createTimeFormatter()
 
         // Map sets of days into single elements to reliably group entries for each day
@@ -73,6 +94,10 @@ struct PharmacyOpenHoursCalculator {
         }
         var result = TodaysOpeningState.closed
 
+        let emergencyClosedRange = parseClosedRange(emergencyServiceHours)
+
+        let closingClosedRange = parseClosedRange(specialClosings)
+
         for hop in todaysHoursOfOperation ?? [] {
             if let openTimeString = hop.openingTime,
                let closeTimeString = hop.closingTime,
@@ -80,27 +105,117 @@ struct PharmacyOpenHoursCalculator {
                let closingTime = timeFormatter.date(from: closeTimeString),
                let openingDateTime = date.createSameDay(with: openingTime),
                let closingDateTime = date.createSameDay(with: closingTime) {
-                // Is open right now?
-                if date > openingDateTime, date < closingDateTime {
-                    let timeSpanTillClose = Calendar.current.dateComponents([.minute], from: date, to: closingDateTime)
+                var nextReopenTime: Date?
+                var openInterval = openingDateTime ... closingDateTime
 
-                    if let minutesTillClose = timeSpanTillClose.minute,
-                       minutesTillClose < Self.minimumOpenMinutesLeftBeforeWarn {
-                        return TodaysOpeningState.closingSoon(
-                            closingDateTime: timeOnlyFormatter.string(from: closingDateTime)
+                let todayStart = Calendar.current.startOfDay(for: date)
+                let endOfToday = Calendar.current
+                    .date(byAdding: .init(day: 1, second: -1), to: todayStart) ?? todayStart
+
+                // filter and min for the next or active emergencies, we only care for the first one
+                let nextEmergencies: ClosedRange<Date>? = emergencyClosedRange
+                    .filter { $0.lowerBound <= endOfToday && $0.upperBound > date }
+                    .min { $0.lowerBound < $1.lowerBound }
+
+                // filter and min for the next or active, we only care for the first one
+                let nextClosing: ClosedRange<Date>? = closingClosedRange
+                    .filter { $0.lowerBound <= endOfToday && $0.upperBound > date }
+                    .min { $0.lowerBound < $1.lowerBound }
+
+                if let nextClosing {
+                    if nextClosing.lowerBound <= openInterval.lowerBound,
+                       nextClosing.upperBound >= openInterval.upperBound {
+                        // fully closed but could have emergencyOpening
+                        if nextEmergencies == nil {
+                            return .closed
+                        }
+                    }
+
+                    if nextClosing.lowerBound <= openInterval.lowerBound,
+                       nextClosing.upperBound < openInterval.upperBound {
+                        // specialClosing starts before regular opening and ends during regular opening
+                        openInterval = nextClosing.upperBound ... openInterval.upperBound
+                    }
+
+                    if nextClosing.lowerBound >= openInterval.lowerBound,
+                       nextClosing.lowerBound < openInterval.upperBound {
+                        // specialClosing during regular opening
+                        openInterval = openInterval.lowerBound ... nextClosing.lowerBound
+
+                        if nextClosing.upperBound < closingDateTime {
+                            // specialClosing ends before regular closing
+                            nextReopenTime = nextReopenTime.map { min($0, nextClosing.upperBound) } ?? nextClosing
+                                .upperBound
+                        }
+                    }
+                    // ignore cases when it starts/ends before or after regular opening
+                }
+
+                if let nextEmergencies {
+                    // Emergency ends before regular opening
+                    if nextEmergencies.upperBound < openInterval.lowerBound {
+                        nextReopenTime = nextReopenTime.map { min($0, openInterval.lowerBound) } ?? openInterval
+                            .lowerBound
+                    }
+
+                    // Emergency after current interval
+                    if nextEmergencies.lowerBound > openInterval.upperBound {
+                        if date >= openInterval.upperBound {
+                            // is already closed and opening is now emergency opening
+                            openInterval = nextEmergencies.lowerBound ... nextEmergencies.upperBound
+                        } else {
+                            nextReopenTime = nextReopenTime
+                                .map { min($0, nextEmergencies.lowerBound) } ?? nextEmergencies
+                                .lowerBound
+                        }
+                    }
+
+                    // Emergency starts before
+                    if nextEmergencies.lowerBound < openInterval.lowerBound {
+                        openInterval = nextEmergencies.lowerBound ... openInterval.upperBound
+                    }
+
+                    // Emergency ends after current interval and nextEmergencies is not set
+                    if nextEmergencies.upperBound > openInterval.upperBound, nextReopenTime == nil {
+                        openInterval = openInterval.lowerBound ... nextEmergencies.upperBound
+                    }
+                }
+
+                // Is open right now?
+                if openInterval.contains(date) {
+                    let timeSpanTillClose = Calendar.current.dateComponents(
+                        [.minute],
+                        from: date,
+                        to: openInterval.upperBound
+                    )
+
+                    let closingString = uiDateFormatter.timeOnlyFormatter.string(from: openInterval.upperBound)
+
+                    if let openLater = nextReopenTime,
+                       let minutesTillClose = timeSpanTillClose.minute,
+                       minutesTillClose <= Self.minimumOpenMinutesLeftBeforeWarn {
+                        let openingString = uiDateFormatter.timeOnlyFormatter.string(from: openLater)
+                        return .closingButOpenLaterToday(
+                            closingDateTime: closingString,
+                            openingDateTime: openingString
                         )
+                    } else if let minutesTillClose = timeSpanTillClose.minute,
+                              minutesTillClose <= Self.minimumOpenMinutesLeftBeforeWarn {
+                        return .closingSoon(closingDateTime: closingString)
                     } else {
-                        return TodaysOpeningState.open(
-                            closingDateTime: timeOnlyFormatter.string(from: closingDateTime)
-                        )
+                        return .open(closingDateTime: closingString)
                     }
 
                     // if not open right now maybe opens later?
-                } else if openingDateTime > date {
-                    let minutesTilOpen = Calendar.current.dateComponents([.minute], from: date, to: openingDateTime)
-                    result = TodaysOpeningState.willOpen(
+                } else if openInterval.lowerBound > date {
+                    let minutesTilOpen = Calendar.current.dateComponents(
+                        [.minute],
+                        from: date,
+                        to: openInterval.lowerBound
+                    )
+                    result = .willOpen(
                         minutesTilOpen: minutesTilOpen.minute,
-                        openingDateTime: timeOnlyFormatter.string(from: openingDateTime)
+                        openingDateTime: uiDateFormatter.timeOnlyFormatter.string(from: openInterval.lowerBound)
                     )
                 }
             }
@@ -128,6 +243,21 @@ struct PharmacyOpenHoursCalculator {
 
     private func weekDayAs3CharString(from date: Date) -> String {
         Self.dateFormatter.string(from: date).lowercased()
+    }
+
+    func parseClosedRange(_ specialHours: [PharmacyLocation.SpecialOperationHours]) -> [ClosedRange<Date>] {
+        @Dependency(\.fhirDateFormatter) var fhirDateFormatter
+
+        return specialHours.compactMap { specialHour in
+            guard
+                let start = specialHour.startDate,
+                let end = specialHour.endDate,
+                let startDate = fhirDateFormatter.date(from: start),
+                let endDate = fhirDateFormatter.date(from: end)
+            else { return nil }
+
+            return startDate ... endDate
+        }
     }
 }
 

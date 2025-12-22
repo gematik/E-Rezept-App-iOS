@@ -20,20 +20,23 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import Dependencies
 import eRpKit
+import FeatureCardWall
+import Foundation
 
 protocol PrescriptionRepository {
     /// Load Prescriptions from local repository
-    func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError>
+    func loadLocal(for profileId: UUID) -> AnyPublisher<[Prescription], PrescriptionRepositoryError>
 
     /// Load Prescriptions if preconditions are met else require further actions
-    func forcedLoadRemote(for locale: String?)
+    func forcedLoadRemote(for locale: String?, for profileId: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>
 
     /// "Silently" try to load Prescriptions if preconditions are met
-    func silentLoadRemote(for locale: String?)
+    func silentLoadRemote(for locale: String?, for profileId: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError>
 }
 
@@ -44,21 +47,21 @@ struct DummyPrescriptionRepository: PrescriptionRepository {
         ErxTask.Demo.expiredErxTask(with: .computed(status: .dispensed)),
         ErxTask.Demo.expiredErxTask(with: .completed),
     ].map {
-        Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+        Prescription(erxTask: $0)
     }
 
-    func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
+    func loadLocal(for _: UUID) -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
         Just(prescriptions).setFailureType(to: PrescriptionRepositoryError.self).eraseToAnyPublisher()
     }
 
-    func forcedLoadRemote(for _: String?)
+    func forcedLoadRemote(for _: String?, for _: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
         Just(PrescriptionRepositoryLoadRemoteResult.notAuthenticated)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
     }
 
-    func silentLoadRemote(for _: String?)
+    func silentLoadRemote(for _: String?, for _: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
         Just(PrescriptionRepositoryLoadRemoteResult.notAuthenticated)
             .setFailureType(to: PrescriptionRepositoryError.self)
@@ -76,22 +79,21 @@ enum PrescriptionRepositoryLoadRemoteResult: Equatable {
     //  - authenticationRequired: insinuated more action(s): present cardwall, ask user how to proceed, ... etc.
 }
 
-// sourcery: CodedError = "027"
+@CodedError("027")
 enum PrescriptionRepositoryError: Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case loginHandler(LoginHandlerError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case erxRepository(ErxRepositoryError)
 }
 
 class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating {
-    init(loginHandler: LoginHandler, erxTaskRepository: ErxTaskRepository) {
+    init(loginHandler: LoginHandler) {
         self.loginHandler = loginHandler
-        self.erxTaskRepository = erxTaskRepository
     }
 
     let loginHandler: LoginHandler
-    let erxTaskRepository: ErxTaskRepository
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
 
     var isActive: AnyPublisher<Bool, Never> {
         isActivePublisher.removeDuplicates().eraseToAnyPublisher()
@@ -100,85 +102,100 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
     // TODO: maybe int? // swiftlint:disable:this todo
     private var isActivePublisher = CurrentValueSubject<Bool, Never>(false)
 
-    @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
+    func loadLocal(for profileId: UUID) -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
+        @Dependency(\.schedulers) var schedulers
 
-    func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
-        erxTaskRepository.loadLocalAll()
+        return erxTaskRepository.loadLocalAllTasks(profileId)
+            .mapError { PrescriptionRepositoryError.erxRepository($0.asErxRepositoryError()) }
+            .receive(on: schedulers.main)
             .map {
-                $0.map { Prescription(erxTask: $0, dateFormatter: self.uiDateFormatter) }
+                $0.map {
+                    Prescription(erxTask: $0)
+                }
             }
-            .mapError(PrescriptionRepositoryError.erxRepository)
             .eraseToAnyPublisher()
     }
 
-    func silentLoadRemote(for locale: String?)
+    func silentLoadRemote(for locale: String?, for profileId: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
         isActivePublisher.send(true)
 
-        return loginHandler
-            .isAuthenticated()
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .first()
-            .flatMap { isAuthenticated in
-                if Result.success(true) == isAuthenticated {
-                    return self.loadRemoteAndSave(for: locale)
-                } else {
-                    return Just(PrescriptionRepositoryLoadRemoteResult.notAuthenticated)
-                        .setFailureType(to: PrescriptionRepositoryError.self)
-                        .eraseToAnyPublisher()
+        return withEscapedDependencies { dependencies in
+            loginHandler
+                .isAuthenticated()
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .first()
+                .flatMap { isAuthenticated in
+                    if Result.success(true) == isAuthenticated {
+                        return dependencies.yield {
+                            self.loadRemoteAndSave(for: locale, for: profileId)
+                        }
+                    } else {
+                        return Just(PrescriptionRepositoryLoadRemoteResult.notAuthenticated)
+                            .setFailureType(to: PrescriptionRepositoryError.self)
+                            .eraseToAnyPublisher()
+                    }
                 }
-            }
-            .handleEvents(
-                receiveCompletion: ({ [weak self] _ in
-                    self?.isActivePublisher.send(false)
-                }),
-                receiveCancel: ({ [weak self] in
-                    self?.isActivePublisher.send(false)
-                })
-            )
-            .eraseToAnyPublisher()
+                .handleEvents(
+                    receiveCompletion: ({ [weak self] _ in
+                        self?.isActivePublisher.send(false)
+                    }),
+                    receiveCancel: ({ [weak self] in
+                        self?.isActivePublisher.send(false)
+                    })
+                )
+                .eraseToAnyPublisher()
+        }
     }
 
-    private func loadRemoteAndSave(for locale: String?)
+    private func loadRemoteAndSave(for locale: String?, for profileId: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
-        erxTaskRepository
-            .loadRemoteAll(for: locale)
-            .map {
-                $0.map { Prescription(erxTask: $0, dateFormatter: self.uiDateFormatter) }
+        @Dependency(\.schedulers) var schedulers
+        return Future {
+            return try await self.erxTaskRepository.loadRemoteAllTasks(locale, profileId)
+        }
+        .receive(on: schedulers.main)
+        .mapError { PrescriptionRepositoryError.erxRepository($0.asErxRepositoryError()) }
+        .map {
+            $0.map {
+                Prescription(erxTask: $0)
             }
-            .map(PrescriptionRepositoryLoadRemoteResult.prescriptions)
-            .mapError(PrescriptionRepositoryError.erxRepository)
-            .first()
-            .eraseToAnyPublisher()
+        }
+        .map(PrescriptionRepositoryLoadRemoteResult.prescriptions)
+        .first()
+        .eraseToAnyPublisher()
     }
 
-    func forcedLoadRemote(for locale: String?)
+    func forcedLoadRemote(for locale: String?, for profileId: UUID)
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
         isActivePublisher.send(true)
-
-        return loginHandler
-            .isAuthenticatedOrAuthenticate()
-            .first()
-            .flatMap { isAuthenticated in
-                // [REQ:gemSpec_eRp_FdV:A_20167-02#2,A_20172] no token/not authorized, show authenticator module
-                if Result.success(false) == isAuthenticated {
-                    return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)
-                        .setFailureType(to: PrescriptionRepositoryError.self)
-                        .eraseToAnyPublisher()
+        return withEscapedDependencies { dependencies in
+            loginHandler
+                .isAuthenticatedOrAuthenticate()
+                .first()
+                .flatMap { isAuthenticated in
+                    // [REQ:gemSpec_eRp_FdV:A_20167-02#2,A_20172] no token/not authorized, show authenticator module
+                    if Result.success(false) == isAuthenticated {
+                        return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)
+                            .setFailureType(to: PrescriptionRepositoryError.self)
+                            .eraseToAnyPublisher()
+                    }
+                    if case let Result.failure(error) = isAuthenticated {
+                        return Fail(error: PrescriptionRepositoryError.loginHandler(error))
+                            .eraseToAnyPublisher()
+                    } else {
+                        return dependencies.yield {
+                            return self.loadRemoteAndSave(for: locale, for: profileId)
+                        }
+                    }
                 }
-                if case let Result.failure(error) = isAuthenticated {
-                    return Fail(error: PrescriptionRepositoryError.loginHandler(error))
-                        .eraseToAnyPublisher()
-                } else {
-                    return self.loadRemoteAndSave(for: locale)
-                }
-            }
-            .handleEvents(
-                receiveCompletion: ({ [weak self] _ in
-                    self?.isActivePublisher.send(false)
-                })
-            )
-            .eraseToAnyPublisher()
+                .handleEvents(
+                    receiveCompletion: ({ [weak self] _ in
+                        self?.isActivePublisher.send(false)
+                    })
+                )
+                .eraseToAnyPublisher()
+        }
     }
 }
 

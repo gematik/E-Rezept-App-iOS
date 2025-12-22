@@ -26,6 +26,7 @@ import SwiftUI
 
 extension View {
     /// Sets the navigation bar title using a `StringAsset`.
+    @available(macOS, unavailable)
     public func navigationBarTitle(
         _ stringAsset: StringAsset,
         displayMode: NavigationBarItem.TitleDisplayMode

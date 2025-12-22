@@ -21,6 +21,8 @@
 //
 
 import ComposableArchitecture
+import eRpKit
+import Pharmacy
 
 /// Domain for country selection in EU prescription redemption
 @Reducer
@@ -32,22 +34,72 @@ public struct CountrySelectionDomain {
         public var countries: [Country] = []
         /// Currently selected country
         public var selectedCountry: Country?
+        /// Search for countries in list
+        public var searchText: String = ""
+
+        public init(
+            countries: [Country],
+            selectedCountry: Country? = nil
+        ) {
+            self.countries = countries
+            self.selectedCountry = selectedCountry
+        }
     }
 
     /// Actions for country selection
-    public enum Action: Equatable {
+    public enum Action: Equatable, BindableAction {
+        case loadAllCountries
         /// Select a specific country
         case selectCountry(Country)
+        /// Serach for a specific country in result list
+        case serachList
+        /// Toggle location search on/off
+        case toggleLocation
+
+        case recievedCountriesResult(Result<[Country], PharmacyRepositoryError>)
+
+        case binding(BindingAction<State>)
     }
 
     /// Initialize the domain
     public init() {}
+    @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
 
-    /// Reducer function
-    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
+    /// Reducers
+    public var body: some Reducer<State, Action> {
+        BindingReducer()
+
+        Reduce(self.core)
+    }
+
+    /// Core Reducer function
+    public func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
+        case .loadAllCountries:
+            return .run { send in
+                do {
+                    let response = try await pharmacyRepository.fetchEuCountries()
+                    await send(.recievedCountriesResult(.success(response)))
+                } catch let error as PharmacyRepositoryError {
+                    await send(.recievedCountriesResult(.failure(error)))
+                }
+            }
+        case let .recievedCountriesResult(result):
+            switch result {
+            case let .success(countries):
+                state.countries = countries
+                return .none
+            case .failure:
+                return .none
+            }
         case let .selectCountry(country):
             state.selectedCountry = country
+            return .none
+        case .serachList:
+            return .none
+        case .toggleLocation:
+            return .none
+        case .binding:
             return .none
         }
     }

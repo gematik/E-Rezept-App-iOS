@@ -23,6 +23,7 @@
 import eRpKit
 import Foundation
 import IDP
+import Settings
 
 struct UserProfile: ProfileCellModel, Equatable, Identifiable {
     var id: UUID { profile.id }
@@ -84,6 +85,12 @@ extension UserProfile {
     }
 
     private static func connectionStatus(for token: IDPToken?, lastAuthenticated: Date?) -> ProfileConnectionStatus {
+        @Shared(.isDemoMode) var isDemoMode
+
+        guard !isDemoMode else {
+            return .connected
+        }
+
         if let ssoToken = token?.ssoToken?.data(using: .utf8) {
             let elements = ssoToken.split(separator: 0x2E, omittingEmptySubsequences: false)
             if let header = elements.first,

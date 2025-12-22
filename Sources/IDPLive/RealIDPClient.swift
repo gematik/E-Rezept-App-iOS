@@ -22,6 +22,7 @@
 // swiftlint:disable type_body_length
 // swiftlint:disable file_length
 
+import AsyncHelpers
 import Combine
 import CryptoKit
 import Foundation
@@ -63,44 +64,18 @@ class RealIDPClient: IDPClient {
 
     func loadDiscoveryDocument() -> AnyPublisher<DiscoveryDocument, IDPError> {
         // load discovery dokument jwt
-        httpClient.sendPublisher(request: URLRequest(url: clientConfig.discoveryURL))
-            .mapError {
-                $0 as Error
-            }
-            .tryMap { data, _, _ -> AnyPublisher<DiscoveryDocument, Error> in
-                let jwt = try JWT(from: data)
-                let payload = try jwt.decodePayload(type: DiscoveryDocumentPayload.self)
-                return self.httpClient
-                    // load public encryption key
-                    .sendPublisher(request: URLRequest(url: payload.pukIdpEnc.correct(),
-                                                       cachePolicy: .reloadIgnoringCacheData))
-                    .zip(
-                        // load public signature key
-                        self.httpClient
-                            .sendPublisher(request: URLRequest(url: payload.pukIdpSig.correct(),
-                                                               cachePolicy: .reloadIgnoringCacheData))
-                    ) { pukIdpEncResponse, pukIdpSigResponse in
-                        (pukIdpEncResponse, pukIdpSigResponse)
-                    }
-                    .mapError {
-                        $0 as Error
-                    }
-                    .tryMap { pukIdpEncResponse, pukIdpSigResponse -> DiscoveryDocument in
-                        try DiscoveryDocument(
-                            jwt: jwt,
-                            pukIdpEncResponse: pukIdpEncResponse,
-                            pukIdpSigResponse: pukIdpSigResponse
-                        )
-                    }
-                    .eraseToAnyPublisher()
-            }
-            .flatMap {
-                $0
-            }
-            .mapError {
-                $0.asIDPError()
-            }
-            .eraseToAnyPublisher()
+        Future { [clientConfig, httpClient] in
+            let discovery = try await httpClient.send(request: URLRequest(url: clientConfig.discoveryURL))
+            let jwt = try JWT(from: discovery.data)
+            let payload = try jwt.decodePayload(type: DiscoveryDocumentPayload.self)
+            async let enc = httpClient.send(request: URLRequest(url: payload.pukIdpEnc.correct(),
+                                                                cachePolicy: .reloadIgnoringCacheData))
+            async let sig = httpClient.send(request: URLRequest(url: payload.pukIdpSig.correct(),
+                                                                cachePolicy: .reloadIgnoringCacheData))
+            return try await DiscoveryDocument(jwt: jwt, pukIdpEncResponse: enc, pukIdpSigResponse: sig)
+        }
+        .mapError { $0.asIDPError() }
+        .eraseToAnyPublisher()
     }
 
     func requestChallenge(
@@ -138,8 +113,10 @@ class RealIDPClient: IDPClient {
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
-            nil // Don't follow the redirect, but handle it
+        return Future { [httpClient] in
+            try await httpClient.send(request: request, interceptors: []) { _, _ in
+                nil // Don't follow the redirect, but handle it
+            }
         }
         .tryMap { body, _, status -> IDPChallenge in
             if status.isSuccessful {
@@ -177,8 +154,10 @@ class RealIDPClient: IDPClient {
 
         let redirect = clientConfig.redirectURI.absoluteString
 
-        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
-            nil // Don't follow the redirect, but handle it
+        return Future { [httpClient] in
+            try await httpClient.send(request: request, interceptors: []) { _, _ in
+                nil // Don't follow the redirect, but handle it
+            }
         }
         .tryMap { body, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
@@ -223,8 +202,10 @@ class RealIDPClient: IDPClient {
             "ssotoken": ssotoken,
         ])
 
-        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
-            nil // Don't follow the redirect, but handle it
+        return Future { [httpClient] in
+            try await httpClient.send(request: request, interceptors: []) { _, _ in
+                nil // Don't follow the redirect, but handle it
+            }
         }
         .tryMap { data, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
@@ -272,20 +253,22 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedBody(parameters: parameters)
 
         // [REQ:gemSpec_IDP_Frontend:A_20529-01#5] Sending the Request with the default HTTPClient via TLS.
-        return httpClient.sendPublisher(request: request)
-            .tryMap { body, _, status -> TokenPayload in
-                // [REQ:gemSpec_IDP_Frontend:A_19938-01#2|3] 2xx HTTPCodes are treated as tokens
-                if status.isSuccessful {
-                    return try JSONDecoder().decode(TokenPayload.self, from: body)
-                } else {
-                    throw Self.responseError(for: body)
-                }
+        return Future { [httpClient] in
+            try await httpClient.send(request: request)
+        }
+        .tryMap { body, _, status -> TokenPayload in
+            // [REQ:gemSpec_IDP_Frontend:A_19938-01#2|3] 2xx HTTPCodes are treated as tokens
+            if status.isSuccessful {
+                return try JSONDecoder().decode(TokenPayload.self, from: body)
+            } else {
+                throw Self.responseError(for: body)
             }
-            .mapError {
-                // [REQ:gemSpec_IDP_Frontend:A_20079] Network timeouts will traverse the queue as `HTTPError`s.
-                $0.asIDPError()
-            }
-            .eraseToAnyPublisher()
+        }
+        .mapError {
+            // [REQ:gemSpec_IDP_Frontend:A_20079] Network timeouts will traverse the queue as `HTTPError`s.
+            $0.asIDPError()
+        }
+        .eraseToAnyPublisher()
     }
 
     func registerDevice(_ encryptedRegistration: JWE, token: IDPToken,
@@ -302,16 +285,18 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: ["encrypted_registration_data": encryptedRegistrationData])
 
-        return httpClient.sendPublisher(request: request)
-            .tryMap { body, _, status -> PairingEntry in
-                if status.isSuccessful {
-                    return try JSONDecoder().decode(PairingEntry.self, from: body)
-                } else {
-                    throw Self.responseError(for: body)
-                }
+        return Future { [httpClient] in
+            try await httpClient.send(request: request)
+        }
+        .tryMap { body, _, status -> PairingEntry in
+            if status.isSuccessful {
+                return try JSONDecoder().decode(PairingEntry.self, from: body)
+            } else {
+                throw Self.responseError(for: body)
             }
-            .mapError { $0.asIDPError() }
-            .eraseToAnyPublisher()
+        }
+        .mapError { $0.asIDPError() }
+        .eraseToAnyPublisher()
     }
 
     func unregisterDevice(_ keyIdentifier: String, token: IDPToken,
@@ -324,16 +309,18 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
-        return httpClient.sendPublisher(request: request)
-            .tryMap { body, _, status -> Bool in
-                if status.isSuccessful {
-                    return true
-                } else {
-                    throw Self.responseError(for: body)
-                }
+        return Future { [httpClient] in
+            try await httpClient.send(request: request)
+        }
+        .tryMap { body, _, status -> Bool in
+            if status.isSuccessful {
+                return true
+            } else {
+                throw Self.responseError(for: body)
             }
-            .mapError { $0.asIDPError() }
-            .eraseToAnyPublisher()
+        }
+        .mapError { $0.asIDPError() }
+        .eraseToAnyPublisher()
     }
 
     func listDevices(token: IDPToken, using document: DiscoveryDocument) -> AnyPublisher<PairingEntries, IDPError> {
@@ -345,21 +332,23 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Accept")
         request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
-        return httpClient.sendPublisher(request: request)
-            .tryMap { body, _, status -> PairingEntries in
-                if status.isSuccessful {
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = .secondsSince1970
-                    return try decoder.decode(PairingEntries.self, from: body)
-                } else {
-                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                        throw Self.fallbackServerResponse
-                    }
-                    throw IDPError.serverError(responseError)
+        return Future { [httpClient] in
+            try await httpClient.send(request: request)
+        }
+        .tryMap { body, _, status -> PairingEntries in
+            if status.isSuccessful {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .secondsSince1970
+                return try decoder.decode(PairingEntries.self, from: body)
+            } else {
+                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
+                    throw Self.fallbackServerResponse
                 }
+                throw IDPError.serverError(responseError)
             }
-            .mapError { $0.asIDPError() }
-            .eraseToAnyPublisher()
+        }
+        .mapError { $0.asIDPError() }
+        .eraseToAnyPublisher()
     }
 
     func altVerify(_ encryptedSignedChallenge: JWE,
@@ -378,8 +367,10 @@ class RealIDPClient: IDPClient {
         request
             .setFormUrlEncodedBody(parameters: ["encrypted_signed_authentication_data": encryptedSignedChallengeData])
 
-        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
-            nil // Don't follow the redirect, but handle it
+        return Future { [httpClient] in
+            try await httpClient.send(request: request, interceptors: []) { _, _ in
+                nil // Don't follow the redirect, but handle it
+            }
         }
         .tryMap { [redirect = clientConfig.redirectURI.absoluteString] data, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
@@ -409,25 +400,27 @@ class RealIDPClient: IDPClient {
         // load complete kk_apps directory
         let request = URLRequest(url: url)
 
-        return httpClient.sendPublisher(request: request)
-            .mapError {
-                $0 as Error
-            }
-            .tryMap { data, _, status -> IDPDirectoryKKApps in
-                if status.isSuccessful {
-                    let jwt = try JWT(from: data)
-                    return IDPDirectoryKKApps(jwt: jwt)
-                } else {
-                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: data) else {
-                        throw Self.fallbackServerResponse
-                    }
-                    throw IDPError.serverError(responseError)
+        return Future { [httpClient] in
+            try await httpClient.send(request: request)
+        }
+        .mapError {
+            $0 as Error
+        }
+        .tryMap { data, _, status -> IDPDirectoryKKApps in
+            if status.isSuccessful {
+                let jwt = try JWT(from: data)
+                return IDPDirectoryKKApps(jwt: jwt)
+            } else {
+                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: data) else {
+                    throw Self.fallbackServerResponse
                 }
+                throw IDPError.serverError(responseError)
             }
-            .mapError {
-                $0.asIDPError()
-            }
-            .eraseToAnyPublisher()
+        }
+        .mapError {
+            $0.asIDPError()
+        }
+        .eraseToAnyPublisher()
     }
 
     func startExtAuth(_ app: IDPExtAuth, using document: DiscoveryDocument) -> AnyPublisher<URL, IDPError> {
@@ -456,8 +449,10 @@ class RealIDPClient: IDPClient {
         }
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
 
-        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
-            nil // Don't follow the redirect, but handle it
+        return Future { [httpClient] in
+            try await httpClient.send(request: request, interceptors: []) { _, _ in
+                nil // Don't follow the redirect, but handle it
+            }
         }
         .tryMap { data, httpResponse, status -> URL in
             if status.isRedirect {
@@ -494,8 +489,10 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: formUrlParameters)
 
-        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
-            nil // Don't follow the redirect, but handle it
+        return Future { [httpClient] in
+            try await httpClient.send(request: request, interceptors: []) { _, _ in
+                nil // Don't follow the redirect, but handle it
+            }
         }
         .tryMap { [redirect = clientConfig.extAuthRedirectURI.absoluteString] body, httpResponse, status
             -> IDPExchangeToken in

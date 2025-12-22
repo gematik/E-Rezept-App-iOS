@@ -53,29 +53,39 @@ final class SceneDelegateTests: XCTestCase {
 
     private func loadFactory() -> CoreDataControllerFactory {
         guard let factory = coreDataFactory else {
-            #if os(macOS)
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
-            #else
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
+            let factory: CoreDataControllerFactory = .init(databaseUrl: { self.databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
+
+                var fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: self.databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
             coreDataFactory = factory
             return factory
         }
-
         return factory
-    }
-
-    private func loadProfileCoreDataStore() -> ProfileCoreDataStore {
-        ProfileCoreDataStore(
-            coreDataControllerFactory: loadFactory(),
-            backgroundQueue: AnyScheduler.main
-        )
     }
 
     func testSanitizingDatabaseShouldWipeUserDefaultsIfThereIsNoProfile() throws {

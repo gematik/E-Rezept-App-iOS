@@ -24,6 +24,8 @@ import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import XCTest
 
 @MainActor

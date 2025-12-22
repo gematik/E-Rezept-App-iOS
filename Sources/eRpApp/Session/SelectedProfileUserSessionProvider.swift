@@ -24,6 +24,7 @@ import Combine
 import eRpKit
 import eRpLocalStorage
 import Foundation
+import Settings
 
 class SelectedProfileUserSessionProvider {
     private(set) var userSession: UserSession

@@ -22,8 +22,10 @@
 
 import Combine
 import ComposableArchitecture
+import ConsentService
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import HTTPClient
 import Nimble
 import XCTest
@@ -225,11 +227,11 @@ final class ChargeItemListDomainTests: XCTestCase {
         )
 
         let httpClientError = HTTPClientError.httpError(.init(URLError.Code(rawValue: 408)))
-        let consentServiceError = ChargeItemConsentService.Error
+        let consentServiceError = ConsentService.Error
             .erxRepository(.remote(.fhirClient(.http(.init(httpClientError: httpClientError, operationOutcome: nil)))))
         mockChargeItemListDomainService
             .grantChargeItemsConsentForReturnValue =
-            Just(.error(.chargeItemConsentService(consentServiceError))).eraseToAnyPublisher()
+            Just(.error(.consentService(consentServiceError))).eraseToAnyPublisher()
 
         // when user initiates the grant process
         await store.send(.grantConsentBottomBannerButtonTapped) { state in
@@ -241,7 +243,7 @@ final class ChargeItemListDomainTests: XCTestCase {
             state.grantConsentState = .loading
         }
         await testScheduler.run()
-        await store.receive(.response(.grantConsent(.error(.chargeItemConsentService(consentServiceError))))) { state in
+        await store.receive(.response(.grantConsent(.error(.consentService(consentServiceError))))) { state in
             state.grantConsentState = .error
             state.destination = .alert(consentServiceError.alertState!.chargeItemListDomainErpAlertState)
         }

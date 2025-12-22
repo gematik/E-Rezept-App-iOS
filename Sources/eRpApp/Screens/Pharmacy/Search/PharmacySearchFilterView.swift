@@ -29,6 +29,14 @@ struct PharmacySearchFilterView: View {
 
     var body: some View {
         VStack(spacing: 24) {
+            HStack(spacing: 0) {
+                Spacer()
+
+                CloseButton {
+                    store.send(.delegate(.close), animation: .easeInOut)
+                }
+            }
+
             Text(L10n.psfTxtTitle)
                 .font(.subheadline.weight(.bold))
 

@@ -31,11 +31,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>Hatalı parola. Lütfen 1 saniye sonra tekrar deneyin.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
+			<string>Hatalı parola. Lütfen %u saniye sonra tekrar deneyin.</string>
 			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>Hatalı parola. Lütfen 0 saniye sonra tekrar deneyin.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -49,11 +49,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>Lütfen %u saniye sonra tekrar deneyin.</string>
 			<key>other</key>
 			<string>Lütfen %u saniye içinde tekrar deneyin.</string>
 			<key>zero</key>
-			<string>Bitte probieren Sie es in %u Sekunden erneut.</string>
+			<string>Lütfen %u saniye sonra tekrar deneyin.</string>
 		</dict>
 	</dict>
 	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
@@ -67,7 +67,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>Bu reçete, tedaviniz kapsamında sizin için %%@ kullanıldı.</string>
 			<key>other</key>
 			<string>Bu reçete % %@ tarihinde tedavinizin bir parçası olarak sizin için dolduruldu.</string>
 			<key>zero</key>

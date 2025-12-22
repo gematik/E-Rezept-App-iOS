@@ -20,13 +20,15 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import eRpKit
 import Foundation
 import ModelsR4
+import OpenSSL
 
-// sourcery: CodedError = "610"
+@CodedError("610")
 public enum HealthcareServiceBundleParsingError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case parseError(String)
 }
 
@@ -35,7 +37,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: Array with all found and parsed pharmacies
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parsePharmacyLocations() throws -> [PharmacyLocation] {
+    public func parsePharmacyLocations() throws -> [PharmacyLocation] {
         // Collect and parse all Pharmacy Locations
         try entry?.compactMap {
             guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
@@ -45,7 +47,14 @@ extension ModelsR4.Bundle {
         } ?? []
     }
 
-    static func parse(
+    /// Parse and extract a single `PharmacyLocation` from the given `HealthcareService` and `Bundle`
+    ///
+    /// - Parameters:
+    ///   - healthcareService: The `HealthcareService` resource to extract pharmacy location data from
+    ///   - bundle: The `Bundle` containing related resources (e.g., Locations, Organizations)
+    /// - Returns: A `PharmacyLocation`
+    /// - Throws: `ModelsR4.Bundle.Error`
+    public static func parse(
         healthcareService: ModelsR4.HealthcareService,
         bundle: ModelsR4.Bundle
     ) throws -> PharmacyLocation {
@@ -95,7 +104,9 @@ extension ModelsR4.Bundle {
             position: position,
             address: address,
             telecom: telecom,
-            hoursOfOperation: healthcareService.hoursOfOperations
+            hoursOfOperation: healthcareService.hoursOfOperations,
+            specialClosingHours: healthcareService.specialClosing,
+            emergencyServiceHours: healthcareService.specialOpening
         )
     }
 
@@ -103,7 +114,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: Array with all found and parsed pharmacies
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parseTelematikId() throws -> Insurance? {
+    public func parseTelematikId() throws -> Insurance? {
         // Collect and parse all Pharmacy Locations
         try entry?.compactMap {
             guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
@@ -117,7 +128,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: Array with all found and parsed pharmacies
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parseInsurance() throws -> [Insurance] {
+    public func parseInsurance() throws -> [Insurance] {
         // Collect and parse all Pharmacy Locations
         try entry?.compactMap {
             guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
@@ -127,11 +138,18 @@ extension ModelsR4.Bundle {
         } ?? []
     }
 
-    static func parseString(
+    /// Parse and extract an `Insurance` object from the given `HealthcareService` and `Bundle`
+    ///
+    /// - Parameters:
+    ///   - healthcareService: The `HealthcareService` resource to extract insurance-related data from
+    ///   - bundle: The `Bundle` containing related resources
+    /// - Returns: An optional `Insurance`
+    /// - Throws: `ModelsR4.Bundle.Error`
+    public static func parseString(
         healthcareService: ModelsR4.HealthcareService,
         bundle: ModelsR4.Bundle
     ) throws -> Insurance? {
-        guard let id = healthcareService.id?.value?.string else {
+        guard (healthcareService.id?.value?.string) != nil else {
             throw HealthcareServiceBundleParsingError.parseError("Could not parse id from healthcare service.")
         }
 
@@ -150,7 +168,63 @@ extension ModelsR4.Bundle {
                          telematikId: telematikID)
     }
 
-    func findResource<Resource: ModelsR4.Resource>(
+    /// Parse and extract all found Pharmacy Locations from `Self`
+    ///
+    /// - Returns: Array with all found and parsed pharmacies
+    /// - Throws: `ModelsR4.Bundle.Error`
+    func parseCountry() throws -> [Country] {
+        // Collect and parse all Pharmacy Locations
+        try entry?.compactMap {
+            guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
+                return nil
+            }
+            return try Self.parseCountry(healthcareService: healthcareService, bundle: self)
+        } ?? []
+    }
+
+    static func parseCountry(
+        healthcareService: ModelsR4.HealthcareService,
+        bundle: ModelsR4.Bundle
+    ) throws -> Country? {
+        guard let id = healthcareService.id?.value?.string else {
+            throw HealthcareServiceBundleParsingError.parseError("Could not parse id from healthcare service.")
+        }
+
+        guard let organizationReference = healthcareService.providedBy?.reference,
+              let organization = bundle.findResource(with: organizationReference, type: ModelsR4.Organization.self)
+        else {
+            throw HealthcareServiceBundleParsingError
+                .parseError("Could not parse organization from healthcare service.")
+        }
+
+        let countryCode: String?
+        if let valueX = organization
+            .extensions(for: "https://gematik.de/fhir/directory/StructureDefinition/ncpeh-country-ex")
+            .first?.value,
+            case let Extension.ValueX.coding(value) = valueX {
+            countryCode = value.code?.value?.string
+        } else {
+            countryCode = ""
+        }
+
+        guard let countryName = organization.name?.value?.string else {
+            throw HealthcareServiceBundleParsingError.parseError("Could not parse countryName from organization.")
+        }
+
+        guard let telematikID = organization.telematikID else {
+            throw HealthcareServiceBundleParsingError.parseError("Could not parse telematikID from organization.")
+        }
+
+        return Country(id: id, countryCode: countryCode, name: countryName, telematikId: telematikID)
+    }
+
+    /// Find and return a FHIR `Resource` of the specified type with the given identifier
+    ///
+    /// - Parameters:
+    ///   - identifier: The FHIR identifier used to locate the resource
+    ///   - type: The specific `Resource` type to search for
+    /// - Returns: A resource of the specified type if found; otherwise, `nil`
+    public func findResource<Resource: ModelsR4.Resource>(
         with identifier: FHIRPrimitive<FHIRString>,
         type _: Resource.Type
     ) -> Resource? {
@@ -158,16 +232,49 @@ extension ModelsR4.Bundle {
 
         // try finding the resource by fullUrl
         if let bundle = entry?.lazy.first(where: { bundleEntry in
-            guard let urlString = bundleEntry.fullUrl?.value?.url.absoluteString,
-                  let resourceIdentifier = newIdentifier.value?.string
-            else { return false }
-            return urlString.contains(resourceIdentifier)
+            guard let resourceIdentifier = newIdentifier.value?.string else { return false }
+            if let urlString = bundleEntry.fullUrl?.value?.url.absoluteString {
+                return urlString.contains(resourceIdentifier)
+            }
+            if let resourceType = bundleEntry.resource?.resourceType,
+               let id = bundleEntry.resource?.get().id?.value?.string {
+                return "\(resourceType)/\(id)".contains(resourceIdentifier)
+            }
+            return false
         })?
             .resource?
             .get(if: Resource.self) {
             return bundle
         }
         return nil
+    }
+
+    /// Parse and extract all found avs certificates from `self`
+    ///
+    /// - Returns: Array with all found and parsed certificates
+    /// - Throws: `ModelsR4.Bundle.Error`
+    public func parseCertificates() throws -> [X509] {
+        // Collect and parse all Pharmacy Locations
+        try entry?.compactMap { anEntry -> X509? in
+            guard let binaryResource = anEntry.resource?.get(if: ModelsR4.Binary.self) else {
+                return nil
+            }
+            return try Self.parse(binary: binaryResource)
+        }
+        // Work around for filtering for the AVS encryption certificates:
+        // We test wether the certificate's public key type is brainpoolP256r1.
+        // If it is not, for now we assume it to be a RSA-type (the ones we are looking for).
+        // (since only brainpoolP256r1 OR RSA-type public keys are used in our context (for now)).
+        // TODO: test directly for the subjectpublickey type in OpenSSL-Swift // swiftlint:disable:this todo
+        .filter { $0.brainpoolP256r1KeyExchangePublicKey() == nil } ?? []
+    }
+
+    static func parse(binary: ModelsR4.Binary) throws -> X509? {
+        guard let base64DataString = binary.data?.value?.dataString else {
+            return nil
+        }
+        guard let data = Data(base64Encoded: base64DataString) else { return nil }
+        return try? X509(der: data)
     }
 }
 
@@ -219,6 +326,41 @@ extension ModelsR4.HealthcareService {
         return hours
     }
 
+    var specialClosing: [PharmacyLocation.SpecialOperationHours] {
+        var hours: [PharmacyLocation.SpecialOperationHours] = []
+        notAvailable?.forEach { noTime in
+            let pharmacyNa = PharmacyLocation.SpecialOperationHours(
+                reason: noTime.description_fhir.value?.description,
+                startDate: noTime.during?.start?.value?.description.replacingOccurrences(of: "Z", with: "+00:00"),
+                endDate: noTime.during?.end?.value?.description.replacingOccurrences(of: "Z", with: "+00:00")
+            )
+            hours.append(pharmacyNa)
+        }
+        return hours
+    }
+
+    var specialOpening: [PharmacyLocation.SpecialOperationHours] {
+        var hours: [PharmacyLocation.SpecialOperationHours] = []
+        availableTime?.forEach { availableTime in
+            availableTime.extensions(for: FHIRDirectory.Key.specialOpeningTimes)
+                .forEach { ext in
+                    ext.extension?.forEach { specialClosing in
+                        if case let .period(period) = specialClosing.value {
+                            let pharmacyEm = PharmacyLocation.SpecialOperationHours(
+                                startDate: period.start?.value?.description.replacingOccurrences(
+                                    of: "Z",
+                                    with: "+00:00"
+                                ),
+                                endDate: period.end?.value?.description.replacingOccurrences(of: "Z", with: "+00:00")
+                            )
+                            hours.append(pharmacyEm)
+                        }
+                    }
+                }
+        }
+        return hours
+    }
+
     var pharmacyTypes: [PharmacyLocation.PharmacyType] {
         guard let specialty = specialty else {
             return []
@@ -250,6 +392,29 @@ extension ModelsR4.Organization {
                 $0.value == id.system?.value?.url.absoluteString
             }
         }?.value?.value?.string
+    }
+}
+
+extension ModelsR4.DateTime {
+    func dateTimeToDate() throws -> Date? {
+        guard
+            let monthUInt = date.month, let month = Int(exactly: monthUInt),
+            let dayUInt = date.day, let day = Int(exactly: dayUInt),
+            let hourUInt = time?.hour, let hour = Int(exactly: hourUInt),
+            let minuteUInt = time?.minute, let minute = Int(exactly: minuteUInt)
+        else {
+            return nil
+        }
+
+        return DateComponents(
+            calendar: Calendar(identifier: .gregorian),
+            timeZone: timeZone,
+            year: date.year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute
+        ).date
     }
 }
 

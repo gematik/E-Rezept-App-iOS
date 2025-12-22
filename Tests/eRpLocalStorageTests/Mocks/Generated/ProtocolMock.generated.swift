@@ -26,38 +26,6 @@ import Foundation
 
 
 
-// MARK: - MockCoreDataControllerFactory -
-
-final class MockCoreDataControllerFactory: CoreDataControllerFactory {
-    
-   // MARK: - databaseUrl
-
-    var databaseUrl: URL {
-        get { underlyingDatabaseUrl }
-        set(value) { underlyingDatabaseUrl = value }
-    }
-    var underlyingDatabaseUrl: URL!
-    
-   // MARK: - loadCoreDataController
-
-    var loadCoreDataControllerThrowableError: Error?
-    var loadCoreDataControllerCallsCount = 0
-    var loadCoreDataControllerCalled: Bool {
-        loadCoreDataControllerCallsCount > 0
-    }
-    var loadCoreDataControllerReturnValue: CoreDataController!
-    var loadCoreDataControllerClosure: (() throws -> CoreDataController)?
-
-    func loadCoreDataController() throws -> CoreDataController {
-        if let error = loadCoreDataControllerThrowableError {
-            throw error
-        }
-        loadCoreDataControllerCallsCount += 1
-        return try loadCoreDataControllerClosure.map({ try $0() }) ?? loadCoreDataControllerReturnValue
-    }
-}
-
-
 // MARK: - MockUserDataStore -
 
 final class MockUserDataStore: UserDataStore {
@@ -174,6 +142,14 @@ final class MockUserDataStore: UserDataStore {
         set(value) { underlyingHideWelcomeMessage = value }
     }
     var underlyingHideWelcomeMessage: AnyPublisher<Bool, Never>!
+    
+   // MARK: - hideEURedeemInstructions
+
+    var hideEURedeemInstructions: AnyPublisher<Bool, Never> {
+        get { underlyingHideEURedeemInstructions }
+        set(value) { underlyingHideEURedeemInstructions = value }
+    }
+    var underlyingHideEURedeemInstructions: AnyPublisher<Bool, Never>!
     
    // MARK: - set
 
@@ -373,5 +349,22 @@ final class MockUserDataStore: UserDataStore {
         setHideWelcomeMessageReceivedHideWelcomeMessage = hideWelcomeMessage
         setHideWelcomeMessageReceivedInvocations.append(hideWelcomeMessage)
         setHideWelcomeMessageClosure?(hideWelcomeMessage)
+    }
+    
+   // MARK: - set
+
+    var setHideEURedeemInstructionsCallsCount = 0
+    var setHideEURedeemInstructionsCalled: Bool {
+        setHideEURedeemInstructionsCallsCount > 0
+    }
+    var setHideEURedeemInstructionsReceivedHideEURedeemInstructions: Bool?
+    var setHideEURedeemInstructionsReceivedInvocations: [Bool] = []
+    var setHideEURedeemInstructionsClosure: ((Bool) -> Void)?
+
+    func set(hideEURedeemInstructions: Bool) {
+        setHideEURedeemInstructionsCallsCount += 1
+        setHideEURedeemInstructionsReceivedHideEURedeemInstructions = hideEURedeemInstructions
+        setHideEURedeemInstructionsReceivedInvocations.append(hideEURedeemInstructions)
+        setHideEURedeemInstructionsClosure?(hideEURedeemInstructions)
     }
 }

@@ -25,6 +25,7 @@ import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import IDP
 import Nimble
 import Pharmacy
@@ -34,7 +35,6 @@ import XCTest
 @MainActor
 final class DiGaInsuranceListDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
-    let mockPharmacyRepository = MockPharmacyRepository()
 
     typealias TestStore = TestStoreOf<DiGaInsuranceListDomain>
 
@@ -47,74 +47,77 @@ final class DiGaInsuranceListDomainTests: XCTestCase {
             DiGaInsuranceListDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
-            dependencies.pharmacyRepository = mockPharmacyRepository
             prepareDependencies(&dependencies)
         }
     }
 
     func digaInsuranceListHappyPath() async {
-        let store = testStore(.init())
         let result = [Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123"),
                       Insurance(id: UUID(), name: "AInsurance", telematikId: "321321"),
                       Insurance(id: UUID(), name: "ZInsurance", telematikId: "213213")]
+        await withDependencies {
+            $0.pharmacyRepository.fetchAllInsurances = { result }
+        } operation: {
+            let store = testStore(.init())
 
-        mockPharmacyRepository.fetchAllInsurancesReturnValue = Just(result)
-            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+            let task = await store.send(.task) { state in
+                state.isLoading = true
+            }
 
-        let task = await store.send(.task) { state in
-            state.isLoading = true
+            await store.receive(.response(.receivedInsurances(.success(result)))) { state in
+                state.isLoading = true
+                state.insurances = result
+                state.filteredinsurances = result
+            }
+
+            await task.cancel()
         }
-
-        await store.receive(.response(.receivedInsurances(.success(result)))) { state in
-            state.isLoading = true
-            state.insurances = result
-            state.filteredinsurances = result
-        }
-
-        await task.cancel()
     }
 
     func digaInsuranceListError() async {
-        let store = testStore(.init())
         let error = PharmacyRepositoryError.remote(.notFound)
+        await withDependencies {
+            $0.pharmacyRepository.fetchAllInsurances = { throw error }
+        } operation: {
+            let store = testStore(.init())
 
-        mockPharmacyRepository.fetchAllInsurancesReturnValue = Fail(error: error).eraseToAnyPublisher()
+            let task = await store.send(.task) { state in
+                state.isLoading = true
+            }
 
-        let task = await store.send(.task) { state in
-            state.isLoading = true
+            await store.receive(.response(.receivedInsurances(.failure(error)))) { state in
+                state.isLoading = true
+                state.destination = .alert(.init(for: error))
+            }
+
+            await task.cancel()
         }
-
-        await store.receive(.response(.receivedInsurances(.failure(error)))) { state in
-            state.isLoading = true
-            state.destination = .alert(.init(for: error))
-        }
-
-        await task.cancel()
     }
 
     func digaInsuranceListSearch() async {
-        let store = testStore(.init())
         let searchResult = Insurance(id: UUID(), name: "Versicherung2", telematikId: "321321")
+
         let result = [Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123"),
                       searchResult]
+        await withDependencies {
+            $0.pharmacyRepository.fetchAllInsurances = { result }
+        } operation: {
+            let store = testStore(.init())
+            let task = await store.send(.task) { state in
+                state.isLoading = true
+            }
 
-        mockPharmacyRepository.fetchAllInsurancesReturnValue = Just(result)
-            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+            await store.receive(.response(.receivedInsurances(.success(result)))) { state in
+                state.isLoading = true
+                state.insurances = result
+                state.filteredinsurances = result
+            }
 
-        let task = await store.send(.task) { state in
-            state.isLoading = true
+            await store.send(.searchList("Versicherung")) { state in
+                state.filteredinsurances = [searchResult]
+            }
+
+            await task.cancel()
         }
-
-        await store.receive(.response(.receivedInsurances(.success(result)))) { state in
-            state.isLoading = true
-            state.insurances = result
-            state.filteredinsurances = result
-        }
-
-        await store.send(.searchList("Versicherung")) { state in
-            state.filteredinsurances = [searchResult]
-        }
-
-        await task.cancel()
     }
 }

@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
 /// Represents a record of a healthcare consumer’s choices, which permits or denies identified recipient(s) or
@@ -61,6 +62,8 @@ public struct ErxConsent: Identifiable, Hashable, Codable {
     public enum Category: String, Equatable, Codable {
         /// Consent for saving electronic charge item
         case chargcons = "CHARGCONS"
+        /// Consent for redeeming e-prescriptions in EU countries
+        case euDispense = "EUDISPCONS"
     }
 
     public enum Scope: String, Equatable, Codable {
@@ -81,12 +84,12 @@ public struct ErxConsent: Identifiable, Hashable, Codable {
 }
 
 extension ErxConsent {
-    // sourcery: CodedError = "206"
+    @CodedError("206")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         /// Unable to construct consent request
         case unableToConstructConsentRequest
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         /// Invalid ErxConsent input
         case invalidErxConsentInput(String)
     }

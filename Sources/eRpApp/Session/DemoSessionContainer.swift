@@ -23,8 +23,11 @@
 import AVS
 import BfArM
 import Combine
+import Dependencies
 import eRpKit
 import eRpLocalStorage
+import FeatureCardWall
+import FeatureHelpers
 import FHIRClient
 import FHIRVZD
 import Foundation
@@ -45,10 +48,6 @@ class DemoSessionContainer: UserSession {
     }
 
     private lazy var memoryStorage = MemoryStorage()
-
-    var isDemoMode: Bool {
-        true
-    }
 
     private let schedulers: Schedulers
 
@@ -86,10 +85,6 @@ class DemoSessionContainer: UserSession {
             .eraseToAnyPublisher()
     }()
 
-    lazy var nfcSessionProvider: NFCSignatureProvider = {
-        DemoSignatureProvider()
-    }()
-
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
         DefaultNFCResetRetryCounterController()
     }()
@@ -108,47 +103,26 @@ class DemoSessionContainer: UserSession {
             DebugLiveLogger.LogInterceptor(),
         ]
 
-        let fhirVZDConfig = FHIRVZDClient.Configuration(eRezeptAPIServer: appConfiguration.eRezept,
-                                                        eRezeptAdditionalHeader: appConfiguration
-                                                            .eRezeptAdditionalHeader)
-
         // Remote FHIR data source configuration
         let client = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: interceptors
         )
-        return DemoPharmacyRepository(
-            cloud: HealthcareServiceFHIRDataSource(
-                fhirClient: FHIRClient(
-                    server: appConfiguration.fhirVzd,
-                    httpClient: client
-                ),
-                session: DefaultFHIRVZDSession(config: fhirVZDConfig)
+
+        @Dependency(\.fhirVZDSession) var fhirVZDSession: FHIRVZDSession
+
+        return PharmacyRepository.dummyPharmacyRepository(cloud: HealthcareServiceFHIRDataSource(
+            fhirClient: FHIRClient(
+                server: appConfiguration.fhirVzd,
+                httpClient: client
             ),
-            requestDelayInSeconds: 0.9,
-            schedulers: Schedulers()
-        )
+            session: fhirVZDSession
+        ))
     }()
 
     var updateChecker = UpdateChecker {
         false
     }
-
-    private lazy var demoErxTaskRepository: ErxTaskRepository = {
-        DemoErxTaskRepository(
-            requestDelayInSeconds: 0.9,
-            schedulers: schedulers,
-            secureUserStore: secureUserStore
-        )
-    }()
-
-    lazy var erxTaskRepository: ErxTaskRepository = {
-        demoErxTaskRepository
-    }()
-
-    lazy var entireErxTaskRepository: eRpKit.ErxTaskRepository = {
-        demoErxTaskRepository
-    }()
 
     lazy var ordersRepository: OrdersRepository = {
         DemoOrdersRepository()
@@ -190,8 +164,7 @@ class DemoSessionContainer: UserSession {
 
     private lazy var demoPrescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
         DefaultPrescriptionRepository(
-            loginHandler: idpSessionLoginHandler,
-            erxTaskRepository: self.erxTaskRepository
+            loginHandler: idpSessionLoginHandler
         )
     }()
 

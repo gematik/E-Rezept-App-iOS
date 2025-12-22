@@ -62,4 +62,10 @@ class MockHealthcareServiceFHIRClient: HealthcareServiceFHIRClient {
             .setFailureType(to: FHIRClient.Error.self)
             .eraseToAnyPublisher()
     }
+
+    func fetchEuCountries(accessToken _: String?) -> AnyPublisher<[Country], FHIRClient.Error> {
+        Just([Country]())
+            .setFailureType(to: FHIRClient.Error.self)
+            .eraseToAnyPublisher()
+    }
 }

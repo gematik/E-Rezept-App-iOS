@@ -37,7 +37,7 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
     ) -> StoreOf<DiGaDetailDomain> {
         Store(
             initialState: .init(
-                diGaTask: .init(prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)),
+                diGaTask: .init(prescription: Prescription(erxTask: erxTask)),
                 diGaInfo: diGaInfo,
                 bfarmDiGaDetails: bfarmInfo,
                 selectedInsurance: selectedInsurance
@@ -143,8 +143,7 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
         let sut = NavigationStack {
             DiGaDetailView(store: .init(initialState:
                 .init(
-                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
-                                                               dateFormatter: UIDateFormatter.testValue)),
+                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest)),
                     diGaInfo: .init(diGaState: .request),
                     bfarmDiGaDetails: .init(contractMedicalServicesRequired: false,
                                             additionalDevices: [String](),
@@ -245,8 +244,7 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
         let sut = NavigationStack {
             DiGaDetailView(store: .init(initialState:
                 .init(
-                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
-                                                               dateFormatter: UIDateFormatter.testValue)),
+                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest)),
                     diGaInfo: .init(diGaState: .request),
                     profile: UserProfile.Dummies.profileA,
                     selectedView: .details
@@ -263,8 +261,7 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
         let sut = NavigationStack {
             DiGaDetailView(store: .init(initialState:
                 .init(
-                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
-                                                               dateFormatter: UIDateFormatter.testValue)),
+                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest)),
                     diGaInfo: .init(diGaState: .request),
                     bfarmDiGaDetails: .init(contractMedicalServicesRequired: false,
                                             additionalDevices: [String](),

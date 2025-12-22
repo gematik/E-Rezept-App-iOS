@@ -22,6 +22,7 @@
 
 @testable import eRpFeatures
 import Nimble
+import Profiles
 import TestUtils
 import XCTest
 

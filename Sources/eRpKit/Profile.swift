@@ -111,6 +111,17 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         case unknown
         case gKV
         case pKV
+        // Federal institutions, e.g. Bundespolizei
+        case federalKV
+
+        public var canReceiveChargeItems: Bool {
+            switch self {
+            case .unknown, .gKV:
+                return false
+            case .federalKV, .pKV:
+                return true
+            }
+        }
     }
 
     public enum Color: String, CaseIterable, Codable {

@@ -20,10 +20,13 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Dependencies
 import DependenciesMacros
 import eRpKit
+import FeatureHelpers
 import Foundation
+import Settings
 
 @DependencyClient
 struct OrganDonorJumpService {
@@ -41,13 +44,13 @@ extension OrganDonorJumpService: TestDependencyKey {
     static var testValue = OrganDonorJumpService()
 }
 
-// sourcery: CodedError = "040"
+@CodedError("040")
 enum OrganDonorJumpServiceError: Swift.Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case fetchingProfile
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case generatingGenericUrl
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case openingSpecificUrl
 }
 
@@ -55,7 +58,7 @@ extension OrganDonorJumpService: DependencyKey {
     static var liveValue = OrganDonorJumpService {
         @Dependency(\.userDataStore) var userDataStore: UserDataStore
         @Dependency(\.userSession) var userSession: UserSession
-        @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+        @Dependency(\.openURLHandler) var openURLHandler
 
         do {
             for try await userProfile in userSession.profile().first().values {
@@ -71,12 +74,10 @@ extension OrganDonorJumpService: DependencyKey {
                     }
                     url = genericUrl
                 }
-                guard resourceHandler.canOpenURL(url) else {
+                guard await openURLHandler.canOpenURL(url) else {
                     throw OrganDonorJumpServiceError.openingSpecificUrl
                 }
-                Task { @MainActor in
-                    resourceHandler.open(url)
-                }
+                await openURLHandler.open(url)
             }
         } catch let error as OrganDonorJumpServiceError {
             throw error

@@ -42,7 +42,7 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.label
-                .opacity(isEnabled ? 1.0 : 0.5)
+                .opacity(isEnabled ? 1.0 : 0.3)
                 .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: showSeparator))
                 .subTitleStyle(.navigation(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing))
                 .labelStyle(DetailNavigationLabelStyle(
@@ -51,7 +51,7 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
                 ))
         }
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-        .foregroundColor(Color(.label))
+        .foregroundColor(Colors.systemLabel)
         .background(
             configuration.isPressed ? style.content.selectedColor : style.content.backgroundColor
         )

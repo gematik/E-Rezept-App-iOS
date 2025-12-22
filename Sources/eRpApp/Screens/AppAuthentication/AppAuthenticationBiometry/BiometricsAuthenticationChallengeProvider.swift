@@ -20,8 +20,10 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import Dependencies
+import eRpResources
 import Foundation
 import LocalAuthentication
 
@@ -32,11 +34,11 @@ protocol AuthenticationChallengeProvider {
         -> AnyPublisher<AuthenticationChallengeProviderResult, Never>
 }
 
-// sourcery: CodedError = "003"
+@CodedError("003")
 enum AuthenticationChallengeProviderError: Swift.Error, LocalizedError, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case cannotEvaluatePolicy(NSError?)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case failedEvaluatingPolicy(NSError?)
 
     var errorDescription: String? {

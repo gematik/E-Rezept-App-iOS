@@ -90,7 +90,7 @@ class SelfPayerWarningUITests: XCTestCase, Sendable {
             .tapRedeemRemote()
             .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .tapRedeem(.shipmentViaLogin)
 
         let editAdressScreen = redeemScreen
             .tapEditAddress()
@@ -107,7 +107,7 @@ class SelfPayerWarningUITests: XCTestCase, Sendable {
 
         // Delected 1 SEL -> 2 in Total
         let selectionScreen = redeemScreen.tapEditPrescriptions()
-        selectionScreen.cellForPrescriptionNamed("SelfPayer1").tap()
+        selectionScreen.cellForPrescriptionNamed("SelfPayer1, Noch 23 Tage einlösbar").tap()
         selectionScreen.tapSave()
         print(redeemScreen.selfPayerWarning().debugDescription)
 
@@ -117,7 +117,7 @@ class SelfPayerWarningUITests: XCTestCase, Sendable {
 
         // Deselect 1 SEL (1 Normal)
         let selectionScreen2 = redeemScreen.tapEditPrescriptions()
-        selectionScreen2.cellForPrescriptionNamed("SelfPayer2").tap()
+        selectionScreen2.cellForPrescriptionNamed("SelfPayer2, Noch 23 Tage einlösbar").tap()
         selectionScreen2.tapSave()
 
         // Check Multi but 1 SEL Text
@@ -126,7 +126,7 @@ class SelfPayerWarningUITests: XCTestCase, Sendable {
 
         // Deselect Normal Task
         let selectionScreen3 = redeemScreen.tapEditPrescriptions()
-        selectionScreen3.cellForPrescriptionNamed("Ibuprofen 04").tap()
+        selectionScreen3.cellForPrescriptionNamed("Ibuprofen 04, Noch 23 Tage einlösbar").tap()
         selectionScreen3.tapSave()
 
         // Check Single SEL TOTAL Text

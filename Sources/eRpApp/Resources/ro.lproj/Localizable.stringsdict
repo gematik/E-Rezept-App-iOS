@@ -13,7 +13,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Au fost detectate %u încercări de conectare nereușite</string>
 			<key>one</key>
 			<string>A fost detectată o încercare de conectare nereușită</string>
 			<key>other</key>
@@ -30,12 +30,12 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>few</key>
+			<string>Parolă greșită. Vă rugăm să încercați din nou peste %u secunde.</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>Parolă incorectă. Vă rugăm să încercați din nou peste 1 secundă.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
-			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>Parolă greșită. Vă rugăm să încercați din nou peste %u secunde.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -49,9 +49,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Vă rugăm să încercați din nou în %u secunde.</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>Vă rugăm să încercați din nou peste %u secundă.</string>
 			<key>other</key>
 			<string>Vă rugăm să încercați din nou în %u secunde.</string>
 		</dict>
@@ -67,9 +67,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Această rețetă a fost eliberată pentru dumneavoastră pe data de % %@ ca parte a unui tratament.</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>Această rețetă a fost folosită %%@ ca parte a unui tratament pentru dumneavoastră.</string>
 			<key>other</key>
 			<string>Această rețetă a fost eliberată pentru dumneavoastră pe data de % %@ ca parte a unui tratament.</string>
 		</dict>
@@ -85,7 +85,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Încă poate fi răscumpărat pentru %u zile</string>
 			<key>one</key>
 			<string>Rambursabil doar mâine</string>
 			<key>other</key>
@@ -103,7 +103,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Șters pe: %% @</string>
 			<key>one</key>
 			<string>Șters: %% @</string>
 			<key>other</key>
@@ -121,7 +121,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Poate fi în continuare răscumpărat ca plătitor propriu pentru %u zile</string>
 			<key>one</key>
 			<string>Poate fi răscumpărat doar mâine ca plătitor propriu</string>
 			<key>other</key>
@@ -139,7 +139,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Rețete</string>
 			<key>one</key>
 			<string>Reţetă</string>
 			<key>other</key>
@@ -157,7 +157,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%lu retete</string>
 			<key>one</key>
 			<string>%lu reteta</string>
 			<key>other</key>
@@ -175,7 +175,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%li rețete nu au putut fi valorificate</string>
 			<key>one</key>
 			<string>Rețeta selectată nu a putut fi valorificată</string>
 			<key>other</key>
@@ -193,7 +193,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Rețetele nu pot fi răscumpărate</string>
 			<key>one</key>
 			<string>Rețeta nu poate fi răscumpărată</string>
 			<key>other</key>
@@ -211,7 +211,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Următoarele rețete nu mai pot fi valorificate: %% @. Este posibil să le fi răscumpărat deja prin alte mijloace sau să fi fost șterse.</string>
 			<key>one</key>
 			<string>Rețeta %% @ nu mai poate fi valorificată. Este posibil să fi răscumpărat deja prin alte mijloace sau să fi fost șters.</string>
 			<key>other</key>
@@ -229,7 +229,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Medicamentul primit</string>
 			<key>one</key>
 			<string>A primit medicamente</string>
 			<key>other</key>
@@ -247,7 +247,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Gata, adauga retete</string>
 			<key>one</key>
 			<string>Gata, adauga reteta</string>
 			<key>other</key>
@@ -265,7 +265,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>rețetele</string>
 			<key>one</key>
 			<string>rețeta</string>
 			<key>other</key>
@@ -283,7 +283,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Mai aveți %u încercări de a introduce codul PIN actual.</string>
 			<key>one</key>
 			<string>Mai aveți o încercare de a introduce codul PIN actual.</string>
 			<key>other</key>
@@ -301,7 +301,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Mai aveți %u încercări de a introduce codul PUK.</string>
 			<key>one</key>
 			<string>Mai aveți o încercare de a introduce codul PUK.</string>
 			<key>other</key>

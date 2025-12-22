@@ -25,129 +25,99 @@ import Dependencies
 import eRpKit
 import Foundation
 import IDP
+import Profiles
+import Settings
 
-protocol ProfileBasedSessionProvider {
-    func idpSession(for profileId: UUID) -> IDPSession
-    func biometrieIdpSession(for profileId: UUID) -> IDPSession
-    func userDataStore(for profileId: UUID) -> SecureUserDataStore
-    func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError>
-    func signatureProvider(for profileId: UUID) -> SecureEnclaveSignatureProvider
-}
+extension ProfileBasedSessionProvider: DependencyKey {
+    public static let liveValue: ProfileBasedSessionProvider = {
+        @Dependency(\.userSessionProvider) var userSessionProvider
+        var demoUserSession = UsersSessionContainerDependency.liveValue.userSession
 
-struct ProfileBasedSessionProviderDependency: DependencyKey {
-    static let liveValue: ProfileBasedSessionProvider = DefaultSessionProvider(
-        userSessionProvider: UserSessionProviderDependency.liveValue,
-        userSession: UsersSessionContainerDependency.liveValue.userSession
-    )
+        func userSession(for profileId: UUID) -> UserSession {
+            // In case of demo mode, we need to use the original session, otherwise NFC will not be mocked
+            @Shared(.isDemoMode) var isDemoMode: Bool
 
-    static let previewValue: ProfileBasedSessionProvider = DummyProfileBasedSessionProvider()
-
-    static let testValue: ProfileBasedSessionProvider = UnimplementedProfileBasedSessionProvider()
-}
-
-extension DependencyValues {
-    var profileBasedSessionProvider: ProfileBasedSessionProvider {
-        get { self[ProfileBasedSessionProviderDependency.self] }
-        set { self[ProfileBasedSessionProviderDependency.self] = newValue }
-    }
-}
-
-struct DefaultSessionProvider: ProfileBasedSessionProvider {
-    init(userSessionProvider: UserSessionProvider, userSession: UserSession) {
-        self.userSessionProvider = userSessionProvider
-        self.userSession = userSession
-    }
-
-    private let userSessionProvider: UserSessionProvider
-    private let userSession: UserSession
-
-    func idpSession(for profileId: UUID) -> IDPSession {
-        userSession(for: profileId).idpSession
-    }
-
-    func signatureProvider(for profileId: UUID) -> IDP.SecureEnclaveSignatureProvider {
-        userSession(for: profileId).secureEnclaveSignatureProvider
-    }
-
-    func biometrieIdpSession(for profileId: UUID) -> IDPSession {
-        userSession(for: profileId).pairingIdpSession
-    }
-
-    func userDataStore(for profileId: UUID) -> SecureUserDataStore {
-        userSession(for: profileId).secureUserStore
-    }
-
-    func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
-        userSession(for: profileId).idTokenValidator()
-    }
-
-    private func userSession(for profileId: UUID) -> UserSession {
-        // In case of demo mode, we need to use the original session, otherwise NFC will not be mocked
-        if userSession.isDemoMode {
-            return userSession
+            if isDemoMode {
+                return demoUserSession
+            }
+            return userSessionProvider.userSession(for: profileId)
         }
-        return userSessionProvider.userSession(for: profileId)
-    }
-}
 
-struct RegisterSessionProvider: ProfileBasedSessionProvider {
-    init(userSessionProvider: UserSessionProvider, userSession: UserSession) {
-        self.userSessionProvider = userSessionProvider
-        self.userSession = userSession
-    }
-
-    private let userSessionProvider: UserSessionProvider
-    private let userSession: UserSession
-
-    func idpSession(for profileId: UUID) -> IDPSession {
-        userSession(for: profileId).pairingIdpSession
-    }
-
-    func signatureProvider(for profileId: UUID) -> IDP.SecureEnclaveSignatureProvider {
-        userSession(for: profileId).secureEnclaveSignatureProvider
-    }
-
-    func biometrieIdpSession(for profileId: UUID) -> IDPSession {
-        idpSession(for: profileId)
-    }
-
-    func userDataStore(for profileId: UUID) -> SecureUserDataStore {
-        userSession(for: profileId).secureUserStore
-    }
-
-    func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
-        userSession(for: profileId).idTokenValidator()
-    }
-
-    private func userSession(for profileId: UUID) -> UserSession {
-        // In case of demo mode, we need to use the original session, otherwise NFC will not be mocked
-        if userSession.isDemoMode {
-            return userSession
+        return ProfileBasedSessionProvider { profileId in
+            userSession(for: profileId).idpSession
+        } biometrieIdpSession: { profileId in
+            userSession(for: profileId).pairingIdpSession
+        } userDataStore: { profileId in
+            userSession(for: profileId).secureUserStore
+        } idTokenValidator: { profileId in
+            userSession(for: profileId).idTokenValidator()
+        } signatureProvider: { profileId in
+            userSession(for: profileId).secureEnclaveSignatureProvider
         }
-        return userSessionProvider.userSession(for: profileId)
-    }
+    }()
 }
 
-class DummyProfileBasedSessionProvider: ProfileBasedSessionProvider {
-    var userSessionProvider: UserSessionProvider = DummyUserSessionProvider()
-
-    func idpSession(for _: UUID) -> IDPSession {
-        DemoIDPSession(storage: MemoryStorage())
-    }
-
-    func signatureProvider(for _: UUID) -> SecureEnclaveSignatureProvider {
-        DummySecureEnclaveSignatureProvider()
-    }
-
-    func biometrieIdpSession(for _: UUID) -> IDPSession {
-        DemoIDPSession(storage: MemoryStorage())
-    }
-
-    func userDataStore(for _: UUID) -> SecureUserDataStore {
-        MemoryStorage()
-    }
-
-    func idTokenValidator(for _: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
-        DummySessionContainer().idTokenValidator()
-    }
-}
+//
+// struct DefaultSessionProvider: ProfileBasedSessionProvider {
+//    init(userSessionProvider: UserSessionProvider, userSession: UserSession) {
+//        self.userSessionProvider = userSessionProvider
+//        self.userSession = userSession
+//    }
+//
+//    private let userSessionProvider: UserSessionProvider
+//    private let userSession: UserSession
+//
+//    func idpSession(for profileId: UUID) -> IDPSession {
+//        userSession(for: profileId).idpSession
+//    }
+//
+//    func signatureProvider(for profileId: UUID) -> IDP.SecureEnclaveSignatureProvider {
+//        userSession(for: profileId).secureEnclaveSignatureProvider
+//    }
+//
+//    func biometrieIdpSession(for profileId: UUID) -> IDPSession {
+//        userSession(for: profileId).pairingIdpSession
+//    }
+//
+//    func userDataStore(for profileId: UUID) -> SecureUserDataStore {
+//        userSession(for: profileId).secureUserStore
+//    }
+//
+//    func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
+//        userSession(for: profileId).idTokenValidator()
+//    }
+//
+//    private func userSession(for profileId: UUID) -> UserSession {
+//        // In case of demo mode, we need to use the original session, otherwise NFC will not be mocked
+//        @Shared(.isDemoMode) var isDemoMode: Bool
+//
+//        if isDemoMode {
+//            return userSession
+//        }
+//        return userSessionProvider.userSession(for: profileId)
+//    }
+// }
+//
+// class DummyProfileBasedSessionProvider: ProfileBasedSessionProvider {
+//    var userSessionProvider: UserSessionProvider = DummyUserSessionProvider()
+//
+//    func idpSession(for _: UUID) -> IDPSession {
+//        DemoIDPSession(storage: MemoryStorage())
+//    }
+//
+//    func signatureProvider(for _: UUID) -> SecureEnclaveSignatureProvider {
+//        DummySecureEnclaveSignatureProvider()
+//    }
+//
+//    func biometrieIdpSession(for _: UUID) -> IDPSession {
+//        DemoIDPSession(storage: MemoryStorage())
+//    }
+//
+//    func userDataStore(for _: UUID) -> SecureUserDataStore {
+//        MemoryStorage()
+//    }
+//
+//    func idTokenValidator(for _: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
+//        DummySessionContainer().idTokenValidator()
+//    }
+// }

@@ -147,4 +147,30 @@ extension FHIRClient: HealthcareServiceFHIRClient {
             )
         )
     }
+
+    /// Loads an array of `Country` from a remote (server).
+    ///
+    /// - Parameters:
+    /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
+    public func fetchEuCountries(accessToken: String?)
+        -> AnyPublisher<[Country], Error> {
+        let handler = DefaultFHIRResponseHandler(
+            acceptFormat: FHIRAcceptFormat.json
+        ) { (fhirResponse: FHIRClient.Response) -> [Country] in
+            let decoder = JSONDecoder()
+            let resource: ModelsR4.Bundle
+            do {
+                resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+            } catch {
+                throw Error.decoding(error)
+            }
+            return try resource.parseCountry()
+        }
+        return execute(
+            operation: HealthcareServiceFHIROperation.fetchEuCountries(
+                accessToken: accessToken,
+                handler: handler
+            )
+        )
+    }
 }

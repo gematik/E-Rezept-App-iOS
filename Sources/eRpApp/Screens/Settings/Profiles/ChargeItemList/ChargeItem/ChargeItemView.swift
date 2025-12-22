@@ -24,6 +24,7 @@ import CasePaths
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureCardWall
 import Foundation
 import SwiftUI
 
@@ -54,7 +55,7 @@ struct ChargeItemView: View {
                                         .font(Font.subheadline.weight(.semibold))
                                 }
                             }
-                            .buttonStyle(TertiaryButtonStyle())
+                            .buttonStyle(.tertiary)
                             .foregroundColor(Colors.primary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
@@ -89,7 +90,7 @@ struct ChargeItemView: View {
 
                     Text(L10n.stgTxtChargeItemSum)
                         .font(.body)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
 
                 Spacer()

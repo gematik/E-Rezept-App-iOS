@@ -21,6 +21,7 @@
 //
 
 import Combine
+import eRpResources
 import SwiftUI
 
 struct RelativeTimerView: View {

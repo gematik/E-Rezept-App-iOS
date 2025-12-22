@@ -92,7 +92,7 @@ class OnboardingUITests: XCTestCase, Sendable {
 
                 pwdScreen.typePasswordSecond(XCUIKeyboardKey.delete.rawValue)
                 pwdScreen.typePasswordSecond("1n1n1n1n1n1n1n1n1n")
-                pwdScreen.typePassword("\r")
+                pwdScreen.typePasswordSecond("\r")
 
                 expect(pwdScreen.passwordStrengthErrorFooter().exists).to(beFalse())
 

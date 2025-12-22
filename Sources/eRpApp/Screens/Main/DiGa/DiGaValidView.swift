@@ -32,14 +32,8 @@ struct DiGaValidView: View {
         VStack {
             HStack {
                 Spacer()
-                Button {
+                CloseButton {
                     store.send(.setNavigation(tag: .none))
-                } label: {
-                    Image(systemName: SFSymbolName.crossIconPlain)
-                        .font(Font.caption.weight(.bold))
-                        .foregroundColor(Color(.label))
-                        .padding(12)
-                        .background(Circle().foregroundColor(Color(.systemGray6)))
                 }
             }
 

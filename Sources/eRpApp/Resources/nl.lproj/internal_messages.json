@@ -46,5 +46,11 @@
         "text": "**♿ Toegankelijkheid** \nDe profielinstellingen zijn herzien om de toegankelijkheid verder te vergroten.",
         "timestamp": "2025-08-26T08:00:00.000Z",
         "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registratie voor meer mensen** \nRegistratie is nu ook mogelijk voor verzekerden van federale instellingen, zoals de Federale Politie en anderen. \n \n **🕒 Verbeterde openingstijden van apotheken** \nSpoeddiensten en speciale sluitingstijden voor apotheken worden nu weergegeven, indien beschikbaar. \n \n **💊 Selectie van alle recepten** \nBij het inwisselen van recepten kunnen nu alle recepten tegelijkertijd worden geselecteerd. \n \n **♿ Toegankelijkheid** \nDe kleuren van lettertypen en pictogrammen zijn aangepast om een hoger contrast te bereiken. Bovendien is de VoiceOver-spraakuitvoer voor het bewerken van de profielfoto en het herkennen van de inlogstatus verbeterd.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
     }
 ]

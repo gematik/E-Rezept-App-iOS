@@ -37,7 +37,7 @@ struct ToggleCell: View {
     init(text: LocalizedStringKey,
          a11y: String,
          systemImage: String? = nil,
-         textColor: Color = Colors.text,
+         textColor: Color = Colors.systemLabel,
          iconColor: Color = Colors.primary500,
          backgroundColor: Color = Colors.systemBackgroundTertiary,
          isToggleOn: Binding<Bool> = .constant(false),

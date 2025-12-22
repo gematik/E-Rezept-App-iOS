@@ -20,13 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import eRpKit
 import Foundation
 import ModelsR4
 // swiftlint:disable file_length
-// sourcery: CodedError = "580"
+@CodedError("580")
 public enum RemoteStorageBundleParsingError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case parseError(String)
 }
 

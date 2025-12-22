@@ -73,7 +73,7 @@ public struct ProfileImageView: View {
                 } else {
                     Image(systemName: SFSymbolName.camera)
                         .font(Font.headline.weight(.bold))
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
             }
         }

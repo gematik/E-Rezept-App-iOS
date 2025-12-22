@@ -23,7 +23,9 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 import eRpStyleKit
+import FeatureCardWall
 import SwiftUI
 
 struct HealthCardPasswordCanView: View {
@@ -144,13 +146,13 @@ struct HealthCardPasswordCanView: View {
                     can: $store.can.sending(\.updateCan)
                 ) {}
 
-                TertiaryListButton(
-                    text: L10n.cdwBtnCanScanner,
-                    imageName: SFSymbolName.cameraViewfinder,
-                    accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
-                ) {
+                Button {
                     store.send(.showScannerView)
+                } label: {
+                    Label(L10n.cdwBtnCanScanner, systemImage: SFSymbolName.cameraViewfinder)
                 }
+                .buttonStyle(.tertiary)
+                .accessibilityIdentifier(A11y.cardWall.canInput.cdwBtnCanScan)
                 .padding()
                 .fullScreenCover(isPresented: Binding<Bool>(
                     get: { store.state.destination == .scanner },

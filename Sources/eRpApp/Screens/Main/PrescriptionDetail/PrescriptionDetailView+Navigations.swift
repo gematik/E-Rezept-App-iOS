@@ -23,6 +23,7 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureEURedeem
 import SwiftUI
 
 extension PrescriptionDetailView {
@@ -44,7 +45,7 @@ extension PrescriptionDetailView {
                 .smallSheet($store
                     .scope(state: \.destination?.emergencyServiceFeeInfo,
                            action: \.destination.emergencyServiceFeeInfo)) { _ in
-                        EmergencyServiceFeeDrawerView()
+                        EmergencyServiceFeeDrawerView(store: store)
                 }
                 .accessibility(hidden: true)
 
@@ -53,7 +54,7 @@ extension PrescriptionDetailView {
                 .smallSheet($store
                     .scope(state: \.destination?.selfPayerInfo,
                            action: \.destination.selfPayerInfo)) { _ in
-                        SelDrawerView()
+                        SelDrawerView(store: store)
                 }
                 .accessibility(hidden: true)
 
@@ -181,6 +182,14 @@ extension PrescriptionDetailView {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.delegate(.close))
+                        }
+                    }
+
                     Text(store.title)
                         .font(.headline)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoTitle)
@@ -198,8 +207,18 @@ extension PrescriptionDetailView {
         }
 
         struct EmergencyServiceFeeDrawerView: View {
+            let store: StoreOf<PrescriptionDetailDomain>
+
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.setNavigation(tag: .none))
+                        }
+                    }
+
                     Text(L10n.prscDtlDrEmergencyServiceFeeInfoTitle)
                         .font(.headline)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerTitle)
@@ -219,8 +238,18 @@ extension PrescriptionDetailView {
         }
 
         struct SelDrawerView: View {
+            let store: StoreOf<PrescriptionDetailDomain>
+
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.setNavigation(tag: .none))
+                        }
+                    }
+
                     Text(L10n.prscDtlDrawerSelfPayerInfoHeader)
                         .font(.headline)
 
@@ -240,6 +269,14 @@ extension PrescriptionDetailView {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.delegate(.close))
+                        }
+                    }
+
                     Text(store.title)
                         .font(.headline)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoTitle)

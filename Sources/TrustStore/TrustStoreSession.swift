@@ -31,25 +31,19 @@ public protocol TrustStoreSession {
     ///
     /// [REQ:gemSpec_eRp_FdV:A_19739]
     ///
-    /// - Returns: A publisher that emits a validated VAU certificate or an error
-    func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError>
+    /// - Note: Thrown errors are of type `TrustStoreError`
+    /// - Returns: A validated VAU certificate
+    func vauCertificate() async throws -> X509
 
-    /// Try to validate a given certificate against the underlying truststore.
+    /// Try to validate a given certificate against the underlying Truststore.
     /// An OCSP response will also be requested and checked against
     ///
     /// [REQ:gemSpec_eRp_FdV:A_19739]
     ///
     /// - Parameter certificate: the certificate to be validated
-    /// - Returns: A publisher that emits a Boolean stating whether or not the certificate could be validated.
-    func validate(certificate: X509) -> AnyPublisher<Bool, TrustStoreError>
-
-    /// Request and validate the VAU certificate
-    ///
-    /// [REQ:gemSpec_eRp_FdV:A_19739]
-    ///
     /// - Note: Thrown errors are of type `TrustStoreError`
-    /// - Returns: A validated VAU certificate
-    func vauCertificate() async throws -> X509
+    /// - Returns: A publisher that emits a Boolean stating whether or not the certificate could be validated.
+    func validate(eeCertificate: X509) async throws -> Bool
 
     /// Delete all stored data
     func reset()

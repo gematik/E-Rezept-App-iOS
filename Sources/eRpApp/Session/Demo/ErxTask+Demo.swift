@@ -409,7 +409,8 @@ extension ErxTask {
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization
+            organization: demoOrganization,
+            isEURedeemable: true
         )
 
         static let erxTask8: ErxTask = .init(

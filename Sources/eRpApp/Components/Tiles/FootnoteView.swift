@@ -32,7 +32,7 @@ struct FootnoteView: View {
         HStack {
             Text(text, bundle: .module)
                 .font(.footnote)
-                .foregroundColor(Colors.textSecondary)
+                .foregroundColor(Colors.systemLabelSecondary)
                 .multilineTextAlignment(.leading)
                 .accessibility(identifier: a11y)
                 .padding([.bottom])

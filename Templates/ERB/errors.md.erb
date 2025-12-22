@@ -1,0 +1,91 @@
+# Swift Error Documentation
+
+Generated on: <%= Time.now.strftime('%Y-%m-%d %H:%M:%S') %>
+
+## Summary
+
+- **Total Files**: <%= summary[:total_files] %>
+- **Total Error Enums**: <%= summary[:total_enums] %>
+- **Total Error Cases**: <%= summary[:total_cases] %>
+
+## Table of Contents
+
+<% all_errors.each do |error| -%>
+<% display_name = GenerateErrorDocumentationAction.get_display_name(error) -%>
+- [<%= display_name %>](#<%= display_name.downcase.gsub(/[^a-z0-9]/, '-') %>)
+<% end -%>
+
+---
+
+<% all_errors.each do |error| -%>
+<% display_name = GenerateErrorDocumentationAction.get_display_name(error) -%>
+## <%= display_name %>
+
+**Error Code**: `<%= error[:code] %>`
+**Qualified Name**: `<%= error[:qualified_name] %>`
+**File**: `<%= error[:file] %>`
+
+<% if error[:documentation] && !error[:documentation].empty? -%>
+**Description**:
+<%= error[:documentation] %>
+
+<% end -%>
+<% if error[:cases].any? -%>
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+<% error[:cases].each do |case_info| -%>
+<% case_doc = case_info[:documentation] && !case_info[:documentation].empty? ? case_info[:documentation].gsub(/\n/, ' ').strip : "No description" -%>
+| `<%= case_info[:full_id] %>` | `<%= case_info[:name] %>` | <%= case_doc %> |
+<% end -%>
+
+<% else -%>
+### Error Cases
+
+*No cases defined for this error enum.*
+
+<% end -%>
+<% related_errors = [] -%>
+<% error[:cases].each do |case_info| -%>
+<% next unless case_info[:assoc_types] -%>
+<% case_info[:assoc_types].each do |assoc_type| -%>
+<% if GenerateErrorDocumentationAction.is_error_type?(assoc_type) -%>
+<% target_error = all_errors.find { |e| e[:qualified_name] == assoc_type || e[:name] == assoc_type } -%>
+<% if target_error -%>
+<% related_errors << { case_name: case_info[:name], target_error: GenerateErrorDocumentationAction.get_display_name(target_error) } -%>
+<% end -%>
+<% end -%>
+<% end -%>
+<% end -%>
+<% if related_errors.any? -%>
+### Related Errors
+
+<% related_errors.each do |rel| -%>
+<% target_anchor = rel[:target_error].downcase.gsub(/[^a-z0-9]/, '-') -%>
+- Case `<%= rel[:case_name] %>` → [<%= rel[:target_error] %>](#<%= target_anchor %>)
+<% end -%>
+
+<% end -%>
+---
+
+<% end -%>
+## Error Relationships
+
+This section shows how errors are related to each other through associated types:
+
+<% all_errors.each do |error| -%>
+<% error[:cases].each do |case_info| -%>
+<% next unless case_info[:assoc_types] -%>
+<% case_info[:assoc_types].each do |assoc_type| -%>
+<% if GenerateErrorDocumentationAction.is_error_type?(assoc_type) -%>
+<% target_error = all_errors.find { |e| e[:qualified_name] == assoc_type || e[:name] == assoc_type } -%>
+<% if target_error -%>
+<% source_display = GenerateErrorDocumentationAction.get_display_name(error) -%>
+<% target_display = GenerateErrorDocumentationAction.get_display_name(target_error) -%>
+- `<%= source_display %>.<%= case_info[:name] %>` → `<%= target_display %>`
+<% end -%>
+<% end -%>
+<% end -%>
+<% end -%>
+<% end -%>

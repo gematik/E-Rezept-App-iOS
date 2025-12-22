@@ -24,6 +24,7 @@ import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
 import Nimble
+import Synchronization
 import XCTest
 
 @MainActor
@@ -31,63 +32,72 @@ final class SettingsDomainTests: XCTestCase {
     var mockTracker = MockTracker()
     let mockUserSessionContainer = MockUsersSessionContainer()
     let scheduler = DispatchQueue.immediate.eraseToAnyScheduler()
-    let mockResourceHandler = MockResourceHandler()
     typealias TestStore = TestStoreOf<SettingsDomain>
 
-    func testStore() -> TestStore {
-        testStore(for: SettingsDomain.Dummies.state)
-    }
-
-    func testStore(for state: SettingsDomain.State) -> TestStore {
+    func testStore(
+        for state: SettingsDomain.State = SettingsDomain.Dummies.state,
+        withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStore {
         TestStore(initialState: state) {
             SettingsDomain()
         } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = mockUserSessionContainer
             dependencies.tracker = mockTracker
             dependencies.router = MockRouting()
-            dependencies.resourceHandler = mockResourceHandler
+
+            prepareDependencies(&dependencies)
         }
     }
 
     func testDemoModeToggleShouldSetDemoModeWhenDemoModeIsFalse() async {
         let store = testStore()
 
-        mockUserSessionContainer.underlyingIsDemoMode = Just(false).eraseToAnyPublisher()
-        await store.send(.response(.demoModeStatusReceived(false)))
+        @Shared(.isDemoMode) var isDemoMode
+        $isDemoMode.withLock { $0 = false }
+
         // when
         await store.send(.toggleDemoModeSwitch(true)) { sut in
             // then
             sut.destination = .alert(.info(SettingsDomain.demoModeOnAlertState))
+            sut.$isDemoMode.withLock { $0 = true }
         }
-        expect(self.mockUserSessionContainer.switchToDemoModeCalled).to(beTrue())
     }
 
     func testDemoModeToggleShouldSetStandardModeWhenDemoModeIsTrue() async {
+        @Shared(.isDemoMode) var isDemoMode
+        $isDemoMode.withLock { $0 = true }
+
         let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: true
-            )
+            for: SettingsDomain.State()
         )
         // when
         await store.send(.toggleDemoModeSwitch(false)) { sut in
             // then
             sut.destination = .alert(.info(SettingsDomain.demoModeOffAlertState))
+            sut.$isDemoMode.withLock { $0 = false }
         }
-        expect(self.mockUserSessionContainer.switchToStandardModeCalled).to(beTrue())
     }
 
+    @available(iOS 18.0, *)
     func testLanguageSettings() async {
-        let store = testStore()
+        let openedURL = Mutex<URL?>(nil)
+
+        let store = testStore { dependencies in
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
+        }
 
         await store.send(.languageSettingsTapped) { sut in
             sut.destination = .alert(.info(SettingsDomain.languageSettingsAlertState))
         }
 
-        expect(self.mockResourceHandler.openCalled).to(beFalse())
+        expect(openedURL.withLock { $0 }).to(beNil())
 
         await store.send(.destination(.presented(.alert(.openSettings))))
 
-        expect(self.mockResourceHandler.openCalled).to(beTrue())
+        expect(openedURL.withLock { $0 }).toNot(beNil())
     }
 
     func testToggleHealthCardView() async {
@@ -111,9 +121,7 @@ final class SettingsDomainTests: XCTestCase {
 
     func testAppTrackingOptInStartsComplyDialog() async {
         let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false
-            )
+            for: SettingsDomain.State()
         )
 
         // when
@@ -126,9 +134,7 @@ final class SettingsDomainTests: XCTestCase {
 
     func testAppTrackingOptInConfirmAlert() async {
         let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false
-            )
+            for: SettingsDomain.State()
         )
 
         mockTracker.optIn = false
@@ -149,9 +155,7 @@ final class SettingsDomainTests: XCTestCase {
 
     func testAppTrackingOptInDisableAfterConfirm() async {
         let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false
-            )
+            for: SettingsDomain.State()
         )
 
         mockTracker.optIn = true
@@ -163,9 +167,7 @@ final class SettingsDomainTests: XCTestCase {
 
     func testAppTrackingOptInCancelAlert() async {
         let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false
-            )
+            for: SettingsDomain.State()
         )
         mockTracker.optIn = false
 

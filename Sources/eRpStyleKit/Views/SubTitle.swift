@@ -103,12 +103,12 @@ public struct DefaultSubTitleStyle: SubTitleStyle {
         VStack(alignment: .leading, spacing: 4) {
             configuration.title
                 .font(.body)
-                .foregroundColor(Color(.label))
+                .foregroundColor(Colors.systemLabel)
 
             if let description = configuration.description {
                 description
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
 
             if let details = configuration.details {
@@ -131,12 +131,12 @@ public struct SectionContainerSubTitleStyle: SubTitleStyle {
         VStack(alignment: .leading, spacing: 4) {
             configuration.title
                 .font(.body)
-                .foregroundColor(Color(.label))
+                .foregroundColor(Colors.systemLabel)
 
             if let description = configuration.description {
                 description
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
 
             if let details = configuration.details {
@@ -166,18 +166,18 @@ public struct DetailNavigationSubTitleStyle: SubTitleStyle {
             VStack(alignment: .leading, spacing: 4) {
                 configuration.title
                     .font(.body)
-                    .foregroundColor(Color(.label))
+                    .foregroundColor(Colors.systemLabel)
 
                 if let description = configuration.description {
                     description
                         .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
 
                 if let details = configuration.details {
                     details
                         .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
             }
 
@@ -185,7 +185,7 @@ public struct DetailNavigationSubTitleStyle: SubTitleStyle {
 
             if let text = stateText {
                 Text(text)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .padding(.horizontal)
             }
 
@@ -212,18 +212,18 @@ public struct InfoNavigationSubTitleStyle: SubTitleStyle {
             VStack(alignment: .leading, spacing: 4) {
                 configuration.title
                     .font(.body)
-                    .foregroundColor(Color(.label))
+                    .foregroundColor(Colors.systemLabel)
 
                 if let description = configuration.description {
                     description
                         .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
 
                 if let details = configuration.details {
                     details
                         .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
             }
 
@@ -246,12 +246,12 @@ public struct PlainSectionContainerSubTitleStyle: SubTitleStyle {
             configuration
                 .title
                 .font(.body)
-                .foregroundColor(Color(.label))
+                .foregroundColor(Colors.systemLabel)
 
             if let description = configuration.description {
                 description
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
 
             if let details = configuration.details {

@@ -20,12 +20,21 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import CasePaths
+import CodedError
 import Combine
 import ComposableArchitecture
+import ConsentService
 import eRpKit
+import eRpResources
+import ErxTaskRepository
+import FeatureCardWall
+import FeatureEURedeem
+import FeatureHelpers
 import Foundation
 import IDP
+import Settings
 import SwiftUI
 
 // swiftlint:disable type_body_length file_length
@@ -84,7 +93,8 @@ struct MainDomain {
 
     @ObservableState
     struct State: Equatable {
-        var isDemoMode = false
+        @Shared(.selectedProfileId) var profileId
+        @Shared(.isDemoMode) var isDemoMode
         // Delete this after iOS 16 deprecation
         var showIOS16DeprecationBanner: Bool {
             ProcessInfo().operatingSystemVersion.majorVersion == 16
@@ -100,13 +110,11 @@ struct MainDomain {
         var horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State
         var updateChecked = false
 
-        init(isDemoMode: Bool = false,
-             destination: Destination.State? = nil,
+        init(destination: Destination.State? = nil,
              prescriptionListState: PrescriptionListDomain.State,
              extAuthPendingState: ExtAuthPendingDomain.State = ExtAuthPendingDomain.State(),
              horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State,
              updateChecked: Bool = false) {
-            self.isDemoMode = isDemoMode
             self.destination = destination
             self.prescriptionListState = prescriptionListState
             self.extAuthPendingState = extAuthPendingState
@@ -123,19 +131,19 @@ struct MainDomain {
         case loadDeviceSecurityView
         /// Check for forced updates
         case checkForForcedUpdates
-        /// Start listening to demo mode changes
-        case subscribeToDemoModeChange
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
         /// Tapping the OS deprecation banner shows more information
         case osDeprecationBannerTapped
         case gkvInsuredButtonTapped
         case pkvInsuredButtonTapped
+        case federalInsuredButtonTapped
         case externalLogin(URL)
         case importTaskByUrl(URL)
         case showDrawer
         case grantChargeItemsConsentActivate
         case grantChargeItemsConsentDismiss
+        case grantChargeItemsConsentCloseButtonTapped
         case refreshPrescription
         case destination(PresentationAction<Destination.Action>)
         case path(StackActionOf<Path>)
@@ -143,6 +151,9 @@ struct MainDomain {
         case startCardWall
         case redeemPrescriptions(_ prescriptions: Shared<[Prescription]>)
         case redeemFromPharmacy(_ pharmacy: PharmacyLocation, option: RedeemOption)
+        case euRedeemSelection
+        case euRedeemInstructions(_ isRedeeming: Bool)
+        case euRedeemCode
         case response(Response)
 
         // Child Domain Actions
@@ -152,10 +163,9 @@ struct MainDomain {
 
         enum Response: Equatable {
             case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
-            case demoModeChangeReceived(Bool)
             case importReceived(Result<[ErxTask], Error>)
             case showDrawer(DrawerEvaluation.DrawerEvaluationResult)
-            case grantChargeItemsConsentActivate(ChargeItemConsentService.GrantResult)
+            case grantChargeItemsConsentActivate(ConsentService.GrantResult)
             case showUpdateAlertResponse(Bool)
         }
     }
@@ -168,19 +178,30 @@ struct MainDomain {
         case redeem(PharmacyRedeemDomain)
         // sourcery: AnalyticsScreen = pharmacySearch
         case pharmacy(PharmacySearchDomain)
+
+        /// EU redeem selection screen
+        case euRedeemSelection(EURedeemSelectionDomain)
+        /// Country selection screen
+        case countrySelection(CountrySelectionDomain)
+        /// Prescription selection screen
+        case prescriptionSelection(SelectEUPrescriptionsDomain)
+        /// Instructions screen
+        case instructions(InstructionsDomain)
+        /// Code display screen
+        case code(CodeDomain)
     }
 
-    // sourcery: CodedError = "015"
+    @CodedError("015")
     @CasePathable
     enum Error: Swift.Error, Equatable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case localStoreError(LocalStoreError)
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case userSessionError(UserSessionError)
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         /// Import of shared Task failed due to being a duplicate already existing within the app
         case importDuplicate
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         /// Saving or retrieving data failed
         case repositoryError(ErxRepositoryError)
     }
@@ -194,7 +215,7 @@ struct MainDomain {
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.deviceSecurityManager) var deviceSecurityManager
     @Dependency(\.profileSecureDataWiper) var profileSecureDataWiper: ProfileSecureDataWiper
-    @Dependency(\.chargeItemConsentService) var chargeItemConsentService: ChargeItemConsentService
+    @Dependency(\.consentService) var consentService: ConsentService
     @Dependency(\.profileDataStore) var profileDataStore
     @Dependency(\.router) var router: Routing
     @Dependency(\.drawerEvaluation) var drawerEvaluation: DrawerEvaluation
@@ -211,7 +232,7 @@ struct MainDomain {
             deviceSecurityManager: deviceSecurityManager,
             profileSecureDataWiper: profileSecureDataWiper,
             profileDataStore: profileDataStore,
-            chargeItemConsentService: chargeItemConsentService
+            consentService: consentService
         )
     }
 
@@ -290,21 +311,11 @@ struct MainDomain {
                 }
                 await send(.response(.showUpdateAlertResponse(false)))
             })
-        case .subscribeToDemoModeChange:
-            return .publisher(
-                environment.userSessionContainer.isDemoMode
-                    .map { .response(.demoModeChangeReceived($0)) }
-                    .receive(on: environment.schedulers.main.animation())
-                    .eraseToAnyPublisher
-            )
         case let .response(.showUpdateAlertResponse(show)):
             state.updateChecked = true
             if show, state.destination == nil {
                 state.destination = .alert(AlertStates.forcedUpdateAlert())
             }
-            return .none
-        case let .response(.demoModeChangeReceived(demoModeValue)):
-            state.isDemoMode = demoModeValue
             return .none
         case let .externalLogin(url):
             // [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
@@ -319,7 +330,7 @@ struct MainDomain {
                   let sharedTasks = try? JSONDecoder().decode([SharedTask].self, from: fragment) else {
                 return .none
             }
-            return environment.checkForTaskDuplicatesThenSave(sharedTasks)
+            return environment.checkForTaskDuplicatesThenSave(sharedTasks, profileId: state.profileId)
         case .response(.importReceived(.success)):
             state.destination = .alert(.init(title: L10n.erxTxtPrescriptionAddedAlertTitle))
             return .none
@@ -401,6 +412,11 @@ struct MainDomain {
         case .prescriptionList(action: .showArchivedButtonTapped):
             state.destination = .prescriptionArchive(.init())
             return .none
+        case .destination(.dismiss):
+            if state.destination.is(\.cardWall) {
+                return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
+            }
+            return .none
         case .destination(.presented(.cardWall(action: .delegate(.close)))),
              .extAuthPending(action: .hide):
             state.destination = nil
@@ -453,6 +469,19 @@ struct MainDomain {
                     .async()
                 await send(.startCardWall)
             }
+        case .federalInsuredButtonTapped:
+            guard let profileId = state.horizontalProfileSelectionState.selectedProfileId else {
+                return .none
+            }
+
+            return .run { send in
+                _ = try await userProfileService
+                    .update(profileId: profileId) { profile in
+                        profile.insuranceType = .federalKV
+                    }
+                    .async()
+                await send(.startCardWall)
+            }
         case let .response(.showDrawer(drawerEvaluationResult)):
             switch drawerEvaluationResult {
             case .welcomeDrawer:
@@ -476,7 +505,7 @@ struct MainDomain {
             state.destination = nil
             let profileId = userSession.profileId
             return .run { send in
-                let result = try await chargeItemConsentService.grantConsent(profileId)
+                let result = try await consentService.grantConsent(.chargcons, profileId)
                 await send(.response(.grantChargeItemsConsentActivate(result)))
             }
         case let .response(.grantChargeItemsConsentActivate(result)):
@@ -487,13 +516,13 @@ struct MainDomain {
                 state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
             case .conflict:
                 state.destination = .toast(ToastStates.conflictToast)
-            case let .error(chargeItemConsentServiceError):
-                if let alertState = chargeItemConsentServiceError.alertState {
+            case let .error(consentServiceError):
+                if let alertState = consentServiceError.alertState {
                     // in case of an expected (specified) http error
                     state.destination = .alert(alertState.mainDomainErpAlertState)
                 } else {
                     // in case of an unexpected (not specified) error
-                    state.destination = .alert(AlertStates.grantConsentErrorFor(error: chargeItemConsentServiceError))
+                    state.destination = .alert(AlertStates.grantConsentErrorFor(error: consentServiceError))
                 }
             }
             return .none
@@ -507,6 +536,9 @@ struct MainDomain {
              .destination(.presented(.alert(.dismissGrantChargeItemConsent))):
             state.destination = nil
             return .none
+        case .grantChargeItemsConsentCloseButtonTapped:
+            state.destination = nil
+            return .none
         case .destination(.presented(.alert(.consentServiceErrorOkay))):
             state.destination = nil
             return .none
@@ -516,13 +548,14 @@ struct MainDomain {
                 await send(.grantChargeItemsConsentActivate)
             }
         case .destination(.presented(.alert(.goToAppStore))):
-            @Dependency(\.resourceHandler) var resourceHandler
+            @Dependency(\.openURLHandler) var openURLHandler
 
             guard let url = URL(string: "https://itunes.apple.com/app/id1511792179?mt=8") else {
                 return .none
             }
-            resourceHandler.open(url)
-            return .none
+            return .run { _ in
+                await openURLHandler.open(url)
+            }
         case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
             state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
             return .none
@@ -541,11 +574,7 @@ struct MainDomain {
             switch delegateAction {
             case .close:
                 state.destination = nil
-                return .run { send in
-                    // wait for running effects to finish
-                    try await schedulers.main.sleep(for: 0.5)
-                    await send(.showDrawer)
-                }
+                return .none
             case let .failure(error):
                 state.destination = .alert(
                     .init(for: error, actions: {
@@ -604,6 +633,8 @@ struct MainDomain {
             case let .redeemOverview(prescriptions):
                 let prescriptions = Shared(value: prescriptions)
                 return .send(.redeemPrescriptions(prescriptions))
+            case .euRedeemTapped:
+                return .send(.euRedeemSelection)
             case .close:
                 guard !state.path.isEmpty else {
                     reportIssue(
@@ -612,6 +643,83 @@ struct MainDomain {
                     return .none
                 }
                 state.path.removeLast()
+                return .none
+            }
+        case .destination(
+            .presented(
+                .prescriptionDetail(action: .destination(.presented(.matrixCode(.delegate(.euRedeemButtonTapped)))))
+            )
+        ),
+        .destination(.presented(.prescriptionDetail(action: .delegate(.euRedeemButtonTapped)))):
+            state.destination = nil
+            return .run { send in
+                // wait for running effects to finish
+                try await schedulers.main.sleep(for: 0.05)
+                await send(.euRedeemSelection)
+            }
+        case let .path(.element(id: _, action: .countrySelection(.selectCountry(country)))):
+            state.path.removeLast()
+            guard let id = state.path.ids.last
+            else { return .none }
+            state.path[id: id, case: \.euRedeemSelection]?.selectedCountry = country
+            return .none
+        case let .path(.popFrom(id: id)):
+            // Back navigation from PrescriptionSelection to EURedeemSelection
+            if let path = state.path[id: id, case: \.prescriptionSelection] {
+                let prescriptions = path.prescriptions.filter(\.isSelected)
+                guard state.path.ids.count > 1 else { return .none }
+                let previousId = state.path.ids[state.path.index(before: state.path.endIndex - 1)]
+                state.path[id: previousId, case: \.euRedeemSelection]?.selectedPrescriptions = prescriptions
+            }
+            return .none
+        case let .path(.element(id: _, action: .euRedeemSelection(.delegate(delegate)))):
+            switch delegate {
+            case .selectPrescriptionsButtonTapped:
+                state.path.append(.prescriptionSelection(.init()))
+                return .none
+            case .selectCountryButtonTapped:
+                state.path.append(.countrySelection(.init(countries: [])))
+                return .none
+            case .selectInstructionButtonTapped:
+                return .send(.euRedeemInstructions(false))
+            case .redeemButtonTapped:
+                return .run { [userDataStore = self.userDataStore] send in
+                    let hideEURedeemInstructions = try await userDataStore.hideEURedeemInstructions.async()
+                    if hideEURedeemInstructions {
+                        await send(.euRedeemCode)
+                    } else {
+                        userDataStore.set(hideEURedeemInstructions: true)
+                        await send(.euRedeemInstructions(true))
+                    }
+                }
+            case .close:
+                state.path.removeAll()
+                return .none
+            }
+        case .euRedeemSelection:
+            state.path.append(.euRedeemSelection(.init()))
+            return .none
+        case let .euRedeemInstructions(isRedeeming):
+            state.path.append(.instructions(.init(isRedeeming: isRedeeming)))
+            return .none
+        case .euRedeemCode:
+            state.path.append(.code(.init()))
+            return .none
+        case let .path(.element(id: _, action: .instructions(.delegate(delegate)))):
+            switch delegate {
+            case .continueButtonTapped:
+                return .send(.euRedeemCode)
+            case .close:
+                state.path.removeAll()
+                return .none
+            }
+        case let .path(.element(id: _, action: .code(.delegate(delegate)))):
+            switch delegate {
+            case .takeReceipt:
+                state.path.removeAll()
+                return .none
+            case .close:
+                state.path.removeAll()
                 return .none
             }
         case let .path(.element(id: _, action: .pharmacy(

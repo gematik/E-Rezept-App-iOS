@@ -20,12 +20,16 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import CasePaths
 import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
 import CoreLocationUI
 import eRpKit
+import eRpResources
+import FeatureEURedeem
+import FeatureHelpers
 import IDP
 import MapKit
 import Pharmacy
@@ -49,6 +53,8 @@ struct PharmacySearchMapDomain {
         var currentUserLocation: Location?
         /// Map-Location for MapView with the standard value if location is not active
         var mapLocation: MKCoordinateRegionContainer
+
+        var isoCountryCode: String?
         /// Store for the remote search result
         var pharmacies: [PharmacyLocationViewModel] = []
         /// Store for the active filter options the user has chosen
@@ -61,6 +67,14 @@ struct PharmacySearchMapDomain {
         var showOnlyTextSearchResult = false
         /// The value of the search text field
         var searchText = ""
+
+        var hideEURedeemHint = false
+        var isEURedeemable: Bool {
+            @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+            return euRedeemPrescriptionsFeature
+                && isoCountryCode != "DE"
+                && EUCountry.europeanCountryCodes.contains(isoCountryCode ?? "")
+        }
     }
 
     @Reducer(state: .equatable, action: .equatable)
@@ -100,6 +114,8 @@ struct PharmacySearchMapDomain {
         case locationManager(LocationManager.Action)
         // Pharmacy filter
         case showPharmacyFilter
+        // EU redeem
+        case hideEuRedeemHint
 
         case destination(PresentationAction<Destination.Action>)
         case resetNavigation
@@ -111,6 +127,7 @@ struct PharmacySearchMapDomain {
         enum Delegate: Equatable {
             case closeMap(location: Location?)
             case close
+            case euRedeemTapped
         }
 
         @CasePathable
@@ -122,22 +139,9 @@ struct PharmacySearchMapDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
     @Dependency(\.locationManager) var locationManager: LocationManager
-    @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+    @Dependency(\.openURLHandler) var openURLHandler
     @Dependency(\.dateProvider) var date: () -> Date
-
-    // swiftlint:disable:next todo
-    // TODO: move to UIDateFormatter and add dependency within the model where it's used
-    var timeOnlyFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        if let preferredLang = Locale.preferredLanguages.first,
-           preferredLang.starts(with: "de") {
-            dateFormatter.dateFormat = "HH:mm 'Uhr'"
-        } else {
-            dateFormatter.timeStyle = .short
-            dateFormatter.dateStyle = .none
-        }
-        return dateFormatter
-    }()
+    @Dependency(\.uiDateFormatter) var uiDateFormatter
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -195,7 +199,7 @@ struct PharmacySearchMapDomain {
                         pharmacy: $0.pharmacyLocation,
                         referenceLocation: centerLocation,
                         referenceDate: date(),
-                        timeOnlyFormatter: timeOnlyFormatter
+                        timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
                     )
                 }
 
@@ -252,7 +256,7 @@ struct PharmacySearchMapDomain {
                         referenceLocation: Location(rawValue: .init(latitude: location.latitude,
                                                                     longitude: location.longitude)),
                         referenceDate: date(),
-                        timeOnlyFormatter: timeOnlyFormatter
+                        timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
                     )
                 }
                 .filter(by: state.pharmacyFilterOptions)
@@ -377,6 +381,9 @@ struct PharmacySearchMapDomain {
                 pharmacyFilterShow: [.open, .delivery, .shipment, .currentLocation]
             ))
             return .none
+        case .hideEuRedeemHint:
+            state.hideEURedeemHint = true
+            return .none
         case .resetNavigation:
             state.destination = nil
             return .none
@@ -384,8 +391,9 @@ struct PharmacySearchMapDomain {
             state.destination = .alert(alert)
             return .none
         case .destination(.presented(.alert(.openAppSpecificSettings))):
-            openSettings()
-            return .none
+            return .run { _ in
+                await openSettings()
+            }
         case .destination, .locationManager, .delegate, .binding:
             return .none
         }
@@ -423,9 +431,9 @@ extension PharmacySearchMapDomain {
         )
     }()
 
-    func openSettings() {
+    func openSettings() async {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            resourceHandler.open(url)
+            await openURLHandler.open(url)
         }
     }
 
@@ -435,17 +443,16 @@ extension PharmacySearchMapDomain {
         searchText: String = ""
     ) async throws -> PharmacySearchMapDomain.Action {
         let position = Position(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
-        return try await pharmacyRepository.searchRemote(
-            searchTerm: searchText,
-            position: position,
-            filter: filter.asPharmacyRepositoryFilters
-        )
-        .first()
-        .catchToPublisher()
-        .map { .response(.pharmaciesReceived($0, location.coordinate)) }
-        .receive(on: schedulers.main.animation())
-        .eraseToAnyPublisher()
-        .async()
+        do {
+            let response = try await pharmacyRepository.searchRemote(
+                searchText,
+                position,
+                filter.asPharmacyRepositoryFilters
+            )
+            return Action.response(.pharmaciesReceived(.success(response), location.coordinate))
+        } catch let error as PharmacyRepositoryError {
+            return Action.response(.pharmaciesReceived(.failure(error), location.coordinate))
+        }
     }
 
     /// This function calculates the span needed to display up to the seventh (or last) pharmacy on the Map.

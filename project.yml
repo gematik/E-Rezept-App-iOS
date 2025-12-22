@@ -53,21 +53,22 @@ schemes:
       targets:
         - eRpAppTests
         - eRpAppStoreScreenshots
+        - package: eRpKit/AVSTests
         - package: eRpKit/eRpFeaturesTests
-        - package: eRpKit/eRpStyleKitTests
         - package: eRpKit/eRpKitTests
         - package: eRpKit/eRpLocalStorageTests
         - package: eRpKit/eRpRemoteStorageTests
-        - package: eRpKit/PharmacyTests
-        - package: eRpKit/IDPTests
-        - package: eRpKit/IDPLiveTests
-        - package: eRpKit/HTTPClientTests
-        - package: eRpKit/HTTPClientLiveTests
+        - package: eRpKit/eRpStyleKitTests
         - package: eRpKit/FHIRClientTests
+        - package: eRpKit/FHIRVZDTests
+        - package: eRpKit/HTTPClientLiveTests
+        - package: eRpKit/IDPLiveTests
+        - package: eRpKit/IDPTests
+        - package: eRpKit/PharmacyTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
-        - package: eRpKit/AVSTests
-        - package: eRpKit/FHIRVZDTests
+        - package: eRpKit/AsyncHelpersTests
+        - package: eRpKit/FeatureCardWallTests
   AllTests_macOS:
     build:
       targets:
@@ -77,19 +78,19 @@ schemes:
       region: DE
       gatherCoverageData: true
       targets:
+        - package: eRpKit/AVSTests
         - package: eRpKit/eRpKitTests
         - package: eRpKit/eRpLocalStorageTests
         - package: eRpKit/eRpRemoteStorageTests
-        - package: eRpKit/PharmacyTests
-        - package: eRpKit/IDPTests
-        - package: eRpKit/IDPLiveTests
-        - package: eRpKit/HTTPClientTests
-        - package: eRpKit/HTTPClientLiveTests
         - package: eRpKit/FHIRClientTests
+        - package: eRpKit/FHIRVZDTests
+        - package: eRpKit/HTTPClientLiveTests
+        - package: eRpKit/IDPLiveTests
+        - package: eRpKit/IDPTests
+        - package: eRpKit/PharmacyTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
-        - package: eRpKit/AVSTests
-        - package: eRpKit/FHIRVZDTests
+        - package: eRpKit/AsyncHelpersTests
   AllIntegrationTests_iOS:
     build:
       targets:

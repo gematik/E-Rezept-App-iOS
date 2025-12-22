@@ -13,9 +13,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Bylo zjištěno %u neúspěšných pokusů o přihlášení</string>
 			<key>many</key>
-			<string></string>
+			<string>Bylo zjištěno %u neúspěšných pokusů o přihlášení</string>
 			<key>one</key>
 			<string>Byl zjištěn neúspěšný pokus o přihlášení</string>
 			<key>other</key>
@@ -32,12 +32,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>few</key>
+			<string>Nesprávné heslo. Zkuste to prosím znovu za %u sekund.</string>
+			<key>many</key>
+			<string>Nesprávné heslo. Zkuste to prosím znovu za %u sekund.</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>Nesprávné heslo. Zkuste to prosím znovu za 1 sekundu.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
-			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>Nesprávné heslo. Zkuste to prosím znovu za %u sekund.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -51,11 +53,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Zkuste to prosím znovu za %u sekund.</string>
 			<key>many</key>
-			<string></string>
+			<string>Zkuste to prosím znovu za %u sekund.</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>Zkuste to prosím znovu za %u sekundu.</string>
 			<key>other</key>
 			<string>Zkuste to prosím znovu za %u sekund.</string>
 		</dict>
@@ -71,11 +73,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Tento recept vám byl vydán dne % %@ jako součást léčby.</string>
 			<key>many</key>
-			<string></string>
+			<string>Tento recept vám byl vydán dne % %@ jako součást léčby.</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>Tento recept byl %%@ v rámci léčby pro vás uplatněn.</string>
 			<key>other</key>
 			<string>Tento recept vám byl vydán dne % %@ jako součást léčby.</string>
 		</dict>
@@ -91,9 +93,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Stále lze uplatnit %u dní</string>
 			<key>many</key>
-			<string></string>
+			<string>Stále lze uplatnit %u dní</string>
 			<key>one</key>
 			<string>Lze uplatnit pouze zítra</string>
 			<key>other</key>
@@ -111,9 +113,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Smazáno dne: %% @</string>
 			<key>many</key>
-			<string></string>
+			<string>Smazáno dne: %% @</string>
 			<key>one</key>
 			<string>Smazáno: %% @</string>
 			<key>other</key>
@@ -131,9 +133,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Stále lze uplatnit jako samoplátce po dobu %u dní</string>
 			<key>many</key>
-			<string></string>
+			<string>Stále lze uplatnit jako samoplátce po dobu %u dní</string>
 			<key>one</key>
 			<string>Lze uplatnit pouze zítra jako samoplátce</string>
 			<key>other</key>
@@ -151,9 +153,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Recepty</string>
 			<key>many</key>
-			<string></string>
+			<string>Recepty</string>
 			<key>one</key>
 			<string>Recept</string>
 			<key>other</key>
@@ -171,9 +173,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%lu receptů</string>
 			<key>many</key>
-			<string></string>
+			<string>%lu receptů</string>
 			<key>one</key>
 			<string>%lu recept</string>
 			<key>other</key>
@@ -191,9 +193,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%li receptů nebylo možné uplatnit</string>
 			<key>many</key>
-			<string></string>
+			<string>%li receptů nebylo možné uplatnit</string>
 			<key>one</key>
 			<string>Vybraný recept nelze uplatnit</string>
 			<key>other</key>
@@ -211,9 +213,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Předpisy nelze uplatnit</string>
 			<key>many</key>
-			<string></string>
+			<string>Předpisy nelze uplatnit</string>
 			<key>one</key>
 			<string>Předpis nelze uplatnit</string>
 			<key>other</key>
@@ -231,9 +233,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Následující recepty již nelze uplatnit: %% @. Možná jste je již uplatnili jinými prostředky nebo byly smazány.</string>
 			<key>many</key>
-			<string></string>
+			<string>Následující recepty již nelze uplatnit: %% @. Možná jste je již uplatnili jinými prostředky nebo byly smazány.</string>
 			<key>one</key>
 			<string>Recept %% @ již nelze uplatnit. Možná jste jej již uplatnili jiným způsobem nebo byl smazán.</string>
 			<key>other</key>
@@ -251,9 +253,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Přijaté léky</string>
 			<key>many</key>
-			<string></string>
+			<string>Přijaté léky</string>
 			<key>one</key>
 			<string>Přijaté léky</string>
 			<key>other</key>
@@ -271,9 +273,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Hotovo, přidejte recepty</string>
 			<key>many</key>
-			<string></string>
+			<string>Hotovo, přidejte recepty</string>
 			<key>one</key>
 			<string>Hotovo, přidejte recept</string>
 			<key>other</key>
@@ -291,9 +293,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>předpisy</string>
 			<key>many</key>
-			<string></string>
+			<string>předpisy</string>
 			<key>one</key>
 			<string>předpis</string>
 			<key>other</key>
@@ -311,9 +313,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Stále máte %u pokusů o zadání aktuálního PIN.</string>
 			<key>many</key>
-			<string></string>
+			<string>Stále máte %u pokusů o zadání aktuálního PIN.</string>
 			<key>one</key>
 			<string>Máte ještě jeden pokus o zadání aktuálního PIN.</string>
 			<key>other</key>
@@ -331,9 +333,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>Stále máte %u pokusů o zadání kódu PUK.</string>
 			<key>many</key>
-			<string></string>
+			<string>Stále máte %u pokusů o zadání kódu PUK.</string>
 			<key>one</key>
 			<string>Máte ještě jeden pokus o zadání kódu PUK.</string>
 			<key>other</key>

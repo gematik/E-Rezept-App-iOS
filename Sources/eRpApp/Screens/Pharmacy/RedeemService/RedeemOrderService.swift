@@ -21,6 +21,7 @@
 //
 
 import CasePaths
+import CodedError
 import Dependencies
 import DependenciesMacros
 import eRpKit
@@ -31,10 +32,11 @@ import Pharmacy
 @DependencyClient
 struct RedeemOrderService {
     var redeemOptionProvider: @Sendable (_ pharmacy: PharmacyLocation) async throws -> RedeemOptionProvider
-    var redeemViaAVS: @Sendable (_ orders: [OrderRequest]) async throws -> IdentifiedArrayOf<OrderResponse>
-    var redeemViaErxTaskRepository: @Sendable (_ orders: [OrderRequest]) async throws
+    var redeemViaAVS: @Sendable (_ orders: [OrderRequest], _ profileId: UUID) async throws
         -> IdentifiedArrayOf<OrderResponse>
-    var redeemViaErxTaskRepositoryDiGa: @Sendable (_ orders: [OrderDiGaRequest]) async throws
+    var redeemViaErxTaskRepository: @Sendable (_ orders: [OrderRequest], _ profileId: UUID) async throws
+        -> IdentifiedArrayOf<OrderResponse>
+    var redeemViaErxTaskRepositoryDiGa: @Sendable (_ orders: [OrderDiGaRequest], _ profileId: UUID) async throws
         -> IdentifiedArrayOf<OrderDiGaResponse>
 }
 
@@ -49,27 +51,22 @@ extension RedeemOrderService: DependencyKey {
             redeemOptionProvider: { pharmacy in
                 var pharmacy = pharmacy
                 let profile = try await userSession.profile().async(\RedeemOrderServiceError.Cases.localStore)
-                if pharmacy.hasAVSEndpoints {
-                    let certificates = try await pharmacyRepository.loadAvsCertificates(for: pharmacy.id)
-                        .async(\RedeemOrderServiceError.Cases.pharmacy)
-                    pharmacy.avsCertificates = certificates
-                }
 
                 return RedeemOptionProvider(
                     wasAuthenticatedBefore: profile.isLinkedToInsuranceId,
                     pharmacy: pharmacy
                 )
             },
-            redeemViaAVS: { orders in
-                try await avsRedeemService().redeem(orders)
+            redeemViaAVS: { orders, profileId in
+                try await avsRedeemService().redeem(orders, profileId: profileId)
                     .async(\RedeemOrderServiceError.Cases.redeem)
             },
-            redeemViaErxTaskRepository: { orders in
-                try await erxTaskRepositoryRedeemService().redeem(orders)
+            redeemViaErxTaskRepository: { orders, profileId in
+                try await erxTaskRepositoryRedeemService().redeem(orders, profileId: profileId)
                     .async(\RedeemOrderServiceError.Cases.redeem)
             },
-            redeemViaErxTaskRepositoryDiGa: { orders in
-                try await erxTaskRepositoryRedeemService().redeemDiGa(orders)
+            redeemViaErxTaskRepositoryDiGa: { orders, profileId in
+                try await erxTaskRepositoryRedeemService().redeemDiGa(orders, profileId: profileId)
                     .async(\RedeemOrderServiceError.Cases.redeem)
             }
         )
@@ -83,13 +80,13 @@ extension DependencyValues {
     }
 }
 
-// sourcery: CodedError = "039"
+@CodedError("045")
 @CasePathable
 enum RedeemOrderServiceError: Swift.Error, Equatable, LocalizedError {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case localStore(LocalStoreError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case pharmacy(PharmacyRepositoryError)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case redeem(RedeemServiceError)
 }

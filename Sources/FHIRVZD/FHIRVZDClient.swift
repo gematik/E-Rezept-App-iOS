@@ -23,19 +23,17 @@
 import Dependencies
 import DependenciesMacros
 import Foundation
-import HTTPClient
-import HTTPClientLive
 
 /// FHIR VZD Client interacts with the authorization endpoints of the service
 @DependencyClient
 public struct FHIRVZDClient {
     /// Refreshes the access token for the FHIR VZD service
-    var refresh: @Sendable (Configuration) async throws -> FHIRVZDToken
+    public var refresh: @Sendable (Configuration) async throws -> FHIRVZDToken
 }
 
 extension DependencyValues {
     /// FHIR VZD Client
-    var fhirVZDClient: FHIRVZDClient {
+    public var fhirVZDClient: FHIRVZDClient {
         get { self[FHIRVZDClient.self] }
         set { self[FHIRVZDClient.self] = newValue }
     }
@@ -45,47 +43,13 @@ extension FHIRVZDClient: TestDependencyKey {
     public static let testValue: FHIRVZDClient = Self()
 }
 
-extension FHIRVZDClient: DependencyKey {
-    // swiftlint:disable:next trailing_closure
-    public static let liveValue = Self(
-        refresh: { configuration in
-            let httpClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
-            let decoder = JSONDecoder()
-
-            let url = configuration.eRezeptAPIServer.appendingPathComponent("vzd/token")
-            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            for (key, value) in configuration.eRezeptAdditionalHeader {
-                request.addValue(value, forHTTPHeaderField: key)
-            }
-
-            do {
-                let result = try await httpClient.sendAsync(request: request)
-                if result.status.isSuccessful {
-                    let token = try decoder.decode(FHIRVZDToken.self, from: result.data)
-                    return token
-                } else {
-                    throw FHIRVZDError.tokenUnavailable
-                }
-            } catch let error as HTTPClientError {
-                throw FHIRVZDError.network(error: error)
-            } catch let error as DecodingError {
-                throw FHIRVZDError.decoding(error: error)
-            } catch {
-                throw FHIRVZDError.unspecified(error: error)
-            }
-        }
-    )
-}
-
 extension FHIRVZDClient {
     /// FHIR VZD Configuration
     public struct Configuration {
         /// eRezept API URL
-        let eRezeptAPIServer: URL
+        public let eRezeptAPIServer: URL
         /// eRezept API headers
-        let eRezeptAdditionalHeader: [String: String]
+        public let eRezeptAdditionalHeader: [String: String]
 
         /// Initialize FHIR VZD Configuration
         ///

@@ -2,6 +2,8 @@
 
 import Foundation
 import FeatureEURedeem
+import FeatureCardWall
+import eRpResources
 
 {% macro DomainReducerRouteEnum stateType typeName %}
 {% typed stateType as Enum %}

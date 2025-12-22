@@ -20,10 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
+import eRpResources
+import ErxTaskRepository
+import FeatureHelpers
 import Foundation
 import SwiftUI
 
@@ -37,9 +41,9 @@ struct MedicationReminderListDomain {
         case alert(ErpAlertState<Never>)
     }
 
-    // sourcery: CodedError = "042"
+    @CodedError("042")
     enum Error: Swift.Error, Equatable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case generic(String)
     }
 
@@ -91,14 +95,11 @@ struct MedicationReminderListDomain {
                     .eraseToAnyPublisher
             )
         case let .loadReceived(.failure(error)):
-            state.destination = .alert(.error(
-                error: error,
-                alertState: .init(for: error, actions: {
-                    ButtonState(role: .cancel) {
-                        .init(L10n.alertBtnOk)
-                    }
-                })
-            ))
+            state.destination = .alert(ErpAlertState(for: error, actions: {
+                ButtonState(role: .cancel) {
+                    .init(L10n.alertBtnOk)
+                }
+            }))
             return .none
         case let .loadReceived(.success(profiles)):
             state.profileMedicationReminder = []
@@ -132,14 +133,11 @@ struct MedicationReminderListDomain {
                 .append(ProfileMedicationReminder(profile: profile, medicationProfileReminderList: reminder))
             return .none
         case let .profileMedicationReminderFailed(error):
-            state.destination = .alert(.error(
-                error: error,
-                alertState: .init(for: error, actions: {
-                    ButtonState(role: .cancel) {
-                        .init(L10n.alertBtnOk)
-                    }
-                })
-            ))
+            state.destination = .alert(ErpAlertState(for: error, actions: {
+                ButtonState(role: .cancel) {
+                    .init(L10n.alertBtnOk)
+                }
+            }))
             return .none
         case let .deleteFromProfileMedicationReminderList(
             profileMedicationReminderId,

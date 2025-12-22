@@ -16,6 +16,532 @@ import IDPLive
 import OpenSSL
 import Pharmacy
 
+// MARK: - SmartMockErxLocalDataStore -
+
+class SmartMockErxLocalDataStore: ErxLocalDataStore, SmartMock {
+    private var wrapped: ErxLocalDataStore
+    private var isRecording: Bool
+
+    init(wrapped: ErxLocalDataStore, mocks: Mocks?, isRecording: Bool = false) {
+        self.wrapped = wrapped
+        self.isRecording = isRecording
+
+        fetchTaskByAccessCodeRecordings = mocks?.fetchTaskByAccessCodeRecordings ?? .delegate
+        listAllTasksOfRecordings = mocks?.listAllTasksOfRecordings ?? .delegate
+        fetchLatestLastModifiedForErxTasksOfRecordings = mocks?.fetchLatestLastModifiedForErxTasksOfRecordings ?? .delegate
+        saveTasksInUpdateProfileLastAuthenticatedRecordings = mocks?.saveTasksInUpdateProfileLastAuthenticatedRecordings ?? .delegate
+        deleteTasksInRecordings = mocks?.deleteTasksInRecordings ?? .delegate
+        listAllTasksWithoutProfileRecordings = mocks?.listAllTasksWithoutProfileRecordings ?? .delegate
+        listAllCommunicationsForRecordings = mocks?.listAllCommunicationsForRecordings ?? .delegate
+        fetchLatestTimestampForCommunicationsOfRecordings = mocks?.fetchLatestTimestampForCommunicationsOfRecordings ?? .delegate
+        saveCommunicationsOfRecordings = mocks?.saveCommunicationsOfRecordings ?? .delegate
+        allUnreadCommunicationsOfForRecordings = mocks?.allUnreadCommunicationsOfForRecordings ?? .delegate
+        listAllMedicationDispensesOfRecordings = mocks?.listAllMedicationDispensesOfRecordings ?? .delegate
+        saveMedicationDispensesRecordings = mocks?.saveMedicationDispensesRecordings ?? .delegate
+        fetchChargeItemOfByRecordings = mocks?.fetchChargeItemOfByRecordings ?? .delegate
+        fetchLatestTimestampForChargeItemsOfRecordings = mocks?.fetchLatestTimestampForChargeItemsOfRecordings ?? .delegate
+        listAllChargeItemsOfRecordings = mocks?.listAllChargeItemsOfRecordings ?? .delegate
+        saveChargeItemsOfRecordings = mocks?.saveChargeItemsOfRecordings ?? .delegate
+        deleteOfChargeItemsRecordings = mocks?.deleteOfChargeItemsRecordings ?? .delegate
+        updateDiGaInfoRecordings = mocks?.updateDiGaInfoRecordings ?? .delegate
+    }
+
+    var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>
+
+    func fetchTask(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.fetchTask(
+                    by: id,
+                    accessCode: accessCode
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchTaskByAccessCodeRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchTaskByAccessCodeRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchTask(
+                    by: id,
+                    accessCode: accessCode
+            )
+        }
+    }
+
+    var listAllTasksOfRecordings: MockAnswer<[ErxTask]>
+
+    func listAllTasks(of profileId: UUID?) -> AnyPublisher<[ErxTask], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listAllTasks(
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listAllTasksOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listAllTasksOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listAllTasks(
+                    of: profileId
+            )
+        }
+    }
+
+    var fetchLatestLastModifiedForErxTasksOfRecordings: MockAnswer<String?>
+
+    func fetchLatestLastModifiedForErxTasks(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.fetchLatestLastModifiedForErxTasks(
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchLatestLastModifiedForErxTasksOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchLatestLastModifiedForErxTasksOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchLatestLastModifiedForErxTasks(
+                    of: profileId
+            )
+        }
+    }
+
+    var saveTasksInUpdateProfileLastAuthenticatedRecordings: MockAnswer<Bool>
+
+    func save(tasks: [ErxTask], in profileId: UUID?, updateProfileLastAuthenticated: Bool) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.save(
+                    tasks: tasks,
+                    in: profileId,
+                    updateProfileLastAuthenticated: updateProfileLastAuthenticated
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.saveTasksInUpdateProfileLastAuthenticatedRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = saveTasksInUpdateProfileLastAuthenticatedRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.save(
+                    tasks: tasks,
+                    in: profileId,
+                    updateProfileLastAuthenticated: updateProfileLastAuthenticated
+            )
+        }
+    }
+
+    var deleteTasksInRecordings: MockAnswer<Bool>
+
+    func delete(tasks: [ErxTask], in profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.delete(
+                    tasks: tasks,
+                    in: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.deleteTasksInRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = deleteTasksInRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.delete(
+                    tasks: tasks,
+                    in: profileId
+            )
+        }
+    }
+
+    var listAllTasksWithoutProfileRecordings: MockAnswer<[ErxTask]>
+
+    func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listAllTasksWithoutProfile(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listAllTasksWithoutProfileRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listAllTasksWithoutProfileRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listAllTasksWithoutProfile(
+            )
+        }
+    }
+
+    var listAllCommunicationsForRecordings: MockAnswer<[ErxTask.Communication]>
+
+    func listAllCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listAllCommunications(
+                    for: profile
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listAllCommunicationsForRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listAllCommunicationsForRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listAllCommunications(
+                    for: profile
+            )
+        }
+    }
+
+    var fetchLatestTimestampForCommunicationsOfRecordings: MockAnswer<String?>
+
+    func fetchLatestTimestampForCommunications(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.fetchLatestTimestampForCommunications(
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchLatestTimestampForCommunicationsOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchLatestTimestampForCommunicationsOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchLatestTimestampForCommunications(
+                    of: profileId
+            )
+        }
+    }
+
+    var saveCommunicationsOfRecordings: MockAnswer<Bool>
+
+    func save(communications: [ErxTask.Communication], of profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.save(
+                    communications: communications,
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.saveCommunicationsOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = saveCommunicationsOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.save(
+                    communications: communications,
+                    of: profileId
+            )
+        }
+    }
+
+    var allUnreadCommunicationsOfForRecordings: MockAnswer<[ErxTask.Communication]>
+
+    func allUnreadCommunications(of profileId: UUID?, for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.allUnreadCommunications(
+                    of: profileId,
+                    for: profile
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.allUnreadCommunicationsOfForRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = allUnreadCommunicationsOfForRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.allUnreadCommunications(
+                    of: profileId,
+                    for: profile
+            )
+        }
+    }
+
+    var listAllMedicationDispensesOfRecordings: MockAnswer<[ErxMedicationDispense]>
+
+    func listAllMedicationDispenses(of profileId: UUID?) -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listAllMedicationDispenses(
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listAllMedicationDispensesOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listAllMedicationDispensesOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listAllMedicationDispenses(
+                    of: profileId
+            )
+        }
+    }
+
+    var saveMedicationDispensesRecordings: MockAnswer<Bool>
+
+    func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.save(
+                    medicationDispenses: medicationDispenses
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.saveMedicationDispensesRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = saveMedicationDispensesRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.save(
+                    medicationDispenses: medicationDispenses
+            )
+        }
+    }
+
+    var fetchChargeItemOfByRecordings: MockAnswer<ErxSparseChargeItem?>
+
+    func fetchChargeItem(of profileId: UUID?, by chargeItemID: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.fetchChargeItem(
+                    of: profileId,
+                    by: chargeItemID
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchChargeItemOfByRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchChargeItemOfByRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchChargeItem(
+                    of: profileId,
+                    by: chargeItemID
+            )
+        }
+    }
+
+    var fetchLatestTimestampForChargeItemsOfRecordings: MockAnswer<String?>
+
+    func fetchLatestTimestampForChargeItems(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.fetchLatestTimestampForChargeItems(
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchLatestTimestampForChargeItemsOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchLatestTimestampForChargeItemsOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchLatestTimestampForChargeItems(
+                    of: profileId
+            )
+        }
+    }
+
+    var listAllChargeItemsOfRecordings: MockAnswer<[ErxSparseChargeItem]>
+
+    func listAllChargeItems(of profileId: UUID?) -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listAllChargeItems(
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listAllChargeItemsOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listAllChargeItemsOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listAllChargeItems(
+                    of: profileId
+            )
+        }
+    }
+
+    var saveChargeItemsOfRecordings: MockAnswer<Bool>
+
+    func save(chargeItems: [ErxSparseChargeItem], of profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.save(
+                    chargeItems: chargeItems,
+                    of: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.saveChargeItemsOfRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = saveChargeItemsOfRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.save(
+                    chargeItems: chargeItems,
+                    of: profileId
+            )
+        }
+    }
+
+    var deleteOfChargeItemsRecordings: MockAnswer<Bool>
+
+    func delete(of profileId: UUID?, chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.delete(
+                    of: profileId,
+                    chargeItems: chargeItems
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.deleteOfChargeItemsRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = deleteOfChargeItemsRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.delete(
+                    of: profileId,
+                    chargeItems: chargeItems
+            )
+        }
+    }
+
+    var updateDiGaInfoRecordings: MockAnswer<Bool>
+
+    func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.update(
+                    diGaInfo: diGaInfo
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.updateDiGaInfoRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = updateDiGaInfoRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.update(
+                    diGaInfo: diGaInfo
+            )
+        }
+    }
+
+    struct Mocks: Codable {
+        var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>? = .delegate
+        var listAllTasksOfRecordings: MockAnswer<[ErxTask]>? = .delegate
+        var fetchLatestLastModifiedForErxTasksOfRecordings: MockAnswer<String?>? = .delegate
+        var saveTasksInUpdateProfileLastAuthenticatedRecordings: MockAnswer<Bool>? = .delegate
+        var deleteTasksInRecordings: MockAnswer<Bool>? = .delegate
+        var listAllTasksWithoutProfileRecordings: MockAnswer<[ErxTask]>? = .delegate
+        var listAllCommunicationsForRecordings: MockAnswer<[ErxTask.Communication]>? = .delegate
+        var fetchLatestTimestampForCommunicationsOfRecordings: MockAnswer<String?>? = .delegate
+        var saveCommunicationsOfRecordings: MockAnswer<Bool>? = .delegate
+        var allUnreadCommunicationsOfForRecordings: MockAnswer<[ErxTask.Communication]>? = .delegate
+        var listAllMedicationDispensesOfRecordings: MockAnswer<[ErxMedicationDispense]>? = .delegate
+        var saveMedicationDispensesRecordings: MockAnswer<Bool>? = .delegate
+        var fetchChargeItemOfByRecordings: MockAnswer<ErxSparseChargeItem?>? = .delegate
+        var fetchLatestTimestampForChargeItemsOfRecordings: MockAnswer<String?>? = .delegate
+        var listAllChargeItemsOfRecordings: MockAnswer<[ErxSparseChargeItem]>? = .delegate
+        var saveChargeItemsOfRecordings: MockAnswer<Bool>? = .delegate
+        var deleteOfChargeItemsRecordings: MockAnswer<Bool>? = .delegate
+        var updateDiGaInfoRecordings: MockAnswer<Bool>? = .delegate
+    }
+    func recordedData() throws -> CodableMock {
+        return try CodableMock(
+            "ErxLocalDataStore",
+            Mocks(
+                fetchTaskByAccessCodeRecordings: fetchTaskByAccessCodeRecordings,
+                listAllTasksOfRecordings: listAllTasksOfRecordings,
+                fetchLatestLastModifiedForErxTasksOfRecordings: fetchLatestLastModifiedForErxTasksOfRecordings,
+                saveTasksInUpdateProfileLastAuthenticatedRecordings: saveTasksInUpdateProfileLastAuthenticatedRecordings,
+                deleteTasksInRecordings: deleteTasksInRecordings,
+                listAllTasksWithoutProfileRecordings: listAllTasksWithoutProfileRecordings,
+                listAllCommunicationsForRecordings: listAllCommunicationsForRecordings,
+                fetchLatestTimestampForCommunicationsOfRecordings: fetchLatestTimestampForCommunicationsOfRecordings,
+                saveCommunicationsOfRecordings: saveCommunicationsOfRecordings,
+                allUnreadCommunicationsOfForRecordings: allUnreadCommunicationsOfForRecordings,
+                listAllMedicationDispensesOfRecordings: listAllMedicationDispensesOfRecordings,
+                saveMedicationDispensesRecordings: saveMedicationDispensesRecordings,
+                fetchChargeItemOfByRecordings: fetchChargeItemOfByRecordings,
+                fetchLatestTimestampForChargeItemsOfRecordings: fetchLatestTimestampForChargeItemsOfRecordings,
+                listAllChargeItemsOfRecordings: listAllChargeItemsOfRecordings,
+                saveChargeItemsOfRecordings: saveChargeItemsOfRecordings,
+                deleteOfChargeItemsRecordings: deleteOfChargeItemsRecordings,
+                updateDiGaInfoRecordings: updateDiGaInfoRecordings
+            )
+        )
+    }
+}
+
+
 // MARK: - SmartMockErxRemoteDataStore -
 
 class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
@@ -505,507 +1031,6 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
 }
 
 
-// MARK: - SmartMockErxTaskCoreDataStore -
-
-class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
-    private var wrapped: ErxTaskCoreDataStore
-    private var isRecording: Bool
-
-    init(wrapped: ErxTaskCoreDataStore, mocks: Mocks?, isRecording: Bool = false) {
-        self.wrapped = wrapped
-        self.isRecording = isRecording
-
-        fetchTaskByAccessCodeRecordings = mocks?.fetchTaskByAccessCodeRecordings ?? .delegate
-        listAllTasksRecordings = mocks?.listAllTasksRecordings ?? .delegate
-        fetchLatestLastModifiedForErxTasksRecordings = mocks?.fetchLatestLastModifiedForErxTasksRecordings ?? .delegate
-        saveTasksUpdateProfileLastAuthenticatedRecordings = mocks?.saveTasksUpdateProfileLastAuthenticatedRecordings ?? .delegate
-        deleteTasksRecordings = mocks?.deleteTasksRecordings ?? .delegate
-        listAllTasksWithoutProfileRecordings = mocks?.listAllTasksWithoutProfileRecordings ?? .delegate
-        listAllCommunicationsForRecordings = mocks?.listAllCommunicationsForRecordings ?? .delegate
-        fetchLatestTimestampForCommunicationsRecordings = mocks?.fetchLatestTimestampForCommunicationsRecordings ?? .delegate
-        saveCommunicationsRecordings = mocks?.saveCommunicationsRecordings ?? .delegate
-        allUnreadCommunicationsForRecordings = mocks?.allUnreadCommunicationsForRecordings ?? .delegate
-        listAllMedicationDispensesRecordings = mocks?.listAllMedicationDispensesRecordings ?? .delegate
-        saveMedicationDispensesRecordings = mocks?.saveMedicationDispensesRecordings ?? .delegate
-        fetchChargeItemByRecordings = mocks?.fetchChargeItemByRecordings ?? .delegate
-        fetchLatestTimestampForChargeItemsRecordings = mocks?.fetchLatestTimestampForChargeItemsRecordings ?? .delegate
-        listAllChargeItemsRecordings = mocks?.listAllChargeItemsRecordings ?? .delegate
-        saveChargeItemsRecordings = mocks?.saveChargeItemsRecordings ?? .delegate
-        deleteChargeItemsRecordings = mocks?.deleteChargeItemsRecordings ?? .delegate
-        updateDiGaInfoRecordings = mocks?.updateDiGaInfoRecordings ?? .delegate
-    }
-
-    /// ErxLocalDataStore
-    var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>
-
-    func fetchTask(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.fetchTask(
-                    by: id,
-                    accessCode: accessCode
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchTaskByAccessCodeRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchTaskByAccessCodeRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchTask(
-                    by: id,
-                    accessCode: accessCode
-            )
-        }
-    }
-
-    var listAllTasksRecordings: MockAnswer<[ErxTask]>
-
-    func listAllTasks() -> AnyPublisher<[ErxTask], LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.listAllTasks(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.listAllTasksRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = listAllTasksRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.listAllTasks(
-            )
-        }
-    }
-
-    var fetchLatestLastModifiedForErxTasksRecordings: MockAnswer<String?>
-
-    func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.fetchLatestLastModifiedForErxTasks(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchLatestLastModifiedForErxTasksRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchLatestLastModifiedForErxTasksRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchLatestLastModifiedForErxTasks(
-            )
-        }
-    }
-
-    var saveTasksUpdateProfileLastAuthenticatedRecordings: MockAnswer<Bool>
-
-    func save(tasks: [ErxTask], updateProfileLastAuthenticated: Bool) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.save(
-                    tasks: tasks,
-                    updateProfileLastAuthenticated: updateProfileLastAuthenticated
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.saveTasksUpdateProfileLastAuthenticatedRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = saveTasksUpdateProfileLastAuthenticatedRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.save(
-                    tasks: tasks,
-                    updateProfileLastAuthenticated: updateProfileLastAuthenticated
-            )
-        }
-    }
-
-    var deleteTasksRecordings: MockAnswer<Bool>
-
-    func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.delete(
-                    tasks: tasks
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.deleteTasksRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = deleteTasksRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.delete(
-                    tasks: tasks
-            )
-        }
-    }
-
-    var listAllTasksWithoutProfileRecordings: MockAnswer<[ErxTask]>
-
-    func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.listAllTasksWithoutProfile(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.listAllTasksWithoutProfileRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = listAllTasksWithoutProfileRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.listAllTasksWithoutProfile(
-            )
-        }
-    }
-
-    var listAllCommunicationsForRecordings: MockAnswer<[ErxTask.Communication]>
-
-    func listAllCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.listAllCommunications(
-                    for: profile
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.listAllCommunicationsForRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = listAllCommunicationsForRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.listAllCommunications(
-                    for: profile
-            )
-        }
-    }
-
-    var fetchLatestTimestampForCommunicationsRecordings: MockAnswer<String?>
-
-    func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.fetchLatestTimestampForCommunications(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchLatestTimestampForCommunicationsRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchLatestTimestampForCommunicationsRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchLatestTimestampForCommunications(
-            )
-        }
-    }
-
-    var saveCommunicationsRecordings: MockAnswer<Bool>
-
-    func save(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.save(
-                    communications: communications
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.saveCommunicationsRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = saveCommunicationsRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.save(
-                    communications: communications
-            )
-        }
-    }
-
-    var allUnreadCommunicationsForRecordings: MockAnswer<[ErxTask.Communication]>
-
-    func allUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.allUnreadCommunications(
-                    for: profile
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.allUnreadCommunicationsForRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = allUnreadCommunicationsForRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.allUnreadCommunications(
-                    for: profile
-            )
-        }
-    }
-
-    var listAllMedicationDispensesRecordings: MockAnswer<[ErxMedicationDispense]>
-
-    func listAllMedicationDispenses() -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.listAllMedicationDispenses(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.listAllMedicationDispensesRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = listAllMedicationDispensesRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.listAllMedicationDispenses(
-            )
-        }
-    }
-
-    var saveMedicationDispensesRecordings: MockAnswer<Bool>
-
-    func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.save(
-                    medicationDispenses: medicationDispenses
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.saveMedicationDispensesRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = saveMedicationDispensesRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.save(
-                    medicationDispenses: medicationDispenses
-            )
-        }
-    }
-
-    var fetchChargeItemByRecordings: MockAnswer<ErxSparseChargeItem?>
-
-    func fetchChargeItem(by chargeItemID: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.fetchChargeItem(
-                    by: chargeItemID
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchChargeItemByRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchChargeItemByRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchChargeItem(
-                    by: chargeItemID
-            )
-        }
-    }
-
-    var fetchLatestTimestampForChargeItemsRecordings: MockAnswer<String?>
-
-    func fetchLatestTimestampForChargeItems() -> AnyPublisher<String?, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.fetchLatestTimestampForChargeItems(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchLatestTimestampForChargeItemsRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchLatestTimestampForChargeItemsRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchLatestTimestampForChargeItems(
-            )
-        }
-    }
-
-    var listAllChargeItemsRecordings: MockAnswer<[ErxSparseChargeItem]>
-
-    func listAllChargeItems() -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.listAllChargeItems(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.listAllChargeItemsRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = listAllChargeItemsRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.listAllChargeItems(
-            )
-        }
-    }
-
-    var saveChargeItemsRecordings: MockAnswer<Bool>
-
-    func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.save(
-                    chargeItems: chargeItems
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.saveChargeItemsRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = saveChargeItemsRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.save(
-                    chargeItems: chargeItems
-            )
-        }
-    }
-
-    var deleteChargeItemsRecordings: MockAnswer<Bool>
-
-    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.delete(
-                    chargeItems: chargeItems
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.deleteChargeItemsRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = deleteChargeItemsRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.delete(
-                    chargeItems: chargeItems
-            )
-        }
-    }
-
-    var updateDiGaInfoRecordings: MockAnswer<Bool>
-
-    func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError> {
-        guard !isRecording else {
-            let result = wrapped.update(
-                    diGaInfo: diGaInfo
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.updateDiGaInfoRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = updateDiGaInfoRecordings.next() {
-            return Just(value)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.update(
-                    diGaInfo: diGaInfo
-            )
-        }
-    }
-
-    struct Mocks: Codable {
-        var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>? = .delegate
-        var listAllTasksRecordings: MockAnswer<[ErxTask]>? = .delegate
-        var fetchLatestLastModifiedForErxTasksRecordings: MockAnswer<String?>? = .delegate
-        var saveTasksUpdateProfileLastAuthenticatedRecordings: MockAnswer<Bool>? = .delegate
-        var deleteTasksRecordings: MockAnswer<Bool>? = .delegate
-        var listAllTasksWithoutProfileRecordings: MockAnswer<[ErxTask]>? = .delegate
-        var listAllCommunicationsForRecordings: MockAnswer<[ErxTask.Communication]>? = .delegate
-        var fetchLatestTimestampForCommunicationsRecordings: MockAnswer<String?>? = .delegate
-        var saveCommunicationsRecordings: MockAnswer<Bool>? = .delegate
-        var allUnreadCommunicationsForRecordings: MockAnswer<[ErxTask.Communication]>? = .delegate
-        var listAllMedicationDispensesRecordings: MockAnswer<[ErxMedicationDispense]>? = .delegate
-        var saveMedicationDispensesRecordings: MockAnswer<Bool>? = .delegate
-        var fetchChargeItemByRecordings: MockAnswer<ErxSparseChargeItem?>? = .delegate
-        var fetchLatestTimestampForChargeItemsRecordings: MockAnswer<String?>? = .delegate
-        var listAllChargeItemsRecordings: MockAnswer<[ErxSparseChargeItem]>? = .delegate
-        var saveChargeItemsRecordings: MockAnswer<Bool>? = .delegate
-        var deleteChargeItemsRecordings: MockAnswer<Bool>? = .delegate
-        var updateDiGaInfoRecordings: MockAnswer<Bool>? = .delegate
-    }
-    func recordedData() throws -> CodableMock {
-        return try CodableMock(
-            "ErxTaskCoreDataStore",
-            Mocks(
-                fetchTaskByAccessCodeRecordings: fetchTaskByAccessCodeRecordings,
-                listAllTasksRecordings: listAllTasksRecordings,
-                fetchLatestLastModifiedForErxTasksRecordings: fetchLatestLastModifiedForErxTasksRecordings,
-                saveTasksUpdateProfileLastAuthenticatedRecordings: saveTasksUpdateProfileLastAuthenticatedRecordings,
-                deleteTasksRecordings: deleteTasksRecordings,
-                listAllTasksWithoutProfileRecordings: listAllTasksWithoutProfileRecordings,
-                listAllCommunicationsForRecordings: listAllCommunicationsForRecordings,
-                fetchLatestTimestampForCommunicationsRecordings: fetchLatestTimestampForCommunicationsRecordings,
-                saveCommunicationsRecordings: saveCommunicationsRecordings,
-                allUnreadCommunicationsForRecordings: allUnreadCommunicationsForRecordings,
-                listAllMedicationDispensesRecordings: listAllMedicationDispensesRecordings,
-                saveMedicationDispensesRecordings: saveMedicationDispensesRecordings,
-                fetchChargeItemByRecordings: fetchChargeItemByRecordings,
-                fetchLatestTimestampForChargeItemsRecordings: fetchLatestTimestampForChargeItemsRecordings,
-                listAllChargeItemsRecordings: listAllChargeItemsRecordings,
-                saveChargeItemsRecordings: saveChargeItemsRecordings,
-                deleteChargeItemsRecordings: deleteChargeItemsRecordings,
-                updateDiGaInfoRecordings: updateDiGaInfoRecordings
-            )
-        )
-    }
-}
-
-
 // MARK: - SmartMockIDPSession -
 
 class SmartMockIDPSession: IDPSession, SmartMock {
@@ -1384,189 +1409,6 @@ class SmartMockIDPSession: IDPSession, SmartMock {
 }
 
 
-// MARK: - SmartMockPharmacyRemoteDataStore -
-
-class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
-    private var wrapped: PharmacyRemoteDataStore
-    private var isRecording: Bool
-
-    init(wrapped: PharmacyRemoteDataStore, mocks: Mocks?, isRecording: Bool = false) {
-        self.wrapped = wrapped
-        self.isRecording = isRecording
-
-        searchPharmaciesByPositionFilterRecordings = mocks?.searchPharmaciesByPositionFilterRecordings ?? .delegate
-        fetchPharmacyByRecordings = mocks?.fetchPharmacyByRecordings ?? .delegate
-        loadAvsCertificatesForRecordings = mocks?.loadAvsCertificatesForRecordings ?? .delegate
-        apiFiltersForRecordings = mocks?.apiFiltersForRecordings ?? .delegate
-        fetchInsuranceByRecordings = mocks?.fetchInsuranceByRecordings ?? .delegate
-        fetchAllInsurancesRecordings = mocks?.fetchAllInsurancesRecordings ?? .delegate
-    }
-
-    var searchPharmaciesByPositionFilterRecordings: MockAnswer<[PharmacyLocation]>
-
-    func searchPharmacies(by searchTerm: String, position: Position?, filter: [PharmacyRemoteDataStoreFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error> {
-        guard !isRecording else {
-            let result = wrapped.searchPharmacies(
-                    by: searchTerm,
-                    position: position,
-                    filter: filter
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.searchPharmaciesByPositionFilterRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = searchPharmaciesByPositionFilterRecordings.next() {
-            return Just(value)
-                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.searchPharmacies(
-                    by: searchTerm,
-                    position: position,
-                    filter: filter
-            )
-        }
-    }
-
-    var fetchPharmacyByRecordings: MockAnswer<PharmacyLocation?>
-
-    func fetchPharmacy(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyFHIRDataSource.Error> {
-        guard !isRecording else {
-            let result = wrapped.fetchPharmacy(
-                    by: telematikId
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchPharmacyByRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchPharmacyByRecordings.next() {
-            return Just(value)
-                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchPharmacy(
-                    by: telematikId
-            )
-        }
-    }
-
-    var loadAvsCertificatesForRecordings: MockAnswer<[SerializableX509]>
-
-    func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error> {
-        guard !isRecording else {
-            let result = wrapped.loadAvsCertificates(
-                    for: locationId
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.loadAvsCertificatesForRecordings.record(SerializableX509.from(value))
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = loadAvsCertificatesForRecordings.next() {
-            return Just(value.unwrap())
-                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.loadAvsCertificates(
-                    for: locationId
-            )
-        }
-    }
-
-    var apiFiltersForRecordings: MockAnswer<[PharmacyRemoteDataStoreFilter]>
-
-    func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter] {
-        guard !isRecording else {
-            let result = wrapped.apiFilters(
-                    for: filter
-            )
-            apiFiltersForRecordings.record(result)
-            return result
-        }
-        if let value = apiFiltersForRecordings.next() {
-            return value // [PharmacyRemoteDataStoreFilter]
-        } else {
-            return wrapped.apiFilters(
-                    for: filter
-            )
-        }
-    }
-
-    var fetchInsuranceByRecordings: MockAnswer<Insurance?>
-
-    func fetchInsurance(by ikNumber: String) -> AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error> {
-        guard !isRecording else {
-            let result = wrapped.fetchInsurance(
-                    by: ikNumber
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchInsuranceByRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchInsuranceByRecordings.next() {
-            return Just(value)
-                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchInsurance(
-                    by: ikNumber
-            )
-        }
-    }
-
-    var fetchAllInsurancesRecordings: MockAnswer<[Insurance]>
-
-    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error> {
-        guard !isRecording else {
-            let result = wrapped.fetchAllInsurances(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchAllInsurancesRecordings.record(value)
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = fetchAllInsurancesRecordings.next() {
-            return Just(value)
-                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.fetchAllInsurances(
-            )
-        }
-    }
-
-    struct Mocks: Codable {
-        var searchPharmaciesByPositionFilterRecordings: MockAnswer<[PharmacyLocation]>? = .delegate
-        var fetchPharmacyByRecordings: MockAnswer<PharmacyLocation?>? = .delegate
-        var loadAvsCertificatesForRecordings: MockAnswer<[SerializableX509]>? = .delegate
-        var apiFiltersForRecordings: MockAnswer<[PharmacyRemoteDataStoreFilter]>? = .delegate
-        var fetchInsuranceByRecordings: MockAnswer<Insurance?>? = .delegate
-        var fetchAllInsurancesRecordings: MockAnswer<[Insurance]>? = .delegate
-    }
-    func recordedData() throws -> CodableMock {
-        return try CodableMock(
-            "PharmacyRemoteDataStore",
-            Mocks(
-                searchPharmaciesByPositionFilterRecordings: searchPharmaciesByPositionFilterRecordings,
-                fetchPharmacyByRecordings: fetchPharmacyByRecordings,
-                loadAvsCertificatesForRecordings: loadAvsCertificatesForRecordings,
-                apiFiltersForRecordings: apiFiltersForRecordings,
-                fetchInsuranceByRecordings: fetchInsuranceByRecordings,
-                fetchAllInsurancesRecordings: fetchAllInsurancesRecordings
-            )
-        )
-    }
-}
-
-
 // MARK: - SmartMockRedeemService -
 
 class SmartMockRedeemService: RedeemService, SmartMock {
@@ -1577,68 +1419,72 @@ class SmartMockRedeemService: RedeemService, SmartMock {
         self.wrapped = wrapped
         self.isRecording = isRecording
 
-        redeemRecordings = mocks?.redeemRecordings ?? .delegate
-        redeemDiGaRecordings = mocks?.redeemDiGaRecordings ?? .delegate
+        redeemProfileIdRecordings = mocks?.redeemProfileIdRecordings ?? .delegate
+        redeemDiGaProfileIdRecordings = mocks?.redeemDiGaProfileIdRecordings ?? .delegate
     }
 
-    var redeemRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>
+    var redeemProfileIdRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>
 
-    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest], profileId: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         guard !isRecording else {
             let result = wrapped.redeem(
-                    orders
+                    orders,
+                    profileId: profileId
             )
                 .handleEvents(receiveOutput: { [weak self] value in
-                    self?.redeemRecordings.record(value)
+                    self?.redeemProfileIdRecordings.record(value)
                 })
                 .eraseToAnyPublisher()
             return result
         }
-        if let value = redeemRecordings.next() {
+        if let value = redeemProfileIdRecordings.next() {
             return Just(value)
                 .setFailureType(to: RedeemServiceError.self)
                 .eraseToAnyPublisher()
         } else {
             return wrapped.redeem(
-                    orders
+                    orders,
+                    profileId: profileId
             )
         }
     }
 
-    var redeemDiGaRecordings: MockAnswer<IdentifiedArrayOf<OrderDiGaResponse>>
+    var redeemDiGaProfileIdRecordings: MockAnswer<IdentifiedArrayOf<OrderDiGaResponse>>
 
-    func redeemDiGa(_ orders: [OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
+    func redeemDiGa(_ orders: [OrderDiGaRequest], profileId: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
         guard !isRecording else {
             let result = wrapped.redeemDiGa(
-                    orders
+                    orders,
+                    profileId: profileId
             )
                 .handleEvents(receiveOutput: { [weak self] value in
-                    self?.redeemDiGaRecordings.record(value)
+                    self?.redeemDiGaProfileIdRecordings.record(value)
                 })
                 .eraseToAnyPublisher()
             return result
         }
-        if let value = redeemDiGaRecordings.next() {
+        if let value = redeemDiGaProfileIdRecordings.next() {
             return Just(value)
                 .setFailureType(to: RedeemServiceError.self)
                 .eraseToAnyPublisher()
         } else {
             return wrapped.redeemDiGa(
-                    orders
+                    orders,
+                    profileId: profileId
             )
         }
     }
 
     struct Mocks: Codable {
-        var redeemRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>? = .delegate
-        var redeemDiGaRecordings: MockAnswer<IdentifiedArrayOf<OrderDiGaResponse>>? = .delegate
+        var redeemProfileIdRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>? = .delegate
+        var redeemDiGaProfileIdRecordings: MockAnswer<IdentifiedArrayOf<OrderDiGaResponse>>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
             "RedeemService",
             Mocks(
-                redeemRecordings: redeemRecordings,
-                redeemDiGaRecordings: redeemDiGaRecordings
+                redeemProfileIdRecordings: redeemProfileIdRecordings,
+                redeemDiGaProfileIdRecordings: redeemDiGaProfileIdRecordings
             )
         )
     }
@@ -1670,6 +1516,7 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
         appStartCounterRecordings = mocks?.appStartCounterRecordings ?? .delegate
         readInternalCommunicationsRecordings = mocks?.readInternalCommunicationsRecordings ?? .delegate
         hideWelcomeMessageRecordings = mocks?.hideWelcomeMessageRecordings ?? .delegate
+        hideEURedeemInstructionsRecordings = mocks?.hideEURedeemInstructionsRecordings ?? .delegate
     }
 
     var hideOnboardingRecordings: MockAnswer<Bool>
@@ -1934,6 +1781,24 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             return wrapped.hideWelcomeMessage
         }
     }
+    var hideEURedeemInstructionsRecordings: MockAnswer<Bool>
+
+    var hideEURedeemInstructions: AnyPublisher<Bool, Never> {
+        guard !isRecording else {
+            return wrapped.hideEURedeemInstructions
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.hideEURedeemInstructionsRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = hideEURedeemInstructionsRecordings.next() {
+            return Just(value)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.hideEURedeemInstructions
+        }
+    }
     func set(onboardingDate: Date?) {
         wrapped.set(
                     onboardingDate: onboardingDate
@@ -2005,6 +1870,12 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             )
     }
 
+    func set(hideEURedeemInstructions: Bool) {
+        wrapped.set(
+                    hideEURedeemInstructions: hideEURedeemInstructions
+            )
+    }
+
     /// AnyObject
     struct Mocks: Codable {
         var hideOnboardingRecordings: MockAnswer<Bool>? = .delegate
@@ -2022,6 +1893,7 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
         var appStartCounterRecordings: MockAnswer<Int>? = .delegate
         var readInternalCommunicationsRecordings: MockAnswer<[String]>? = .delegate
         var hideWelcomeMessageRecordings: MockAnswer<Bool>? = .delegate
+        var hideEURedeemInstructionsRecordings: MockAnswer<Bool>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -2041,88 +1913,12 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
                 latestCompatibleModelVersionRecordings: latestCompatibleModelVersionRecordings,
                 appStartCounterRecordings: appStartCounterRecordings,
                 readInternalCommunicationsRecordings:readInternalCommunicationsRecordings,
-                hideWelcomeMessageRecordings:hideWelcomeMessageRecordings
+                hideWelcomeMessageRecordings:hideWelcomeMessageRecordings,
+                hideEURedeemInstructionsRecordings:hideEURedeemInstructionsRecordings
             )
         )
     }
 }
 
-
-struct SerializableX509: Codable {
-    let payload: X509
-    init(with payload: X509) {
-        self.payload = payload
-    }
-    static func from(_ list: Array<X509>) -> Array<SerializableX509> {
-        list.map { SerializableX509(with: $0) }
-    }
-
-    static func from(_ value: X509) -> SerializableX509 {
-        SerializableX509(with: value)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(payload.derBytes ?? nil)
-    }
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let x509Data = try container.decode(Data.self)
-        payload = try X509(der: x509Data)
-    }
-    func unwrap() -> X509 {
-        return payload
-    }
-}
-
-struct SerializableResult<T: Codable, E: Swift.Error & Codable>: Codable {
-    let payload: Result<T, E>
-    init(with payload: Result<T, E>) {
-        self.payload = payload
-    }
-    static func from(_ list: Array<Result<T, E>>) -> Array<Self> {
-        list.map { Self(with: $0) }
-    }
-
-    static func from(_ value: Result<T, E>) -> Self {
-        Self(with: value)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        switch self.payload {
-        case .success(let value):
-            try container.encode(value)
-        case .failure(let error):
-            try container.encode(error)
-        }
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        if let success = try? container.decode(T.self) {
-            payload = .success(success)
-        } else if let failure = try? container.decode(E.self) {
-            payload = .failure(failure)
-        } else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Failed to decode Result")
-        }
-    }
-    func unwrap() -> Result<T, E> {
-        return payload
-    }
-}
-
-extension Array where Element == SerializableX509 {
-    func unwrap() -> [X509] {
-        map(\.payload)
-    }
-}
-
-extension Array {
-    func unwrap<T: Codable, E: Codable & Swift.Error>() -> [Result<T, E>] where Element == SerializableResult<T, E> {
-        map(\.payload)
-    }
-}
 
 #endif

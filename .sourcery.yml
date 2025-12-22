@@ -21,7 +21,7 @@ configurations:
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/eRpAppTests
     args:
-      protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
+      protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp, FeatureHelpers, FeatureCardWall, Profiles, eRpResources ]
       protocolMockTestableImports: [ eRpFeatures ]
       autoMockableImports: [ AVS, BfArM, Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
       autoMockableTestableImports: [ eRpFeatures ]
@@ -37,6 +37,18 @@ configurations:
       protocolMockTestableImports: [ eRpKit ]
       autoMockableImports: [ Combine,eRpKit,Foundation ]
       autoMockableTestableImports: [ eRpKit ]
+  - sources: # writes to Tests/ErxTaskRepositoryTests/Mocks/Generated/
+      - Sources
+      - Tests/ErxTaskRepositoryTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+      - Templates/Sourcery/Tests/AutoMockable.stencil
+    output: Tests/ErxTaskRepositoryTests
+    args:
+      protocolMockImports: [ Combine,eRpKit,Foundation ]
+      protocolMockTestableImports: [ ErxTaskRepository ]
+      autoMockableImports: [ Combine,eRpKit,Foundation ]
+      autoMockableTestableImports: [ ErxTaskRepository ]
   - sources: # writes to Tests/eRpLocalStorageTests/Mocks/Generated/
       - Sources
       - Tests/eRpLocalStorageTests
@@ -81,7 +93,7 @@ configurations:
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/IntegrationTests
     args:
-      protocolMockImports: [ Combine,eRpKit,OpenSSL,TrustStore ]
+      protocolMockImports: [ Combine,eRpKit,OpenSSL,TrustStore, Foundation ]
       protocolMockTestableImports: [ Pharmacy ]
       autoMockableImports: [ Combine,eRpKit,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ Pharmacy ]

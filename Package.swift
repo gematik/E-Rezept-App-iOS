@@ -31,14 +31,19 @@ let package = Package(
     ],
     products: [
         .library(name: "eRpFeatures", targets: ["eRpFeatures"]),
+        .library(name: "AsyncHelpers", targets: ["AsyncHelpers"]),
+        .library(name: "FeatureCardWall", targets: ["FeatureCardWall"]),
         .library(name: "FeatureEURedeem", targets: ["FeatureEURedeem"]),
+        .library(name: "FeatureHelpers", targets: ["FeatureHelpers"]),
         .library(name: "eRpStyleKit", targets: ["eRpStyleKit"]),
         .library(name: "eRpResources", targets: ["eRpResources"]),
         .library(name: "eRpKit", targets: ["eRpKit"]),
         .library(name: "eRpLocalStorage", targets: ["eRpLocalStorage"]),
         .library(name: "eRpRemoteStorage", targets: ["eRpRemoteStorage"]),
+        .library(name: "ErxTaskRepository", targets: ["ErxTaskRepository"]),
         .library(name: "Pharmacy", targets: ["Pharmacy"]),
         .library(name: "FHIRVZD", targets: ["FHIRVZD"]),
+        .library(name: "FHIRVZDLive", targets: ["FHIRVZDLive"]),
         .library(name: "BfArM", targets: ["BfArM"]),
         .library(name: "BfArMLive", targets: ["BfArMLive"]),
         .library(name: "AVS", targets: ["AVS"]),
@@ -50,6 +55,9 @@ let package = Package(
         .library(name: "TestUtils", targets: ["TestUtils"]),
         .library(name: "TrustStore", targets: ["TrustStore"]),
         .library(name: "VAUClient", targets: ["VAUClient"]),
+        .library(name: "Profiles", targets: ["Profiles"]),
+        .library(name: "Settings", targets: ["Settings"]),
+        .library(name: "ConsentService", targets: ["ConsentService"]),
     ],
     dependencies: [
         .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.37.1"),
@@ -67,14 +75,15 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.3"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.1.2"),
         .package(url: "https://github.com/Quick/Nimble", from: "13.0.0"),
-        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "26.0.0"),
         .package(url: "https://github.com/zxing-cpp/zxing-cpp", from: "2.2.1"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.1"),
         .package(url: "https://github.com/gematik/OpenSSL-Swift", from: "4.2.0"),
         .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.2.2"),
-        .package(url: "https://github.com/gematik/ref-OpenHealthCardKit",  from: "5.8.0"),
+        .package(url: "https://github.com/gematik/ref-OpenHealthCardKit", from: "5.11.1"),
         .package(url: "https://github.com/apple/swift-asn1.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0"),
+        .package(path: "CodedError"), // local package, will be moved to separate repo
     ],
     targets: [
         .target(
@@ -84,8 +93,10 @@ let package = Package(
                 "eRpRemoteStorage",
                 "eRpKit",
                 "eRpLocalStorage",
+                "ErxTaskRepository",
                 "Pharmacy",
                 "FHIRVZD",
+                "FHIRVZDLive",
                 "BfArM",
                 "BfArMLive",
                 "IDP",
@@ -96,7 +107,14 @@ let package = Package(
                 "TrustStore",
                 "VAUClient",
                 "AVS",
+                "FeatureCardWall",
                 "FeatureEURedeem",
+                "FeatureHelpers",
+                "AsyncHelpers",
+                "Settings",
+                "Profiles",
+                "ConsentService",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "ContentsquareModule", package: "CS_iOS_SDK"),
@@ -112,10 +130,7 @@ let package = Package(
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "GemPDFKit", package: "swift-gemPDFKit"),
                 .product(name: "ZXingCpp", package: "zxing-cpp"),
-                .product(name: "HealthCardAccess", package: "ref-openhealthcardkit"),
-                .product(name: "HealthCardControl", package: "ref-openhealthcardkit"),
-                .product(name: "NFCCardReaderProvider", package: "ref-openhealthcardkit"),
-                .product(name: "Helper", package: "ref-openhealthcardkit"),
+                .product(name: "Sharing", package: "swift-sharing"),
             ],
             path: "Sources/eRpApp",
             resources: [
@@ -125,10 +140,31 @@ let package = Package(
                 .unsafeFlags(["-enable-bare-slash-regex"]),
                 .define("ENABLE_DEBUG_VIEW", .when(configuration: .debug)),
                 .define("TEST_ENVIRONMENT", .when(configuration: .debug))
+            ]
+        ),
+        .target(
+            name: "FeatureCardWall",
+            dependencies: [
+                "eRpStyleKit",
+                "eRpKit",
+                "Profiles",
+                "Settings",
+                "IDPLive", // currently needed for X509 + JWTSignatureVerifier
+                "FeatureHelpers",
+                .product(name: "HealthCardAccess", package: "ref-openhealthcardkit"),
+                .product(name: "HealthCardControl", package: "ref-openhealthcardkit"),
+                .product(name: "NFCCardReaderProvider", package: "ref-openhealthcardkit"),
+                .product(name: "Helper", package: "ref-openhealthcardkit"),
+                .product(name: "CodedError", package: "CodedError"),
+                .product(name: "CasePaths", package: "swift-case-paths"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "DependenciesMacros", package: "swift-dependencies"),
+                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
             ],
-            plugins: [
-                .plugin(name: "ErpAppPlugin"),
-                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
+            path: "Sources/FeatureCardWall",
+            resources: [
+                .process("Resources")
             ]
         ),
         .target(
@@ -136,6 +172,8 @@ let package = Package(
             dependencies: [
                 "eRpStyleKit",
                 "eRpKit",
+                "Pharmacy",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "CasePaths", package: "swift-case-paths"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
@@ -147,6 +185,24 @@ let package = Package(
                 .process("Resources")
             ]
         ),
+        .target(
+            name: "FeatureHelpers",
+            dependencies: [
+                "eRpStyleKit",
+                .product(name: "CodedError", package: "CodedError"),
+                .product(name: "CasePaths", package: "swift-case-paths"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ],
+            path: "Sources/FeatureHelpers"
+        ),
+        .target(
+            name: "AsyncHelpers",
+            dependencies: [
+                .product(name: "CasePaths", package: "swift-case-paths"),
+            ],
+            path: "Sources/AsyncHelpers"
+        ),
         .plugin(
             name: "ErpAppPlugin",
             capability: .buildTool(),
@@ -155,11 +211,23 @@ let package = Package(
         .executableTarget(
             name: "EnvironmentParser"
         ),
-
+        .target(
+            name: "ErxTaskRepository",
+            dependencies: [
+                "FHIRClient",
+                "eRpKit",
+                .product(name: "CodedError", package: "CodedError"),
+                .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+            ]
+        ),
         .target(
             name: "eRpStyleKit",
             dependencies: [
-                "eRpResources"
+                "eRpResources",
+                .product(name: "Sharing", package: "swift-sharing"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
             ],
             resources: [
                 .process("Resources")
@@ -180,6 +248,7 @@ let package = Package(
             dependencies: [
                 "IDP",
                 "FHIRClient",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
             ]
@@ -192,6 +261,8 @@ let package = Package(
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
                 .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "DependenciesMacros", package: "swift-dependencies"),
+                .product(name: "Sharing", package: "swift-sharing"),
             ],
             swiftSettings: [
                 .define("ENABLE_DEBUG_VIEW", .when(configuration: .debug))
@@ -203,6 +274,7 @@ let package = Package(
                 "HTTPClient",
                 "FHIRClient",
                 "eRpKit",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "Sharing", package: "swift-sharing"),
             ]
@@ -210,22 +282,21 @@ let package = Package(
         .target(
             name: "Pharmacy",
             dependencies: [
-                "HTTPClient",
                 "FHIRClient",
                 "eRpKit",
-                .product(name: "ModelsR4", package: "FHIRModels"),
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]
         ),
         .target(
             name: "FHIRVZD",
             dependencies: [
                 "Pharmacy",
-                "HTTPClient",
-                "HTTPClientLive",
                 "FHIRClient",
                 "eRpKit",
                 "IDP",
+                .product(name: "CodedError", package: "CodedError"),
                 // change to swift-sharing & dependencies after TCA update
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
@@ -233,9 +304,19 @@ let package = Package(
             ]
         ),
         .target(
+            name: "FHIRVZDLive",
+            dependencies: [
+                "FHIRVZD",
+                "HTTPClientLive",
+                // change to swift-sharing & dependencies after TCA update
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+            ]
+        ),
+        .target(
             name: "BfArM",
             dependencies: [
                 "eRpKit",
+                .product(name: "CodedError", package: "CodedError"),
                 // change to swift-sharing & dependencies after TCA update
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "DependenciesMacros", package: "swift-dependencies")
@@ -252,6 +333,7 @@ let package = Package(
             name: "AVS",
             dependencies: [
                 "HTTPClientLive",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
             ]
@@ -259,6 +341,9 @@ let package = Package(
         .target(
             name: "IDP",
             dependencies: [
+                "eRpResources",
+                "AsyncHelpers",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "CasePaths", package: "swift-case-paths"),
@@ -270,20 +355,27 @@ let package = Package(
                 "HTTPClient",
                 "IDP",
                 "TrustStore",
+                "AsyncHelpers",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
             ]
         ),
         .target(
             name: "FHIRClient",
             dependencies: [
+                "AsyncHelpers",
                 "HTTPClient",
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "DependenciesMacros", package: "swift-dependencies"),
             ]
         ),
         .target(
             name: "HTTPClient",
-            dependencies:  []
+            dependencies:  [
+                .product(name: "CodedError", package: "CodedError"),
+            ]
         ),
         .target(
             name: "HTTPClientLive",
@@ -295,6 +387,7 @@ let package = Package(
             name: "TrustStore",
             dependencies: [
                 "HTTPClient",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "SwiftASN1", package: "swift-asn1"),
             ]
@@ -305,6 +398,8 @@ let package = Package(
                 .product(name: "CasePaths", package: "swift-case-paths"),
                 "HTTPClient",
                 "TrustStore",
+                "AsyncHelpers",
+                .product(name: "CodedError", package: "CodedError"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
         ),
@@ -320,6 +415,52 @@ let package = Package(
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "CustomDump", package: "swift-custom-dump"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+            ]
+        ),
+        .target(
+            name: "Profiles",
+            dependencies: [
+                "IDP",
+                "eRpKit",
+                "eRpLocalStorage",
+                "VAUClient",
+                "TrustStore",
+                "Pharmacy",
+                "eRpRemoteStorage",
+                .product(name: "CodedError", package: "CodedError"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "DependenciesMacros", package: "swift-dependencies")
+            ]
+        ),
+        .target(
+            name: "Settings",
+            dependencies: [
+                "eRpKit",
+                "eRpRemoteStorage",
+                "IDP",
+                "TrustStore",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "Sharing", package: "swift-sharing"),
+            ],
+            swiftSettings: [
+                .define("ENABLE_DEBUG_VIEW", .when(configuration: .debug)),
+                .define("TEST_ENVIRONMENT", .when(configuration: .debug)),
+            ],
+            plugins: [
+                .plugin(name: "ErpAppPlugin"),
+            ]
+        ),
+        .target(
+            name: "ConsentService",
+            dependencies: [
+                "eRpKit",
+                "eRpLocalStorage",
+                "FeatureCardWall",
+                "FeatureHelpers",
+                .product(name: "CodedError", package: "CodedError"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "Sharing", package: "swift-sharing"),
             ]
         ),
         .testTarget(
@@ -379,11 +520,21 @@ let package = Package(
             ]
         ),
         .testTarget(
+            name: "ErxTaskRepositoryTests",
+            dependencies: [
+                "ErxTaskRepository",
+                "TestUtils",
+                "eRpKit",
+                .product(name: "Nimble", package: "Nimble"),
+            ]
+        ),
+        .testTarget(
             name: "PharmacyTests",
             dependencies: [
                 "HTTPClientLive",
                 "TestUtils",
                 "Pharmacy",
+                "FHIRVZD",
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),
@@ -499,5 +650,27 @@ let package = Package(
                 .product(name: "Nimble", package: "Nimble"),
             ]
         ),
+        .testTarget(
+            name: "AsyncHelpersTests",
+            dependencies: [
+                "AsyncHelpers",
+                "TestUtils",
+                .product(name: "Nimble", package: "Nimble"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "CombineSchedulers", package: "combine-schedulers"),
+            ]
+        ),
+        .testTarget(
+            name: "FeatureCardWallTests",
+            dependencies: [
+                "FeatureCardWall",
+                "TestUtils",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "Nimble", package: "Nimble"),
+            ],
+            resources: [
+                .copy("Resources/JWT.bundle")
+            ]
+        )
     ]
 )

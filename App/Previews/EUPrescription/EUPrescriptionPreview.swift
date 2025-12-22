@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import FeatureEURedeem
 import SwiftUI
 
@@ -31,6 +32,7 @@ struct EUPrescriptionPreview: App {
             EURedeemView(store: StoreOf<EURedeemDomain>(initialState: .init()) {
                 EURedeemDomain()
             })
+                .tint(Colors.primary700)
         }
     }
 }

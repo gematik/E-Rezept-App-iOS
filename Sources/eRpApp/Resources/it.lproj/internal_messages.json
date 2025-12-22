@@ -46,5 +46,11 @@
         "text": "**♿ Accessibilità** \nLe impostazioni del profilo sono state riviste per aumentare ulteriormente l'accessibilità.",
         "timestamp": "2025-08-26T08:00:00.000Z",
         "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registrazione per più persone** \nLa registrazione è ora possibile anche per gli assicurati di istituzioni federali, come la Polizia Federale e altri. \n \n **🕒 Orari di apertura delle farmacie migliorati** \nIl servizio di emergenza e gli orari di chiusura speciali per le farmacie vengono ora visualizzati, se disponibili. \n \n **💊 Selezione di tutte le prescrizioni** \nQuando si riscattano le prescrizioni, ora è possibile selezionarle tutte contemporaneamente. \n \n **♿ Accessibilità** \nI colori dei caratteri e delle icone sono stati regolati per ottenere un contrasto maggiore. Inoltre, è stata migliorata la sintesi vocale di VoiceOver per la modifica dell'immagine del profilo e il riconoscimento dello stato di accesso.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
     }
 ]

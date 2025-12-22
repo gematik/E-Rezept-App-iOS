@@ -55,7 +55,8 @@ struct PickupCodeView: View {
             .navigationBarItems(trailing: CloseButton { store.send(.delegate(.close)) }
                 .accessibilityIdentifier(A11y.orderDetail.pickupCode.pucBtnClose))
             .navigationBarTitleDisplayMode(.inline)
-            .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
+            .introspect(.navigationView(style: .stack),
+                        on: .iOS(.v15, .v16, .v17, .v18, .v26)) { navigationController in
                 let navigationBar = navigationController.navigationBar
                 navigationBar.barTintColor = UIColor(Colors.systemBackground)
                 let navigationBarAppearance = UINavigationBarAppearance()

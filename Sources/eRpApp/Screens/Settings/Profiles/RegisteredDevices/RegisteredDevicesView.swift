@@ -23,6 +23,7 @@
 import CasePaths
 import ComposableArchitecture
 import eRpStyleKit
+import FeatureCardWall
 import IDP
 import SwiftUI
 
@@ -105,7 +106,7 @@ struct RegisteredDevicesView: View {
 
                         Text(L10n.stgTxtRegDevicesEmptyList)
                             .font(.subheadline)
-                            .foregroundColor(Color(.secondaryLabel))
+                            .foregroundColor(Colors.systemLabelSecondary)
                             .multilineTextAlignment(.center)
                     }
                     .padding()
@@ -118,7 +119,7 @@ struct RegisteredDevicesView: View {
 
                     Text(L10n.stgTxtRegDevicesInfo)
                         .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .multilineTextAlignment(.center)
 
                     Button(action: {

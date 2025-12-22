@@ -25,15 +25,11 @@ import OpenSSL
 import TrustStore
 
 class DemoTrustStoreSession: TrustStoreSession {
-    func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
-        Fail(error: TrustStoreError.internal(error: .notImplemented)).eraseToAnyPublisher()
-    }
-
-    func validate(certificate _: X509) -> AnyPublisher<Bool, TrustStoreError> {
-        Fail(error: TrustStoreError.internal(error: .notImplemented)).eraseToAnyPublisher()
-    }
-
     func vauCertificate() async throws -> X509 {
+        throw TrustStoreError.internal(error: .notImplemented)
+    }
+
+    func validate(eeCertificate _: X509) async throws -> Bool {
         throw TrustStoreError.internal(error: .notImplemented)
     }
 

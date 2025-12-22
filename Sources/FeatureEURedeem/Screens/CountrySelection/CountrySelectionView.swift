@@ -21,28 +21,70 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpStyleKit
 import SwiftUI
 
-struct CountrySelectionView: View {
-    let store: StoreOf<CountrySelectionDomain>
+public struct CountrySelectionView: View {
+    @Bindable var store: StoreOf<CountrySelectionDomain>
 
-    var body: some View {
-        List(store.countries) { country in
-            Button {
-                store.send(.selectCountry(country))
-            } label: {
+    public init(store: StoreOf<CountrySelectionDomain>) {
+        self.store = store
+    }
+
+    public var body: some View {
+        VStack {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L10n.euredeemCountrySelectionTitle)
+                    .font(.title3.bold())
+                Text(L10n.euredeemCountrySelectionSubtitle)
+                    .font(.subheadline)
+                    .padding(.bottom, 8)
+
+                SearchBar(
+                    searchText: $store.searchText,
+                    prompt: L10n.euredeemCountrySelectionSearchPrompt.text
+                ) {
+                    store.send(.serachList)
+                }
+                .padding(.top, 24)
+
                 HStack {
-                    Text(country.name)
                     Spacer()
-                    if store.selectedCountry == country {
-                        Image(systemName: SFSymbolName.checkmark)
-                            .foregroundColor(.accentColor)
+                    Button {
+                        store.send(.toggleLocation)
+                    } label: {
+                        HStack {
+                            Image(systemName: SFSymbolName.scope)
+                            Text(L10n.euredeemCountrySelectionBtnLocation)
+                        }
+                        .font(.subheadline.weight(.semibold))
+                    }
+                    .padding(.bottom)
+                }
+            }
+            .padding(.horizontal)
+
+            List {
+                ForEach(store.countries) { country in
+                    Button {
+                        store.send(.selectCountry(country))
+                    } label: {
+                        HStack {
+                            Text(country.flag)
+                                .font(.title)
+                            Text(country.name)
+                        }
+                        .alignmentGuide(.listRowSeparatorLeading) { $0[.listRowSeparatorLeading] + 40 }
                     }
                 }
             }
+            .listStyle(PlainListStyle())
         }
-        .navigationTitle("Select Country")
+        .task {
+            store.send(.loadAllCountries)
+        }
+        .background(Color(uiColor: .systemBackground))
     }
 }
 
@@ -50,9 +92,9 @@ struct CountrySelectionView: View {
     CountrySelectionView(
         store: .init(initialState: CountrySelectionDomain.State(
             countries: [
-                Country(id: "DE", name: "Germany"),
-                Country(id: "FR", name: "France"),
-                Country(id: "IT", name: "Italy"),
+                Country(id: "DE", name: "Germany", telematikId: "010110"),
+                Country(id: "FR", name: "France", telematikId: "010111"),
+                Country(id: "IT", name: "Italy", telematikId: "010112"),
             ]
         )) {
             CountrySelectionDomain()

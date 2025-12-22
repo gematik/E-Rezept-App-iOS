@@ -3,6 +3,8 @@
 
 import Foundation
 import FeatureEURedeem
+import FeatureCardWall
+import eRpResources
 
 
 
@@ -344,10 +346,6 @@ extension EURedeemSelectionDomain.State {
         switch destination {
             case let .consent(state: state):
                 return state.routeName() ?? destination.analyticsName
-            case let .selectPrescription(state: state):
-                return state.routeName() ?? destination.analyticsName
-            case let .selectCountry(state: state):
-                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -532,6 +530,16 @@ extension MainDomain.State {
             case let .redeem(state: state):
                 return state.routeName() ?? path.analyticsName
             case let .pharmacy(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .euRedeemSelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .countrySelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .prescriptionSelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .instructions(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .code(state: state):
                 return state.routeName() ?? path.analyticsName
             }
         }
@@ -756,6 +764,16 @@ extension PharmacyContainerDomain.State {
             let path = path[id: pathId] {
             switch path {
             case let .redeem(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .euRedeemSelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .countrySelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .prescriptionSelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .instructions(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .code(state: state):
                 return state.routeName() ?? path.analyticsName
             }
         }
@@ -1295,10 +1313,6 @@ extension EURedeemSelectionDomain.Destination.State {
         switch self {
             case .consent:
                 return "consent"
-            case .selectPrescription:
-                return "selectPrescription"
-            case .selectCountry:
-                return "selectCountry"
         }
     }
 }
@@ -1768,6 +1782,16 @@ extension MainDomain.Path.State {
                 return Analytics.Screens.redeem_overview.name
             case .pharmacy:
                 return Analytics.Screens.pharmacySearch.name
+            case .euRedeemSelection:
+                return "euRedeemSelection"
+            case .countrySelection:
+                return "countrySelection"
+            case .prescriptionSelection:
+                return "prescriptionSelection"
+            case .instructions:
+                return "instructions"
+            case .code:
+                return "code"
         }
     }
 }
@@ -1792,6 +1816,16 @@ extension PharmacyContainerDomain.Path.State {
         switch self {
             case .redeem:
                 return Analytics.Screens.pharmacySearch.name
+            case .euRedeemSelection:
+                return "euRedeemSelection"
+            case .countrySelection:
+                return "countrySelection"
+            case .prescriptionSelection:
+                return "prescriptionSelection"
+            case .instructions:
+                return "instructions"
+            case .code:
+                return "code"
         }
     }
 }

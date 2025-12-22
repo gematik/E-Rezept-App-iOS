@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
 /// Data Model that holds all relevant informations for placing an order in a pharmacy
@@ -121,12 +122,12 @@ public struct Address: Codable, Equatable {
 }
 
 extension ErxTaskOrder {
-    // sourcery: CodedError = "208"
+    @CodedError("208")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         /// Unable to construct communication request
         case unableToConstructCommunicationRequest
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         /// Invalid ErxTaskOrder though previous validation checks have been passed
         case invalidErxTaskOrderInput(String)
     }

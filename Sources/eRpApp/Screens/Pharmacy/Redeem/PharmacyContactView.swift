@@ -42,6 +42,9 @@ struct PharmacyContactView: View {
                     }, content: {
                         LabeledContent(L10n.phaContactTxtPhone) {
                             TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.phone)
+                                .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                    textField.clearButtonMode = .whileEditing
+                                }
                         }
                         .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
                         .textContentType(.telephoneNumber)
@@ -50,6 +53,9 @@ struct PharmacyContactView: View {
                         LabeledContent(L10n.phaContactTxtMail) {
                             TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.mail)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressMail)
+                                .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                    textField.clearButtonMode = .whileEditing
+                                }
                         }
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
@@ -61,6 +67,9 @@ struct PharmacyContactView: View {
                         LabeledContent(L10n.phaContactTxtPhone) {
                             TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.phone)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
+                                .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                    textField.clearButtonMode = .whileEditing
+                                }
                         }
                         .textContentType(.telephoneNumber)
                         .keyboardType(.phonePad)
@@ -73,18 +82,27 @@ struct PharmacyContactView: View {
                     LabeledContent(L10n.phaContactTxtName) {
                         TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.name)
                             .accessibility(identifier: A11y.pharmacyContact.phaContactAddressName)
+                            .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                textField.clearButtonMode = .whileEditing
+                            }
                     }
                     .textContentType(.name)
 
                     LabeledContent(L10n.phaContactTxtStreet) {
                         TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.street)
                             .accessibility(identifier: A11y.pharmacyContact.phaContactAddressStreet)
+                            .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                textField.clearButtonMode = .whileEditing
+                            }
                     }
                     .textContentType(.streetAddressLine1)
 
                     LabeledContent(L10n.phaContactTxtZip) {
                         TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.zip)
                             .accessibility(identifier: A11y.pharmacyContact.phaContactAddressZip)
+                            .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                textField.clearButtonMode = .whileEditing
+                            }
                     }
                     .textContentType(.postalCode)
                     .keyboardType(.numberPad)
@@ -92,6 +110,9 @@ struct PharmacyContactView: View {
                     LabeledContent(L10n.phaContactTxtCity) {
                         TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.city)
                             .accessibility(identifier: A11y.pharmacyContact.phaContactAddressCity)
+                            .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
+                                textField.clearButtonMode = .whileEditing
+                            }
                     }
                     .textContentType(.addressCity)
 

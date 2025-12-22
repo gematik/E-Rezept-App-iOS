@@ -106,6 +106,147 @@ extension PharmacyLocation {
             hoursOfOperation: []
         )
 
+        // pharmacy with specialClosing that will be closed
+        static let pharmacyF = PharmacyLocation(
+            id: "AdlerClosed",
+            status: .active,
+            telematikID: "12344.3",
+            name: "AdlerClosed",
+            types: [PharmacyLocation.PharmacyType.delivery],
+            address: .init(street: "Zooweg", houseNumber: "1", zip: "12099", city: "Berlin"),
+            hoursOfOperation: [
+                .init(
+                    daysOfWeek: ["mon", "tue"],
+                    openingTime: "17:00:00",
+                    closingTime: "21:00:00"
+                ),
+            ],
+            specialClosingHours: [.init(
+                reason: "Ruhetag 1",
+                startDate: TestDate.createFormattedDate(.dayBeforeYesterday),
+                endDate: TestDate.createFormattedDate(.dayAfterTomorrow)
+            ),
+            .init(
+                reason: "Ruhetag 2",
+                startDate: TestDate.createFormattedDate(.twelveDaysAhead),
+                endDate: TestDate.createFormattedDate(.twelveDaysAhead)
+            )]
+        )
+
+        // pharmacy with specialClosing that will close early
+        static let pharmacyG = PharmacyLocation(
+            id: "AdlerEarly",
+            status: .active,
+            telematikID: "12344.5",
+            name: "AdlerEarly",
+            types: [PharmacyLocation.PharmacyType.delivery],
+            address: .init(street: "Parkweg", houseNumber: "2", zip: "13098", city: "Berlin"),
+            hoursOfOperation: [
+                .init(
+                    daysOfWeek: ["mon", "tue"],
+                    openingTime: "08:00:00",
+                    closingTime: "23:59:00"
+                ),
+            ],
+            specialClosingHours: [.init(
+                reason: "Abendessen",
+                startDate: TestDate.createFormattedDate(.oneHourAhead),
+                endDate: TestDate.createFormattedDate(.tomorrow)
+            )]
+        )
+
+        // pharmacy with specialClosing that is closed but will open later again
+        static let pharmacyH = PharmacyLocation(
+            id: "AdlerLater",
+            status: .active,
+            telematikID: "12344.6",
+            name: "AdlerLater",
+            types: [PharmacyLocation.PharmacyType.delivery],
+            address: .init(street: "Parkweg", houseNumber: "3", zip: "13041", city: "Berlin"),
+            hoursOfOperation: [
+                .init(
+                    daysOfWeek: ["mon", "tue"],
+                    openingTime: "08:00:00",
+                    closingTime: "23:59:00"
+                ),
+            ],
+            specialClosingHours: [.init(
+                reason: "Ausschlafen",
+                startDate: TestDate.createFormattedDate(.yesterday),
+                endDate: TestDate.createFormattedDate(.halfanHourAhead)
+            )]
+        )
+
+        // pharmacy with specialClosing already closed and emergencyServiceHours taht will later again
+        static let pharmacyI = PharmacyLocation(
+            id: "EmergencyAfterAdler",
+            status: .active,
+            telematikID: "12344.6",
+            name: "Nacht-Adler",
+            types: [PharmacyLocation.PharmacyType.delivery],
+            address: .init(street: "Parkweg", houseNumber: "3", zip: "13041", city: "Berlin"),
+            hoursOfOperation: [
+                .init(
+                    daysOfWeek: ["mon", "tue"],
+                    openingTime: "08:00:00",
+                    closingTime: "22:30:00"
+                ),
+            ],
+            specialClosingHours: [.init(
+                reason: "Ausschlafen",
+                startDate: TestDate.createFormattedDate(.sixteenDaysBefore),
+                endDate: TestDate.createFormattedDate(.weekBefore)
+            ), .init(
+                reason: "Ausschlafen",
+                startDate: TestDate.createFormattedDate(.yesterday),
+                endDate: TestDate.createFormattedDate(.oneHourAhead)
+            )],
+            emergencyServiceHours: [.init(startDate: TestDate.createFormattedDate(.sixteenDaysBefore),
+                                          endDate: TestDate.createFormattedDate(.weekBefore)),
+                                    .init(startDate: TestDate.createFormattedDate(.oneHourAhead),
+                                          endDate: TestDate.createFormattedDate(.tomorrow))]
+        )
+
+        // pharmacy with emergencyServiceHours that starts early
+        static let pharmacyJ = PharmacyLocation(
+            id: "EmergencyBeforeBird",
+            status: .active,
+            telematikID: "12344.6",
+            name: "Early-Adler",
+            types: [PharmacyLocation.PharmacyType.delivery],
+            address: .init(street: "Parkweg", houseNumber: "3", zip: "13041", city: "Berlin"),
+            hoursOfOperation: [
+                .init(
+                    daysOfWeek: ["mon", "tue"],
+                    openingTime: "22:45:00",
+                    closingTime: "23:59:00"
+                ),
+            ],
+            emergencyServiceHours: [.init(startDate: TestDate.createFormattedDate(.yesterday),
+                                          endDate: TestDate.createFormattedDate(.halfanHourAhead))]
+        )
+
+        // pharmacy with emergencyServiceHours that ends on the next day
+        static let pharmacyK = PharmacyLocation(
+            id: "NormalEmergencyAdler",
+            status: .active,
+            telematikID: "12344.6",
+            name: "NextDay-Adler",
+            types: [PharmacyLocation.PharmacyType.delivery],
+            address: .init(street: "Parkweg", houseNumber: "3", zip: "13041", city: "Berlin"),
+            hoursOfOperation: [
+                .init(
+                    daysOfWeek: ["mon", "tue"],
+                    openingTime: "08:30:00",
+                    closingTime: "19:00:00"
+                ),
+            ],
+            emergencyServiceHours: [.init(startDate: TestDate.createFormattedDate(.oneHourAgo),
+                                          endDate: TestDate.createFormattedDate(.sixHoursAhead)),
+                                    .init(startDate: TestDate.createFormattedDate(.twelveDaysAhead),
+                                          endDate: TestDate.createFormattedDate(.twentyEightDaysAhead))]
+        )
+
         static let pharmacyInactive = PharmacyLocation(
             id: "ProfMaurice1",
             status: .inactive,

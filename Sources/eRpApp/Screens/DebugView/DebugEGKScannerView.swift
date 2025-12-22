@@ -24,16 +24,18 @@
 
 import AVFoundation
 import eRpStyleKit
+import FeatureCardWall
 import OpenSSL
+import Sharing
 import SwiftUI
 
 struct DebugEGKScannerView: View {
     @Binding var show: Bool
 
     // virtual eGK private key
-    @Binding var prkCHAUTbase64: String
+    @Shared(.virtualEGKPrkCHAut) var virtualEGKPrkCHAut
     // virtual eGK certificate
-    @Binding var cCHAUTbase64: String
+    @Shared(.virtualEGKCCHAut) var virtualEGKCCHAut
 
     @State var validPrkFound = false
     @State var validPukFound = false
@@ -53,10 +55,10 @@ struct DebugEGKScannerView: View {
 
                 if (try? BrainpoolP256r1.Verify.PrivateKey(raw: data)) != nil {
                     validPrkFound = true
-                    prkCHAUTbase64 = keyBase64
+                    $virtualEGKPrkCHAut.withLock { $0 = keyBase64 }
                 } else if (try? X509(der: data)) != nil {
                     validPukFound = true
-                    cCHAUTbase64 = keyBase64
+                    $virtualEGKCCHAut.withLock { $0 = keyBase64 }
                 }
             }
 
@@ -85,8 +87,10 @@ struct DebugEGKScannerView: View {
                 .background(Color(.systemBackground))
                 .cornerRadius(16)
 
-                PrimaryTextButton(text: "Accept", a11y: "Accept") {
+                Button {
                     show = false
+                } label: {
+                    Text("Accept")
                 }
             }
             .padding()
@@ -98,8 +102,6 @@ struct DebugEGKScannerView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             DebugEGKScannerView(show: .constant(true),
-                                prkCHAUTbase64: .constant(""),
-                                cCHAUTbase64: .constant(""),
                                 validPrkFound: false,
                                 validPukFound: true,
                                 error: nil)

@@ -55,7 +55,7 @@ struct DebugQRCodeExporter<ContentType: Codable>: View {
                 .padding()
                 .background(Colors.systemBackgroundSecondary)
                 .padding()
-                .introspect(.textEditor, on: .iOS(.v15, .v16, .v17, .v18)) { textView in
+                .introspect(.textEditor, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textView in
                     textView.backgroundColor = UIColor.secondarySystemBackground
                 }
         }

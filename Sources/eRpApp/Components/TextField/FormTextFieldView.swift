@@ -58,7 +58,7 @@ struct FormTextFieldView: View {
                         Text(title, bundle: .module)
                             .font(.subheadline)
                             .fixedSize(horizontal: false, vertical: true)
-                            .foregroundColor(Colors.textSecondary)
+                            .foregroundColor(Colors.systemLabelSecondary)
                     }
                 }
 

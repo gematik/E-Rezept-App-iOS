@@ -144,11 +144,11 @@ public struct SeparatedKeyValuePairStyle: KeyValuePairStyle {
         HStack {
             configuration.key
                 .font(.body)
-                .foregroundColor(Color(.label))
+                .foregroundColor(Colors.systemLabel)
             Spacer()
             configuration.value
                 .font(.body)
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
         }
         .bottomDivider(showSeparator: showSeparator)
         .padding(.leading)
@@ -163,11 +163,11 @@ public struct PlainKeyValuePairStyle: KeyValuePairStyle {
         HStack {
             configuration.key
                 .font(.body)
-                .foregroundColor(Color(.label))
+                .foregroundColor(Colors.systemLabel)
             Spacer()
             configuration.value
                 .font(.body)
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(configuration.key)
@@ -249,7 +249,7 @@ public struct SeparatedNoPaddingKeyValuePairStyle: KeyValuePairStyle {
             Spacer()
             configuration.value
                 .font(.body)
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(configuration.key)

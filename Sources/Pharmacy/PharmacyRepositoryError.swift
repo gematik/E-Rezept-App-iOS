@@ -20,13 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import eRpKit
 import Foundation
 
-// sourcery: CodedError = "571"
+@CodedError("571")
 public enum PharmacyRepositoryError: Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case local(LocalStoreError)
-    // sourcery: errorCode = "02"
-    case remote(PharmacyFHIRDataSource.Error)
+    @ErrorCode("02")
+    case remote(PharmacyRemoteStoreError)
 }

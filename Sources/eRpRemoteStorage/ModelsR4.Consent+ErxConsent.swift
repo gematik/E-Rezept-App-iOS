@@ -43,7 +43,10 @@ extension ModelsR4.Consent {
             .first(where: { coding in
                 ErpCharge.Key.Consent.consentType.contains {
                     $0.value == coding.system?.value?.url.absoluteString
-                }
+                } ||
+                    EURedeem.Key.Consent.consentType.contains {
+                        $0.value == coding.system?.value?.url.absoluteString
+                    }
             })?.code?.value?.string,
             let category = ErxConsent.Category(rawValue: categoryRaw)
         else {

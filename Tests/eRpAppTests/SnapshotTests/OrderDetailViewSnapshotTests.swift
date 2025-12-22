@@ -220,7 +220,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testOderDetailViewWithSingleChips() {
-        var order = Order(orderId: "test",
+        let order = Order(orderId: "test",
                           communications: [communicationDispRequest],
                           chargeItems: [],
                           timelineEntries: [.dispReq(ErxTask.Communication.Unique(from: communicationDispRequest),

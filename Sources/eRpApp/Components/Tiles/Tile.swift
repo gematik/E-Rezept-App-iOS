@@ -38,12 +38,12 @@ struct Tile: View {
                 if let iconSystemName = iconSystemName {
                     Image(systemName: iconSystemName)
                         .frame(minWidth: 24, minHeight: 24)
-                        .foregroundColor(isDisabled ? Color(.secondaryLabel) : Colors.primary500)
+                        .foregroundColor(isDisabled ? Colors.systemLabelSecondary : Colors.primary500)
                         .font(Font.title3.bold())
                 } else if let iconName = iconName {
                     Image(iconName)
                         .frame(minWidth: 24, minHeight: 24)
-                        .foregroundColor(isDisabled ? Color(.secondaryLabel) : Colors.primary500)
+                        .foregroundColor(isDisabled ? Colors.systemLabelSecondary : Colors.primary500)
                         .font(Font.title3.bold())
                 }
 

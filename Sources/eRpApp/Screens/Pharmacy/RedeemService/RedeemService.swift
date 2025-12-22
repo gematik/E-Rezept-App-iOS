@@ -20,10 +20,13 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import AVS
 import Combine
 import Dependencies
 import eRpKit
+import ErxTaskRepository
+import FeatureCardWall
 import Foundation
 import IdentifiedCollections
 import IDP
@@ -31,8 +34,9 @@ import OpenSSL
 import Pharmacy
 
 protocol RedeemService {
-    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
-    func redeemDiGa(_ orders: [OrderDiGaRequest])
+    func redeem(_ orders: [OrderRequest], profileId: UUID)
+        -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
+    func redeemDiGa(_ orders: [OrderDiGaRequest], profileId: UUID)
         -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>
 }
 
@@ -57,7 +61,8 @@ struct AVSRedeemService: RedeemService {
     let groupedRedeemTimeProvider: () -> Date = { Date() }
 
     // swiftlint:disable:next function_body_length
-    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest],
+                profileId _: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         guard orders.allSatisfy({ $0.endpoint != nil }),
               let endpoint = orders.first?.endpoint else {
             return Fail(error: RedeemServiceError.internalError(.missingAVSEndpoint)).eraseToAnyPublisher()
@@ -140,7 +145,8 @@ struct AVSRedeemService: RedeemService {
             .eraseToAnyPublisher()
     }
 
-    func redeemDiGa(_: [OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
+    func redeemDiGa(_: [OrderDiGaRequest],
+                    profileId _: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
         Fail(error: RedeemServiceError.internalError(.missingAVSEndpoint)).eraseToAnyPublisher()
     }
 }
@@ -175,10 +181,11 @@ extension PharmacyLocation.AVSEndpoints.Endpoint {
 }
 
 struct ErxTaskRepositoryRedeemService: RedeemService {
-    let erxTaskRepository: ErxTaskRepository
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
     let loginHandler: LoginHandler
 
-    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest],
+                profileId: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         loginHandler
             .isAuthenticatedOrAuthenticate()
             .first()
@@ -190,7 +197,7 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
                 if case let Result.failure(error) = authenticated {
                     return Fail(error: RedeemServiceError.loginHandler(error: error)).eraseToAnyPublisher()
                 } else {
-                    return checkAndRedeemViaRepository(orders: orders)
+                    return checkAndRedeemViaRepository(orders: orders, profileId: profileId)
                         .mapError(RedeemServiceError.from)
                         .eraseToAnyPublisher()
                 }
@@ -198,7 +205,7 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
             .eraseToAnyPublisher()
     }
 
-    func redeemDiGa(_ orders: [OrderDiGaRequest])
+    func redeemDiGa(_ orders: [OrderDiGaRequest], profileId _: UUID)
         -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
         loginHandler
             .isAuthenticatedOrAuthenticate()
@@ -220,36 +227,39 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
     }
 
     func checkAndRedeemViaRepository(
-        orders: [OrderRequest]
+        orders: [OrderRequest],
+        profileId: UUID
     ) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
-        erxTaskRepository.loadRemoteAll(for: nil)
-            .mapError(RedeemServiceError.from)
-            .flatMap { tasks -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> in
-                let taskIds = orders.map(\.taskID)
-                @Dependency(\.uiDateFormatter) var uiDateFormatter
-                @Dependency(\.date) var date
+        @Dependency(\.schedulers) var schedulers
+        return Future {
+            try await erxTaskRepository.loadRemoteAllTasks(nil, profileId)
+        }
+        .receive(on: schedulers.main)
+        .mapError { RedeemServiceError.eRxRepository($0.asErxRepositoryError()) }
+        .flatMap { tasks -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> in
+            let taskIds = orders.map(\.taskID)
+            @Dependency(\.date) var date
 
-                let updatedTasks = tasks
-                    .filter { taskIds.contains($0.id) }
-                    .map {
-                        Prescription(
-                            erxTask: $0,
-                            date: date(),
-                            dateFormatter: uiDateFormatter
-                        )
-                    }
-
-                let notRedeemablePrescriptions = updatedTasks.filter { !$0.isPharmacyRedeemable }
-                guard notRedeemablePrescriptions.isEmpty else {
-                    return Fail<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>(
-                        error: RedeemServiceError.prescriptionAlreadyRedeemed(notRedeemablePrescriptions)
-                    ).eraseToAnyPublisher()
+            let updatedTasks = tasks
+                .filter { taskIds.contains($0.id) }
+                .map {
+                    Prescription(
+                        erxTask: $0,
+                        date: date()
+                    )
                 }
-                return redeemViaRepository(orders: orders)
-                    .mapError(RedeemServiceError.from)
-                    .eraseToAnyPublisher()
+
+            let notRedeemablePrescriptions = updatedTasks.filter { !$0.isPharmacyRedeemable }
+            guard notRedeemablePrescriptions.isEmpty else {
+                return Fail<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>(
+                    error: RedeemServiceError.prescriptionAlreadyRedeemed(notRedeemablePrescriptions)
+                ).eraseToAnyPublisher()
             }
-            .eraseToAnyPublisher()
+            return redeemViaRepository(orders: orders)
+                .mapError(RedeemServiceError.from)
+                .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 
     func redeemViaRepository(
@@ -269,20 +279,23 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
 
         let redeemErxTaskPublishers: [AnyPublisher<OrderResponse, Never>] =
             erxTaskOrders.map { erxTaskOrder, order in
-                erxTaskRepository.redeem(order: erxTaskOrder)
-                    .map { _ in
-                        OrderResponse(requested: order, result: .success(true))
-                    }
-                    .catch { error in
-                        Just(
-                            OrderResponse(
-                                requested: order,
-                                result: .failure(RedeemServiceError.eRxRepository(error))
-                            )
+                Future {
+                    try await erxTaskRepository.redeem(erxTaskOrder)
+                }
+                .mapError { $0.asErxRepositoryError() }
+                .map { _ in
+                    OrderResponse(requested: order, result: .success(true))
+                }
+                .catch { error in
+                    Just(
+                        OrderResponse(
+                            requested: order,
+                            result: .failure(RedeemServiceError.eRxRepository(error))
                         )
-                        .eraseToAnyPublisher()
-                    }
+                    )
                     .eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
             }
 
         // Collects all order responses and merges them into a single emit of the publisher
@@ -320,20 +333,23 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
 
         let redeemErxTaskPublishers: [AnyPublisher<OrderDiGaResponse, Never>] =
             erxTaskOrders.map { erxTaskOrder, order in
-                erxTaskRepository.redeem(order: erxTaskOrder)
-                    .map { _ in
-                        OrderDiGaResponse(requested: order, result: .success(true))
-                    }
-                    .catch { error in
-                        Just(
-                            OrderDiGaResponse(
-                                requested: order,
-                                result: .failure(RedeemServiceError.eRxRepository(error))
-                            )
+                Future {
+                    try await erxTaskRepository.redeem(erxTaskOrder)
+                }
+                .mapError { $0.asErxRepositoryError() }
+                .map { _ in
+                    OrderDiGaResponse(requested: order, result: .success(true))
+                }
+                .catch { error in
+                    Just(
+                        OrderDiGaResponse(
+                            requested: order,
+                            result: .failure(RedeemServiceError.eRxRepository(error))
                         )
-                        .eraseToAnyPublisher()
-                    }
+                    )
                     .eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
             }
 
         // Collects all order responses and merges them into a single emit of the publisher
@@ -355,6 +371,20 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
     }
 }
 
+extension Swift.Error {
+    /// Map any Error to an RedeemServiceError
+    public func asErxRepositoryError() -> ErxRepositoryError {
+        if let error = self as? LocalStoreError {
+            return ErxRepositoryError.local(error)
+        } else if let error = self as? RemoteStoreError {
+            return ErxRepositoryError.remote(error)
+        } else {
+            // this should not happen if used on any `ErxRepositoryError`
+            return ErxRepositoryError.local(LocalStoreError.notImplemented)
+        }
+    }
+}
+
 // sourcery: skipUnimplemented
 extension ErxTaskRepositoryRedeemService: DependencyKey {
     static let liveValue: () -> RedeemService = {
@@ -362,7 +392,6 @@ extension ErxTaskRepositoryRedeemService: DependencyKey {
         @Dependency(\.loginHandlerServiceFactory) var loginHandlerFactory
 
         return ErxTaskRepositoryRedeemService(
-            erxTaskRepository: userSession.erxTaskRepository,
             loginHandler: loginHandlerFactory.construct(
                 userSession.idpSession,
                 userSession.secureEnclaveSignatureProvider
@@ -381,7 +410,8 @@ extension DependencyValues {
 }
 
 struct DemoRedeemService: RedeemService {
-    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest],
+                profileId _: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         var responses = IdentifiedArrayOf<OrderResponse>()
         for order in orders {
             responses.append(OrderResponse(requested: order, result: .success(true)))
@@ -389,7 +419,7 @@ struct DemoRedeemService: RedeemService {
         return Just(responses).setFailureType(to: RedeemServiceError.self).eraseToAnyPublisher()
     }
 
-    func redeemDiGa(_ orders: [OrderDiGaRequest])
+    func redeemDiGa(_ orders: [OrderDiGaRequest], profileId _: UUID)
         -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
         var responses = IdentifiedArrayOf<OrderDiGaResponse>()
         for order in orders {

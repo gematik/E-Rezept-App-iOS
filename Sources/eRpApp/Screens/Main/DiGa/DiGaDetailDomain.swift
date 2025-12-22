@@ -20,11 +20,16 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import BfArM
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpLocalStorage
 import eRpStyleKit
+import ErxTaskRepository
+import FeatureCardWall
+import FeatureHelpers
 import FHIRVZD
 import Foundation
 import HTTPClient
@@ -38,6 +43,7 @@ struct DiGaDetailDomain {
     @ObservableState
     struct State: Equatable {
         @Shared(.appDefaults) var appDefaults
+        @Shared(.selectedProfileId) var profileId
 
         var diGaTask: DiGaTask
         var diGaInfo: DiGaInfo
@@ -54,6 +60,7 @@ struct DiGaDetailDomain {
         }
 
         var profile: UserProfile?
+
         var isLoading = false
         var selectedInsurance: Insurance?
         var refresh = false
@@ -189,11 +196,11 @@ struct DiGaDetailDomain {
         }
     }
 
-    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
     @Dependency(\.schedulers) var schedulers: Schedulers
-    @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+    @Dependency(\.openURLHandler) var openURLHandler
     @Dependency(\.pasteboardService) var pasteboardService: PasteboardService
-    @Dependency(\.feedbackReceiver) var feedbackReceiver
+    @Dependency(\.hapticFeedbackGenerator) var hapticFeedback
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
     @Dependency(\.redeemOrderService) var redeemOrderService: RedeemOrderService
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
@@ -213,7 +220,7 @@ struct DiGaDetailDomain {
             state.isLoading = true
 
             let loadingTask = Effect.publisher {
-                erxTaskRepository.loadLocal(by: state.diGaInfo.taskId, accessCode: nil)
+                erxTaskRepository.loadLocalTask(state.diGaInfo.taskId, nil)
                     .catchToPublisher()
                     .map(Action.receivedTaskUpdate)
             }
@@ -275,14 +282,14 @@ struct DiGaDetailDomain {
             #else
             guard let ikNumber = state.profile?.insuranceIK else { return .none }
             #endif
-
-            return .publisher(
-                pharmacyRepository.fetchInsurance(ikNumber: ikNumber)
-                    .catchToPublisher()
-                    .map { Action.response(.receivedTelematikId($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
+            return .run { [ikNumber = ikNumber] send in
+                do {
+                    let response = try await pharmacyRepository.fetchInsurance(ikNumber)
+                    await send(.response(.receivedTelematikId(.success(response))))
+                } catch let error as PharmacyRepositoryError {
+                    await send(.response(.receivedTelematikId(.failure(error))))
+                }
+            }
         case let .changePickerView(newView):
             state.selectedView = newView
             return .none
@@ -299,9 +306,12 @@ struct DiGaDetailDomain {
                         accessCode: state.diGaTask.erxTask.accessCode ?? "",
                         telematikId: telematikId
                     )
-                    return .run { send in
+                    return .run { [profileId = state.profileId] send in
                         do {
-                            let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa([request])
+                            let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa(
+                                [request],
+                                profileId
+                            )
                             await send(.response(.redeemReceived(.success(orderResponses))))
                         } catch RedeemOrderServiceError.redeem(.noTokenAvailable) {
                             await send(.setNavigation(tag: .cardWall))
@@ -382,15 +392,16 @@ struct DiGaDetailDomain {
             }
         case let .openLink(urlString):
             guard let urlString = urlString,
-                  let url = URL(string: urlString),
-                  resourceHandler.canOpenURL(url) else {
+                  let url = URL(string: urlString) else {
                 return .none
             }
-            resourceHandler.open(url)
-            return .none
+            return .run { _ in
+                guard await openURLHandler.canOpenURL(url) else { return }
+                await openURLHandler.open(url)
+            }
         case let .copyCode(text):
             pasteboardService.copy(text)
-            feedbackReceiver.hapticFeedbackSuccess()
+            hapticFeedback.success()
             state.successCopied = true
             return .run { send in
                 // wait for 5 second to set successCopied to false
@@ -405,7 +416,10 @@ struct DiGaDetailDomain {
             state.refresh = silent ? false : true
             return .publisher(
                 prescriptionRepository
-                    .silentLoadRemote(for: Locale.current.language.languageCode?.identifier ?? "de")
+                    .silentLoadRemote(
+                        for: Locale.current.language.languageCode?.identifier ?? "de",
+                        for: state.profileId
+                    )
                     .map { status -> DiGaDetailDomain.Action in
                         switch status {
                         case let .prescriptions(value):
@@ -420,11 +434,9 @@ struct DiGaDetailDomain {
                     .eraseToAnyPublisher
             )
         case let .receivedTaskUpdate(.success(erxTask)):
-            @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
-
             guard let erxTask else { return .none }
 
-            state.diGaTask = .init(prescription: Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter))
+            state.diGaTask = .init(prescription: Prescription(erxTask: erxTask))
 
             if let diGaInfo = erxTask.deviceRequest?.diGaInfo {
                 state.diGaInfo = diGaInfo
@@ -463,10 +475,9 @@ struct DiGaDetailDomain {
             case .supportDiGa:
                 state.destination = .supportDiGa(.init())
             case .cardWall:
-                guard let profileId = state.profile?.id else { return .none }
                 state.destination = .cardWall(CardWallIntroductionDomain.State(
                     isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
-                    profileId: profileId
+                    profileId: state.profileId
                 ))
             case .patient:
                 guard let patient = state.diGaTask.erxTask.patient else { return .none }
@@ -506,7 +517,7 @@ struct DiGaDetailDomain {
             return .none
         case .destination(.presented(.alert(.confirmedDelete))):
             state.destination = nil
-            return delete(erxTask: state.diGaTask.erxTask)
+            return delete(erxTask: state.diGaTask.erxTask, profileId: state.profileId)
         case let .response(.taskDeletedReceived(.failure(error))):
             if case let .remote(.fhirClient(.http(fhirClientHttpError))) = error,
                fhirClientHttpError.httpClientError == .authentication(IDPError.tokenUnavailable) {
@@ -527,9 +538,11 @@ struct DiGaDetailDomain {
             return .none
         case let .destination(.presented(.alert(.openEmailClient(body)))):
             state.destination = nil
-            guard let email = createReportEmail(body: body), resourceHandler.canOpenURL(email) else { return .none }
-            resourceHandler.open(email)
-            return .none
+            guard let email = createReportEmail(body: body) else { return .none }
+            return .run { _ in
+                guard await openURLHandler.canOpenURL(email) else { return }
+                await openURLHandler.open(email)
+            }
         case .archive:
             return update(diGaInfo: state.diGaInfo
                 .with(diGaState: DiGaInfo.DiGaState.archive(state.diGaInfo.diGaState)))
@@ -549,9 +562,12 @@ struct DiGaDetailDomain {
                     accessCode: state.diGaTask.erxTask.accessCode ?? "",
                     telematikId: telematikId
                 )
-                return .run { send in
+                return .run { [profileId = state.profileId] send in
                     do {
-                        let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa([request])
+                        let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa(
+                            [request],
+                            profileId
+                        )
                         await send(.response(.redeemReceived(.success(orderResponses))))
                     } catch RedeemOrderServiceError.redeem(.noTokenAvailable) {
                         await send(.setNavigation(tag: .cardWall))
@@ -564,10 +580,9 @@ struct DiGaDetailDomain {
             }
             return .none
         case .showCardWall:
-            guard let profileId = state.profile?.id else { return .none }
             state.destination = .cardWall(CardWallIntroductionDomain.State(
                 isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
-                profileId: profileId
+                profileId: state.profileId
             ))
             return .none
         case .destination(.presented(.cardWall(.delegate(.close)))):
@@ -751,16 +766,23 @@ extension DiGaDetailDomain {
 
     func update(diGaInfo: DiGaInfo) -> Effect<DiGaDetailDomain.Action> {
         .run { send in
-            let result = try await erxTaskRepository.updateLocal(diGaInfo: diGaInfo).asyncResult(\.self)
-            let diGaResult: Result<DiGaInfo, ErxRepositoryError> = result.map { _ in diGaInfo }
-            await send(.response(.updateDiGaInfoReceived(diGaResult)))
+            do {
+                try await erxTaskRepository.updateLocalDiGaInfo(diGaInfo)
+                await send(.response(.updateDiGaInfoReceived(.success(diGaInfo))))
+            } catch let error as ErxRepositoryError {
+                await send(.response(.updateDiGaInfoReceived(.failure(error))))
+            }
         }
     }
 
-    func delete(erxTask: ErxTask) -> Effect<DiGaDetailDomain.Action> {
+    func delete(erxTask: ErxTask, profileId: UUID?) -> Effect<DiGaDetailDomain.Action> {
         .run { send in
-            let result = try await erxTaskRepository.delete(erxTasks: [erxTask]).asyncResult(\.self)
-            await send(.response(.taskDeletedReceived(result)))
+            do {
+                try await erxTaskRepository.deleteTask([erxTask], profileId)
+                await send(.response(.taskDeletedReceived(.success(true))))
+            } catch let error as ErxRepositoryError {
+                await send(.response(.taskDeletedReceived(.failure(error))))
+            }
         }
     }
 }
@@ -770,7 +792,7 @@ extension DiGaDetailDomain.State {
         var attributedString = AttributedString(stringAsset.text)
         attributedString.font = .subheadline
         if let standartRange = attributedString.range(of: L10n.digaDtlTxtSelectedInsuranceWith("").text) {
-            attributedString[standartRange].foregroundColor = Color(.secondaryLabel)
+            attributedString[standartRange].foregroundColor = Colors.systemLabelSecondary
             let restRange = standartRange.upperBound ..< attributedString.endIndex
 
             attributedString[restRange].underlineStyle = .single
@@ -791,13 +813,13 @@ extension DiGaInfo.DiGaState {
         }
     }
 
-    var buttonText: String? {
+    var buttonText: StringAsset? {
         switch self {
-        case .request: return L10n.digaDtlBtnMainRequest.text
-        case .download: return L10n.digaDtlBtnMainDownload.text
-        case .activate: return L10n.digaDtlBtnMainActivate.text
-        case .archive: return L10n.digaDtlBtnMainArchive.text
-        case .completed: return L10n.digaDtlBtnMainCompleted.text
+        case .request: return L10n.digaDtlBtnMainRequest
+        case .download: return L10n.digaDtlBtnMainDownload
+        case .activate: return L10n.digaDtlBtnMainActivate
+        case .archive: return L10n.digaDtlBtnMainArchive
+        case .completed: return L10n.digaDtlBtnMainCompleted
         case .insurance, .noInformation: return nil
         }
     }
@@ -874,8 +896,7 @@ extension DiGaInfo.DiGaState {
 
 extension DiGaDetailDomain {
     enum Dummies {
-        static let prescription = Prescription(erxTask: ErxTask.Demo.expiredErxTask(with: .ready),
-                                               dateFormatter: UIDateFormatter.previewValue)
+        static let prescription = Prescription(erxTask: ErxTask.Demo.expiredErxTask(with: .ready))
 
         static let state = State(diGaTask: .init(prescription: prescription),
                                  diGaInfo: DiGaInfo(diGaState: .request),

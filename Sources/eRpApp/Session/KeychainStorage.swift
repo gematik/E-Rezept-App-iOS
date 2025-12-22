@@ -22,9 +22,11 @@
 
 import Combine
 import eRpKit
+import FeatureHelpers
 import Foundation
 import IDP
 import OpenSSL
+import Profiles
 
 // [REQ:gemSpec_eRp_FdV:A_19186]
 // [REQ:gemSpec_eRp_FdV:A_19188] Deletion of data saved here is managed by the OS.

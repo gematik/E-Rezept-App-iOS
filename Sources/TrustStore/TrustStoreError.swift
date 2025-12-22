@@ -20,57 +20,58 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 import HTTPClient
 
-// sourcery: CodedError = "560"
+@CodedError("560")
 public enum TrustStoreError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     /// In case of HTTP/Connection error
     case network(error: HTTPClientError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     /// When failed to extract a certificate from the CertList
     case noCertificateFound
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     /// When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions
     case invalidOCSPResponse
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     /// When one (or more) end entity certificate cannot be status verified by given OCSP responses
     case eeCertificateOCSPStatusVerification
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     /// Other error cases
     case unspecified(error: Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     /// Internal error
     case `internal`(error: InternalError)
-    // sourcery: errorCode = "07"
+    @ErrorCode("07")
     /// When no valid VAU certificate can be provided by the system at the moment
     case noValidVauCertificateAvailable
-    // sourcery: errorCode = "08"
+    @ErrorCode("08")
     /// When a certificate is of unexpected (e.g. not parsable) format
     case malformedCertificate
 
-    // sourcery: CodedError = "561"
+    @CodedError("561")
     public enum InternalError: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case loadOCSPCheckedTrustStoreUnexpectedNil
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case loadCertListFromServerUnexpectedNil
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case loadOCSPListFromServerUnexpectedNil
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case trustStoreCertListUnexpectedNil
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case loadOCSPResponsesUnexpectedNil
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         case missingSignerForEECertificate
-        // sourcery: errorCode = "07"
+        @ErrorCode("07")
         case notImplemented
-        // sourcery: errorCode = "08"
+        @ErrorCode("08")
         case trustAnchorUnexpectedFormat
-        // sourcery: errorCode = "09"
+        @ErrorCode("09")
         case vauCertificateUnexpectedFormat
-        // sourcery: errorCode = "10"
+        @ErrorCode("10")
         case trustStoreCreationFailed
     }
 }

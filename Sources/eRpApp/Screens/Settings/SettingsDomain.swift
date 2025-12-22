@@ -20,26 +20,31 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
 import IDP
+import Settings
 import UIKit
 
-// sourcery: CodedError = "039"
+@CodedError("039")
 enum SettingsDomainError: Swift.Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case organDonorJumpError(OrganDonorJumpServiceError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case organDonorUnknownError
 }
 
-@Reducer // swiftlint:disable:next type_body_length
+@Reducer
 struct SettingsDomain {
     @ObservableState
     struct State: Equatable {
-        var isDemoMode: Bool
+        @Shared(.isDemoMode) var isDemoMode
         var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
@@ -120,7 +125,6 @@ struct SettingsDomain {
 
         enum Response: Equatable {
             case trackerStatusReceived(Bool)
-            case demoModeStatusReceived(Bool)
             case showChargeItemListReceived(UserProfile)
             case showAlert(SettingsDomainError)
         }
@@ -129,7 +133,7 @@ struct SettingsDomain {
     @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer: UsersSessionContainer
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.tracker) var tracker: Tracker
-    @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+    @Dependency(\.openURLHandler) var openURLHandler
     @Dependency(\.organDonorJumpService) var organDonorJumpService: OrganDonorJumpService
 
     var body: some Reducer<State, Action> {
@@ -145,21 +149,11 @@ struct SettingsDomain {
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
-            return .merge(
-                .publisher(
-                    tracker.optInPublisher
-                        .map { .response(.trackerStatusReceived($0)) }
-                        .eraseToAnyPublisher
-                ),
-                .publisher(
-                    changeableUserSessionContainer.isDemoMode
-                        .map { .response(.demoModeStatusReceived($0)) }
-                        .eraseToAnyPublisher
-                )
+            return .publisher(
+                tracker.optInPublisher
+                    .map { .response(.trackerStatusReceived($0)) }
+                    .eraseToAnyPublisher
             )
-        case let .response(.demoModeStatusReceived(isDemo)):
-            state.isDemoMode = isDemo
-            return .none
         case let .response(.trackerStatusReceived(value)):
             state.trackerOptIn = value
             return .none
@@ -168,6 +162,7 @@ struct SettingsDomain {
         // Demo-Mode
         case let .toggleDemoModeSwitch(isDemo):
             state.destination = .alert(.info(state.isDemoMode ? Self.demoModeOffAlertState : Self.demoModeOnAlertState))
+            state.$isDemoMode.withLock { $0 = isDemo }
             if isDemo {
                 changeableUserSessionContainer.switchToDemoMode()
             } else {
@@ -198,10 +193,12 @@ struct SettingsDomain {
             state.destination = nil
             return .none
         case .destination(.presented(.alert(.openSettings))):
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                resourceHandler.open(url)
+            guard let url = URL(string: UIApplication.openNotificationSettingsURLString) else {
+                return .none
             }
-            return .none
+            return .run { _ in
+                await openURLHandler.open(url)
+            }
         case .destination(.presented(.healthCardPasswordUnlockCard(.delegate(.navigateToSettings)))),
              .destination(.presented(.healthCardPasswordForgotPin(.delegate(.navigateToSettings)))),
              .destination(.presented(.healthCardPasswordSetCustomPin(.delegate(.navigateToSettings)))):
@@ -390,7 +387,6 @@ extension SettingsDomain {
 extension SettingsDomain {
     enum Dummies {
         static let state = State(
-            isDemoMode: false,
             profiles: ProfilesDomain.Dummies.state,
             appVersion: AppVersion(productVersion: "1.0",
                                    buildNumber: "LOCAL BUILD",

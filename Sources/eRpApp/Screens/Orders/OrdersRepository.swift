@@ -20,10 +20,13 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import CasePaths
+import CodedError
 import Combine
 import Dependencies
 import eRpKit
+import ErxTaskRepository
 import FHIRVZD
 import Foundation
 import IdentifiedCollections
@@ -34,60 +37,53 @@ protocol OrdersRepository {
 }
 
 final class DefaultOrdersRepository: OrdersRepository {
-    private let erxTaskRepository: ErxTaskRepository
-    private let pharmacyRepository: PharmacyRepository
-
-    internal init(erxTaskRepository: ErxTaskRepository, pharmacyRepository: PharmacyRepository) {
-        self.erxTaskRepository = erxTaskRepository
-        self.pharmacyRepository = pharmacyRepository
-    }
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
+    @Dependency(\.pharmacyRepository) var pharmacyRepository
 
     func loadAllOrders() -> AsyncThrowingStream<IdentifiedCollections.IdentifiedArray<String, Order>, Swift.Error> {
         AsyncThrowingStream { continuation in
             Task { [erxTaskRepository, pharmacyRepository] in
                 do {
-                    for try await communications in erxTaskRepository.loadLocalCommunications(for: .all).values {
-                        var pharmacyLocations: [String: PharmacyLocation] = [:]
-                        for id in communications.map(\.telematikId).unique() {
-                            if let pharmacy = try await pharmacyRepository.loadCached(by: id)
-                                .async(\Error.Cases.pharmacyRepository) {
-                                pharmacyLocations[pharmacy.telematikID] = pharmacy
-                            }
+                    let communications = try await erxTaskRepository.loadLocalCommunications(.all)
+                    var pharmacyLocations: [String: PharmacyLocation] = [:]
+                    for id in communications.map(\.telematikId).unique() {
+                        if let pharmacy = try await pharmacyRepository.loadCached(id) {
+                            pharmacyLocations[pharmacy.telematikID] = pharmacy
                         }
-
-                        let groupedCommunications = Dictionary(grouping: communications) { $0.orderId }
-
-                        var orders: IdentifiedArray<String, Order> = IdentifiedArray()
-                        for (orderId, communications) in groupedCommunications {
-                            let chargeItems = try await loadChargeItems(for: Set(communications.map(\.taskId)))
-                            // If there is no orderId the communications can be from different orders and pharmacies.
-                            // Only add the pharmacy if the communications belong to same order id
-                            var pharmacy: PharmacyLocation?
-                            if orderId != nil, let telematikId = communications.first?.telematikId {
-                                pharmacy = pharmacyLocations[telematikId]
-                            }
-                            orders.append(
-                                Order(
-                                    orderId: orderId ?? Order.unknownOrderId,
-                                    communications: IdentifiedArray(uniqueElements: communications),
-                                    chargeItems: chargeItems,
-                                    pharmacy: pharmacy
-                                )
-                            )
-                        }
-
-                        continuation
-                            .yield(IdentifiedArray(uniqueElements: orders
-                                    .sorted {
-                                        if $0.lastUpdated == $1.lastUpdated,
-                                           let pharmacy1Name = $0.pharmacy?.name,
-                                           let pharmacy2Name = $1.pharmacy?.name {
-                                            return pharmacy1Name < pharmacy2Name
-                                        } else {
-                                            return $0.lastUpdated > $1.lastUpdated
-                                        }
-                                    }))
                     }
+
+                    let groupedCommunications = Dictionary(grouping: communications) { $0.orderId }
+
+                    var orders: IdentifiedArray<String, Order> = IdentifiedArray()
+                    for (orderId, communications) in groupedCommunications {
+                        let chargeItems = try await loadChargeItems(for: Set(communications.map(\.taskId)))
+                        // If there is no orderId the communications can be from different orders and pharmacies.
+                        // Only add the pharmacy if the communications belong to same order id
+                        var pharmacy: PharmacyLocation?
+                        if orderId != nil, let telematikId = communications.first?.telematikId {
+                            pharmacy = pharmacyLocations[telematikId]
+                        }
+                        orders.append(
+                            Order(
+                                orderId: orderId ?? Order.unknownOrderId,
+                                communications: IdentifiedArray(uniqueElements: communications),
+                                chargeItems: chargeItems,
+                                pharmacy: pharmacy
+                            )
+                        )
+                    }
+
+                    continuation
+                        .yield(IdentifiedArray(uniqueElements: orders
+                                .sorted {
+                                    if $0.lastUpdated == $1.lastUpdated,
+                                       let pharmacy1Name = $0.pharmacy?.name,
+                                       let pharmacy2Name = $1.pharmacy?.name {
+                                        return pharmacy1Name < pharmacy2Name
+                                    } else {
+                                        return $0.lastUpdated > $1.lastUpdated
+                                    }
+                                }))
 
                     continuation.finish()
                 } catch {
@@ -100,7 +96,7 @@ final class DefaultOrdersRepository: OrdersRepository {
     func loadChargeItems(for taskIds: Set<ErxTask.ID>) async throws -> IdentifiedArray<String, ErxChargeItem> {
         var foundChargeItems: IdentifiedArray<String, ErxChargeItem> = IdentifiedArray()
         for taskId in taskIds {
-            if let chargeItem = try await erxTaskRepository.loadLocal(by: taskId).async()?.chargeItem {
+            if let chargeItem = try await erxTaskRepository.loadLocalChargeItem(nil, taskId)?.chargeItem {
                 // Known issue: A Task can be assigned to multiple orders and different pharmacies.
                 // With adding the ChargeItem to each order with this taskId we potentially add it to wrong orders
                 // Also we cannot relate it to a pharmacy, since the telematikId is not part of the ChargeItem
@@ -111,14 +107,14 @@ final class DefaultOrdersRepository: OrdersRepository {
         return foundChargeItems
     }
 
-    // sourcery: CodedError = "037"
+    @CodedError("037")
     @CasePathable
     enum Error: Swift.Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case erxRepository(ErxRepositoryError)
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case pharmacyRepository(PharmacyRepositoryError)
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case unspecified(error: Swift.Error)
 
         var errorDescription: String? {

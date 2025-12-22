@@ -26,6 +26,7 @@ import AVS
 import Dependencies
 import DependenciesMacros
 import eRpKit
+import eRpResources
 import Foundation
 
 public enum Validity: Equatable {

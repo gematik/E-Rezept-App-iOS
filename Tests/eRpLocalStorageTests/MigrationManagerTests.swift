@@ -28,12 +28,13 @@ import eRpKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble
+import Sharing
 import XCTest
 
 final class MigrationManagerTests: XCTestCase {
     private var databaseFile: URL!
     private let fileManager = FileManager.default
-    private var coreDataController: CoreDataController?
+    private var coreDataFactory: CoreDataControllerFactory?
 
     override func setUp() {
         super.setUp()
@@ -47,24 +48,41 @@ final class MigrationManagerTests: XCTestCase {
         super.tearDown()
     }
 
-    func loadCoreDataController() throws -> CoreDataController {
-        guard let controller = coreDataController else {
-            #if os(macOS)
-            let controller = try CoreDataController(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
-            #else
-            let controller = try CoreDataController(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
-            coreDataController = controller
-            return controller
-        }
+    private func loadFactory() -> CoreDataControllerFactory {
+        guard let factory = coreDataFactory else {
+            let factory: CoreDataControllerFactory = .init(databaseUrl: { self.databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
 
-        return controller
+                var fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: self.databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
+            coreDataFactory = factory
+            return factory
+        }
+        return factory
     }
 
     lazy var tasksForPatientAnna: [ErxTask] = {
@@ -118,19 +136,17 @@ final class MigrationManagerTests: XCTestCase {
 
     func testModel4MigrationWithTwoDifferentPatientTasksAndScannedTasks() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
+        let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(profileId: nil,
-                                                              coreDataControllerFactory: factory,
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                               foregroundQueue: foregroundQueue,
                                                               backgroundQueue: backgroundQueue,
                                                               dateProvider: { Date() }),
             userDataStore: userDataStore
         )
         // pre fill database with tasks from two different patients and a scanned task
-        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory)
+        let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory)
         var tasks = tasksForPatientAnna + tasksForPatientLudger
         tasks.append(scannedTask)
         try erxTaskStore.add(tasks: tasks)
@@ -214,12 +230,10 @@ final class MigrationManagerTests: XCTestCase {
 
     func testModel4MigrationWithoutExistingTasks() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
+        let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(
-                profileId: nil,
                 coreDataControllerFactory: factory,
                 foregroundQueue: foregroundQueue,
                 backgroundQueue: backgroundQueue,
@@ -277,12 +291,10 @@ final class MigrationManagerTests: XCTestCase {
 
     func testModel4MigrationWithOnlyScannedTasks() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
+        let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(
-                profileId: nil,
                 coreDataControllerFactory: factory,
                 foregroundQueue: foregroundQueue,
                 backgroundQueue: backgroundQueue,
@@ -292,7 +304,7 @@ final class MigrationManagerTests: XCTestCase {
         )
 
         // pre fill database with tasks from two different patients and a scanned task
-        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory)
+        let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory)
         try erxTaskStore.add(tasks: [scannedTask])
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
@@ -343,12 +355,10 @@ final class MigrationManagerTests: XCTestCase {
 
     func testMigrationFromVersion4ToVersion5WithoutAuditEvents() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
+        let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(profileId: nil,
-                                                              coreDataControllerFactory: factory,
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                               foregroundQueue: foregroundQueue,
                                                               backgroundQueue: backgroundQueue,
                                                               dateProvider: { Date() }),
@@ -375,10 +385,8 @@ final class MigrationManagerTests: XCTestCase {
 
     func testMigrationFromVersion4ToVersion5WithAuditEvents() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
-        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: UUID(),
-                                                       coreDataControllerFactory: factory,
+        let factory = loadFactory()
+        let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                        foregroundQueue: foregroundQueue,
                                                        backgroundQueue: backgroundQueue,
                                                        dateProvider: { Date() })
@@ -409,10 +417,8 @@ final class MigrationManagerTests: XCTestCase {
 
     func testMigrationFromVersion5ToVersion6WithPKVProfiles() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
-        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: UUID(),
-                                                       coreDataControllerFactory: factory,
+        let factory = loadFactory()
+        let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                        foregroundQueue: foregroundQueue,
                                                        backgroundQueue: backgroundQueue,
                                                        dateProvider: { Date() })
@@ -427,7 +433,7 @@ final class MigrationManagerTests: XCTestCase {
                                                 foregroundQueue: foregroundQueue,
                                                 backgroundQueue: backgroundQueue)
 
-        let moc = try loadCoreDataController().container.newBackgroundContext()
+        let moc = try factory.loadCoreDataController().container.newBackgroundContext()
 
         let profileAFixture = ProfileEntity(profile: .init(name: "A Test Profile"), in: moc)
         profileAFixture.insuranceType = ""
@@ -439,9 +445,9 @@ final class MigrationManagerTests: XCTestCase {
 
         try moc.save()
 
-//        let tasks = tasksForPatientAnna + tasksForPatientLudger
-//        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
-//        try erxTaskStore.add(auditEvents: auditEvents)
+        //        let tasks = tasksForPatientAnna + tasksForPatientLudger
+        //        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
+        //        try erxTaskStore.add(auditEvents: auditEvents)
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
@@ -495,10 +501,8 @@ final class MigrationManagerTests: XCTestCase {
 
     func testMigrationFromVersion6ToVersion7OnboardingDate() throws {
         let userDataStore = MockUserDataStore()
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
-        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: UUID(),
-                                                       coreDataControllerFactory: factory,
+        let factory = loadFactory()
+        let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                        foregroundQueue: foregroundQueue,
                                                        backgroundQueue: backgroundQueue,
                                                        dateProvider: { Date() })

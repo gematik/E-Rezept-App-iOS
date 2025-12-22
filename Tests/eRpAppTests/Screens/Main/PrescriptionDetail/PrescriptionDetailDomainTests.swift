@@ -20,28 +20,29 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import IDP
 import Nimble
+import Synchronization
 import XCTest
 
 @MainActor
 final class PrescriptionDetailDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
-    let mockErxTaskRepository = MockErxTaskRepository()
     let uiDateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
-    let mockResourceHandler = MockResourceHandler()
     let mockMatrixCodeGenerator = MockErxMatrixCodeGenerator()
 
     typealias TestStore = TestStoreOf<PrescriptionDetailDomain>
 
     func testStore(
         _ state: PrescriptionDetailDomain.State? = nil,
-        dateProvider: @escaping (() -> Date) = Date.init,
         withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
@@ -52,12 +53,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             PrescriptionDetailDomain()
         } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = userSessionContainer
-            dependencies.erxTaskRepository = mockErxTaskRepository
             dependencies.schedulers = schedulers
             dependencies.fhirDateFormatter = FHIRDateFormatter.shared
-            dependencies.dateProvider = dateProvider
             dependencies.uiDateFormatter = uiDateFormatter
-            dependencies.resourceHandler = mockResourceHandler
             dependencies.erxMatrixCodeGenerator = mockMatrixCodeGenerator
             prepareDependencies(&dependencies)
         }
@@ -81,9 +79,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     /// Tests the case when delete was hit and in the alert 'Yes' was chosen.
     func testDeleteWithAlertSuccess() async {
         let store = testStore()
-
-        mockErxTaskRepository.deletePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
+        store.dependencies.erxTaskRepository.deleteTask = { _, _ in }
         // when
         await store.send(.delete) { sut in
             // then
@@ -108,8 +104,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let expectedError = ErxRepositoryError
             .remote(.fhirClient(.http(.init(httpClientError: .authentication(IDPError.tokenUnavailable),
                                             operationOutcome: nil))))
-
-        mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
+        store.dependencies.erxTaskRepository.deleteTask = { _, _ in
+            throw expectedError
+        }
         // when
         await store.send(.delete) { sut in
             // then
@@ -136,8 +133,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testDeleteWithOtherErrorMessage() async {
         let store = testStore()
         let expectedError = ErxRepositoryError.local(.notImplemented)
-        mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
-
+        store.dependencies.erxTaskRepository.deleteTask = { _, _ in
+            throw expectedError
+        }
         // when
         await store.send(.delete) { sut in
             // then
@@ -169,11 +167,11 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testDeletingPrescriptionInProgress() async {
         await withDependencies {
             $0.date = DateGenerator { Date() }
+            $0.erxTaskRepository.deleteTask = { _, _ in }
         } operation: {
             let prescription = Prescription(
                 erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid,
-                date: TestDate.defaultReferenceDate,
-                dateFormatter: UIDateFormatter.testValue
+                date: TestDate.defaultReferenceDate
             )
             let sut = testStore(.init(
                 prescription: prescription,
@@ -195,30 +193,32 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testDeletingPrescriptionWithDirectAssignment() async {
         let prescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskDirectAssigned,
-            dateFormatter: UIDateFormatter.testValue
+            erxTask: ErxTask.Fixtures.erxTaskDirectAssigned
         )
         let sut = testStore(.init(
             prescription: prescription,
             isArchived: true
         ))
 
-        await sut.send(.delete) {
-            $0.destination = .alert(ErpAlertState(
-                title: L10n.prscDeleteNoteDirectAssignment,
-                actions: {
-                    ButtonState(role: .cancel, action: .dismiss) {
-                        .init(L10n.alertBtnOk)
+        await withDependencies {
+            $0.erxTaskRepository.deleteTask = { _, _ in }
+        } operation: {
+            await sut.send(.delete) {
+                $0.destination = .alert(ErpAlertState(
+                    title: L10n.prscDeleteNoteDirectAssignment,
+                    actions: {
+                        ButtonState(role: .cancel, action: .dismiss) {
+                            .init(L10n.alertBtnOk)
+                        }
                     }
-                }
-            ))
+                ))
+            }
         }
     }
 
     func testCancelDeletingPrescriptionAndChargeItemPKV() async {
         let prescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV,
-            dateFormatter: UIDateFormatter.testValue
+            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV
         )
         let store = testStore(.init(
             prescription: prescription,
@@ -240,25 +240,17 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testDeletingPrescriptionPKV() async {
         let prescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV,
-            dateFormatter: UIDateFormatter.testValue
+            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV
         )
-
-        mockErxTaskRepository.deletePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        mockErxTaskRepository
-            .loadRemoteAndSaveChargeItemsPublisher =
-            Just([ErxChargeItem.Fixtures.chargeItemWithTaskOnlyPKV.sparseChargeItem])
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
-        mockErxTaskRepository.deleteChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-
         let store = testStore(.init(
             prescription: prescription,
             isArchived: true
         ))
-
+        store.dependencies.erxTaskRepository.deleteTask = { _, _ in }
+        store.dependencies.erxTaskRepository.deleteChargeItems = { _, _ in }
+        store.dependencies.erxTaskRepository.loadRemoteChargeItems = { _ in
+            [ErxChargeItem.Fixtures.chargeItemWithTaskOnlyPKV.sparseChargeItem]
+        }
         await store.send(.delete) {
             $0.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
@@ -281,27 +273,20 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testDeletingChargeItemWithErrorMessage() async {
         let prescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV,
-            dateFormatter: UIDateFormatter.testValue
+            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV
         )
-
         let expectedError = ErxRepositoryError.local(.notImplemented)
-        mockErxTaskRepository.deletePublisher = Just(true)
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        mockErxTaskRepository
-            .loadRemoteAndSaveChargeItemsPublisher =
-            Just([ErxChargeItem.Fixtures.chargeItemWithTaskOnlyPKV.sparseChargeItem])
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
-        mockErxTaskRepository.deleteChargeItemsPublisher = Fail(error: expectedError)
-            .eraseToAnyPublisher()
-
         let store = testStore(.init(
             prescription: prescription,
             isArchived: true
         ))
-
+        store.dependencies.erxTaskRepository.deleteTask = { _, _ in }
+        store.dependencies.erxTaskRepository.deleteChargeItems = { _, _ in
+            throw expectedError
+        }
+        store.dependencies.erxTaskRepository.loadRemoteChargeItems = { _ in
+            [ErxChargeItem.Fixtures.chargeItemWithTaskOnlyPKV.sparseChargeItem]
+        }
         await store.send(.delete) { sut in
             sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
@@ -335,22 +320,19 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         var erxTask = ErxTask.Fixtures.scannedTask
         let store = testStore(
             .init(
-                prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
+                prescription: Prescription(erxTask: erxTask),
                 isArchived: false
-            ),
-            dateProvider: { dateToday }
+            )
         )
-
         let expectedRedeemDate = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: dateToday)
-        let prescription = Prescription(erxTask: erxTask, date: dateToday, dateFormatter: UIDateFormatter.testValue)
+        let prescription = Prescription(erxTask: erxTask, date: dateToday)
         erxTask.update(with: expectedRedeemDate)
         let expectedPrescription = Prescription(
             erxTask: erxTask,
-            date: dateToday,
-            dateFormatter: UIDateFormatter.testValue
+            date: dateToday
         )
-        mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
+        store.dependencies.dateProvider = { dateToday }
+        store.dependencies.erxTaskRepository.saveTask = { _, _ in }
         // when
         await store.send(.toggleRedeemPrescription) { sut in
             // then
@@ -372,11 +354,13 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let erxTask = ErxTask.Fixtures.scannedTaskWithAVSTransaction
         let store = testStore(
             .init(
-                prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
+                prescription: Prescription(erxTask: erxTask),
                 isArchived: true
-            ),
-            dateProvider: { dateToday }
-        )
+            )
+        ) { dependencies in
+            dependencies.dateProvider = { dateToday }
+            dependencies.erxTaskRepository.saveTask = { _, _ in }
+        }
 
         // when trying to toggle the state manually
         await store.send(.toggleRedeemPrescription)
@@ -386,7 +370,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testManualRedeemARemoteTask() async {
         let dateToday = Date()
         // given a tasks that has been loaded from fachdienst
-        let store = testStore(dateProvider: { dateToday })
+        let store = testStore { dependencies in
+            dependencies.dateProvider = { dateToday }
+            dependencies.erxTaskRepository.saveTask = { _, _ in }
+        }
 
         // when trying to toggle the state manually
         await store.send(.toggleRedeemPrescription)
@@ -414,8 +401,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore(
             .init(
                 prescription: Prescription(
-                    erxTask: erxTaskWithSubjectToChargeStatus,
-                    dateFormatter: UIDateFormatter.testValue
+                    erxTask: erxTaskWithSubjectToChargeStatus
                 ),
                 isArchived: false
             )
@@ -433,7 +419,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let taskWithoutCoPaymentInfo = ErxTask.Fixtures.erxTask12
         let sut = testStore(
             .init(
-                prescription: Prescription(erxTask: taskWithoutCoPaymentInfo, dateFormatter: UIDateFormatter.testValue),
+                prescription: Prescription(erxTask: taskWithoutCoPaymentInfo),
                 isArchived: false
             )
         )
@@ -447,8 +433,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore(
             .init(
                 prescription: Prescription(
-                    erxTask: erxTaskWithNoSubjectToChargeStatus,
-                    dateFormatter: UIDateFormatter.testValue
+                    erxTask: erxTaskWithNoSubjectToChargeStatus
                 ),
                 isArchived: false
             )
@@ -462,14 +447,19 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
+    @available(iOS 18.0, *)
     func testOpenUrlGesundBundle() async {
-        let sut = testStore()
-        mockResourceHandler.canOpenURLReturnValue = true
+        let openedURL = Mutex<URL?>(nil)
+        let sut = testStore { dependencies in
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
+        }
 
-        expect(self.mockResourceHandler.canOpenURLCalled).to(beFalse())
+        expect(openedURL.withLock { $0 }).to(beNil())
         await sut.send(.openUrlGesundBundDe)
-        expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
-        expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
+        expect(openedURL.withLock { $0 }).to(equal(URL(string: "https://gesund.bund.de")))
     }
 
     func testShowPrescriptionValidityInfo() async {
@@ -644,8 +634,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowMedicationOverview_when_dispensed() async {
         let redeemedPrescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskRedeemed,
-            dateFormatter: UIDateFormatter.testValue
+            erxTask: ErxTask.Fixtures.erxTaskRedeemed
         )
         let sut = testStore(.init(prescription: redeemedPrescription, isArchived: true))
         let expectedState = MedicationOverviewDomain.State(
@@ -663,28 +652,6 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let authoredOn = TestDate.createFormattedDate(.today)
         let expiresOn = TestDate.createFormattedDate(.ninetyTwoDaysAhead)
         let acceptedUntil = TestDate.createFormattedDate(.tomorrow)
-        let sut = testStore(
-            PrescriptionDetailDomain.State(
-                prescription: Prescription(
-                    erxTask: Self.Fixtures.erxTaskFixtureWith(
-                        erxMedication: Self.Fixtures.medicationFixture,
-                        authoredOn: authoredOn,
-                        expiresOn: expiresOn,
-                        acceptedUntil: acceptedUntil
-                    ),
-                    dateFormatter: dateFormatter
-                ),
-                isArchived: false
-            )
-        )
-        let validName = "Hustenbonbons"
-
-        await sut.send(.pencilButtonTapped) { state in
-            state.focus = .medicationName
-        }
-
-        mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
         let expectedErxTask = Self.Fixtures.erxTaskFixtureWith(
             erxMedication: ErxMedication(
                 name: "Hustenbonbons",
@@ -707,22 +674,39 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             acceptedUntil: acceptedUntil
         )
 
+        let sut = testStore(
+            PrescriptionDetailDomain.State(
+                prescription: Prescription(
+                    erxTask: Self.Fixtures.erxTaskFixtureWith(
+                        erxMedication: Self.Fixtures.medicationFixture,
+                        authoredOn: authoredOn,
+                        expiresOn: expiresOn,
+                        acceptedUntil: acceptedUntil
+                    )
+                ),
+                isArchived: false
+            )
+        )
+        let validName = "Hustenbonbons"
+        sut.dependencies.erxTaskRepository.saveTask = { _, _ in }
+
+        await sut.send(.pencilButtonTapped) { state in
+            state.focus = .medicationName
+        }
+
         await sut.send(.setName(validName)) { state in
             state.prescription = Prescription(
-                erxTask: expectedErxTask,
-                dateFormatter: dateFormatter
+                erxTask: expectedErxTask
             )
         }
 
         await sut.receive(.response(.changeNameReceived(.success(expectedErxTask))))
 
-        expect(self.mockErxTaskRepository.saveCalled).to(beTrue())
-        expect(self.mockErxTaskRepository.saveCallsCount).to(equal(1))
-
         // Set name again but now the repo returns an error
         let error = ErxRepositoryError.remote(.notImplemented)
-        mockErxTaskRepository.savePublisher = Fail(outputType: Bool.self, failure: error).eraseToAnyPublisher()
-
+        sut.dependencies.erxTaskRepository.saveTask = { _, _ in
+            throw error
+        }
         await sut.send(.setName("Hustenbonbonssss")) { state in
             state.prescription = Prescription(
                 erxTask: Self.Fixtures.erxTaskFixtureWith(
@@ -745,15 +729,13 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                     authoredOn: authoredOn,
                     expiresOn: expiresOn,
                     acceptedUntil: acceptedUntil
-                ),
-                dateFormatter: dateFormatter
+                )
             )
         }
 
         await sut.receive(.response(.changeNameReceived(Result.failure(error)))) { state in
             state.destination = .alert(PrescriptionDetailDomain.Alerts.changeNameReceivedAlertState(error: error))
         }
-        expect(self.mockErxTaskRepository.saveCallsCount).to(equal(2))
     }
 
     func testUpdateMedicationNameEmptyFailure() async {
@@ -761,8 +743,6 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let invalidName = " "
 
         await sut.send(.setName(invalidName))
-
-        expect(self.mockErxTaskRepository.saveCalled).to(beFalse())
     }
 
     func testMedicationReminderButtonTapped_medicationReminderParser() async {
@@ -792,8 +772,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                     status: .ready,
                     flowType: .pharmacyOnly,
                     medicationSchedule: medicationSchedule
-                ),
-                dateFormatter: UIDateFormatter.previewValue
+                )
             ),
             isArchived: false)
         )
@@ -925,8 +904,7 @@ extension PrescriptionDetailDomainTests {
                         email: "noreply@praxisvonstorchhausen.de",
                         address: "Vor der Bahn 6\n54321 Berlin"
                     )
-                ),
-                dateFormatter: UIDateFormatter.previewValue
+                )
             ),
             isArchived: false
         )
@@ -993,8 +971,7 @@ extension PrescriptionDetailDomainTests {
                         email: "noreply@praxisvonstorchhausen.de",
                         address: "Vor der Bahn 6\n54321 Berlin"
                     )
-                ),
-                dateFormatter: UIDateFormatter.previewValue
+                )
             ),
             isArchived: false
         )

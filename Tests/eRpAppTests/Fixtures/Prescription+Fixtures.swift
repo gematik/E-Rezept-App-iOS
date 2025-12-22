@@ -35,8 +35,7 @@ extension Prescription {
                 ErxTask.Fixtures.erxTasks.map {
                     Prescription(
                         erxTask: $0,
-                        date: TestDate.defaultReferenceDate,
-                        dateFormatter: dateFormatter
+                        date: TestDate.defaultReferenceDate
                     )
                 }
             }

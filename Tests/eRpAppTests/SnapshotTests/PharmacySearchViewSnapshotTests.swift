@@ -122,6 +122,84 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
+    func testPharmacySearch_searchSpecialClosingActive() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            let sut = NavigationStack {
+                PharmacySearchView(
+                    store: .init(
+                        initialState: PharmacySearchDomain.State(
+                            selectedPrescriptions: Shared(value: []),
+                            inRedeemProcess: false,
+                            searchText: "",
+                            pharmacies: [
+                                PharmacyLocationViewModel(
+                                    pharmacy: PharmacyLocation.Fixtures.pharmacyF,
+                                    referenceDate: TestDate.defaultReferenceDate
+                                ),
+                                PharmacyLocationViewModel(
+                                    pharmacy: PharmacyLocation.Fixtures.pharmacyG,
+                                    referenceDate: TestDate.defaultReferenceDate
+                                ),
+                                PharmacyLocationViewModel(
+                                    pharmacy: PharmacyLocation.Fixtures.pharmacyH,
+                                    referenceDate: TestDate.defaultReferenceDate
+                                ),
+                            ],
+                            pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
+                            searchState: .searchResultOk
+                        )
+                    ) {
+                        EmptyReducer()
+                    }
+                )
+            }
+            assertSnapshots(of: sut, as: snapshotModiOnDevices())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+        }
+    }
+
+    func testPharmacySearch_emergencyService() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            let sut = NavigationStack {
+                PharmacySearchView(
+                    store: .init(
+                        initialState: PharmacySearchDomain.State(
+                            selectedPrescriptions: Shared(value: []),
+                            inRedeemProcess: false,
+                            searchText: "",
+                            pharmacies: [
+                                PharmacyLocationViewModel(
+                                    pharmacy: PharmacyLocation.Fixtures.pharmacyI,
+                                    referenceDate: TestDate.defaultReferenceDate
+                                ),
+                                PharmacyLocationViewModel(
+                                    pharmacy: PharmacyLocation.Fixtures.pharmacyJ,
+                                    referenceDate: TestDate.defaultReferenceDate
+                                ),
+                                PharmacyLocationViewModel(
+                                    pharmacy: PharmacyLocation.Fixtures.pharmacyK,
+                                    referenceDate: TestDate.defaultReferenceDate
+                                ),
+                            ],
+                            pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
+                            searchState: .searchResultOk
+                        )
+                    ) {
+                        EmptyReducer()
+                    }
+                )
+            }
+            assertSnapshots(of: sut, as: snapshotModiOnDevices())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+        }
+    }
+
     func testPharmacySearch_mapSearch_WithUserButton() {
         let sut = PharmacySearchMapView(
             store: .init(

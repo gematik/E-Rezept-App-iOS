@@ -28,24 +28,25 @@ import Dependencies
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
+import FeatureCardWall
+import FeatureHelpers
 import FHIRClient
 import FHIRVZD
+import FHIRVZDLive
 import Foundation
 import HTTPClient
 import HTTPClientLive
 import IDP
 import IDPLive
 import Pharmacy
+import Profiles
+import Settings
 import TrustStore
 import VAUClient
 
-// swiftlint:disable:next type_body_length
 class StandardSessionContainer: UserSession {
     private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
-    private var erxTaskCoreDataStore: ErxTaskCoreDataStore
-    private var entireCoreDataStore: ErxTaskCoreDataStore
-    private var pharmacyCoreDataStore: PharmacyCoreDataStore
     let appConfiguration: AppConfiguration
     var profileDataStore: ProfileDataStore
     let shipmentInfoDataStore: ShipmentInfoDataStore
@@ -56,9 +57,6 @@ class StandardSessionContainer: UserSession {
     init(
         for profileId: UUID,
         schedulers: Schedulers,
-        erxTaskCoreDataStore: ErxTaskCoreDataStore,
-        entireCoreDataStore: ErxTaskCoreDataStore,
-        pharmacyCoreDataStore: PharmacyCoreDataStore,
         profileDataStore: ProfileDataStore,
         shipmentInfoDataStore: ShipmentInfoDataStore,
         avsTransactionDataStore: AVSTransactionDataStore,
@@ -66,17 +64,12 @@ class StandardSessionContainer: UserSession {
     ) {
         self.profileId = profileId
         self.schedulers = schedulers
-        self.erxTaskCoreDataStore = erxTaskCoreDataStore
-        self.entireCoreDataStore = entireCoreDataStore
-        self.pharmacyCoreDataStore = pharmacyCoreDataStore
         self.profileDataStore = profileDataStore
         self.shipmentInfoDataStore = shipmentInfoDataStore
         self.avsTransactionDataStore = avsTransactionDataStore
         self.appConfiguration = appConfiguration
         keychainStorage = KeychainStorage(profileId: profileId, schedulers: schedulers)
     }
-
-    var isDemoMode: Bool { false }
 
     lazy var trustStoreSession: TrustStoreSession = {
         guard let trustStoreStorageFilePath = try? FileManager.default.url(
@@ -136,15 +129,6 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
-    lazy var fhirVZDSession: FHIRVZDSession = {
-        let fhirVZDConfig = FHIRVZDClient.Configuration(
-            eRezeptAPIServer: appConfiguration.eRezept,
-            eRezeptAdditionalHeader: appConfiguration.eRezeptAdditionalHeader
-        )
-
-        return DefaultFHIRVZDSession(config: fhirVZDConfig)
-    }()
-
     lazy var extAuthRequestStorage: ExtAuthRequestStorage = { PersistentExtAuthRequestStorage() }()
     lazy var secureUserStore: SecureUserDataStore = { keychainStorage }()
     lazy var localUserStore: UserDataStore = { UserDefaultsStore() }()
@@ -155,30 +139,9 @@ class StandardSessionContainer: UserSession {
             .eraseToAnyPublisher()
     }()
 
-    lazy var nfcSessionProvider: NFCSignatureProvider = {
-        #if ENABLE_DEBUG_VIEW
-        #if targetEnvironment(simulator)
-        return VirtualEGKSignatureProvider()
-        #else
-        return switchedSignatureProvider
-        #endif
-        #else
-        return EGKSignatureProvider(storage: secureUserStore)
-        #endif
-    }()
-
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
         DefaultNFCResetRetryCounterController()
     }()
-
-    #if ENABLE_DEBUG_VIEW
-    lazy var switchedSignatureProvider: NFCSignatureProvider = {
-        SwitchSignatureProvider(
-            defaultSignatureProvider: EGKSignatureProvider(storage: secureUserStore),
-            alternativeSignatureProvider: VirtualEGKSignatureProvider()
-        )
-    }()
-    #endif
 
     // Local VAU storage configuration
     // [REQ:gemSpec_Krypt:A_20175#3|10] Initialization of the VAUStorage at a predefined location in the filesystem
@@ -195,20 +158,6 @@ class StandardSessionContainer: UserSession {
         return FileVAUStorage(vauStorageBaseFilePath: vauStorageFilePath)
     }()
 
-    @Dependency(\.pharmacyServiceFactory) var pharmacyServiceFactory: PharmacyServiceFactory
-
-    lazy var pharmacyRepository: PharmacyRepository = {
-        let fhirClient = FHIRClient(
-            server: appConfiguration.fhirVzd,
-            httpClient: fhirVZDHttpClient
-        )
-
-        return DefaultPharmacyRepository(
-            disk: pharmacyCoreDataStore,
-            cloud: pharmacyServiceFactory.construct(fhirClient, fhirVZDSession)
-        )
-    }()
-
     lazy var updateChecker: UpdateChecker = {
         @Dependency(\.updateCheckerFactory) var factory
 
@@ -222,50 +171,12 @@ class StandardSessionContainer: UserSession {
         return factory.updateChecker(client, appConfiguration)
     }()
 
-    @Dependency(\.erxRemoteDataStoreFactory) var erxRemoteDataStoreFactory: ErxRemoteDataStoreFactory
-    @Dependency(\.medicationScheduleRepository) var medicationScheduleRepository
-
-    private lazy var erxRemoteDataStore: ErxRemoteDataStore = {
-        let vauSession = VAUSession(
-            vauServer: appConfiguration.erp,
-            vauAccessTokenProvider: self.idpSession.asVAUAccessTokenProvider(),
-            vauStorage: self.vauStorage,
-            trustStoreSession: self.trustStoreSession
-        )
-
-        let fhirClient = FHIRClient(
-            server: appConfiguration.base,
-            httpClient: self.erpHttpClient(vau: vauSession)
-        )
-        return erxRemoteDataStoreFactory.construct(fhirClient)
-    }()
-
-    // The local store only returns stored objects for the related profileId
-    lazy var erxTaskRepository: ErxTaskRepository = {
-        DefaultErxTaskRepository(
-            disk: erxTaskCoreDataStore,
-            cloud: erxRemoteDataStore,
-            medicationScheduleRepository: medicationScheduleRepository,
-            profile: profile()
-        )
-    }()
-
-    // the locale store returns all stored objects regardless from which profile they are
-    lazy var entireErxTaskRepository: ErxTaskRepository = {
-        DefaultErxTaskRepository(
-            disk: entireCoreDataStore,
-            cloud: erxRemoteDataStore,
-            medicationScheduleRepository: medicationScheduleRepository,
-            profile: profile()
-        )
-    }()
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
+    @Dependency(\.pharmacyRepository) var pharmacyRepository
 
     // Orders are displayed for all profiles, so the local store is returning objects from all profiles
     lazy var ordersRepository: OrdersRepository = {
-        DefaultOrdersRepository(
-            erxTaskRepository: entireErxTaskRepository,
-            pharmacyRepository: pharmacyRepository
-        )
+        DefaultOrdersRepository()
     }()
 
     lazy var appSecurityManager: AppSecurityManager = {
@@ -303,8 +214,7 @@ class StandardSessionContainer: UserSession {
 
     private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
         DefaultPrescriptionRepository(
-            loginHandler: idpSessionLoginHandler,
-            erxTaskRepository: self.erxTaskRepository
+            loginHandler: idpSessionLoginHandler
         )
     }()
 
@@ -389,7 +299,7 @@ extension StandardSessionContainer {
         // [REQ:gemSpec_IDP_Frontend:A_21325#2] Interceptor order defines what is encrypted via VAU
         let interceptors: [Interceptor] = [
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
-            IDPInterceptor(session: idpSession, delegate: nil),
+            IDPInterceptor(session: idpSession),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
             VAUInterceptor(vauSession: session),
@@ -406,20 +316,6 @@ extension StandardSessionContainer {
     var idpHttpClient: HTTPClient {
         let interceptors: [Interceptor] = [
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.idpAdditionalHeader),
-            LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
-            DebugLiveLogger.LogInterceptor(),
-        ]
-
-        // Remote FHIR data source configuration
-        return DefaultHTTPClient(
-            urlSessionConfiguration: .ephemeral,
-            interceptors: interceptors
-        )
-    }
-
-    var fhirVZDHttpClient: HTTPClient {
-        let interceptors: [Interceptor] = [
-            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.fhirVzdAdditionalHeader),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
         ]

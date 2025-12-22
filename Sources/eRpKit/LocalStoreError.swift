@@ -20,20 +20,21 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
-// sourcery: CodedError = "203"
 /// Local store error cases
+@CodedError("203")
 public enum LocalStoreError: Swift.Error, LocalizedError, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case notImplemented
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case initialization(error: Swift.Error)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case write(error: Swift.Error)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case delete(error: Swift.Error)
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     case read(error: Swift.Error)
 
     public var errorDescription: String? {

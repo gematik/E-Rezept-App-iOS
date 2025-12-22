@@ -20,21 +20,10 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
 
 /// Trusted execution environment protocol that must be implemented according to 'gemSpec_Krypt'.
 public protocol TrustStoreClient {
-    /// Load the CertList for creating a trust store
-    ///
-    /// - Returns: A stream that emits either a CertList or a TrustStoreError.
-    func loadCertListFromServer() -> AnyPublisher<CertList, TrustStoreError>
-
-    /// Load the OCSP Response from remote
-    ///
-    /// - Returns: A stream that emits either a OCSPList or a TrustStoreError.
-    func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError>
-
     /// Load the PKI certificates from remote
     /// https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc
     ///
