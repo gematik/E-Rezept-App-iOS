@@ -20,9 +20,11 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureCardWall
 import Foundation
 import IDP
 
@@ -36,15 +38,15 @@ protocol RegisteredDevicesService {
     func cardWall(for profileId: UUID) -> AnyPublisher<CardWallCANDomain.State, Never>
 }
 
-// sourcery: CodedError = "018"
+@CodedError("018")
 enum RegisteredDevicesServiceError: Swift.Error, Equatable, LocalizedError {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case missingAuthentication
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case missingToken
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case loginHandlerError(LoginHandlerError)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case idpError(IDPError)
 
     var errorDescription: String? {
@@ -143,7 +145,6 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
             .first()
             .map { can in
                 CardWallCANDomain.State(
-                    isDemoModus: userSession.isDemoMode,
                     profileId: userSession.profileId,
                     can: can ?? ""
                 )

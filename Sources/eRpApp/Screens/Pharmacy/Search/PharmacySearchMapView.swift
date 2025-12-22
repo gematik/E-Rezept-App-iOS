@@ -24,6 +24,7 @@ import ComposableArchitecture
 import ComposableCoreLocation
 import CoreLocationUI
 import eRpStyleKit
+import FeatureEURedeem
 import MapKit
 import Perception
 import SwiftUI
@@ -87,6 +88,14 @@ struct PharmacySearchMapView: View {
                         ).accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnFilter)
                     }
 
+                    if store.isEURedeemable, !store.hideEURedeemHint {
+                        EURedeemHintView {
+                            store.send(.delegate(.euRedeemTapped))
+                        } closeAction: {
+                            store.send(.hideEuRedeemHint, animation: .easeOut)
+                        }
+                    }
+
                     Spacer()
 
                     VStack(spacing: 0) {
@@ -117,14 +126,6 @@ struct PharmacySearchMapView: View {
                     }.padding(.bottom, 24)
                 }
             }
-            .alert($store.scope(
-                state: \.destination?.alert?.alert,
-                action: \.destination.alert
-            ))
-            .task {
-                await store.send(.onAppear).finish()
-                UIApplication.shared.dismissKeyboard()
-            }
         }
         .sheet(item: $store.scope(
             state: \.destination?.clusterSheet,
@@ -151,7 +152,14 @@ struct PharmacySearchMapView: View {
                 PharmacyDetailView(store: store)
             }
         }
-
+        .alert($store.scope(
+            state: \.destination?.alert?.alert,
+            action: \.destination.alert
+        ))
+        .task {
+            await store.send(.onAppear).finish()
+            UIApplication.shared.dismissKeyboard()
+        }
         /// Workaround for navigationbar visible on Map after Search for iPhone 12 Mini
         .onAppear { navigationBarHidden = true }
         .navigationBarHidden(navigationBarHidden)

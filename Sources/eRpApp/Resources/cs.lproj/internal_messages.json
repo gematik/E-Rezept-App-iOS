@@ -46,5 +46,11 @@
         "text": "**♿ Přístupnost** \nNastavení profilu bylo upraveno pro další zvýšení přístupnosti.",
         "timestamp": "2025-08-26T08:00:00.000Z",
         "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registrace pro více osob** \nRegistrace je nyní možná i pro pojištěnce federálních institucí, jako je federální policie a další. \n \n **🕒 Vylepšená otevírací doba lékáren** \nNyní se zobrazuje pohotovostní služba a zvláštní zavírací doba lékáren, pokud jsou k dispozici. \n \n **💊 Výběr všech receptů** \nPři uplatňování receptů lze nyní vybrat všechny recepty současně. \n \n **♿ Přístupnost** \nBarvy písem a ikon byly upraveny pro dosažení vyššího kontrastu. Dále byl vylepšen hlasový výstup VoiceOver pro úpravu profilového obrázku a rozpoznávání stavu přihlášení.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
     }
 ]

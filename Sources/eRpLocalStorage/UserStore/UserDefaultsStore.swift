@@ -179,9 +179,17 @@ public class UserDefaultsStore: UserDataStore {
     public func set(hideWelcomeMessage: Bool) {
         userDefaults.hideWelcomeMessage = hideWelcomeMessage
     }
+
+    public var hideEURedeemInstructions: AnyPublisher<Bool, Never> {
+        userDefaults.publisher(for: \UserDefaults.hideEURedeemInstructions).eraseToAnyPublisher()
+    }
+
+    public func set(hideEURedeemInstructions: Bool) {
+        userDefaults.hideEURedeemInstructions = hideEURedeemInstructions
+    }
 }
 
-extension UserDefaults {
+extension String {
     /// Name of the server environment to use. Only usable in non production builds
     public static let kServerEnvironmentConfiguration = "kEnvironmentConfiguration"
 
@@ -191,11 +199,11 @@ extension UserDefaults {
     public static let kVauURL = "kVauURL"
     /// DiscoveryDocument URL Key for `UserDefaults`
     public static let kDiscoveryURL = "kIDPDiscoveryURL"
-    private static let kShouldHideOnboarding = "kShouldHideOnboarding"
-    private static let kOnboardingVersion = "kOnboardingVersion"
-    private static let kShouldHideCardWallIntro = "kShouldHideCardWallIntro"
-    private static let kAppSecurityOption = "kAppSecurityOption"
-    private static let kIgnoreDeviceNotSecuredWarningForSession = "kIgnoreDeviceNotSecuredWarningForSession"
+    static let kShouldHideOnboarding = "kShouldHideOnboarding"
+    static let kOnboardingVersion = "kOnboardingVersion"
+    static let kShouldHideCardWallIntro = "kShouldHideCardWallIntro"
+    static let kAppSecurityOption = "kAppSecurityOption"
+    static let kIgnoreDeviceNotSecuredWarningForSession = "kIgnoreDeviceNotSecuredWarningForSession"
     /// Key for storing if app-install event has been sent to tracking server in `UserDefaults`
     public static let kAppInstallSent = "kAppInstallSent"
     /// Key for storing failedAppAuthentications
@@ -212,96 +220,128 @@ extension UserDefaults {
     public static let kOnboardingDate = "kOnboardingDate"
     ///
     public static let kHideWelcomeMessage = "kHideWelcomeMessage"
+    ///
+    static let kHideEURedeemInstructions = "kHideEURedeemInstructions"
+}
 
+extension UserDefaults {
     @objc var serverEnvironmentConfiguration: String? {
         get {
-            string(forKey: Self.kServerEnvironmentConfiguration)
+            string(forKey: .kServerEnvironmentConfiguration)
         }
         set {
-            setValue(newValue, forKey: Self.kServerEnvironmentConfiguration)
+            setValue(newValue, forKey: .kServerEnvironmentConfiguration)
         }
     }
 
     @objc var shouldHideOnboarding: Bool {
-        get { bool(forKey: Self.kShouldHideOnboarding) }
-        set { set(newValue, forKey: Self.kShouldHideOnboarding) }
+        get { bool(forKey: .kShouldHideOnboarding) }
+        set { set(newValue, forKey: .kShouldHideOnboarding) }
     }
 
     @objc var onboardingVersion: String? {
-        get { string(forKey: Self.kOnboardingVersion) }
-        set { set(newValue, forKey: Self.kOnboardingVersion) }
+        get { string(forKey: .kOnboardingVersion) }
+        set { set(newValue, forKey: .kOnboardingVersion) }
     }
 
     @objc var shouldHideCardWallIntro: Bool {
-        get { bool(forKey: Self.kShouldHideCardWallIntro) }
-        set { set(newValue, forKey: Self.kShouldHideCardWallIntro) }
+        get { bool(forKey: .kShouldHideCardWallIntro) }
+        set { set(newValue, forKey: .kShouldHideCardWallIntro) }
     }
 
     @objc var appSecurityOption: Int {
-        get { integer(forKey: Self.kAppSecurityOption) }
-        set { set(newValue, forKey: Self.kAppSecurityOption) }
+        get { integer(forKey: .kAppSecurityOption) }
+        set { set(newValue, forKey: .kAppSecurityOption) }
     }
 
     @objc var ignoreDeviceNotSecuredWarningForSession: Bool {
-        get { bool(forKey: Self.kIgnoreDeviceNotSecuredWarningForSession) }
-        set { set(newValue, forKey: Self.kIgnoreDeviceNotSecuredWarningForSession) }
+        get { bool(forKey: .kIgnoreDeviceNotSecuredWarningForSession) }
+        set { set(newValue, forKey: .kIgnoreDeviceNotSecuredWarningForSession) }
     }
 
     /// Store if app-install event has been sent to tracking server
     @objc public var appInstallSent: Bool {
-        get { bool(forKey: Self.kAppInstallSent) }
-        set { set(newValue, forKey: Self.kAppInstallSent) }
+        get { bool(forKey: .kAppInstallSent) }
+        set { set(newValue, forKey: .kAppInstallSent) }
     }
 
     /// Store number of failure app authentications
     @objc public var failedAppAuthentications: Int {
-        get { integer(forKey: Self.kFailedAppAuthentications) }
-        set { set(newValue, forKey: Self.kFailedAppAuthentications) }
+        get { integer(forKey: .kFailedAppAuthentications) }
+        set { set(newValue, forKey: .kFailedAppAuthentications) }
     }
 
     /// Store for the selected profile identifier
     @objc public var selectedProfileId: UUID? {
         get {
-            guard let uuidString = string(forKey: Self.kSelectedProfileId) else {
+            guard let uuidString = string(forKey: .kSelectedProfileId) else {
                 return nil
             }
             return UUID(uuidString: uuidString)
         }
-        set { set(newValue?.uuidString, forKey: Self.kSelectedProfileId) }
+        set { set(newValue?.uuidString, forKey: .kSelectedProfileId) }
     }
 
     /// Store number of failure app authentications
     @objc public var latestCompatibleCoreDataModelVersion: Int {
-        get { integer(forKey: Self.kLatestCompatibleCoreDataModelVersion) }
-        set { set(newValue, forKey: Self.kLatestCompatibleCoreDataModelVersion) }
+        get { integer(forKey: .kLatestCompatibleCoreDataModelVersion) }
+        set { set(newValue, forKey: .kLatestCompatibleCoreDataModelVersion) }
     }
 
     /// Store every app start in this counter
     @objc public var appStartCounter: Int {
-        get { integer(forKey: Self.kAppInstallSent) }
-        set { set(newValue, forKey: Self.kAppInstallSent) }
+        get { integer(forKey: .kAppInstallSent) }
+        set { set(newValue, forKey: .kAppInstallSent) }
     }
 
     /// Store for all read internal messages (Id)
     @objc public var readInternalCommunications: [String] {
         get {
-            guard let readIds = stringArray(forKey: Self.kHasReadInternalCommunications) else {
+            guard let readIds = stringArray(forKey: .kHasReadInternalCommunications) else {
                 return []
             }
             return readIds
         }
-        set { set(newValue, forKey: Self.kHasReadInternalCommunications) }
+        set { set(newValue, forKey: .kHasReadInternalCommunications) }
     }
 
     /// Store for the date when the onboarding finished
     @objc public var onboardingDate: Date? {
-        get { object(forKey: Self.kOnboardingDate) as? Date }
-        set { set(newValue, forKey: Self.kOnboardingDate) }
+        get { object(forKey: .kOnboardingDate) as? Date }
+        set { set(newValue, forKey: .kOnboardingDate) }
     }
 
     /// Store if welcome message should be hidden
     @objc public var hideWelcomeMessage: Bool {
-        get { bool(forKey: Self.kHideWelcomeMessage) }
-        set { set(newValue, forKey: Self.kHideWelcomeMessage) }
+        get { bool(forKey: .kHideWelcomeMessage) }
+        set { set(newValue, forKey: .kHideWelcomeMessage) }
     }
+
+    /// Store if EU redeem instructions should be hidden
+    @objc public var hideEURedeemInstructions: Bool {
+        get { bool(forKey: .kHideEURedeemInstructions) }
+        set { set(newValue, forKey: .kHideEURedeemInstructions) }
+    }
+}
+
+import Sharing
+
+extension SharedReaderKey
+    where Self == AppStorageKey<UUID>.Default {
+    /// C.CH.AUT public key for virtual EGK
+    public static var selectedProfileId: Self {
+        Self[.appStorage(.kSelectedProfileId), default: UUID()]
+    }
+}
+
+extension UUID: @retroactive RawRepresentable {
+    public var rawValue: String {
+        uuidString
+    }
+
+    public init?(rawValue: String) {
+        self.init(uuidString: rawValue)
+    }
+
+    public typealias RawValue = String
 }

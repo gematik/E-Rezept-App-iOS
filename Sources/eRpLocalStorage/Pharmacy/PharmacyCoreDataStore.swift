@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import CombineSchedulers
 import CoreData
@@ -165,9 +166,9 @@ public class PharmacyCoreDataStore: PharmacyLocalDataStore, CoreDataCrudable {
         return delete(resultsOf: request)
     }
 
-    // sourcery: CodedError = "505"
+    @CodedError("505")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case noMatchingEntity
     }
 }

@@ -29,11 +29,11 @@ extension DefaultErxTaskCoreDataStore {
     /// Fetch the ErxChargeItem by its id when required by `Self`
     ///
     /// - Parameters:
+    ///   - profileId: The profile identifier to which the item belongs to or nil if all data should be considered
     ///   - id: the ErxChargeItem ID
-    ///   - fullDetail: if set to true, fetches all available information
-    ///   otherwise only a minimal version
     /// - Returns: Publisher for the fetch request
     public func fetchChargeItem(
+        of profileId: UUID?,
         by chargeItemID: ErxChargeItem.ID
     ) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
@@ -61,7 +61,10 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// Fetch the most recent `enteredDate` of all `ChargeItem`s
-    public func fetchLatestTimestampForChargeItems() -> AnyPublisher<String?, LocalStoreError> {
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
+    /// - Returns: The latest timestamp as `String` or error
+    public func fetchLatestTimestampForChargeItems(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
         request.fetchLimit = 1
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxChargeItemEntity.enteredDate), ascending: false)]
@@ -77,8 +80,11 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// List all charge items with the given local contained in the store
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
     /// - Returns: Array of the fetched charge items or error
     public func listAllChargeItems(
+        of profileId: UUID?
     ) -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
@@ -99,7 +105,7 @@ extension DefaultErxTaskCoreDataStore {
     /// Creates or updates the passed sequence of `ErxChargeItem`s
     /// - Parameter chargeItems: Array of charge items that should be stored
     /// - Returns: `true` if save operation was successful
-    public func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+    public func save(chargeItems: [ErxSparseChargeItem], of profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
         coreDataCrudable.save(mergePolicy: .error) { moc in
             _ = chargeItems.map { [weak self] chargeItem -> ErxChargeItemEntity? in
                 let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
@@ -109,14 +115,14 @@ extension DefaultErxTaskCoreDataStore {
                 )
 
                 if let chargeItemEntity = try? moc.fetch(request).first {
-                    chargeItemEntity.update(with: chargeItem, profileEntity: self?.fetchProfile(in: moc))
+                    chargeItemEntity.update(with: chargeItem, profileEntity: self?.fetchProfile(profileId, in: moc))
                     return chargeItemEntity
                 } else {
                     let chargeItemEntity = ErxChargeItemEntity.from(
                         chargeItem: chargeItem,
                         in: moc
                     )
-                    chargeItemEntity?.profile = self?.fetchProfile(in: moc)
+                    chargeItemEntity?.profile = self?.fetchProfile(profileId, in: moc)
                     return chargeItemEntity
                 }
             }
@@ -124,9 +130,14 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// Deletes a sequence of charge items from the store
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
     /// - Parameter chargeItems: Array of charge items that should be deleted
     /// - Returns: `true` if delete operation was successful
-    public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+    public func delete(
+        of profileId: UUID?,
+        chargeItems: [ErxSparseChargeItem]
+    ) -> AnyPublisher<Bool, LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
         var subPredicates = [NSPredicate]()
         if let identifier = profileId {

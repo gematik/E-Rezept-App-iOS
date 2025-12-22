@@ -37,7 +37,7 @@ public struct SelectEUPrescriptionsDomain {
         public var selectAllEnabled = false
 
         public init(
-            prescriptions: [EUPrescription] = [],
+            prescriptions: [EUPrescription] = SelectEUPrescriptionsDomain.Dummies.prescriptions,
             patientName: String = "",
             selectAllEnabled: Bool = false
         ) {
@@ -103,7 +103,6 @@ public struct SelectEUPrescriptionsDomain {
             return .send(.delegate(.didSelectPrescriptions(
                 state.prescriptions.filter(\.isSelected)
             )))
-
         case .delegate:
             return .none
         }
@@ -114,9 +113,9 @@ public struct SelectEUPrescriptionsDomain {
 
 extension SelectEUPrescriptionsDomain {
     /// Mock data for testing and previews
-    enum Dummies {
+    public enum Dummies {
         /// Sample prescriptions for testing
-        static let prescriptions: [EUPrescription] = [
+        public static let prescriptions: [EUPrescription] = [
             EUPrescription(
                 id: "1",
                 name: "Acaimoum",

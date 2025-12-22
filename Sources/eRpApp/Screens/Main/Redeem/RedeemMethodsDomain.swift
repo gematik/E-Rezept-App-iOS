@@ -24,6 +24,7 @@ import CasePaths
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureHelpers
 import IDP
 import UIKit
 
@@ -33,6 +34,11 @@ struct RedeemMethodsDomain {
     struct State: Equatable {
         var prescriptions: [Prescription]
         @Presents var destination: Destination.State?
+
+        var isEURedeemable: Bool {
+            @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+            return euRedeemPrescriptionsFeature && prescriptions.contains(where: \.erxTask.isEURedeemable)
+        }
     }
 
     enum Action: Equatable {
@@ -46,6 +52,7 @@ struct RedeemMethodsDomain {
         enum Delegate: Equatable {
             case close
             case redeemOverview([Prescription])
+            case euRedeemTapped
         }
     }
 
@@ -78,6 +85,15 @@ struct RedeemMethodsDomain {
             }
         }
         .ifLet(\.$destination, action: \.destination)
+    }
+}
+
+extension SharedReaderKey
+    where Self == AppStorageKey<Bool>.Default {
+    /// A key to determine whether the app should show the feature eu redeeming of prescriptions.
+    /// As soon as this feature goes live, this key should be removed.
+    public static var euRedeemPrescriptionsFeature: Self {
+        Self[.appStorage("eu_redeem_prescriptions_feature"), default: false]
     }
 }
 

@@ -109,9 +109,14 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
             fatalError("Element list to short, expected \(position + 1) elements, found \(elements.count)")
         }
         elements[position].coordinate(withNormalizedOffset: .zero).withOffset(.init(dx: -30, dy: 10)).tap()
-        staticText(by: "Löschen", fileID: fileID, file: file, line: line)
-            .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5))
-            .tap()
+        let button = button(by: "Löschen", fileID: fileID, file: file, line: line, checkExistence: false)
+        if button.exists {
+            button.tap()
+        } else {
+            staticText(by: "Löschen", fileID: fileID, file: file, line: line)
+                .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5))
+                .tap()
+        }
     }
 
     func addTimeButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
@@ -124,6 +129,7 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
 
     func toggleDosageDialog(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
         button(by: A11y.medicationReminder.medReminderBtnDosageInstruction, fileID: fileID, file: file, line: line)
+            .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5))
             .tap()
     }
 

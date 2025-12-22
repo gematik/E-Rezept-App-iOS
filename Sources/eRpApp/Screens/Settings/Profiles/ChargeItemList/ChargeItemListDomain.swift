@@ -23,8 +23,11 @@
 
 import Combine
 import ComposableArchitecture
+import ConsentService
 import eRpKit
 import eRpLocalStorage
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
 
 // swiftlint:disable type_body_length
@@ -325,12 +328,12 @@ struct ChargeItemListDomain {
                 return .none
             case let .error(error):
                 state.grantConsentState = .error
-                if case let .chargeItemConsentService(chargeItemConsentServiceError) = error {
-                    if case .loginHandler = chargeItemConsentServiceError {
+                if case let .consentService(consentServiceError) = error {
+                    if case .loginHandler = consentServiceError {
                         state.authenticationState = .error
                         state.bottomBannerState = .authenticate
                         state.destination = nil
-                    } else if let alertState = chargeItemConsentServiceError.alertState {
+                    } else if let alertState = consentServiceError.alertState {
                         // in case of an expected (specified) http error
                         state.authenticationState = .authenticated
                         state.destination = .alert(alertState.chargeItemListDomainErpAlertState)
@@ -412,12 +415,12 @@ struct ChargeItemListDomain {
                 return .none
             case let .error(error):
                 state.grantConsentState = .error
-                if case let .chargeItemConsentService(chargeItemConsentServiceError) = error {
-                    if case .loginHandler = chargeItemConsentServiceError {
+                if case let .consentService(consentServiceError) = error {
+                    if case .loginHandler = consentServiceError {
                         state.authenticationState = .error
                         state.bottomBannerState = .authenticate
                         state.destination = nil
-                    } else if let alertState = chargeItemConsentServiceError.alertState {
+                    } else if let alertState = consentServiceError.alertState {
                         // in case of an expected (specified) http error
                         state.authenticationState = .authenticated
                         state.destination = .alert(alertState.chargeItemListDomainErpAlertState)

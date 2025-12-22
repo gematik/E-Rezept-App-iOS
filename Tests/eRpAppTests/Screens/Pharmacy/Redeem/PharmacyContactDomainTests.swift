@@ -20,10 +20,12 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import Nimble
 import XCTest
 

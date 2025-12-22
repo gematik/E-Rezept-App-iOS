@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import Foundation
 import HTTPClient
@@ -45,36 +46,7 @@ public class VAUInterceptor: Interceptor {
         self.vauEndpointHandler = vauEndpointHandler
     }
 
-    public func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        let request = chain.request
-        guard let originalUrl = request.url else {
-            return Fail(error: HTTPClientError
-                .vauError(VAUError.internalError("Could not prepare request for VAU service")))
-                            .eraseToAnyPublisher()
-        }
-
-        // [REQ:gemSpec_eRp_FdV:A_19187] VAU Bearer must be set to trigger a request
-        return vauAccessTokenProvider.vauBearerToken
-            .zip(
-                vauCertificateProvider.loadAndVerifyVauCertificate(),
-                vauEndpointHandler.vauEndpoint
-            )
-            .first()
-            // Prepare outer request (encrypt original request and embed it into a new one)
-            // [REQ:gemSpec_Krypt:A_20161-01#3] Encapsulate "real" HTTPRequest into VAU envelop
-            .processToVauRequest(urlRequest: request, vauCryptoProvider: vauCryptoProvider)
-            .flatMap { vauCrypto, vauRequest -> AnyPublisher<HTTPResponse, HTTPClientError> in
-                chain.proceedPublisher(request: vauRequest)
-                    // Process VAU server response (validate and extract+decrypt inner FHIR service response)
-                    // [REQ:gemSpec_Krypt:A_20174#12] 2: Handle userpseudonym
-                    .handleUserPseudonym(vauEndpointHandler: self.vauEndpointHandler)
-                    // [REQ:gemSpec_Krypt:A_20174#16] 6: Remove the envelop
-                    .processVauResponse(vauCrypto: vauCrypto, originalUrl: originalUrl)
-            }
-            .eraseToAnyPublisher()
-    }
-
-    public func interceptAsync(chain: Chain) async throws -> HTTPResponse {
+    public func intercept(chain: Chain) async throws -> HTTPResponse {
         let request = chain.request
         guard let originalUrl = request.url else {
             throw HTTPClientError.vauError(VAUError.internalError("Could not prepare request for VAU service"))
@@ -100,7 +72,7 @@ public class VAUInterceptor: Interceptor {
             throw HTTPClientError.vauError(error)
         }
 
-        let vauResponse = try await chain.proceedAsync(request: vauRequest)
+        let vauResponse = try await chain.proceed(request: vauRequest)
         // Process VAU server response (validate and extract+decrypt inner FHIR service response)
         // [REQ:gemSpec_Krypt:A_20174#12] 2: Handle userpseudonym
         vauEndpointHandler.didReceiveUserPseudonym(in: vauResponse)

@@ -46,5 +46,11 @@
         "text": "**♿ Accessibility** \nThe profile settings have been revised to further increase accessibility.",
         "timestamp": "2025-08-26T08:00:00.000Z",
         "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registration for More People** \nRegistration is now also possible for insured persons of federal institutions, such as the Federal Police and others. \n \n **🕒 Improved Pharmacy Opening Hours** \nEmergency service and special closing times for pharmacies are now displayed, if available. \n \n **💊 Selection of All Prescriptions** \nWhen redeeming prescriptions, all prescriptions can now be selected simultaneously. \n \n **♿ Accessibility** \nThe colors of fonts and icons have been adjusted to achieve higher contrast. Additionally, VoiceOver speech output for editing the profile picture and recognizing the login status has been improved.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
     }
 ]

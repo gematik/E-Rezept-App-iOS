@@ -52,7 +52,7 @@ struct OnboardingLegalInfoView: View {
                         )
                         .frame(maxWidth: .infinity, alignment: .center)
                         .fixedSize(horizontal: false, vertical: true)
-                        .buttonStyle(PrimaryBorderButtonStyle())
+                        .buttonStyle(.secondary)
 
                         Button(
                             action: { store.send(.setShowUse(true)) },
@@ -68,7 +68,7 @@ struct OnboardingLegalInfoView: View {
                         )
                         .frame(maxWidth: .infinity, alignment: .center)
                         .fixedSize(horizontal: false, vertical: true)
-                        .buttonStyle(PrimaryBorderButtonStyle())
+                        .buttonStyle(.secondary)
                     }
                     .padding(.vertical, 16)
                 }

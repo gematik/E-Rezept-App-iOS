@@ -20,11 +20,12 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import FHIRClient
 import Foundation
 
-// sourcery: CodedError = "204"
 /// Remote store error cases
+@CodedError("204")
 public enum RemoteStoreError: Swift.Error, LocalizedError, Equatable {
     public static func ==(lhs: RemoteStoreError, rhs: RemoteStoreError) -> Bool {
         switch (lhs, rhs) {
@@ -35,9 +36,9 @@ public enum RemoteStoreError: Swift.Error, LocalizedError, Equatable {
         }
     }
 
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case fhirClient(FHIRClient.Error)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case notImplemented
 
     public var errorDescription: String? {

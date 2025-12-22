@@ -20,12 +20,16 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import CasePaths
 import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
 import CoreLocationUI
 import eRpKit
+import eRpResources
+import FeatureEURedeem
+import FeatureHelpers
 import IDP
 import MapKit
 import Pharmacy
@@ -80,6 +84,8 @@ struct PharmacySearchDomain {
         var currentLocation: Location?
         /// Map-Location for MapView with the standard value if location is not active
         var mapLocation = MKCoordinateRegion.gematikHQRegion
+
+        var isoCountryCode: String?
         /// Store for the remote search result
         var pharmacies: [PharmacyLocationViewModel] = []
         /// Store for the local pharmacies
@@ -87,6 +93,15 @@ struct PharmacySearchDomain {
         /// A valid search terms should at least consist of 3 chars
         var searchTextValid: Bool {
             searchText.count > 2
+        }
+
+        var hideEURedeemHint = false
+        var isEURedeemable: Bool {
+            @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+            return euRedeemPrescriptionsFeature
+                && isoCountryCode != "DE"
+                && EUCountry.europeanCountryCodes.contains(isoCountryCode ?? "")
+                && lastSearchCriteria?.filter.contains { $0 == .currentLocation } == true
         }
 
         var pharmacySearchMapState: PharmacySearchMapDomain.State?
@@ -177,6 +192,9 @@ struct PharmacySearchDomain {
         case startRequestingCurrentLocation
         case locationManager(LocationManager.Action)
         case closeButtonTouched
+        // EU redeem
+        case hideEuRedeemHint
+        case geoCodeLocation(Location)
 
         case destination(PresentationAction<Destination.Action>)
         case resetNavigation
@@ -187,6 +205,7 @@ struct PharmacySearchDomain {
         @CasePathable
         enum Delegate: Equatable {
             case close
+            case euRedeemTapped
         }
 
         @CasePathable
@@ -194,6 +213,7 @@ struct PharmacySearchDomain {
             case pharmaciesReceived(Result<[PharmacyLocationViewModel], PharmacyRepositoryError>)
             case loadLocalPharmaciesReceived(Result<[PharmacyLocationViewModel], PharmacyRepositoryError>)
             case loadAndNavigateToPharmacyReceived(Result<PharmacyLocation, PharmacyRepositoryError>)
+            case isoCountryCodeReceived(String?)
         }
 
         case universalLink(URL)
@@ -202,7 +222,7 @@ struct PharmacySearchDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
     @Dependency(\.locationManager) var locationManager: LocationManager
-    @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+    @Dependency(\.openURLHandler) var openURLHandler
     @Dependency(\.searchHistory) var searchHistory: SearchHistory
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
@@ -231,6 +251,7 @@ struct PharmacySearchDomain {
                 inRedeemProcess: state.inRedeemProcess,
                 currentUserLocation: state.currentLocation,
                 mapLocation: .manual(state.mapLocation),
+                isoCountryCode: state.isoCountryCode,
                 searchText: state.searchText
             ))
             return .none
@@ -250,16 +271,29 @@ struct PharmacySearchDomain {
                 center: location.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
+            return .send(.geoCodeLocation(location))
+        case let .geoCodeLocation(location):
+            return isoCountryCode(location)
+        case let .response(.isoCountryCodeReceived(isoCountryCode)):
+            state.isoCountryCode = isoCountryCode
             return .none
         case let .destination(.presented(.pharmacyMapSearch(action: .delegate(action)))):
             switch action {
             case let .closeMap(location):
                 state.currentLocation = location
                 state.destination = nil
+
                 if state.searchCriteriaChanged {
-                    return .send(.performSearch)
+                    return .run { send in
+                        await send(.performSearch)
+                        if let location {
+                            await send(.geoCodeLocation(location))
+                        }
+                    }
                 }
-                return .none
+
+                guard let location else { return .none }
+                return .send(.geoCodeLocation(location))
             case .close:
                 state.destination = nil
                 return .run { send in
@@ -268,6 +302,8 @@ struct PharmacySearchDomain {
                     try await schedulers.main.sleep(for: 0.1)
                     await send(.delegate(.close))
                 }
+            case .euRedeemTapped:
+                return .none
             }
         case .closeButtonTouched:
             return Effect.send(.delegate(.close))
@@ -275,6 +311,8 @@ struct PharmacySearchDomain {
             switch action {
             case .close:
                 state.destination = nil
+                return .none
+            case .euRedeemTapped:
                 return .none
             }
         case .switchToMapView:
@@ -302,6 +340,7 @@ struct PharmacySearchDomain {
                 inRedeemProcess: state.inRedeemProcess,
                 currentUserLocation: state.currentLocation,
                 mapLocation: mapLocation,
+                isoCountryCode: state.isoCountryCode,
                 pharmacies: pharmacies,
                 showOnlyTextSearchResult: true,
                 searchText: state.searchText
@@ -311,24 +350,22 @@ struct PharmacySearchDomain {
             state.searchHistory = searchHistory.historyItems()
             return .merge(
                 .publisher { state.$pharmacyFilterOptions.publisher.dropFirst().map(Action.quickSearch) },
-                .publisher(
-                    pharmacyRepository.loadLocal(count: 5)
-                        .first()
-                        .map { [currentLocation = state.currentLocation] elements in
-                            elements.map { element in
-                                PharmacyLocationViewModel(
-                                    pharmacy: element,
-                                    referenceLocation: currentLocation,
-                                    referenceDate: referenceDateForOpenHours,
-                                    timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
-                                )
-                            }
+                .run { [currentLocation = state.currentLocation] send in
+                    do {
+                        let response = try await pharmacyRepository.loadLocalCount(5).map { pharmacy in
+                            PharmacyLocationViewModel(
+                                pharmacy: pharmacy,
+                                referenceLocation: currentLocation,
+                                referenceDate: referenceDateForOpenHours,
+                                timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
+                            )
                         }
-                        .catchToPublisher()
-                        .map { .response(.loadLocalPharmaciesReceived($0)) }
-                        .receive(on: schedulers.main.animation())
-                        .eraseToAnyPublisher
-                ), Effect.send(.mapSetUp)
+                        await send(.response(.loadLocalPharmaciesReceived(.success(response))))
+                    } catch let error as PharmacyRepositoryError {
+                        await send(.response(.loadLocalPharmaciesReceived(.failure(error))))
+                    }
+                },
+                Effect.send(.mapSetUp)
             )
         case .onAppear:
             return .run { [state] send in
@@ -389,16 +426,14 @@ struct PharmacySearchDomain {
         case let .loadAndNavigateToPharmacy(pharmacyLocation):
             state.searchState = .startView(loading: true)
             state.selectedPharmacy = pharmacyLocation
-            return .publisher(
-                pharmacyRepository.updateFromRemote(
-                    by: pharmacyLocation.telematikID
-                )
-                .first()
-                .receive(on: schedulers.main)
-                .catchToPublisher()
-                .map { .response(.loadAndNavigateToPharmacyReceived($0)) }
-                .eraseToAnyPublisher
-            )
+            return .run { [telematikID = pharmacyLocation.telematikID] send in
+                do {
+                    let response = try await pharmacyRepository.updateFromRemote(telematikID)
+                    await send(.response(.loadAndNavigateToPharmacyReceived(.success(response))))
+                } catch let error as PharmacyRepositoryError {
+                    await send(.response(.loadAndNavigateToPharmacyReceived(.failure(error))))
+                }
+            }
         case let .response(.loadAndNavigateToPharmacyReceived(result)):
             state.searchState = .startView(loading: false)
             switch result {
@@ -430,7 +465,7 @@ struct PharmacySearchDomain {
                     }
                     state.selectedPharmacy = nil
                     return .run { _ in
-                        _ = try await pharmacyRepository.delete(pharmacy: pharmacyLocation).async()
+                        _ = try await pharmacyRepository.delete(pharmacy: pharmacyLocation)
                     }
                 }
             }
@@ -550,10 +585,14 @@ struct PharmacySearchDomain {
                 }
                 return Effect.send(.mapSetUp)
             case let .didUpdateLocations(locations):
-                state.currentLocation = locations.first
+                guard let location = locations.first
+                else { return .none }
+
+                state.currentLocation = location
                 return .run(operation: { send in
                     await locationManager.stopUpdatingLocation()
                     await send(.performSearch)
+                    await send(.geoCodeLocation(location))
                 })
             default:
                 return .none
@@ -562,6 +601,9 @@ struct PharmacySearchDomain {
             state.destination = .pharmacyFilter(.init(
                 pharmacyFilterOptions: state.$pharmacyFilterOptions
             ))
+            return .none
+        case .hideEuRedeemHint:
+            state.hideEURedeemHint = true
             return .none
         case let .universalLink(url):
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
@@ -572,28 +614,27 @@ struct PharmacySearchDomain {
             }
 
             state.searchState = .startView(loading: true)
-            return .run(operation: { send in
-                let pharmacy = try await pharmacyRepository.loadCached(by: identifier)
-                    .first()
-                    .catchToPublisher()
-                    .async()
+            return .run { send in
+                let pharmacy = try await pharmacyRepository.loadCached(identifier)
 
-                let value = pharmacy.flatMap { location -> Result<PharmacyLocation, PharmacyRepositoryError> in
-                    guard let location = location else {
-                        return .failure(.remote(.notFound))
-                    }
-                    return .success(location)
+                let value: Result<PharmacyLocation, PharmacyRepositoryError>
+                if let pharmacy = pharmacy {
+                    value = .success(pharmacy)
+                } else {
+                    value = .failure(.remote(.notFound))
                 }
+
                 await send(.response(.loadAndNavigateToPharmacyReceived(value)))
 
                 // Let all transitions finish before toggling the favorite.
                 try? await schedulers.main.sleep(for: .seconds(1))
 
                 await send(.destination(.presented(.pharmacyDetail(.setIsFavorite(true)))))
-            })
+            }
         case .destination(.presented(.alert(.openAppSpecificSettings))):
-            openSettings()
-            return .none
+            return .run { _ in
+                await openSettings()
+            }
         case .resetNavigation:
             state.destination = nil
             return .none
@@ -601,6 +642,17 @@ struct PharmacySearchDomain {
             return .none
         }
     }
+}
+
+// Will be moved to FeatureEURedeem.Country
+enum EUCountry {
+    static let europeanCountryCodes: Set<String> = [
+        "DE", "FR", "IT", "ES", "PL", "SE", "NO", "CH", "AT", "NL", "BE",
+        "CZ", "DK", "FI", "GR", "HU", "IE", "PT", "RO", "SK", "SI", "HR",
+        "BG", "EE", "LV", "LT", "LU", "MT", "CY", "IS", "LI", "MC", "SM",
+        "VA", "UK", "RU", "UA", "BY", "MD", "AL", "BA", "MK", "RS", "ME",
+        "XK", "TR",
+    ]
 }
 
 extension URLComponents {
@@ -630,9 +682,9 @@ extension URLComponents {
 }
 
 extension PharmacySearchDomain {
-    func openSettings() {
+    func openSettings() async {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            resourceHandler.open(url)
+            await openURLHandler.open(url)
         }
     }
 
@@ -642,28 +694,41 @@ extension PharmacySearchDomain {
            let longitude = searchCriteria.location?.coordinate.longitude {
             position = Position(lat: latitude, lon: longitude)
         }
-        return .publisher(
-            pharmacyRepository.searchRemote(
-                searchTerm: searchCriteria.searchTerm,
-                position: position,
-                filter: searchCriteria.filter.asPharmacyRepositoryFilters
-            )
-            .first()
-            .map { elements in
-                elements.map { element in
+        return .run { [searchCriteria = searchCriteria, position = position] send in
+            do {
+                let response = try await pharmacyRepository.searchRemote(
+                    searchCriteria.searchTerm,
+                    position,
+                    searchCriteria.filter
+                        .asPharmacyRepositoryFilters
+                )
+                .map { pharmacy in
                     PharmacyLocationViewModel(
-                        pharmacy: element,
-                        referenceLocation: searchCriteria.location,
+                        pharmacy: pharmacy,
+                        referenceLocation: searchCriteria
+                            .location,
                         referenceDate: referenceDateForOpenHours,
-                        timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
+                        timeOnlyFormatter: uiDateFormatter
+                            .timeOnlyFormatter
                     )
                 }
+                await send(.response(.pharmaciesReceived(.success(response))))
+            } catch let error as PharmacyRepositoryError {
+                await send(.response(.pharmaciesReceived(.failure(error))))
             }
-            .catchToPublisher()
-            .map { .response(.pharmaciesReceived($0)) }
-            .receive(on: schedulers.main.animation())
-            .eraseToAnyPublisher
-        )
+        }
+    }
+
+    func isoCountryCode(
+        _ location: Location,
+        geoCoder: CLGeocoder = CLGeocoder()
+    ) -> Effect<PharmacySearchDomain.Action> {
+        .run { send in
+            let geoLocation = try? await geoCoder.reverseGeocodeLocation(
+                CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            )
+            await send(.response(.isoCountryCodeReceived(geoLocation?.first?.isoCountryCode)))
+        }
     }
 
     /// This function calculates the span needed to display up to the seventh (or last) pharmacy on the Map.

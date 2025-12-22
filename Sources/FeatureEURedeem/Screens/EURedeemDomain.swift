@@ -28,6 +28,8 @@ public struct EURedeemDomain {
     /// State for the EU redemption flow
     @ObservableState
     public struct State: Equatable {
+        /// First redeem of a eu prescription for this profile
+        public var firstRedeem = true
         /// Navigation path for the redemption flow
         public var path = StackState<Path.State>()
         /// State for the selection screen
@@ -76,35 +78,39 @@ public struct EURedeemDomain {
 
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .selection(.redeemButtonTapped):
-            state.path.append(.instructions(.init()))
-            return .none
-        case .selection(.selectCountryButtonTapped):
-            state.path.append(.countrySelection(.init(countries: EURedeemSelectionDomain.Dummies.countries)))
-            return .none
-        case .selection(.selectPrescriptionsButtonTapped):
-
-            state.path.append(.prescriptionSelection(
-                SelectEUPrescriptionsDomain.State(
-                    prescriptions: state.selection.prescriptions,
-                    patientName: "Ada Muster"
-                )
-            ))
-            return .none
-
+        case let .selection(.delegate(delegate)):
+            switch delegate {
+            case .selectInstructionButtonTapped:
+                state.path.append(.instructions(.init()))
+                return .none
+            case .redeemButtonTapped:
+                state.path.append(.instructions(.init()))
+                return .none
+            case .selectCountryButtonTapped:
+                state.path.append(.countrySelection(.init(countries: EURedeemSelectionDomain.Dummies.countries)))
+                return .none
+            case .selectPrescriptionsButtonTapped:
+                state.path.append(.prescriptionSelection(
+                    SelectEUPrescriptionsDomain.State(
+                        prescriptions: state.selection.prescriptions,
+                        patientName: "Ada Muster"
+                    )
+                ))
+                return .none
+            case .close:
+                return .none
+            }
         case let .path(.element(id: _, action: .countrySelection(.selectCountry(country)))):
             state.selection.selectedCountry = country
             state.path.removeLast()
             return .none
-
         case let .path(.element(id: _,
                                 action: .prescriptionSelection(.delegate(.didSelectPrescriptions(prescriptions))))):
-            return .send(.selection(.setSelectedPrescriptions(prescriptions)))
-
+            state.selection.prescriptions = prescriptions
+            return .none
         case .path(.element(id: _, action: .instructions(.delegate(.continueButtonTapped)))):
             state.path.append(.code(.init()))
             return .none
-
         case .path, .selection:
             return .none
         }

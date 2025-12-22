@@ -32,9 +32,12 @@ struct GrantChargeItemConsentDrawerView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 24) {
-            Capsule()
-                .foregroundColor(Colors.systemLabelQuarternary)
-                .frame(width: 32, height: 8, alignment: .center)
+            HStack(spacing: 0) {
+                Spacer()
+
+                CloseButton { store.send(.grantChargeItemsConsentCloseButtonTapped) }
+                    .accessibilityIdentifier(A11y.mainScreen.erxBtnConsentDrawerClose)
+            }
 
             Image(decorative: Asset.Illustrations.pharmacistm1)
 
@@ -44,7 +47,7 @@ struct GrantChargeItemConsentDrawerView: View {
                     .accessibility(identifier: A11y.mainScreen.erxTxtConsentDrawerTitle)
 
                 Text(L10n.mainTxtConsentDrawerMessage)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibility(identifier: A11y.mainScreen.erxTxtConsentDrawerMessage)
@@ -71,7 +74,7 @@ struct GrantChargeItemConsentDrawerView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 8) // capsule padding
+        .padding(.top, 8) // close button padding
         .padding(.horizontal)
         .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
     }

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Details - Swift Error Documentation</title>
+    <link rel="stylesheet" href="shared_styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <a href="error_search.html" class="nav-button">⛓ Error-Chains Search</a>
+            <a href="error_graph.html" class="nav-button">📊 Visual Graph Search</a>
+            <a href="error_details.html" class="nav-button active">📋 Error Details</a>
+            <a href="errors.md" class="nav-button">📝 Markdown</a>
+            <a href="errors.json" class="nav-button">📄 Raw JSON Data</a>
+        </div>
+
+        <div class="header">
+            <h1>E-Rezept iOS - Error Details<br /><sub>Generated on <%= Time.now.strftime('%Y-%m-%d %H:%M:%S') %></sub></h1>
+            <p>This documentation provides detailed information about all error enums and their cases defined in the Swift codebase.</p>
+            <p>It is meant to assist support and development teams in understanding and handling errors effectively.</p>
+            <p>For any questions or contributions, please contact the development team.</p>
+        </div>
+
+        <div class="summary">
+            <h2>Summary</h2>
+            <p><strong>Total Files:</strong> <%= summary[:total_files] %></p>
+            <p><strong>Total Error Enums:</strong> <%= summary[:total_enums] %></p>
+            <p><strong>Total Error Cases:</strong> <%= summary[:total_cases] %></p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="errorSearch" class="search-input" placeholder="Search errors by name, code, or description...">
+        </div>
+
+        <div class="error-list" id="errorList">
+<% all_errors.each do |error| -%>
+<% display_name = GenerateErrorDocumentationAction.get_display_name(error) -%>
+<% error_id = display_name.downcase.gsub(/[^a-z0-9]/, '_') -%>
+            <div class="error-card" id="<%= error_id %>" data-searchable="<%= GenerateErrorDocumentationAction.escape_html(display_name) %> <%= error[:code] %> <%= error[:qualified_name] %> <%= error[:documentation] %>">
+                <div class="error-header">
+                    <h2 class="error-title"><%= GenerateErrorDocumentationAction.escape_html(display_name) %></h2>
+                    <div class="error-meta">
+                        <span class="error-code"><%= error[:code] %></span>
+                        <span> • Qualified Name: <code><%= GenerateErrorDocumentationAction.escape_html(error[:qualified_name]) %></code></span>
+                        <span> • File: <code><%= GenerateErrorDocumentationAction.escape_html(error[:file]) %></code></span>
+                    </div>
+                </div>
+                
+<% if error[:documentation] && !error[:documentation].empty? -%>
+                <div class="documentation">
+<%= GenerateErrorDocumentationAction.escape_html(error[:documentation]) %>
+                </div>
+<% end -%>
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+<% if error[:cases].any? -%>
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+<% error[:cases].each do |case_info| -%>
+<% case_doc = case_info[:documentation] && !case_info[:documentation].empty? ? GenerateErrorDocumentationAction.escape_html(case_info[:documentation]) : "<em>No description</em>" -%>
+                            <tr>
+                                <td><span class="case-id">i-<%= case_info[:full_id] %></span></td>
+                                <td><span class="case-name"><%= GenerateErrorDocumentationAction.escape_html(case_info[:name]) %></span></td>
+                                <td><%= case_doc %></td>
+                            </tr>
+<% end -%>
+                        </tbody>
+                    </table>
+<% else -%>
+                    <p class="no-cases">No cases defined for this error enum.</p>
+<% end -%>
+                </div>
+
+<% related_errors = [] -%>
+<% error[:cases].each do |case_info| -%>
+<% next unless case_info[:assoc_types] -%>
+<% case_info[:assoc_types].each do |assoc_type| -%>
+<% if GenerateErrorDocumentationAction.is_error_type?(assoc_type) -%>
+<% target_error = all_errors.find { |e| e[:qualified_name] == assoc_type || e[:name] == assoc_type } -%>
+<% if target_error -%>
+<% target_display = GenerateErrorDocumentationAction.get_display_name(target_error) -%>
+<% target_id = target_display.downcase.gsub(/[^a-z0-9]/, '_') -%>
+<% related_errors << { case_name: case_info[:name], target_error: target_display, target_id: target_id } -%>
+<% end -%>
+<% end -%>
+<% end -%>
+<% end -%>
+<% if related_errors.any? -%>
+                <div class="related-errors">
+                    <h3>Related Errors</h3>
+                    <ul>
+<% related_errors.each do |rel| -%>
+                        <li>Case <code><%= GenerateErrorDocumentationAction.escape_html(rel[:case_name]) %></code> → <a href="#<%= rel[:target_id] %>" class="related-link"><%= GenerateErrorDocumentationAction.escape_html(rel[:target_error]) %></a></li>
+<% end -%>
+                    </ul>
+                </div>
+<% end -%>
+
+            </div>
+<% end -%>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('errorSearch');
+        const errorCards = document.querySelectorAll('.error-card');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            errorCards.forEach(card => {
+                const searchableContent = card.getAttribute('data-searchable').toLowerCase();
+                if (searchableContent.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

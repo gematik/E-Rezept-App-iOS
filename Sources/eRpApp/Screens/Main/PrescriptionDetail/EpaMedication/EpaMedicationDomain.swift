@@ -24,6 +24,7 @@ import Combine
 import ComposableArchitecture
 import Dependencies
 import eRpKit
+import eRpResources
 import SwiftUI
 
 @Reducer

@@ -20,7 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
+import AsyncHelpers
 import Foundation
 import HTTPClient
 import IDP
@@ -28,18 +28,10 @@ import IDP
 /// The IDP HTTP Interceptor to authenticate HTTP-Requests
 public class IDPInterceptor: Interceptor {
     private let session: IDPSession
-
-    /// The IDPSession delegate used for the intercept
-    public weak var delegate: IDPSessionDelegate?
-
     /// Initialize with IDPSession
-    ///
-    /// - Parameters:
-    ///   - session: the session to use
-    ///   - delegate: optional delegate
-    public init(session: IDPSession, delegate: IDPSessionDelegate? = nil) {
+    /// - Parameter session: the session to use
+    public init(session: IDPSession) {
         self.session = session
-        self.delegate = delegate
     }
 
     /// Intercepting a `Chain` to set the Authorization header
@@ -49,45 +41,28 @@ public class IDPInterceptor: Interceptor {
     ///         with a HTTPError.authentication error.
     ///
     /// - Parameter chain: the request chain to proceed authenticated hereafter
-    /// - Returns: Publisher that continues the chain authenticated
-    public func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    /// - Returns: the response from the chain
+    public func intercept(chain: Chain) async throws -> HTTPResponse {
         var request = chain.request
-        if let delegate = self.delegate, delegate.shouldAuthorize(request: request) == false {
-            return chain.proceedPublisher(request: request)
-        } else {
-            return session
-                .autoRefreshedToken
-                .first()
-                .tryMap { token in
-                    guard let token = token else {
-                        throw IDPError.tokenUnavailable
-                    }
-                    // [REQ:gemSpec_IDP_Frontend:A_20602#2,A_21325#1] Setup `Authorization-Header`.
-                    request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
-                    return request
-                }
-                .mapError { error in
-                    // [REQ:gemSpec_eRp_FdV:A_20167-02#4] no token available, bailout
-                    .authentication(error)
-                }
-                .flatMap { request -> AnyPublisher<HTTPResponse, HTTPClientError> in
-                    chain
-                        // swiftlint:disable:previous trailing_closure
-                        .proceedPublisher(request: request)
-                        .handleEvents(receiveOutput: { httpResponse in
-                            if httpResponse.status == HTTPStatusCode.unauthorized {
-                                // [REQ:gemSpec_eRp_FdV:A_20167-02#5] invalidate/delete unauthorized token
-                                // [REQ:BSI-eRp-ePA:O.Source_5#2] invalidate/delete unauthorized token
-                                self.session.invalidateAccessToken()
-                            }
-                        })
-                        .eraseToAnyPublisher()
-                }
-                .eraseToAnyPublisher()
+        do {
+            // Obtain (auto-refreshed) access token
+            let token = try await session.autoRefreshedToken.async()
+            guard let token = token else {
+                throw IDPError.tokenUnavailable
+            }
+            // [REQ:gemSpec_IDP_Frontend:A_20602#2,A_21325#1] Setup `Authorization-Header`.
+            request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
+        } catch {
+            // [REQ:gemSpec_eRp_FdV:A_20167-02#4] no token available, bailout
+            throw HTTPClientError.authentication(error)
         }
-    }
 
-    public func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
-        throw HTTPClientError.internalError("notImplemented")
+        let response = try await chain.proceed(request: request)
+        if response.status == .unauthorized {
+            // [REQ:gemSpec_eRp_FdV:A_20167-02#5] invalidate/delete unauthorized token
+            // [REQ:BSI-eRp-ePA:O.Source_5#2] invalidate/delete unauthorized token
+            session.invalidateAccessToken()
+        }
+        return response
     }
 }

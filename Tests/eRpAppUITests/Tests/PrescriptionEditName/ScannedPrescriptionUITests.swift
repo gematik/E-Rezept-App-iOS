@@ -63,7 +63,8 @@ final class ScannedPrescriptionUITests: XCTestCase, Sendable {
     }
 
     @MainActor
-    func testEditPrescriptionTitle_editName() {
+    func testEditPrescriptionTitle_editName() async {
+        let bridge = UITestBridgeClient()
         // given
         app.buttons.element(matching: .init(format: "label == %@", "Rezepte")).tap()
         let medicine223 = "Medicine 223"
@@ -78,7 +79,7 @@ final class ScannedPrescriptionUITests: XCTestCase, Sendable {
         let emtriva200 = "EMTRIVA 200 mg Hartkapseln :)"
         app.typeText(XCUIKeyboardKey.delete.rawValue + emtriva200)
         app.typeText(XCUIKeyboardKey.enter.rawValue)
-
+        await bridge.sendMessage(.scenarioStep(1))
         // (go back)
         app.navigationBars.buttons.firstMatch.tap()
 
@@ -95,7 +96,7 @@ final class ScannedPrescriptionUITests: XCTestCase, Sendable {
         let emtriva250 = "EMTRIVA 250 mg Hartkapseln :)"
         app.typeText("50 mg Hartkapseln :)")
         app.typeText(XCUIKeyboardKey.enter.rawValue)
-
+        await bridge.sendMessage(.scenarioStep(2))
         // (go back)
         app.navigationBars.buttons.firstMatch.tap()
 
@@ -107,7 +108,7 @@ final class ScannedPrescriptionUITests: XCTestCase, Sendable {
         app.staticTexts.containing(NSPredicate(format: "label like '\(emtriva250)'")).element.tap()
 
         app.buttons.containing(NSPredicate(format: "label like 'Als eingelöst markieren'")).element.tap()
-
+        await bridge.sendMessage(.scenarioStep(3))
         // (go to archive)
         app.navigationBars.buttons.firstMatch.tap()
         app.buttons[A11y.mainScreen.erxBtnArcPrescription].tap()
@@ -124,7 +125,6 @@ final class ScannedPrescriptionUITests: XCTestCase, Sendable {
         }
         let noName250 = "250 mg Hartkapseln :)"
         app.typeText(XCUIKeyboardKey.delete.rawValue + noName250)
-
         // (go back)
         app.navigationBars.buttons.firstMatch.tap()
 

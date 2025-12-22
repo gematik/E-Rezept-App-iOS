@@ -50,10 +50,10 @@ struct MedicationReminderSetupView: View {
                     HStack(spacing: 10) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(store.medicationSchedule.dosageInstructions)
-                                .foregroundColor(Colors.text)
+                                .foregroundColor(Colors.systemLabel)
                             Text(L10n.medReminderTxtDosageInstructionSubtitle)
                                 .font(.subheadline)
-                                .foregroundColor(Colors.textSecondary)
+                                .foregroundColor(Colors.systemLabelSecondary)
                         }
 
                         Spacer()
@@ -89,11 +89,11 @@ struct MedicationReminderSetupView: View {
                     } label: {
                         HStack {
                             Text(L10n.medReminderTxtRepetitionTitle)
-                                .foregroundColor(Colors.text)
+                                .foregroundColor(Colors.systemLabel)
                             Spacer()
 
                             Text(store.repetitionValue)
-                                .foregroundColor(Colors.textSecondary)
+                                .foregroundColor(Colors.systemLabelSecondary)
                             Image(systemName: SFSymbolName.chevronForward)
                                 .foregroundColor(Color(.tertiaryLabel))
                                 .font(.body.weight(.semibold))
@@ -142,7 +142,7 @@ struct MedicationReminderSetupView: View {
                             ) {}
                                 .offset(x: -16) // layout priority + offset makes it look correct
                                 .focused($focus, equals: .time(entry.id))
-                                .introspect(.datePicker, on: .iOS(.v15, .v16, .v17, .v18)) { datePicker in
+                                .introspect(.datePicker, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { datePicker in
                                     datePicker.minuteInterval = 5
                                     let calendar = Calendar.autoupdatingCurrent
                                     datePicker.calendar = calendar
@@ -234,6 +234,12 @@ extension MedicationReminderSetupView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 0) {
+                    Spacer()
+                    CloseButton {
+                        store.send(.delegate(.close))
+                    }
+                }
                 Text(store.title)
                     .font(.headline)
                     .accessibilityIdentifier(A11y.medicationReminder.medReminderDrawerDosageInstructionInfoTitle)

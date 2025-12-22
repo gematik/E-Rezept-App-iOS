@@ -23,6 +23,7 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureHelpers
 import SwiftUI
 
 extension AppAuthenticationBiometricPasswordDomain.State {
@@ -39,37 +40,35 @@ struct AppAuthenticationBiometricPasswordView: View {
             VStack(alignment: .center) {
                 switch store.biometryType {
                 case .faceID:
-                    PrimaryTextButton(
-                        text: L10n.authBtnBapFaceid,
-                        a11y: A11y.auth.authBtnBapFaceid,
-                        image: Image(systemName: SFSymbolName.faceId),
-                        useFullWidth: false
-                    ) {
+                    Button {
                         store.send(.startAuthenticationChallenge)
+                    } label: {
+                        Label(L10n.authBtnBapFaceid, systemImage: SFSymbolName.faceId)
                     }
+                    .buttonStyle(.primaryHugging)
+                    .accessibilityIdentifier(A11y.auth.authBtnBapFaceid)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .center)
 
                 case .touchID:
-                    PrimaryTextButton(
-                        text: L10n.authBtnBapTouchid,
-                        a11y: A11y.auth.authBtnBapTouchid,
-                        image: Image(systemName: SFSymbolName.touchId),
-                        useFullWidth: false
-                    ) {
+                    Button {
                         store.send(.startAuthenticationChallenge)
+                    } label: {
+                        Label(L10n.authBtnBapTouchid, systemImage: SFSymbolName.touchId)
                     }
+                    .buttonStyle(.primaryHugging)
+                    .accessibilityIdentifier(A11y.auth.authBtnBapTouchid)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
-
-                NavButton(
-                    text: L10n.authBtnBapChange,
-                    a11y: A11y.auth.authBtnBapChange,
-                    back: false
-                ) {
+                Button {
                     store.send(.switchToPassword(true), animation: .default)
+                } label: {
+                    Text(L10n.authBtnBapChange)
                 }
+                .buttonStyle(.smallNavigation(back: false))
+                .accessibility(identifier: A11y.auth.authBtnBapChange)
+                .frame(maxWidth: .infinity, alignment: .center)
             }
             .onAppear {
                 if store.startImmediateAuthenticationChallenge {
@@ -101,7 +100,7 @@ struct PasswordView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(
-                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
+                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.systemLabelSecondary,
                         lineWidth: 0.5
                     )
             )
@@ -115,24 +114,28 @@ struct PasswordView: View {
                     .padding(.top, 4)
             }
 
-            PrimaryTextButton(
-                text: L10n.authBtnPasswordContinue,
-                a11y: A11y.auth.authBtnPasswordContinue,
-                isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
-                useFullWidth: false
-            ) {
+            Button {
                 store.send(.loginButtonTapped, animation: .default)
+            } label: {
+                Text(L10n.authBtnPasswordContinue)
             }
+            .buttonStyle(
+                .primary(
+                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
+                    width: .wideHugging
+                )
+            )
+            .accessibilityIdentifier(A11y.auth.authBtnPasswordContinue)
             .padding()
             .frame(maxWidth: .infinity, alignment: .center)
 
-            NavButton(
-                text: L10n.authBtnBapBack,
-                a11y: A11y.auth.authBtnBapChange,
-                back: true
-            ) {
+            Button {
                 store.send(.switchToPassword(false), animation: .default)
+            } label: {
+                Text(L10n.authBtnBapBack)
             }
+            .buttonStyle(.smallNavigation(back: true))
+            .accessibility(identifier: A11y.auth.authBtnBapChange)
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .center)
             .multilineTextAlignment(.center)

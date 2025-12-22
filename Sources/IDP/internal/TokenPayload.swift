@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import CryptoKit
 import Foundation
 import OpenSSL
@@ -135,13 +136,13 @@ public struct TokenPayload: Codable {
 }
 
 extension TokenPayload {
-    // sourcery: CodedError = "106"
+    @CodedError("106")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case dataEncoding
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case stringConversion
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case decryption(Swift.Error)
     }
 
@@ -199,9 +200,9 @@ public struct KeyVerifier: Codable {
         case verifierCode = "code_verifier"
     }
 
-    // sourcery: CodedError = "105"
+    @CodedError("105")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case stringConversion
     }
 

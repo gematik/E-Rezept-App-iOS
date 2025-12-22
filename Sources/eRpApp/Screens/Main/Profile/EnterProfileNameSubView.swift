@@ -27,9 +27,22 @@ import SwiftUIIntrospect
 struct EnterProfileNameSubView: View {
     let displayName: Binding<String>
     let didTapButtonAction: () -> Void
+    let closeAction: (() -> Void)?
     var validating: ((String) -> Bool)?
 
     @FocusState private var focused: Bool
+
+    init(
+        displayName: Binding<String>,
+        didTapButtonAction: @escaping () -> Void,
+        closeAction: (() -> Void)? = nil,
+        validating: ((String) -> Bool)? = nil
+    ) {
+        self.displayName = displayName
+        self.didTapButtonAction = didTapButtonAction
+        self.closeAction = closeAction
+        self.validating = validating
+    }
 
     var isValidEntry: Bool {
         guard let validating = validating else { return true }
@@ -38,6 +51,16 @@ struct EnterProfileNameSubView: View {
 
     var body: some View {
         VStack(spacing: 8) {
+            if let closeAction = closeAction {
+                HStack(spacing: 0) {
+                    Spacer()
+
+                    CloseButton {
+                        closeAction()
+                    }
+                }
+            }
+
             Section(header:
                 Text(L10n.addTxtTitle)
                     .font(.system(size: 16, weight: .bold))) {
@@ -45,10 +68,10 @@ struct EnterProfileNameSubView: View {
                         L10n.addTxtProfile1,
                         text: displayName
                     )
-                    .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18)) { textField in
+                    .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textField in
                         textField.clearButtonMode = .whileEditing
                     }
-                    .foregroundColor(Colors.text)
+                    .foregroundColor(Colors.systemLabel)
                     .padding()
                     .border(Colors.primary700, width: 2, cornerRadius: 8)
                     .padding(.vertical)

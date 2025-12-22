@@ -45,7 +45,10 @@ struct ErxTaskScannerView: View {
 
             CameraAuthorizationAlertView()
         }
-        .onChange(of: store.scanState, perform: hapticAndAudioFeedback)
+
+        .onChange(of: store.scanState) { _, new in
+            hapticAndAudioFeedback(for: new)
+        }
         .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
     }
 

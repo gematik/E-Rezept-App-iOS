@@ -88,6 +88,25 @@ struct RedeemMethodsView: View {
                 .buttonStyle(.plain)
                 .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
 
+                if store.isEURedeemable {
+                    HStack {
+                        Spacer()
+                        Button {
+                            store.send(.delegate(.euRedeemTapped))
+                        } label: {
+                            HStack {
+                                Text(L10n.rdmBtnRedeemEuPrsc)
+                                    .font(.subheadline)
+                                Image(systemName: SFSymbolName.arrowForward)
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                        }
+                        .accessibility(identifier: A18n.redeem.overview.rdmBtnRedeemEuPrsc)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top)
+                }
+
                 Spacer()
             }
         }
@@ -96,7 +115,7 @@ struct RedeemMethodsView: View {
                 .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
         )
         .navigationBarTitleDisplayMode(.inline)
-        .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
+        .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18, .v26)) { navigationController in
             let navigationBar = navigationController.navigationBar
             navigationBar.barTintColor = UIColor(Colors.systemBackground)
             let navigationBarAppearance = UINavigationBarAppearance()

@@ -108,7 +108,7 @@ final class ButtonsSnapshotTests: ERPSnapshotTestCase {
             Spacer()
         }
         .font(.footnote)
-        .foregroundColor(Color(.secondaryLabel))
+        .foregroundColor(Colors.systemLabelSecondary)
         .background(Color(.systemBackground))
         .frame(width: 375)
 
@@ -197,7 +197,7 @@ final class ButtonsSnapshotTests: ERPSnapshotTestCase {
             Spacer()
         }
         .font(.footnote)
-        .foregroundColor(Color(.secondaryLabel))
+        .foregroundColor(Colors.systemLabelSecondary)
         .background(Color(.systemBackground))
         .frame(width: 375)
 

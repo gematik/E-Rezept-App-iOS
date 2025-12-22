@@ -73,14 +73,15 @@ struct DeviceSecuritySystemPinView: View {
             Spacer(minLength: 0)
 
             GreyDivider()
-            PrimaryTextButton(
-                text: L10n.secBtnSystemPinDone,
-                a11y: A11y.security.secBtnSystemPinDone,
-                image: nil
-            ) {
+
+            Button {
                 action(ignorePermanently)
+            } label: {
+                Label(L10n.secBtnSystemPinDone)
             }
-            .padding()
+            .buttonStyle(.primary)
+            .accessibilityIdentifier(A11y.security.secBtnSystemPinDone)
+            .padding(.vertical)
         }
     }
 }

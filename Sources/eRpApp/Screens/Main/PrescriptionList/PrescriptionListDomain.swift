@@ -20,9 +20,12 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureCardWall
+import FeatureHelpers
 import FHIRClient
 import Foundation
 import HTTPClient
@@ -49,6 +52,7 @@ struct PrescriptionListDomain {
         }
 
         @Shared(.appDefaults) var appDefaults
+        @Shared(.selectedProfileId) var profileId
 
         private(set) var openPrescriptions: [Prescription] = []
         private(set) var hasArchivedPrescriptions = false
@@ -152,13 +156,33 @@ struct PrescriptionListDomain {
         case .unregisterActiveUserProfileListener:
             return .cancel(id: CancelID.activeUserProfile)
         case .registerActiveUserProfileListener:
-            return .publisher(
-                userProfileService.activeUserProfilePublisher()
-                    .removeDuplicates()
-                    .catchToPublisher()
-                    .map { .response(.activeUserProfileReceived($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
+            let profilePublisher = userProfileService.activeUserProfilePublisher()
+                .removeDuplicates()
+                .catchToPublisher()
+                .map { Action.response(.activeUserProfileReceived($0)) }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+            // If we already we also want to trigger a remote load
+            if state.profile != nil {
+                return .concatenate(
+                    .run(operation: { _ in
+                        // sleep a few seconds to allow UI to settle for iOS 17 padding glitch
+                        try await Task.sleep(for: .seconds(0.1))
+                    }),
+                    .merge(
+                        .publisher(profilePublisher),
+                        .send(.loadRemotePrescriptionsAndSave)
+                    )
+                )
+            }
+            return .concatenate(
+                .run(operation: { _ in
+                    // sleep a few seconds to allow UI to settle for iOS 17 padding glitch
+                    try await Task.sleep(for: .seconds(0.1))
+                }),
+                .publisher(
+                    profilePublisher
+                )
             )
         case .response(.activeUserProfileReceived(.failure)):
             state.profile = nil
@@ -187,7 +211,7 @@ struct PrescriptionListDomain {
         case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
             return .publisher(
-                prescriptionRepository.loadLocal()
+                prescriptionRepository.loadLocal(for: state.profileId)
                     .receive(on: schedulers.main.animation())
                     .catchToLoadingStateEffect()
                     .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
@@ -205,7 +229,7 @@ struct PrescriptionListDomain {
             return .none
         case .loadRemotePrescriptionsAndSave:
             state.loadingState = .loading(nil)
-            return environment.loadRemoteTasksAndSave()
+            return environment.loadRemoteTasksAndSave(profileId: state.profileId)
                 .cancellable(id: CancelID.fetchPrescriptionId, cancelInFlight: true)
         case let .response(.loadRemotePrescriptionsAndSaveReceived(loadingState)):
             state.loadingState = loadingState
@@ -216,22 +240,22 @@ struct PrescriptionListDomain {
             return .none
         case .refresh:
             state.loadingState = .loading(nil)
-            return environment.refreshOrShowInsuranceSelectionOrCardWall().cancellable(
+            return environment.refreshOrShowInsuranceSelectionOrCardWall(profileId: state.profileId).cancellable(
                 id: CancelID.refreshId,
                 cancelInFlight: true
             )
         case .alertDismissButtonTapped:
             state.loadingState = .idle
             return .none
-        case .response(.showCardWallReceived),
-             .response(.showInsuranceTypeSelectionSheetReceived),
-             .prescriptionDetailViewTapped,
+        case .prescriptionDetailViewTapped,
              .redeemButtonTapped,
              .diGaDetailViewTapped,
              .showArchivedButtonTapped,
              .profilePictureViewTapped:
             return .none
-        case .response(.errorReceived):
+        case .response(.errorReceived),
+             .response(.showInsuranceTypeSelectionSheetReceived),
+             .response(.showCardWallReceived):
             state.loadingState = .idle
             return .none // Handled in parent domain
         }
@@ -251,10 +275,10 @@ extension PrescriptionListDomain {
         typealias Action = PrescriptionListDomain.Action
 
         /// "Silently" try to load ErxTasks if preconditions are met
-        func loadRemoteTasksAndSave() -> Effect<PrescriptionListDomain.Action> {
+        func loadRemoteTasksAndSave(profileId: UUID) -> Effect<PrescriptionListDomain.Action> {
             .publisher(
                 prescriptionRepository
-                    .silentLoadRemote(for: locale)
+                    .silentLoadRemote(for: locale, for: profileId)
                     .map { status -> PrescriptionListDomain.Action in
                         switch status {
                         case let .prescriptions(value):
@@ -271,11 +295,14 @@ extension PrescriptionListDomain {
         }
 
         /// Load ErxTasks if already logged in else show Insurance Selection or CardWall or error
-        func refreshOrShowInsuranceSelectionOrCardWall() -> Effect<PrescriptionListDomain.Action> {
-            .publisher(
+        func refreshOrShowInsuranceSelectionOrCardWall(profileId: UUID) -> Effect<PrescriptionListDomain.Action> {
+            @Shared(.isDemoMode) var isDemoMode
+
+            return .publisher(
                 prescriptionRepository
-                    .forcedLoadRemote(for: locale)
+                    .forcedLoadRemote(for: locale, for: profileId)
                     .catchUnauthorizedToShowCardwall()
+                    .delay(for: isDemoMode ? 2.0 : 0.0, scheduler: schedulers.main) // fake server dely for demo mode
                     .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
                         switch status {
                         case let .prescriptions(value):

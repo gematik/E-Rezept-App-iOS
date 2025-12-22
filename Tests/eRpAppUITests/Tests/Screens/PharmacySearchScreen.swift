@@ -71,9 +71,22 @@ struct PharmacySearchScreen: Screen {
     }
 
     @discardableResult
+    func tapSearchCancelButton(fileID: String = #fileID, file: String = #filePath,
+                               line: UInt = #line) -> RedeemSelectionScreen {
+        // Renamed on iOS 26
+        // if iOS 26
+        if #available(iOS 26.0, *) {
+            button(within: app.navigationBars, by: "Schließen", fileID: fileID, file: file, line: line).tap()
+        } else {
+            button(within: app.navigationBars, by: "Abbrechen", fileID: fileID, file: file, line: line).tap()
+        }
+
+        return RedeemSelectionScreen(app: app)
+    }
+
+    @discardableResult
     func tapCancelButton(fileID: String = #fileID, file: String = #filePath,
                          line: UInt = #line) -> RedeemSelectionScreen {
-        print(app.debugDescription)
         button(within: app.navigationBars, by: "Abbrechen", fileID: fileID, file: file, line: line).tap()
 
         return RedeemSelectionScreen(app: app)

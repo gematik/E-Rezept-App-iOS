@@ -185,15 +185,9 @@ extension UIDateFormatter: DependencyKey {
         return UIDateFormatter(fhirDateFormatter: fhirDateFormatter)
     }()
 
-    static var previewValue: UIDateFormatter = {
-        @Dependency(\.fhirDateFormatter) var fhirDateFormatter
-        return UIDateFormatter(fhirDateFormatter: fhirDateFormatter)
-    }()
+    static var previewValue: UIDateFormatter = liveValue
 
-    static var testValue: UIDateFormatter = {
-        @Dependency(\.fhirDateFormatter) var fhirDateFormatter
-        return UIDateFormatter(fhirDateFormatter: fhirDateFormatter)
-    }()
+    static var testValue: UIDateFormatter = liveValue
 }
 
 extension DependencyValues {

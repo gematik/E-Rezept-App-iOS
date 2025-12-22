@@ -68,4 +68,58 @@ extension Publisher {
             XCTFail("Test timed out", file: file, line: line)
         }
     }
+
+    /// XCTestExpectation-based variant of `test` that waits for the Publisher to complete or fail.
+    /// Uses XCTWaiter instead of a semaphore.
+    public func testWait(
+        timeout: TimeInterval = 2.0,
+        file: StaticString = #file,
+        line: UInt = #line,
+        failure: @escaping (Failure) -> Void = { error in
+            XCTFail("Publisher threw (unexpected) error: \(error)", file: #file, line: #line)
+        },
+        expectations: @escaping (Output) -> Void = { value in
+            XCTFail("Publisher did not expect to receive a value \(value)", file: #file, line: #line)
+        },
+        subscribeScheduler: AnySchedulerOf<DispatchQueue> = AnyScheduler.immediate,
+        receivingScheduler: AnySchedulerOf<DispatchQueue> = AnyScheduler.immediate
+    ) {
+        let completionExpectation = XCTestExpectation(description: "Publisher completion")
+        let cancellable = subscribe(on: subscribeScheduler)
+            .receive(on: receivingScheduler)
+            .sink(
+                receiveCompletion: { completion in
+                    if case let .failure(error) = completion {
+                        failure(error)
+                    }
+                    completionExpectation.fulfill()
+                },
+                receiveValue: { value in
+                    expectations(value)
+                }
+            )
+
+        // Ensure waiter runs on main thread so main-queue deliveries (receive(on: .main)) are processed.
+        let waiterResult: XCTWaiter.Result = {
+            if Thread.isMainThread {
+                return XCTWaiter.wait(for: [completionExpectation], timeout: timeout)
+            } else {
+                var result: XCTWaiter.Result = .completed
+                DispatchQueue.main.sync {
+                    result = XCTWaiter.wait(for: [completionExpectation], timeout: timeout)
+                }
+                return result
+            }
+        }()
+
+        if waiterResult != .completed {
+            cancellable.cancel()
+            switch waiterResult {
+            case .timedOut:
+                XCTFail("Test timed out", file: file, line: line)
+            default:
+                XCTFail("Unexpected wait result: \(waiterResult)", file: file, line: line)
+            }
+        }
+    }
 }

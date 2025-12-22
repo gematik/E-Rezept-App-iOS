@@ -46,5 +46,11 @@
         "text": "**♿ Barrierefreiheit**\nDie Profileinstellungen wurden überarbeitet, um die Barrierefreiheit weiter zu erhöhen.",
         "timestamp": "2025-08-26T08:00:00.000Z",
         "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Anmeldung für mehr Personen**\nDie Anmeldung ist jetzt auch für Versicherte von Bundeseinrichtungen, wie der Bundespolizei und anderen möglich.\n\n**🕒 Bessere Apothekenöffnungszeiten**\nNotdienst- und Sonderschließzeiten von Apotheken werden jetzt angezeigt, sofern diese hinterlegt sind.\n\n**💊 Auswahl von allen Rezepten**\nBeim Einlösen können jetzt alle Rezepte gleichzeitig ausgewählt werden.\n\n**♿ Barrierefreiheit**\nDie Farben von Schriften und Icons wurden angepasst, um höhere Kontrastwerte zu erzielen. Zudem wurden die VoiceOver-Sprachausgaben für das Bearbeiten des Profilbilds und Erkennen des Anmeldestatus verbessert.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
     }
 ]

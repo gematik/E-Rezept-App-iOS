@@ -52,7 +52,7 @@ struct PrescriptionView: View {
                         if !(prescription.type == .directAssignment && !prescription.isArchived) {
                             Text(prescription.statusMessage)
                                 .font(Font.subheadline.weight(.regular))
-                                .foregroundColor(Color(.secondaryLabel))
+                                .foregroundColor(Colors.systemLabelSecondary)
                                 .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionValidity)
                         }
                         PrescriptionStatusView(prescription: prescription)

@@ -129,7 +129,7 @@ struct PasswordStrengthView: View {
             HStack {
                 Text(strengthLocalization, bundle: .module)
                     .font(.caption)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
 
                 if strength.passesMinimumThreshold {
                     Image(systemName: SFSymbolName.checkmark)

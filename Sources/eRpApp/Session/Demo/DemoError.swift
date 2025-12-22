@@ -20,10 +20,11 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
-// sourcery: CodedError = "019"
+@CodedError("019")
 enum DemoError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case demo
 }

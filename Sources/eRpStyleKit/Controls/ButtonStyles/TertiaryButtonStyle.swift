@@ -36,28 +36,26 @@ public struct TertiaryButtonStyle: ButtonStyle {
         isDestructive = destructive
     }
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var foregroundColor: Color {
         switch (isDestructive, isEnabled) {
         case (false, true):
             return Colors.primary
         case (false, false):
-            return Color(.systemGray)
+            return Colors.primary.disabled(for: colorScheme)
         case (true, true):
             return Colors.red600
         case (true, false):
-            return Color(.systemGray)
+            return Colors.red600.disabled(for: colorScheme)
         }
     }
 
     public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .font(.body.weight(.semibold))
-            .foregroundColor(isEnabled ? foregroundColor : Color(.systemGray))
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(foregroundColor)
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
-            .overlay(RoundedRectangle(cornerRadius: 16).stroke().foregroundColor(foregroundColor))
-            .cornerRadius(16)
-            .padding(.horizontal)
     }
 }
 

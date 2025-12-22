@@ -94,8 +94,9 @@ final class DiGaUITests: XCTestCase, Sendable {
                 diGaDetails.tapMainButton()
 
                 // Umfrage Bubble ist aktiv
-                await expect(self.app.tabBars.buttons["Einstellungen"].value as? String == "Neu")
-                    .toEventually(beTrue(), timeout: .seconds(2), pollInterval: .microseconds(100))
+                // Broken in iOS 26, .badge is not readable via Accessibility anymore
+//                await expect(self.app.tabBars.buttons["Einstellungen"].value as? String == "Neu")
+//                    .toEventually(beTrue(), timeout: .seconds(2), pollInterval: .microseconds(100))
 
                 expect(diGaDetails.mainButton().label).to(equal("DiGA App aktivieren"))
                 diGaDetails.tapMainButton()
@@ -246,8 +247,8 @@ final class DiGaUITests: XCTestCase, Sendable {
             // einlösen
             diGaDetails.tapMainButton()
 
-            expect(self.app.buttons[A11y.cardWall.intro.cdwBtnIntroCancel])
-                .to(exist(A11y.cardWall.intro.cdwBtnIntroCancel))
+            await expect(self.app.buttons[A11y.cardWall.intro.cdwBtnIntroCancel])
+                .toEventually(exist(A11y.cardWall.intro.cdwBtnIntroCancel))
         }
     }
 

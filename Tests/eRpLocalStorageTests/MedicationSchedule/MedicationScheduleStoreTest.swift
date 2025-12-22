@@ -27,6 +27,7 @@ import eRpKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble
+import Sharing
 import TestUtils
 import XCTest
 
@@ -54,21 +55,37 @@ final class MedicationScheduleStoreTest: XCTestCase {
 
     private func loadFactory() -> CoreDataControllerFactory {
         guard let factory = coreDataFactory else {
-            #if os(macOS)
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
+            return .init(databaseUrl: { self.databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
 
-            #else
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
-            coreDataFactory = factory
-            return factory
+                var fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: self.databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
         }
+
         return factory
     }
 
@@ -80,9 +97,8 @@ final class MedicationScheduleStoreTest: XCTestCase {
         )
     }
 
-    private func loadErxTaskCoreDataStore(for profileId: UUID? = nil) -> ErxTaskCoreDataStore {
+    private func loadErxTaskCoreDataStore() -> ErxTaskCoreDataStore {
         DefaultErxTaskCoreDataStore(
-            profileId: profileId,
             coreDataControllerFactory: loadFactory(),
             foregroundQueue: .immediate,
             backgroundQueue: .main,

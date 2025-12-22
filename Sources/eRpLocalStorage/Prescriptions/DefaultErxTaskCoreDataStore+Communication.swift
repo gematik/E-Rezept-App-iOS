@@ -27,7 +27,9 @@ import eRpKit
 /// Communication related local store interfaces
 extension DefaultErxTaskCoreDataStore {
     /// Fetch the most recent `timestamp` of all `Communication`s
-    public func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, LocalStoreError> {
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
+    public func fetchLatestTimestampForCommunications(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
         let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity.fetchRequest()
         request.fetchLimit = 1
         request.sortDescriptors = [NSSortDescriptor(
@@ -46,6 +48,8 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// List all communications for the given profile contained in the store
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
     /// - Parameter profile: Filters for the passed Profile type
     /// - Returns: array of the fetched communications or error
     public func listAllCommunications(
@@ -79,8 +83,11 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// Returns all unread communications for the given profile
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
     /// - Parameter profile: profile for which you want to have the count
     public func allUnreadCommunications(
+        of profileId: UUID?,
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity.fetchRequest()
@@ -124,9 +131,12 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// Creates or updates the passes sequence of `ErxTaskCommunication`s
+    /// - Parameter profileId: The profile identifier to which the item belongs to or nil if all data should be
+    /// considered
     /// - Parameter communications: Array of communications that should be stored
     /// - Returns: `true` if save operation was successful
-    public func save(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, LocalStoreError> {
+    public func save(communications: [ErxTask.Communication],
+                     of profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
         coreDataCrudable.save(mergePolicy: .error) { [weak self] moc in
             _ = communications.map { erxTaskCommunication -> ErxTaskCommunicationEntity in
 
@@ -164,6 +174,7 @@ extension DefaultErxTaskCoreDataStore {
                             }
                         if communicationDispReq == nil {
                             communicationDispReq = self?.fetchCommunication(
+                                of: profileId,
                                 for: .dispReq,
                                 with: erxTaskCommunication.taskId,
                                 telematikId: erxTaskCommunication.telematikId,
@@ -187,7 +198,8 @@ extension DefaultErxTaskCoreDataStore {
         }
     }
 
-    private func fetchCommunication(for profile: ErxTask.Communication.Profile,
+    private func fetchCommunication(of profileId: UUID?,
+                                    for profile: ErxTask.Communication.Profile,
                                     with taskId: ErxTask.ID,
                                     telematikId: String,
                                     on moc: NSManagedObjectContext) -> ErxTask.Communication? {

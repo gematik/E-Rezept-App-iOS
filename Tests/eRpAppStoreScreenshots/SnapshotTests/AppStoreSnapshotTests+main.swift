@@ -459,8 +459,7 @@ extension Prescription {
         static let prescriptions = ErxTask.Fixtures.erxTasks.map {
             Prescription(
                 erxTask: $0,
-                date: TestDate.defaultReferenceDate,
-                dateFormatter: UIDateFormatter.testValue
+                date: TestDate.defaultReferenceDate
             )
         }
     }

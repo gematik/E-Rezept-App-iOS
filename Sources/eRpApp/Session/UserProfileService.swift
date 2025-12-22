@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import Dependencies
@@ -78,10 +79,10 @@ class DummyUserProfileService: UserProfileService {
     static let dummyProfile = Profile(name: "Dummy Profile")
 }
 
-// sourcery: CodedError = "022"
+@CodedError("022")
 @CasePathable
 enum UserProfileServiceError: Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case localStoreError(LocalStoreError)
 }
 

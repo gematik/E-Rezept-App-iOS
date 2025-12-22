@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import ComposableArchitecture
 import Foundation
 import UIKit
@@ -61,9 +62,9 @@ struct ShareSheetDomain {
         }
     }
 
-    // sourcery: CodedError = "043"
+    @CodedError("043")
     enum Error: Swift.Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case shareFailure(String)
 
         var errorDescription: String? {

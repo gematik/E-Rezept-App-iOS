@@ -25,6 +25,7 @@ import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
 @testable import eRpLocalStorage
+import Settings
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -130,9 +131,8 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
 
     func testSettingsView_DemoMode_Enabled() {
         let sut = SettingsView(store: StoreOf<SettingsDomain>(
-            initialState: SettingsDomain.State(isDemoMode: true,
+            initialState: SettingsDomain.State(isDemoMode: Shared(value: true),
                                                appVersion: appVersion)
-
         ) {
             EmptyReducer()
         })
@@ -144,7 +144,6 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
     func testSettingsView_ComplyTrackingView() {
         let sut = SettingsView.TrackingComplyView(store: StoreOf<SettingsDomain>(
             initialState: SettingsDomain.State(
-                isDemoMode: false,
                 destination: .complyTracking(.init())
             )
 
@@ -171,7 +170,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
             UserProfile(from: Profile(name: "Anna Vetter", color: Profile.Color.yellow), isAuthenticated: false),
         ]
 
-        return SettingsDomain.State(isDemoMode: isDemoMode,
+        return SettingsDomain.State(isDemoMode: Shared(value: isDemoMode),
                                     profiles: ProfilesDomain.State(
                                         profiles: profiles,
                                         selectedProfileId: profiles.first!.id

@@ -94,7 +94,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
                                        content: attachmentData,
                                        mimeType: "application/pkcs7-signature")
 
-        let printedAttachment = try document.append(attachment: attachment, startObj: result.count)
+        let printedAttachment = try document.append(attachments: [attachment], startObj: result.count)
 
         var actualResult = result
         actualResult.append(printedAttachment)

@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
@@ -31,73 +32,92 @@ public struct InstructionsView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // Header section
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.euredeemInstructionsTitle)
-                            .font(.title.bold())
-                            .foregroundColor(Colors.text)
+        WithPerceptionTracking {
+            VStack(alignment: .leading, spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        // Header section
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.euredeemInstructionsTitle)
+                                .font(.title.bold())
+                                .foregroundColor(Colors.systemLabel)
 
-                        Button(L10n.euredeemInstructionsSubtitle) {
-                            // Handle website link tap
+                            Button(L10n.euredeemInstructionsSubtitle) {
+                                // Handle website link tap
+                            }
+                            .foregroundColor(Colors.systemGray2)
+                            .buttonStyle(.plain)
+                            .font(.body)
                         }
-                        .foregroundColor(Colors.systemGray2)
-                        .buttonStyle(.plain)
-                        .font(.body)
+
+                        // Instructions steps
+                        VStack(alignment: .leading, spacing: 16) {
+                            InstructionStepView(
+                                stepNumber: L10n.euredeemInstructionsStep1Title,
+                                description: L10n.euredeemInstructionsStep1Description
+                            )
+
+                            InstructionStepView(
+                                stepNumber: L10n.euredeemInstructionsStep2Title,
+                                description: L10n.euredeemInstructionsStep2Description
+                            )
+
+                            InstructionStepView(
+                                stepNumber: L10n.euredeemInstructionsStep3Title,
+                                description: L10n.euredeemInstructionsStep3Description
+                            )
+
+                            InstructionStepView(
+                                stepNumber: L10n.euredeemInstructionsStep4Title,
+                                description: L10n.euredeemInstructionsStep4Description
+                            )
+
+                            InstructionStepView(
+                                stepNumber: L10n.euredeemInstructionsStep5Title,
+                                description: L10n.euredeemInstructionsStep5Description
+                            )
+                        }
                     }
-
-                    // Instructions steps
-                    VStack(alignment: .leading, spacing: 16) {
-                        InstructionStepView(
-                            stepNumber: L10n.euredeemInstructionsStep1Title,
-                            description: L10n.euredeemInstructionsStep1Description
-                        )
-
-                        InstructionStepView(
-                            stepNumber: L10n.euredeemInstructionsStep2Title,
-                            description: L10n.euredeemInstructionsStep2Description
-                        )
-
-                        InstructionStepView(
-                            stepNumber: L10n.euredeemInstructionsStep3Title,
-                            description: L10n.euredeemInstructionsStep3Description
-                        )
-
-                        InstructionStepView(
-                            stepNumber: L10n.euredeemInstructionsStep4Title,
-                            description: L10n.euredeemInstructionsStep4Description
-                        )
-
-                        InstructionStepView(
-                            stepNumber: L10n.euredeemInstructionsStep5Title,
-                            description: L10n.euredeemInstructionsStep5Description
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-            }
-
-            // Bottom section with button and disclaimer
-            VStack(spacing: 8) {
-                Button(L10n.euredeemInstructionsGenerateCodeButton) {
-                    // Handle generate code action
-                    store.send(.delegate(.continueButtonTapped))
-                }
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
-                .padding(.horizontal, 16)
-
-                Text(L10n.euredeemInstructionsDisclaimer)
-                    .font(.caption)
-                    .foregroundColor(Colors.systemGray2)
-                    .multilineTextAlignment(.center)
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                    .padding(.top, 16)
+                }
+
+                if store.isRedeeming {
+                    // Bottom section with button and disclaimer
+                    VStack(spacing: 8) {
+                        GreyDivider()
+
+                        Button(L10n.euredeemInstructionsGenerateCodeButton) {
+                            // Handle generate code action
+                            store.send(.delegate(.continueButtonTapped))
+                        }
+                        .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+
+                        Text(L10n.euredeemInstructionsDisclaimer)
+                            .font(.caption)
+                            .foregroundColor(Colors.systemGray2)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
+                    }
+                }
             }
+            .background(Colors.systemBackground)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        store.send(.delegate(.close))
+                    }, label: {
+                        Text(L10n.euredeemInstructionsBtnClose)
+                    })
+                        .accessibility(identifier: "euredeem_instructions_close_button")
+                }
+            }
+            .navigationTitle(L10n.euredeemInstructionsNavigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .background(Colors.systemBackground)
     }
 }
 
@@ -109,7 +129,7 @@ struct InstructionStepView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(stepNumber)
                 .font(.headline)
-                .foregroundColor(Colors.text)
+                .foregroundColor(Colors.systemLabel)
 
             Text(description)
                 .font(.body)
@@ -120,11 +140,13 @@ struct InstructionStepView: View {
 }
 
 #Preview {
-    InstructionsView(
-        store: StoreOf<InstructionsDomain>(
-            initialState: InstructionsDomain.State()
-        ) {
-            InstructionsDomain()
-        }
-    )
+    NavigationStack {
+        InstructionsView(
+            store: StoreOf<InstructionsDomain>(
+                initialState: InstructionsDomain.State()
+            ) {
+                InstructionsDomain()
+            }
+        )
+    }
 }

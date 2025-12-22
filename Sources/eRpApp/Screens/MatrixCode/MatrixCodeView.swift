@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import FeatureEURedeem
 import SwiftUI
 
 extension MatrixCodeDomain.State {
@@ -90,6 +91,24 @@ struct MatrixCodeView: View {
             }
 
             Spacer()
+
+            if store.isEURedeemable {
+                HStack {
+                    Button {
+                        store.send(.delegate(.euRedeemButtonTapped))
+                    } label: {
+                        HStack {
+                            Text(L10n.dmcBtnRedeemEuPrsc)
+                                .font(.subheadline)
+                            Image(systemName: SFSymbolName.arrowForward)
+                                .font(.subheadline.weight(.semibold))
+                        }
+                    }
+                    .accessibility(identifier: A11y.matrixCode.dmcBtnRedeemEuPrsc)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
         }
         .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         .navigationBarItems(

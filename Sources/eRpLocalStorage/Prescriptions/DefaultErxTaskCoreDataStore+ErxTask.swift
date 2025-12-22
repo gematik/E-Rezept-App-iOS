@@ -58,7 +58,7 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// Fetch the most recent `lastModified` of all `ErxTask`s
-    public func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, LocalStoreError> {
+    public func fetchLatestLastModifiedForErxTasks(of profileId: UUID?) -> AnyPublisher<String?, LocalStoreError> {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
         request.fetchLimit = 1
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.lastModified), ascending: false)]
@@ -75,7 +75,7 @@ extension DefaultErxTaskCoreDataStore {
 
     // tag::ErxTaskCoreDataStoreExample1[]
     /// List all tasks contained in the store
-    public func listAllTasks() -> AnyPublisher<[ErxTask], LocalStoreError> {
+    public func listAllTasks(of profileId: UUID?) -> AnyPublisher<[ErxTask], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
         request.sortDescriptors = [
             NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: false),
@@ -104,15 +104,19 @@ extension DefaultErxTaskCoreDataStore {
             .eraseToAnyPublisher()
     }
 
+    // swiftlint:disable function_body_length
+
     /// Creates or updates a sequence of tasks into the store
     /// - Parameter tasks: Array of `ErxTasks`s that should be saved
     /// - Parameter updateProfileLastAuthenticated: `true` if the profile last authenticated should be updated, `false`
     ///   otherwise.
     /// - Returns: A publisher that finishes with `true` on completion or fails with an error.
-    public func save(tasks: [ErxTask], updateProfileLastAuthenticated: Bool) -> AnyPublisher<Bool, LocalStoreError> {
-        // swiftlint:disable:previous function_body_length
+    public func save(tasks: [ErxTask],
+                     in profileId: UUID?,
+                     updateProfileLastAuthenticated: Bool) -> AnyPublisher<Bool, LocalStoreError> {
+        // swiftlint:enable function_body_length
         coreDataCrudable.save(mergePolicy: .mergeByPropertyObjectTrump) { [weak self] moc in
-            let profileEntity = self?.fetchProfile(in: moc)
+            let profileEntity = self?.fetchProfile(profileId, in: moc)
 
             if updateProfileLastAuthenticated {
                 profileEntity?.lastAuthenticated = Date()
@@ -129,13 +133,13 @@ extension DefaultErxTaskCoreDataStore {
             }
             return coreDataCrudable.save(mergePolicy: .mergeByPropertyObjectTrump) { [weak self] moc -> Bool in
                 guard let self = self else { return false }
-                let profileEntity = self.fetchProfile(in: moc)
+                let profileEntity = self.fetchProfile(profileId, in: moc)
 
                 if updateProfileLastAuthenticated {
                     profileEntity?.lastAuthenticated = Date()
                 }
 
-                let listAllDiGaInfo = self.listAllDiGaInfo(for: profileEntity, in: moc)
+                let listAllDiGaInfo = self.listAllDiGaInfo(for: profileEntity, of: profileId, in: moc)
 
                 for task in tasks {
                     let taskEntity = ErxTaskEntity.from(task: task, in: moc)
@@ -197,7 +201,8 @@ extension DefaultErxTaskCoreDataStore {
         return result.first
     }
 
-    func listAllDiGaInfo(for _: ProfileEntity?, in context: NSManagedObjectContext) -> [DiGaInfoEntity] {
+    func listAllDiGaInfo(for _: ProfileEntity?, of profileId: UUID?,
+                         in context: NSManagedObjectContext) -> [DiGaInfoEntity] {
         let request: NSFetchRequest<DiGaInfoEntity> = DiGaInfoEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
             key: #keyPath(ErxChargeItemEntity.taskId),
@@ -221,7 +226,7 @@ extension DefaultErxTaskCoreDataStore {
     }
 
     /// Deletes a sequence of tasks from the store
-    public func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, LocalStoreError> {
+    public func delete(tasks: [ErxTask], in profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: false)]
         var subPredicates = [NSPredicate]()

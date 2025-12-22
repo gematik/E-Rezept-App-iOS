@@ -53,13 +53,13 @@ struct AppAuthenticationWithBiometricsView: View {
         let action: () -> Void
 
         var body: some View {
-            PrimaryTextButton(
-                text: L10n.authBtnBiometricsFaceid,
-                a11y: A18n.auth.authBtnBiometricsFaceid,
-                image: Image(systemName: SFSymbolName.faceId),
-                useFullWidth: false,
-                action: action
-            )
+            Button {
+                action()
+            } label: {
+                Label(L10n.authBtnBiometricsFaceid, systemImage: SFSymbolName.faceId)
+            }
+            .buttonStyle(.primaryHugging)
+            .accessibilityIdentifier(A18n.auth.authBtnBiometricsFaceid)
             .padding()
             .frame(maxWidth: .infinity, alignment: .center)
         }
@@ -69,13 +69,13 @@ struct AppAuthenticationWithBiometricsView: View {
         let action: () -> Void
 
         var body: some View {
-            PrimaryTextButton(
-                text: L10n.authBtnBiometricsTouchid,
-                a11y: A18n.auth.authBtnBiometricsTouchid,
-                image: Image(systemName: SFSymbolName.touchId),
-                useFullWidth: false,
-                action: action
-            )
+            Button {
+                action()
+            } label: {
+                Label(L10n.authBtnBiometricsTouchid, systemImage: SFSymbolName.touchId)
+            }
+            .buttonStyle(.primaryHugging)
+            .accessibilityIdentifier(A18n.auth.authBtnBiometricsTouchid)
             .padding()
             .frame(maxWidth: .infinity, alignment: .center)
         }

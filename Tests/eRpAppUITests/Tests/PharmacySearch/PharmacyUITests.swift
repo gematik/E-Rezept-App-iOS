@@ -99,27 +99,13 @@ final class PharmacyUITests: XCTestCase, Sendable {
         try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 500)
 
         assertPharmacyServices(pharmacyName: "ZoTI_01_TEST-ONLY", services: [])
-        assertPharmacyServices(pharmacyName: "ZoTI_02_TEST-ONLY", services: [.pickup])
-        assertPharmacyServices(pharmacyName: "ZoTI_03_TEST-ONLY", services: [.delivery])
-        assertPharmacyServices(pharmacyName: "ZoTI_04_TEST-ONLY", services: [.shipment])
         assertPharmacyServices(pharmacyName: "ZoTI_05_TEST-ONLY", services: [.pickupViaLogin])
         assertPharmacyServices(pharmacyName: "ZoTI_06_TEST-ONLY", services: [.deliveryViaLogin])
         assertPharmacyServices(pharmacyName: "ZoTI_07_TEST-ONLY", services: [.shipmentViaLogin])
-        assertPharmacyServices(pharmacyName: "ZoTI_08_TEST-ONLY", services: [.pickup, .delivery, .shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_09_TEST-ONLY", services: [.pickup, .delivery, .shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_10_TEST-ONLY", services: [.pickup, .delivery, .shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_11_TEST-ONLY", services: [.pickup, .delivery, .shipment])
         assertPharmacyServices(
             pharmacyName: "ZoTI_12_TEST-ONLY",
             services: [.pickupViaLogin, .deliveryViaLogin, .shipmentViaLogin]
         )
-        assertPharmacyServices(pharmacyName: "ZoTI_13_TEST-ONLY", services: [.pickup, .delivery])
-        assertPharmacyServices(pharmacyName: "ZoTI_14_TEST-ONLY", services: [.pickup, .shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_15_TEST-ONLY", services: [.pickup, .shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_16_TEST-ONLY", services: [.shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_17_TEST-ONLY", services: [.pickup, .delivery])
-        assertPharmacyServices(pharmacyName: "ZoTI_18_TEST-ONLY", services: [.pickup, .delivery, .shipment])
-        assertPharmacyServices(pharmacyName: "ZoTI_19_TEST-ONLY", services: [.delivery, .shipment])
         assertPharmacyServices(pharmacyName: "ZoTI_20_TEST-ONLY", services: [.pickupViaLogin, .shipmentViaLogin])
 
         // Back
@@ -139,7 +125,7 @@ final class PharmacyUITests: XCTestCase, Sendable {
 
         XCTAssertTrue(app.otherElements.matching(identifier: "pha_search_map_map")
             .children(matching: .other)
-            .matching(NSPredicate(format: "label like '+19 weitere'"))
+            .matching(NSPredicate(format: "label like '+5 weitere'"))
             .element.waitForExistence(timeout: 5))
     }
 
@@ -194,7 +180,7 @@ final class PharmacyUITests: XCTestCase, Sendable {
             .matching(identifier: "shipment")
             .element.exists)
 
-        redeemSearchScreen.tapCancelButton()
+        redeemSearchScreen.tapSearchCancelButton()
         redeemSearchScreen.tapCancelButton()
 
         tabBar.tapPharmacySearchTab()
@@ -217,11 +203,11 @@ final class PharmacyUITests: XCTestCase, Sendable {
             .tapPharmacySearchTab()
 
         let redeemScreen = pharmacySearchScreen
-            .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
-            .tapRedeem()
+            .pharmacyDetailsForPharmacy("ZoTI_07_TEST-ONLY")
+            .tapRedeem(.shipmentViaLogin)
 
         redeemScreen.addPrescriptionButton().tap()
-        app.buttons["Adavomilproston"].tap()
+        app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].tap()
         app.buttons["Speichern"].tap()
 
         let editAdressScreen = redeemScreen
@@ -241,11 +227,11 @@ final class PharmacyUITests: XCTestCase, Sendable {
             .tapPharmacySearchTab()
 
         let redeemScreen = pharmacySearchScreen
-            .pharmacyDetailsForPharmacy("ZoTI_02_TEST-ONLY")
-            .tapRedeem(.pickup)
+            .pharmacyDetailsForPharmacy("ZoTI_05_TEST-ONLY")
+            .tapRedeem(.pickupViaLogin)
 
         redeemScreen.addPrescriptionButton().tap()
-        app.buttons["Adavomilproston"].tap()
+        app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].tap()
         app.buttons["Speichern"].tap()
 
         try await redeemScreen
@@ -259,11 +245,11 @@ final class PharmacyUITests: XCTestCase, Sendable {
             .tapPharmacySearchTab()
 
         let redeemScreen = pharmacySearchScreen
-            .pharmacyDetailsForPharmacy("ZoTI_03_TEST-ONLY")
-            .tapRedeem(.delivery)
+            .pharmacyDetailsForPharmacy("ZoTI_06_TEST-ONLY")
+            .tapRedeem(.deliveryViaLogin)
 
         redeemScreen.addPrescriptionButton().tap()
-        app.buttons["Adavomilproston"].tap()
+        app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].tap()
         app.buttons["Speichern"].tap()
 
         let editAdressScreen = redeemScreen

@@ -21,6 +21,7 @@
 //
 
 import Combine
+import Dependencies
 @testable import eRpFeatures
 import Nimble
 import TestUtils
@@ -29,7 +30,6 @@ import XCTest
 final class DefaultDeviceSecurityManagerTests: XCTestCase {
     var mockUserDataStore: MockUserDataStore!
     var deviceSecurityManagerSessionStorage: MockDeviceSecurityManagerSessionStorage!
-    var securityPolicyEvaluator: MockSecurityPolicyEvaluator!
 
     var sut: DefaultDeviceSecurityManager!
 
@@ -38,130 +38,152 @@ final class DefaultDeviceSecurityManagerTests: XCTestCase {
 
         mockUserDataStore = MockUserDataStore()
         deviceSecurityManagerSessionStorage = MockDeviceSecurityManagerSessionStorage()
-        securityPolicyEvaluator = MockSecurityPolicyEvaluator()
 
         sut = DefaultDeviceSecurityManager(userDataStore: mockUserDataStore,
-                                           sessionStorage: deviceSecurityManagerSessionStorage,
-                                           laContext: securityPolicyEvaluator)
+                                           sessionStorage: deviceSecurityManagerSessionStorage)
     }
 
     func testWhenPinMissing() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = false
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(false).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(false).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in false }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beTrue())
+            expect(result).to(beTrue())
+        }
     }
 
     func testWhenPinSet() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = true
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(false).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(false).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in true }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 
     func testWhenPinMissingAndWarningIgnoredTemporarily() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = false
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(false).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(true).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in false }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 
     func testWhenPinSetAndWarningIgnoredTemporarily() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = true
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(false).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(true).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in true }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 
     func testWhenPinMissingAndWarningIgnoredTemporarilyAndWarningIgnoredPermanently() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = false
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(true).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(true).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in false }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 
     func testWhenPinSetAndWarningIgnoredTemporarilyAndWarningIgnoredPermanently() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = true
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(true).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(true).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in true }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 
     func testWhenPinMissingAndWarningIgnoredPermanently() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = false
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(true).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(false).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in false }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 
     func testWhenPinSetAndWarningIgnoredPermanently() {
         var result: Bool?
 
-        securityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = true
         mockUserDataStore.ignoreDeviceNotSecuredWarningPermanently = Just(true).eraseToAnyPublisher()
         deviceSecurityManagerSessionStorage.ignoreDeviceNotSecuredWarningForSession = Just(false).eraseToAnyPublisher()
 
-        sut.informMissingSystemPin
-            .test(expectations: { value in
-                result = value
-            })
+        withDependencies { dependencies in
+            dependencies.securityPolicyEvaluator.canEvaluatePolicy = { _, _ in true }
+        } operation: {
+            sut.informMissingSystemPin
+                .test(expectations: { value in
+                    result = value
+                })
 
-        expect(result).to(beFalse())
+            expect(result).to(beFalse())
+        }
     }
 }

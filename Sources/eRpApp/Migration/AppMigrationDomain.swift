@@ -24,6 +24,8 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
+import eRpResources
+import FeatureHelpers
 import Foundation
 
 @Reducer
@@ -131,14 +133,14 @@ struct AppMigrationDomain {
             )
             return .none
         case .destination(.presented(.alert(.deleteDatabase))):
-            let databaseUrl = factory.databaseUrl
+            let databaseUrl = factory.databaseUrl()
             guard fileManager.fileExists(atPath: databaseUrl.path) else {
                 state.migration = .failed
                 state.destination = .alert(Self.deleteDatabaseAlertState())
                 return .none
             }
             do {
-                let databaseUrl = factory.databaseUrl
+                let databaseUrl = factory.databaseUrl()
                 if let coreDataController = try? factory.loadCoreDataController() {
                     // Don't let deleting the persistent store stop deleting the database file
                     try? coreDataController.destroyPersistentStore(at: databaseUrl)
@@ -212,7 +214,7 @@ extension AppMigrationDomain {
 
 extension MigrationManager {
     static var failing = MigrationManager(
-        factory: LocalStoreFactory.failing,
+        factory: CoreDataControllerFactory.failing,
         erxTaskCoreDataStore: DefaultErxTaskCoreDataStore.failing,
         userDataStore: DemoUserDefaultsStore()
     )

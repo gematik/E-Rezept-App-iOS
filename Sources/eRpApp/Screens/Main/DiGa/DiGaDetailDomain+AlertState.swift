@@ -20,8 +20,11 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import Foundation
 
 extension DiGaDetailDomain {

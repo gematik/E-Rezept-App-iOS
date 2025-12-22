@@ -25,6 +25,8 @@ import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import IDP
 import Nimble
 import XCTest
@@ -50,21 +52,20 @@ final class MatrixCodeDomainTests: XCTestCase {
             isMatrixCodeZoomed: isMatrixCodeZoomed
         )
         let savingError: ErxRepositoryError = .local(.notImplemented)
-        let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let deleteErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        let mockRepository = MockErxTaskRepository(
-            stored: [],
-            saveErxTasks: saveErxTaskPublisher,
-            deleteErxTasks: deleteErxTaskPublisher,
-            find: findPublisher
-        )
         return TestStore(initialState: testState) {
             MatrixCodeDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.erxMatrixCodeGenerator = mockDMCGenerator
-            dependencies.erxTaskRepository = mockRepository
+            dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+                Just(.none).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            }
+            dependencies.erxTaskRepository.saveTask = { _, _ in
+                throw savingError
+            }
+            dependencies.erxTaskRepository.deleteTask = { _, _ in
+                throw savingError
+            }
             dependencies.fhirDateFormatter = FHIRDateFormatter.shared
             dependencies.dismiss = DismissEffect { self.isDismissInvoked.setValue(true) }
             dependencies.uuid = UUIDGenerator.incrementing
@@ -218,10 +219,6 @@ final class MatrixCodeDomainTests: XCTestCase {
             ErxTask.Fixtures.erxTask4,
             ErxTask.Fixtures.erxTask5,
         ]
-        let mockRepository = MockErxTaskRepository(
-            stored: [],
-            saveErxTasks: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        )
 
         let store = TestStore(
             initialState: MatrixCodeDomain.State(
@@ -236,7 +233,7 @@ final class MatrixCodeDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.erxMatrixCodeGenerator = mockDMCGenerator
-            dependencies.erxTaskRepository = mockRepository
+            dependencies.erxTaskRepository.saveTask = { _, _ in }
             dependencies.fhirDateFormatter = FHIRDateFormatter.shared
             dependencies.uuid = UUIDGenerator.incrementing
         }

@@ -23,6 +23,9 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import ErxTaskRepository
+import FeatureHelpers
 import Foundation
 import UIKit
 import Vision
@@ -42,6 +45,7 @@ struct ScannerDomain {
 
     @ObservableState
     struct State: Equatable {
+        @Shared(.selectedProfileId) var profileId
         /// Presents the current state of the scanning process. Errors are displayed as hints
         var scanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .idle
         /// Array of all accepted tasks which are ready for saving
@@ -123,17 +127,14 @@ struct ScannerDomain {
             case let .saveAndClose(scannedBatches):
                 let authoredOn = dateFormatter.stringWithLongUTCTimeZone(from: Date())
                 let erxTasks = scannedBatches.flatMap { $0 }.asErxTasks(status: .ready, with: authoredOn)
-
-                return .publisher(
-                    repository.save(erxTasks: erxTasks)
-                        .first()
-                        .receive(on: scheduler.main)
-                        .map { .response(.saveAndCloseReceived(.success($0))) }
-                        .catch { error in
-                            Just(Action.response(.saveAndCloseReceived(.failure(error))))
-                        }
-                        .eraseToAnyPublisher
-                )
+                return .run { [profileId = state.profileId] send in
+                    do {
+                        try await repository.saveTask(erxTasks, profileId)
+                        await send(.response(.saveAndCloseReceived(.success(true))))
+                    } catch let error as ErxRepositoryError {
+                        await send(.response(.saveAndCloseReceived(.failure(error))))
+                    }
+                }
                 .cancellable(id: CancelID.saveErxTasks)
             case .response(.saveAndCloseReceived(.failure)):
                 state.destination = .alert(Self.savingAlertState)
@@ -150,6 +151,12 @@ struct ScannerDomain {
                         return checkForTaskDuplicatesInStore(scannedTasks)
                             .cancellable(id: CancelID.loadErxTask)
                     case let .url(universalLink):
+                        // Only handle supported universal links --> ignore foreign URLs
+                        guard Endpoint.isUniversalLinkSupported(universalLink) else {
+                            state.scanState = .idle
+                            return .none
+                        }
+
                         return .run { _ in
                             @Dependency(\.dismiss) var dismiss
 
@@ -274,7 +281,7 @@ struct ScannerDomain {
 extension ScannerDomain {
     func checkForTaskDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> Effect<ScannerDomain.Action> {
         let findPublishers: [AnyPublisher<ScannedErxTask?, Never>] = scannedTasks.map { scannedTask in
-            self.repository.loadLocal(by: scannedTask.id, accessCode: scannedTask.accessCode)
+            repository.loadLocalTask(scannedTask.id, scannedTask.accessCode)
                 .map { erxTask -> ScannedErxTask? in
                     if erxTask != nil {
                         return nil // by returning nil we sort out previously stored tasks
@@ -282,7 +289,7 @@ extension ScannerDomain {
                         return scannedTask
                     }
                 }
-                .catch { _ in Just(.none) }
+                .catch { _ in Just(scannedTask) }
                 .eraseToAnyPublisher()
         }
 

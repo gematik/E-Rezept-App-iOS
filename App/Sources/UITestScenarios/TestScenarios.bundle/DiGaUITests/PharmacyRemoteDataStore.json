@@ -25,7 +25,7 @@
          ],
       "type":"repeated"
    },
-   "fetchInsuranceByRecordings":{
+   "fetchInsuranceRecordings":{
       "payload":[
           {
              "telematikId":"8-01-0000000272",

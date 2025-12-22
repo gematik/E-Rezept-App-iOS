@@ -24,10 +24,14 @@ import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
-struct CodeView: View {
+public struct CodeView: View {
     @Bindable var store: StoreOf<CodeDomain>
 
-    var body: some View {
+    public init(store: StoreOf<CodeDomain>) {
+        self.store = store
+    }
+
+    public var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 0) {
@@ -35,14 +39,14 @@ struct CodeView: View {
                         HStack {
                             Text(L10n.euredeemCodeStep2)
                                 .font(.headline)
-                                .foregroundColor(Colors.text)
+                                .foregroundColor(Colors.systemLabel)
 
                             Spacer()
                         }
 
                         Text(L10n.euredeemCodeStepDescription)
                             .font(.subheadline)
-                            .foregroundColor(Colors.textSecondary)
+                            .foregroundColor(Colors.systemLabelSecondary)
                             .multilineTextAlignment(.leading)
                     }
 
@@ -54,13 +58,15 @@ struct CodeView: View {
                                 store.send(.toggleDisplayMode)
                             },
                             label: {
-                                Image(systemName: store.displayMode == .manual ? SFSymbolName.qrCode : SFSymbolName
-                                    .textFormat123)
-                                                                    .font(.subheadline.bold())
-                                                                    .foregroundColor(Colors.backgroundNeutral)
-                                                                    .frame(width: 40, height: 40)
-                                                                    .background(Colors.primary700)
-                                                                    .clipShape(Circle())
+                                Image(
+                                    systemName: store.displayMode == .manual ? SFSymbolName.qrCode : SFSymbolName
+                                        .textFormat123
+                                )
+                                .font(.subheadline.bold())
+                                .foregroundColor(Colors.backgroundNeutral)
+                                .frame(width: 40, height: 40)
+                                .background(Colors.primary700)
+                                .clipShape(Circle())
                             }
                         )
                         .offset(x: 6, y: -17)
@@ -72,7 +78,21 @@ struct CodeView: View {
                 .padding()
             }
 
-            CodeActionButtons(store: store)
+            VStack(spacing: 8) {
+                GreyDivider()
+
+                CodeActionButtons(store: store)
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    store.send(.delegate(.close))
+                }, label: {
+                    Text(L10n.euredeemCodeBtnClose)
+                })
+                    .accessibility(identifier: "euredeem_code_close_button")
+            }
         }
         .navigationTitle(L10n.euredeemCodeTitle)
         .navigationBarTitleDisplayMode(.inline)
@@ -172,14 +192,14 @@ struct ManualCodeView: View {
 
                     Text(L10n.euredeemCodeInsuranceNumberLabel)
                         .font(.body)
-                        .foregroundColor(Colors.text)
+                        .foregroundColor(Colors.systemLabel)
                 }
 
                 Text(store.insuranceNumber)
                     .font(.system(.title, design: .monospaced))
                     .kerning(10)
                     .fontWeight(.bold)
-                    .foregroundColor(Colors.text)
+                    .foregroundColor(Colors.systemLabel)
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(Colors.systemBackgroundSecondary)
@@ -195,13 +215,13 @@ struct ManualCodeView: View {
 
                     Text(L10n.euredeemCodeExchangeCodeLabel)
                         .font(.body)
-                        .foregroundColor(Colors.text)
+                        .foregroundColor(Colors.systemLabel)
                 }
 
                 Text(store.isExpired ? L10n.euredeemCodeExpiredTitle
                     .text : formatCodeForDisplay(store.exchangeCode))
                                     .font(.system(.title, design: .monospaced).bold())
-                                    .foregroundColor(store.isExpired ? Colors.red900 : Colors.text)
+                                    .foregroundColor(store.isExpired ? Colors.red900 : Colors.systemLabel)
                                     .padding()
                                     .frame(maxWidth: .infinity)
                                     .padding(8)
@@ -228,7 +248,7 @@ struct ManualCodeView: View {
             if !store.isExpired {
                 Text(L10n.euredeemCodeValidityManual)
                     .font(.caption)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
             }
 
@@ -312,7 +332,7 @@ struct QRCodeView: View {
             if !store.isExpired {
                 Text(L10n.euredeemCodeQrDescription)
                     .font(.caption)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
                     .transition(.opacity.animation(.easeInOut(duration: 0.5)))
             }

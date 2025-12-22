@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
+import FeatureHelpers
 import HealthCardControl
 import Nimble
 import TestUtils

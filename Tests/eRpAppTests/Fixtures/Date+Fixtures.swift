@@ -39,6 +39,9 @@ extension Date {
             case yesterday
             case oneHourAgo
             case today
+            case halfanHourAhead
+            case oneHourAhead
+            case sixHoursAhead
             case tomorrow
             case dayAfterTomorrow
             case threeDaysAhead
@@ -80,6 +83,12 @@ extension Date {
                 return referenceDate.addingTimeInterval(-60 * 60)
             case .today:
                 return referenceDate
+            case .halfanHourAhead:
+                return referenceDate.addingTimeInterval(60 * 30)
+            case .oneHourAhead:
+                return referenceDate.addingTimeInterval(60 * 60)
+            case .sixHoursAhead:
+                return referenceDate.addingTimeInterval(60 * 60 * 6)
             case .tomorrow:
                 return referenceDate.addingTimeInterval(60 * 60 * 24)
             case .dayAfterTomorrow:

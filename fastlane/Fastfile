@@ -257,25 +257,28 @@ lane :generate_documentation do |options|
   list_errors
   list_requirements
 
-  output = sh "cd .. && swift package describe --type json | jq -r \".targets[].name\" | grep -v Tests"
+  # create sbom into documentations
+  sh "cd .. && snyk sbom --file=Package.swift --format=cyclonedx1.6+json > docs/sbom.json; cd -"
+
+  output = sh "cd .. && swift package describe --type json | jq \".targets[]|select(.type == \\\"library\\\").name\" | grep -v Test | sed \"s/\\\"//g\" | sort"
   schemes = output.split("\n").map { |e| e.strip }
 
   sh "mkdir -p ../build/docs"
+  sh "mkdir -p ../docs/technical"
 
-  for scheme in schemes
-    sh "cd .. && mint run -s sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} -sdk 'iphonesimulator' > build/docs/#{scheme}.json; cd -"
-  end
+  # docc build
+  sh "cd .. && xcrun xcodebuild -project eRp-App.xcodeproj -derivedDataPath build/docsData -scheme eRpFeatures -destination 'platform=iOS Simulator,name=iPhone 16' -parallelizeTargets docbuild | cd -"
 
-  version = sh 'cd .. && grep -A 1 -R CFBundleShortVersionString ./App/Sources/Resources/Info.plist | grep "<string>" | sed -E "s/.*<string>(.*)<\\/string>/\\1/g"; cd - > /dev/null'.strip
+  paths = schemes.map { |scheme|
+    "../build/docsData/Build/Products/Debug-iphonesimulator/#{scheme}.doccarchive"
+  }.join(" ")
 
-  for scheme in schemes
-    sh "cd .. && jazzy --config '.jazzy.yml' --module-version '#{version}' --sourcekitten-sourcefile build/docs/#{scheme}.json --output 'docs/modules/#{scheme.sub('_macOS','')}' --readme doc/modules/#{scheme.sub('_macOS','')}/Readme.md --documentation 'doc/modules/#{scheme.sub('_macOS','')}/*.md'; cd -"
-  end
+  sh "rm -rf ../build/docs/AllSchemes.doccarchive"
+  sh "$(xcrun --find docc) merge #{paths}  --synthesized-landing-page-name \"E-Rezept ABC\" --output-path ../build/docs/AllSchemes.doccarchive"
+  sh "$(xcrun --find docc) process-archive transform-for-static-hosting \"../build/docs/AllSchemes.doccarchive\" --hosting-base-path /technical/ --output-path ../docs/technical"
 
-  jazzy(
-    config: ".jazzy.yml",
-    module_version: version
-  )
+  # generate landing page
+  generate_docs_index_html
 end
 
 desc "Lane that runs the static code analyzer for the project."
@@ -357,24 +360,41 @@ end
 lane :list_errors do |options|
   sh "mkdir -p ../docs/errors"
 
-  sh "cd .. && sourcery --config .sourcery-errors.yml"
+  # Generate error documentation using our custom action
+  result = generate_error_documentation(
+    sources_dir: "./Sources",
+    output_dir: "./docs/errors"
+  )
 
-  # Text List
-  sh "cd .. && pandoc -s -f markdown -t html --toc --css style.css doc/errors/generated/errors.md > docs/errors/errors.html"
+  UI.success("📊 Generated documentation for #{result[:total_enums]} error enums with #{result[:total_cases]} total cases")
 
-  # Graph
-  sh "cd .. && dot -Tsvg -Kdot doc/errors/generated/errors.dot > docs/errors/error_graph.svg"
-  sh "cd .. && cp doc/errors/error_graph.html docs/errors/error_graph.html"
-  sh "cd .. && cp doc/errors/error_graph.css docs/errors/error_graph.css"
-  sh "cd .. && cp Templates/ERB/style.css docs/errors/style.css"
+  # Generate SVG from DOT file using Graphviz
+  if File.exist?("../docs/errors/errors.dot")
+    sh "cd .. && dot -Tsvg -Kdot docs/errors/errors.dot > docs/errors/error_graph.svg"
+    UI.success("✅ Generated error graph SVG")
+  end
 
-  # CSV
-  sh "cd .. && cp doc/errors/generated/errors.csv docs/errors/errors.csv"
+  # Copy additional static files for the error documentation
+  sh "cd .. && cp doc/errors/error_graph.html docs/errors/error_graph.html" if File.exist?("../doc/errors/error_graph.html")
+  sh "cd .. && cp doc/errors/error_graph.css docs/errors/error_graph.css" if File.exist?("../doc/errors/error_graph.css")
+  sh "cd .. && cp Templates/ERB/style.css docs/errors/style.css" if File.exist?("../Templates/ERB/style.css")
+
+  # Report any missing expected error codes
+  if result[:missing_codes] && result[:missing_codes].any?
+    UI.important("⚠️  Missing expected error codes: #{result[:missing_codes].join(', ')}")
+  end
+
+  UI.success("🎉 Error documentation generation complete!")
+  UI.message("📁 Files generated in docs/errors/:")
+  UI.message("   • errors.json - Structured error data for search interface")
+  UI.message("   • errors.dot - Graphviz DOT format for visualization")
+  UI.message("   • error_graph.svg - Visual error relationship graph")
+  UI.message("   • search.html - Interactive search interface")
 end
 
 lane :list_requirements do |options|
   template_dir = File.join(File.dirname(__FILE__), 'Templates', 'ERB')
-  output_dir = File.join(File.dirname(__FILE__), 'build', 'requirements')
+  output_dir = File.join(File.dirname(__FILE__), 'docs', 'requirements')
   output_docs_dir = File.join(File.dirname(__FILE__), 'build', 'docs', 'generated')
   
   templates = [
@@ -846,6 +866,12 @@ end
 lane :build_archive_with_debug_screen do |options|
   clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
 
+  # On CI if there is no match password available return with error
+  if is_ci and (ENV["MATCH_PASSWORD"].nil? or ENV["MATCH_PASSWORD"].empty?)
+    UI.error("No MATCH_PASSWORD available, cannot sign the app.")
+    return
+  end
+  
   match(type: "appstore")
 
   gym(
@@ -1261,7 +1287,7 @@ lane :pull_erp_shared_data do
 
   erp_shared_data_insurance_contacts(
     gitlab_api_token: gitlab_api_token,
-    replace_file_path: './Sources/eRpApp/Resources/health_insurance_contacts.json',
+    replace_file_path: './Sources/FeatureCardWall/Resources/health_insurance_contacts.json',
     transform_to_json_format: true
   )
 end
@@ -1385,4 +1411,20 @@ def extract_release_notes_for_version(version)
     # Fallback if version not found
     return "Release notes for version #{version} not found in ReleaseNotes.md"
   end
+end
+
+lane :generate_docs_index_html do |options|
+  version = current_version_number()
+
+  # Load and render the ERB template
+  erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'docs_index.html.erb')
+  erb = ERB.new(File.read(erb_path))
+  html_content = erb.result(binding)
+
+  # Write the HTML file
+  File.open("../docs/index.html", "w") do |file|
+    file.write(html_content)
+  end
+
+  UI.success("📄 Generated docs/index.html")
 end

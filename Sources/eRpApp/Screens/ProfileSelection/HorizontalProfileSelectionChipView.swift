@@ -34,7 +34,7 @@ struct HorizontalProfileSelectionChipView: View {
     var body: some View {
         HStack(alignment: .center) {
             Text(userProfile.name)
-                .foregroundColor(isSelected ? Colors.systemLabel : Colors.textSecondary)
+                .foregroundColor(isSelected ? Colors.systemLabel : Colors.systemLabelSecondary)
                 .font(.body)
 
             if userProfile.activityIndicating {

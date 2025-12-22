@@ -25,109 +25,63 @@ import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import Nimble
 import Pharmacy
+import Settings
+import Synchronization
 import XCTest
 
 @MainActor
 final class OrderDetailDomainTests: XCTestCase {
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
-    let mockErxRepository = MockErxTaskRepository(
-        find: Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher(),
-        saveCommunications: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-    )
-    let mockPharmacyRepository = MockPharmacyRepository()
-    let mockApplication = MockResourceHandler()
     let mockUserDataStore = MockUserDataStore()
     typealias TestStore = TestStoreOf<OrderDetailDomain>
 
     private func testStore(
-        for repository: MockErxTaskRepository
-    ) -> TestStore {
-        TestStore(initialState: OrderDetailDomain
-            .State(communicationMessage: .order(.init(orderId: "765432", communications: [], chargeItems: [])))) {
-                OrderDetailDomain()
-        } withDependencies: { dependencies in
-            dependencies.schedulers = schedulers
-            dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = repository
-            dependencies.resourceHandler = UnimplementedResourceHandler()
-            dependencies.userDataStore = mockUserDataStore
-        }
-    }
-
-    private func testStore(
-        for order: Order,
-        resourceHandler: ResourceHandler = UnimplementedResourceHandler()
+        for order: Order = .init(orderId: "765432", communications: [], chargeItems: []),
+        withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStore {
         TestStore(initialState: OrderDetailDomain.State(communicationMessage: .order(order))) {
             OrderDetailDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = mockErxRepository
-            dependencies.pharmacyRepository = mockPharmacyRepository
-            dependencies.resourceHandler = resourceHandler
             dependencies.userDataStore = mockUserDataStore
-        }
-    }
 
-    private func testStore(for state: OrderDetailDomain.State) -> TestStore {
-        TestStore(initialState: state) {
-            OrderDetailDomain()
-        } withDependencies: { dependencies in
-            dependencies.schedulers = schedulers
-            dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = mockErxRepository
-            dependencies.pharmacyRepository = mockPharmacyRepository
-            dependencies.resourceHandler = UnimplementedResourceHandler()
-            dependencies.userDataStore = mockUserDataStore
+            prepareDependencies(&dependencies)
         }
-    }
-
-    private func repository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
-        let communicationPublisher = Just<[ErxTask.Communication]>(communications)
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        let savePublisher = Just(true)
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        return MockErxTaskRepository(listCommunications: communicationPublisher,
-                                     saveCommunications: savePublisher)
     }
 
     func testMarkCommunicationsRead() async {
         let orderId = "12343-1236-432"
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentUnread])
-        mockErxRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        mockErxRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
+        store.dependencies.erxTaskRepository.saveLocalCommunications = { _, _ in }
+        store.dependencies.erxTaskRepository.saveChargeItems = { _, _ in }
+        store.dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+            Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }
 
         await store.send(.didDisplayTimelineEntries)
-        expect(self.mockErxRepository.saveCommunicationsCallsCount) == 1
-        expect(self.mockErxRepository.saveChargeItemsCalled).to(beFalse())
     }
 
     func testMarkCommunicationsAndChargeItemRead() async {
         let orderId = "12343-1236-432"
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentUnread])
-        mockErxRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-        mockErxRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: [ErxChargeItem.Fixtures.chargeItem]),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [ErxChargeItem.Fixtures.chargeItem])
         )
+        store.dependencies.erxTaskRepository.saveLocalCommunications = { _, _ in }
+        store.dependencies.erxTaskRepository.saveChargeItems = { _, _ in }
+        store.dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+            Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }
 
         await store.send(.didDisplayTimelineEntries)
-        expect(self.mockErxRepository.saveCommunicationsCallsCount) == 1
-        expect(self.mockErxRepository.saveChargeItemsCallsCount) == 1
     }
 
     func testLoadTasks() async {
@@ -135,9 +89,12 @@ final class OrderDetailDomainTests: XCTestCase {
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
         let tasks = [ErxTask.Demo.erxTask1]
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
+        store.dependencies.erxTaskRepository.saveLocalCommunications = { _, _ in }
+        store.dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+            Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }
 
         await store.send(.loadTasks)
         await store.receive(.tasksReceived(tasks)) {
@@ -151,25 +108,29 @@ final class OrderDetailDomainTests: XCTestCase {
         let pharmacy = Self.pharmacy
         let remotePharmacy = Self.pharmacyRemote
         let order: Order = .init(orderId: orderId, communications: comm, chargeItems: [], pharmacy: pharmacy)
-        let store = testStore(
-            for: order,
-            resourceHandler: mockApplication
-        )
-        mockPharmacyRepository.updateFromRemoteByReturnValue = Just(Self.pharmacyRemote)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
+        await withDependencies {
+            $0.erxTaskRepository.saveLocalCommunications = { _, _ in }
+            $0.erxTaskRepository.loadLocalTask = { _, _ in
+                Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            }
+            $0.pharmacyRepository.updateFromRemote = { _ in remotePharmacy }
+        } operation: {
+            let store = testStore(
+                for: order
+            )
 
-        await store.send(.loadAndShowPharmacy)
+            await store.send(.loadAndShowPharmacy)
 
-        await store.receive(.response(.loadAndShowPharmacyReceived(.success(remotePharmacy)))) { state in
-            state.order = Order.lens.pharmacy.set(remotePharmacy)(order)
-            state.destination = .pharmacyDetail(.init(
-                prescriptions: Shared(value: []),
-                selectedPrescriptions: Shared(value: []),
-                inRedeemProcess: false,
-                inOrdersMessage: true,
-                pharmacyViewModel: .init(pharmacy: remotePharmacy)
-            ))
+            await store.receive(.response(.loadAndShowPharmacyReceived(.success(remotePharmacy)))) { state in
+                state.order = Order.lens.pharmacy.set(remotePharmacy)(order)
+                state.destination = .pharmacyDetail(.init(
+                    prescriptions: Shared(value: []),
+                    selectedPrescriptions: Shared(value: []),
+                    inRedeemProcess: false,
+                    inOrdersMessage: true,
+                    pharmacyViewModel: .init(pharmacy: remotePharmacy)
+                ))
+            }
         }
     }
 
@@ -178,26 +139,33 @@ final class OrderDetailDomainTests: XCTestCase {
         let comm = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
         let pharmacy = Self.pharmacy
         let order: Order = .init(orderId: orderId, communications: comm, chargeItems: [], pharmacy: pharmacy)
-        let store = testStore(
-            for: order,
-            resourceHandler: mockApplication
-        )
-        mockPharmacyRepository
-            .updateFromRemoteByReturnValue = Fail(error: PharmacyRepositoryError.remote(.notFound))
-            .eraseToAnyPublisher()
-        mockPharmacyRepository.deletePharmaciesReturnValue = Just(true)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
+        let error = PharmacyRepositoryError.remote(.notFound)
+        await withDependencies {
+            $0.erxTaskRepository.saveLocalCommunications = { _, _ in }
+            $0.erxTaskRepository.loadLocalTask = { _, _ in
+                Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            }
+            $0.pharmacyRepository.updateFromRemote = { _ in throw error }
+            $0.pharmacyRepository.deleteMultiple = { _ in true }
+        } operation: {
+            let store = testStore(
+                for: order
+            )
 
-        await store.send(.loadAndShowPharmacy)
+            await store.send(.loadAndShowPharmacy)
 
-        await store.receive(.response(.loadAndShowPharmacyReceived(.failure(.remote(.notFound))))) { state in
-            state.order = Order.lens.pharmacy.set(nil)(order)
-            state.destination = .alert(.init(for: PharmacyRepositoryError.remote(.notFound)))
+            await store.receive(.response(.loadAndShowPharmacyReceived(.failure(.remote(.notFound))))) { state in
+                state.order = Order.lens.pharmacy.set(nil)(order)
+                state.destination = .alert(.init(for: PharmacyRepositoryError.remote(.notFound)))
+            }
         }
     }
 
+    @available(iOS 18.0, *)
+    @MainActor
     func testOpenPhoneApp() async {
+        let openedURL = Mutex<URL?>(nil)
+
         let pharmacy = PharmacyLocation.Dummies.pharmacy
         let store = testStore(
             for: .init(
@@ -205,20 +173,26 @@ final class OrderDetailDomainTests: XCTestCase {
                 communications: [],
                 chargeItems: [],
                 pharmacy: pharmacy
-            ),
-            resourceHandler: mockApplication
-        )
+            )
+        ) { dependencies in
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
+        }
 
         await store.send(.openPhoneApp)
-        expect(self.mockApplication.openCallsCount) == 1
         guard let phone = pharmacy.telecom?.phone else {
             XCTFail("phone number is not present")
             return
         }
-        expect(self.mockApplication.openReceivedUrl) == URL(phoneNumber: phone)
+        expect(openedURL.withLock { $0 }).to(equal(URL(phoneNumber: phone)))
     }
 
+    @available(iOS 18.0, *)
+    @MainActor
     func testOpenMailApp() async {
+        let openedURL = Mutex<URL?>(nil)
+
         let pharmacy = PharmacyLocation.Dummies.pharmacy
         let store = testStore(
             for: .init(
@@ -226,17 +200,19 @@ final class OrderDetailDomainTests: XCTestCase {
                 communications: [],
                 chargeItems: [],
                 pharmacy: pharmacy
-            ),
-            resourceHandler: mockApplication
-        )
+            )
+        ) { dependencies in
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
+        }
 
         await store.send(.openMailApp)
-        expect(self.mockApplication.openCallsCount) == 1
         guard let email = pharmacy.telecom?.email else {
             XCTFail("email address is not present")
             return
         }
-        expect(self.mockApplication.openReceivedUrl) == URL(string: "mailto:\(email)?")
+        expect(openedURL.withLock { $0 }).to(equal(URL(string: "mailto:\(email)?")))
     }
 
     func testSelectingMedication() async {
@@ -246,7 +222,7 @@ final class OrderDetailDomainTests: XCTestCase {
         await store.send(.didSelectMedication(input)) { state in
             state.destination = .prescriptionDetail(
                 .init(
-                    prescription: Prescription(erxTask: input, dateFormatter: UIDateFormatter.testValue),
+                    prescription: Prescription(erxTask: input),
                     isArchived: false
                 )
             )
@@ -277,47 +253,51 @@ final class OrderDetailDomainTests: XCTestCase {
         }
     }
 
+    @available(iOS 18.0, *)
     func testSelectingValidUrl() async {
+        let openedURL = Mutex<URL?>(nil)
+
         let orderId = "12343-1236-432"
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
-        )
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
+        ) { dependencies in
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+        }
 
         let expectedUrl = URL(string: "https://www.das-e-rezept-fuer-deutschland.de")!
         await store.send(.showOpenUrlSheet(url: expectedUrl)) { state in
             state.openUrlSheetUrl = expectedUrl
         }
-        mockApplication.canOpenURLReturnValue = true
 
         await store.send(.openUrl(url: expectedUrl))
-        expect(self.mockApplication.canOpenURLCallsCount) == 1
-        expect(self.mockApplication.openCallsCount) == 1
-        expect(self.mockApplication.openReceivedUrl) == expectedUrl
+
+        expect(openedURL.withLock { $0 }).to(equal(expectedUrl))
     }
 
     func testSelectingInvalidUrl() async {
         let orderId = "12343-1236-432"
         let expectedUrl = URL(string: "www.invalid-url.de")!
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentInvalidUrl])
-        mockApplication.canOpenURLReturnValue = false
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
-        )
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
+        ) { dependencies in
+            dependencies.openURLHandler.canOpenURL = { _ in false }
+        }
 
         await store.send(.showOpenUrlSheet(url: expectedUrl)) { state in
             state.openUrlSheetUrl = expectedUrl
         }
-        await store.send(.openUrl(url: expectedUrl)) { state in
+        await store.send(.openUrl(url: expectedUrl))
+        await store.receive(.response(.showAlert(OrderDetailDomain.openUrlAlertState(for: expectedUrl)))) { state in
             state.destination = .alert(OrderDetailDomain.openUrlAlertState(for: expectedUrl))
         }
-        expect(self.mockApplication.canOpenURLCallsCount) == 1
-        expect(self.mockApplication.openCallsCount) == 0
-        expect(self.mockApplication.openReceivedUrl).to(beNil())
     }
 
+    @available(iOS 18.0, *)
     func testCommunicationWithWrongPayloadFormat() async {
         let date = Date()
         let timestamp = date.fhirFormattedString(with: .yearMonthDayTime)
@@ -332,6 +312,7 @@ final class OrderDetailDomainTests: XCTestCase {
             "mailto:app-fehlermeldung@ti-support.de?subject=Fehlermeldung%20aus%20der%20E-Rezept%20App&body=Liebes%20Service-Team,%20ich%20habe%20eine%20Nachricht%20von%20einer%20Apotheke%20erhalten.%20Leider%20konnte%20ich%20meinem%20Nutzer%20die%20Nachricht%20aber%20nicht%20mitteilen,%20da%20ich%20sie%20nicht%20verstanden%20habe.%20Bitte%20pr%C3%BCft,%20was%20hier%20passiert%20ist,%20und%20helft%20uns.%20Vielen%20Dank!%20Die%20E-Rezept%20App%0A%0ASie%20senden%20uns%20diese%20Informationen%20zum%20Zwecke%20der%20Fehlersuche.%20Bitte%20beachten%20Sie,%20dass%20auch%20Ihre%20Mailadresse%20sowie%20ggf.%20Ihr%20darin%20enthaltener%20Name%20%C3%BCbertragen%20wird.%20Wenn%20Sie%20diese%20Informationen%20ganz%20oder%20teilweise%20nicht%20%C3%BCbermitteln%20m%C3%B6chten,%20l%C3%B6schen%20Sie%20diese%20bitte%20aus%20dieser%20Mail.%20%0A%0AAlle%20Daten%20werden%20von%20der%20gematik%20GmbH%20oder%20deren%20beauftragten%20Unternehmen%20nur%20zur%20Bearbeitung%20dieser%20Fehlermeldung%20gespeichert%20und%20verarbeitet.%20Die%20L%C3%B6schung%20erfolgt%20automatisiert,%20sp%C3%A4testens%20180%20Tage%20nach%20Bearbeitung%20des%20Tickets.%20Ihre%20Mailadresse%20nutzen%20wir%20ausschlie%C3%9Flich,%20um%20mit%20Ihnen%20Kontakt%20in%20Bezug%20auf%20diese%20Fehlermeldung%20aufzunehmen.%20F%C3%BCr%20Fragen%20oder%20eine%20vorzeitige%20L%C3%B6schung%20k%C3%B6nnen%20Sie%20sich%20jederzeit%20an%20den%20Datenschutzverantwortlichen%20des%20E-Rezept%20Systems%20wenden.%20Sie%20finden%20weitere%20Informationen%20in%20der%20E-Rezept%20App%20im%20Men%C3%BC%20unter%20dem%20Datenschutz-Eintrag.%0A%0Awrong%20payload%20format%0A%0AFehler%2040%2042%2067336%0ATestAppVersion%0A\(timestamp)%0AModel:%20\(deviceInfo.model),%0AOS:\(deviceInfo.systemName)%20\(deviceInfo.version)"
         )
         // swiftlint:enable line_length
+        let openedURL = Mutex<URL?>(nil)
 
         let orderId = "12343-1236-432"
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationWithWrongPayload])
@@ -343,8 +324,6 @@ final class OrderDetailDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = mockErxRepository
-            dependencies.resourceHandler = mockApplication
             dependencies.dateProvider = { date }
             dependencies.userDataStore = mockUserDataStore
             dependencies.currentAppVersion = AppVersion(
@@ -352,12 +331,14 @@ final class OrderDetailDomainTests: XCTestCase {
                 buildNumber: "",
                 buildHash: ""
             )
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+            dependencies.openURLHandler.open = { url in
+                openedURL.withLock { $0 = url }
+            }
         }
-        mockApplication.canOpenURLReturnValue = true
         await store.send(.openMail(message: "wrong payload format"))
-        expect(self.mockApplication.canOpenURLCallsCount) == 1
-        expect(self.mockApplication.openCallsCount) == 1
-        expect(self.mockApplication.openReceivedUrl) == expectedUrl
+
+        expect(openedURL.withLock { $0 }).to(equal(expectedUrl))
     }
 
     func testMarkInternalCommunicationAsRead() async {
@@ -366,7 +347,19 @@ final class OrderDetailDomainTests: XCTestCase {
                                                            text: "Hello E-Rezept Team",
                                                            version: "",
                                                            isRead: false)
-        let store = testStore(for: .init(communicationMessage: .internalCommunication(.init(messages: [message]))))
+
+        let store = TestStore(
+            initialState: OrderDetailDomain
+                .State(communicationMessage: .internalCommunication(.init(messages: [message])))
+        ) {
+            OrderDetailDomain()
+        } withDependencies: {
+            $0.erxTaskRepository.saveLocalCommunications = { _, _ in }
+            $0.erxTaskRepository.loadLocalTask = { _, _ in
+                Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            }
+            $0.userDataStore = mockUserDataStore
+        }
 
         await store.send(.didDisplayTimelineEntries)
         expect(self.mockUserDataStore.markInternalCommunicationAsReadMessageIdCalled).to(beTrue())
@@ -383,8 +376,7 @@ final class OrderDetailDomainTests: XCTestCase {
                                                                 chipTexts: ["Vita-Tee"])]
 
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
 
         await store.send(.tasksReceived([tasks])) {
@@ -403,8 +395,7 @@ final class OrderDetailDomainTests: XCTestCase {
                                                                 pharmacy: nil,
                                                                 chipTexts: [L10n.ordDetailTxtChipAll.text])]
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
 
         await store.send(.tasksReceived(tasks)) {
@@ -422,8 +413,7 @@ final class OrderDetailDomainTests: XCTestCase {
                                                               chipTexts: ["Vita-Tee"])]
 
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
 
         await store.send(.tasksReceived([tasks])) {
@@ -441,8 +431,7 @@ final class OrderDetailDomainTests: XCTestCase {
         let expectedTimelineEntire: [TimelineEntry] = [.reply(OrderDetailDomainTests.communicationReply2Unique,
                                                               chipTexts: [L10n.ordDetailTxtChipAll.text])]
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
 
         await store.send(.tasksReceived(tasks)) {
@@ -459,8 +448,7 @@ final class OrderDetailDomainTests: XCTestCase {
         let expectedTimelineEntire: [TimelineEntry] = [.reply(OrderDetailDomainTests.communicationReply1Unique,
                                                               chipTexts: ["Vita-Tee"])]
         let store = testStore(
-            for: .init(orderId: orderId, communications: input, chargeItems: []),
-            resourceHandler: mockApplication
+            for: .init(orderId: orderId, communications: input, chargeItems: [])
         )
 
         await store.send(.tasksReceived(tasks)) {

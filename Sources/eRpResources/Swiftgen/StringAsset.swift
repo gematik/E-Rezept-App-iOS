@@ -22,6 +22,9 @@
 
 import SwiftUI
 
+/// Argument type that conforms to both CVarArg and Hashable for use in StringAsset.
+public typealias EquatableCVarArg = (CVarArg & Hashable)
+
 /// Represents a localized string asset with optional formatting arguments.
 public struct StringAsset {
     /// The bundle containing the localized string.
@@ -31,12 +34,12 @@ public struct StringAsset {
 
     // swiftlint:disable discouraged_optional_collection
     /// Arguments for string formatting.
-    public private(set) var arguments: [CVarArg]?
+    public private(set) var arguments: [any EquatableCVarArg]?
 
     /// Initializes a `StringAsset` with a key, optional arguments, and a bundle.
     public init(
         _ rawKey: String,
-        arguments: [CVarArg]? = nil,
+        arguments: [any EquatableCVarArg]? = nil,
         bundle: Bundle
     ) {
         self.rawKey = rawKey
@@ -63,5 +66,35 @@ public struct StringAsset {
         let formattedKey = bundle.localizedString(forKey: rawKey, value: nil, table: nil)
         let stringKey = String(format: formattedKey, arguments: arguments)
         return LocalizedStringKey(stringLiteral: stringKey)
+    }
+}
+
+extension StringAsset: Equatable {
+    /// Manual Equatable implementation
+    public static func ==(lhs: StringAsset, rhs: StringAsset) -> Bool {
+        // Compare bundle, rawKey first
+        guard lhs.bundle == rhs.bundle, lhs.rawKey == rhs.rawKey else {
+            return false
+        }
+
+        // Compare arguments arrays
+        switch (lhs.arguments, rhs.arguments) {
+        case (nil, nil):
+            return true
+        case let (lhsArgs?, rhsArgs?):
+            guard lhsArgs.count == rhsArgs.count else { return false }
+
+            // Compare each argument by converting to AnyHashable
+            for (lhsArg, rhsArg) in zip(lhsArgs, rhsArgs) {
+                let lhsHashable = AnyHashable(lhsArg)
+                let rhsHashable = AnyHashable(rhsArg)
+                if lhsHashable != rhsHashable {
+                    return false
+                }
+            }
+            return true
+        default:
+            return false // One is nil, the other isn't
+        }
     }
 }

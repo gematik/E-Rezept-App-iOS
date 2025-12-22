@@ -27,9 +27,11 @@ struct EditProfileNameView: View {
     @Bindable var store: StoreOf<EditProfileNameDomain>
 
     var body: some View {
-        EnterProfileNameSubView(displayName: $store.profileName.sending(\.setProfileName)) {
-            store.send(.saveButtonTapped)
-        }
+        EnterProfileNameSubView(
+            displayName: $store.profileName.sending(\.setProfileName),
+            didTapButtonAction: { store.send(.saveButtonTapped) },
+            closeAction: { store.send(.delegate(.close)) }
+        )
     }
 }
 

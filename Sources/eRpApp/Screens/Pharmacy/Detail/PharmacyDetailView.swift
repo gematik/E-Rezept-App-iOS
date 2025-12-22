@@ -61,14 +61,21 @@ struct PharmacyDetailView: View {
                                 .accessibility(identifier: A11y.pharmacyDetail.phaDetailTxtSubtitle)
 
                             if let address = store.pharmacy.address?.fullAddress {
-                                TertiaryButton(text: LocalizedStringKey(address),
-                                               isEnabled: store.pharmacy.canBeDisplayedInMap,
-                                               imageName: SFSymbolName.map) {
+                                Button {
                                     store.send(.openMapApp)
+                                } label: {
+                                    Label {
+                                        Text(address)
+                                    } icon: {
+                                        Image(systemName: SFSymbolName.map)
+                                    }
                                 }
+                                .labelStyle(.trailingIcon)
+                                .buttonStyle(.tertiary(isEnabled: store.pharmacy.canBeDisplayedInMap))
                                 .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         Button(
                             action: { store.send(.toggleIsFavorite) },
                             label: {
@@ -96,6 +103,16 @@ struct PharmacyDetailView: View {
 
                     if !store.pharmacy.hoursOfOperation.isEmpty {
                         OpeningHoursView(dailyOpenHours: store.pharmacyViewModel.openingHours)
+                            .padding(.bottom, 8)
+                    }
+
+                    if !store.pharmacy.emergencyServiceHours.isEmpty {
+                        EmergencyServiceView(specialOpening: store.pharmacyViewModel.emergencyServiceHours)
+                            .padding(.bottom, 8)
+                    }
+
+                    if !store.pharmacy.specialClosingHours.isEmpty {
+                        SpecialClosingView(specialClosings: store.pharmacyViewModel.specialClosingHours)
                             .padding(.bottom, 8)
                     }
 
@@ -271,6 +288,74 @@ extension PharmacyDetailView {
         }
     }
 
+    struct EmergencyServiceView: View {
+        let specialOpening: [PharmacyLocationViewModel.SpecialOperationHoursPeriod]
+        var body: some View {
+            SectionHeaderView(
+                text: L10n.phaDetailEmergencyService,
+                a11y: ""
+            )
+
+            ForEach(specialOpening, id: \.self) { specialHours in
+                HStack(spacing: 16) {
+                    VStack {
+                        Image(systemName: specialHours.imageName.symbolName)
+                            .font(Font.body)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(specialHours.imageName.color)
+                            .accessibilityHidden(true)
+
+                        Spacer(minLength: 0)
+                    }
+                    HStack(spacing: 4) {
+                        Text(specialHours.displayPeriod)
+                            .font(Font.body)
+                            .foregroundColor(specialHours.isActive ? Colors.secondary700 : Colors
+                                .systemLabelSecondary)
+                            .fontWeight(specialHours.isActive ? .semibold : .regular)
+                            .accessibility(label: Text(specialHours.accessiblilityLabel))
+                        Spacer(minLength: 0)
+                    }
+                }.padding(.leading, 16)
+                Divider()
+            }
+        }
+    }
+
+    struct SpecialClosingView: View {
+        let specialClosings: [PharmacyLocationViewModel.SpecialOperationHoursPeriod]
+        var body: some View {
+            SectionHeaderView(
+                text: L10n.phaDetailSpecialClosing,
+                a11y: ""
+            )
+
+            ForEach(specialClosings, id: \.self) { closing in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(closing.reason)
+                        .font(.footnote)
+                        .italic()
+                        .opacity(closing.isActive ? 1 : 0.6)
+                        .foregroundColor(closing.isActive ? Colors.secondary700 : Colors.systemLabelSecondary)
+                        .fontWeight(closing.isActive ? .semibold : .regular)
+
+                    HStack {
+                        Text(closing.displayPeriod)
+                            .font(Font.body)
+                            .foregroundColor(closing.isActive ? Colors.secondary700 : Colors
+                                .systemLabelSecondary)
+                            .fontWeight(closing.isActive ? .semibold : .regular)
+                            .accessibility(label: Text(closing.accessiblilityLabel))
+                            .multilineTextAlignment(.leading)
+                        Spacer(minLength: 0)
+                    }
+                    Spacer(minLength: 0)
+                }.padding([.vertical, .leading], 8)
+                Divider()
+            }
+        }
+    }
+
     struct ContactView: View {
         @Bindable var store: StoreOf<PharmacyDetailDomain>
 
@@ -310,11 +395,11 @@ extension PharmacyDetailView {
     struct Footer: View {
         var text: Text = {
             Text(L10n.phaDetailTxtFooterStart)
-                .foregroundColor(Color(.secondaryLabel)) +
+                .foregroundColor(Colors.systemLabelSecondary) +
                 Text(L10n.phaDetailTxtFooterMid)
                 .foregroundColor(Colors.primary) +
                 Text(L10n.phaDetailTxtFooterEnd)
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
         }()
 
         var body: some View {
@@ -327,6 +412,7 @@ extension PharmacyDetailView {
                 }, label: {
                     text
                         .multilineTextAlignment(.leading)
+                        .accentColor(Colors.primary)
                 })
                 Button(action: {
                     guard let url = URL(string: "https://www.gematik.de/anwendungen/e-rezept/faq/meine-apotheke/"),
@@ -334,9 +420,14 @@ extension PharmacyDetailView {
 
                     UIApplication.shared.open(url)
                 }, label: {
-                    Text(L10n.phaDetailBtnFooter)
-                        .foregroundColor(Colors.primary)
+                    Label {
+                        Text(L10n.phaDetailBtnFooter)
+                    } icon: {
+                        Image(systemName: SFSymbolName.arrowUpForward)
+                    }
                 })
+                    .labelStyle(.trailingIcon)
+                    .buttonStyle(.tertiary)
             }
             .font(.footnote)
         }

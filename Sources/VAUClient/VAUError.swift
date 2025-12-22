@@ -20,27 +20,28 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 import HTTPClient
 
-// sourcery: CodedError = "550"
+@CodedError("550")
 public enum VAUError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     /// In case of HTTP/Connection error
     case network(error: HTTPClientError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     /// When failed to extract a X.509 VAU certificate information
     case certificateDecoding
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     /// When internal cryptographic operations fail
     case internalCryptoError
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     /// In case a response (or request) could not be (cryptographically) verified
     case responseValidation
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     /// Other error cases
     case unspecified(error: Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     /// Internal error
     case internalError(String)
 }

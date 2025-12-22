@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import FeatureEURedeem
 import Perception
 import SwiftUI
 
@@ -42,6 +43,16 @@ struct PharmacyContainerView: View {
             switch store.case {
             case let .redeem(store):
                 PharmacyRedeemView(store: store)
+            case let .euRedeemSelection(store):
+                EURedeemSelectionView(store: store)
+            case let .countrySelection(countrySelectionStore):
+                CountrySelectionView(store: countrySelectionStore)
+            case let .prescriptionSelection(prescriptionSelectionStore):
+                SelectEUPrescriptionsView(store: prescriptionSelectionStore)
+            case let .instructions(instructionsStore):
+                InstructionsView(store: instructionsStore)
+            case let .code(codeStore):
+                CodeView(store: codeStore)
             }
         }
         .accentColor(Colors.primary600)

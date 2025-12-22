@@ -1,3 +1,65 @@
+# 1.35.0
+
+### Features (7 changes)
+
+- Select all prescriptions button when reedeming
+- Add fetchEUCountries to pharmacyRepository
+- Add federal insurance as a new option while loggin in
+- Add Sonderschließungzeiten for PharmacyDetails
+- Add support for EU Dispense consents
+- Add eu redeem flags for local store
+- Add EU redeem entries and feature flag
+
+### Bug fixes (8 changes)
+
+- Fix cardwall hang and several main screen layout issues
+- Fix accessibility issues
+- ScannerView ignores non-app QR codes
+- Fix crash due to race conditions
+- Fix UIKitTextView async hight calculation disabled for only UITest
+- Fix iOS 26 pull to refresh
+- Fix sporadic crashes during NFC communication
+- Fix PKV/GKV drawer opens automatically on new profile creation
+
+### Internal changes (16 changes)
+
+- Move not running tests into suitable location. Fix tests & implementation.
+- Extract erxTaskRepository to own module and update to async await
+- Fix colors 100 dark values
+- Refactor coredataControllerFactory
+- Fix EU redeem navigation
+- Move AppConfiguration to Settings module
+- Change documentation tooling from jazzy to docc
+- Refactor CardWall into own module
+- Add implementation for refactoring ProfileDataStore into modern dependency
+- Refactor dependencies and move into separate modules into
+- Fix UITests for Onboarding and RedeemOverview
+- Refactor isDemoMode to use Shared property wrapper
+- Move more dependencies into module friendly location
+- Introduce helper modules and move some dependencies and helpers into that
+- Change CodedError to be separated into a separte swift package
+- Change some components location to eRpStyleKit.
+
+### Added (1 change)
+
+- Add "Notdienste" section to PharmacyDetailView
+
+### changed (9 changes)
+
+- Change sending communications to use profiel v1.5 and remove 1.4 communications
+- Remove Combine-endpoints from low level clients
+- Update gematik address and data protection information
+- Change diga survey to hide after first tap
+- Change Pharmacy Search to use new server side sort by distance
+- Changed eu redeem selection UI to match figma
+- Introduce CloseButton component for sheets to eRpStyleKit
+- Use /PKICertificates and /OCSPResponse for EE certificate verification
+- Use /PKICertificates and /OCSPResponse for VAU certificate check
+
+### Changed (1 change)
+
+- Update UpdateChecker endpoint
+
 # 1.34.0
 
 ### Features (6 changes)

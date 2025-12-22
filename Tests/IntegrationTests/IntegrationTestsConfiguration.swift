@@ -22,6 +22,7 @@
 
 @testable import eRpFeatures
 import Foundation
+@testable import Settings
 
 extension IntegrationTestsConfiguration {
     enum Environment {

@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureHelpers
 import IDP
 import SwiftUI
 
@@ -56,6 +57,9 @@ struct AppDomain {
 
     @ObservableState
     struct State: Equatable {
+        @Shared(.isDemoMode) var isDemoMode
+        @Shared(.selectedProfileId) var profileId
+
         var destination: Destinations.State
 
         var main: MainDomain.State
@@ -69,7 +73,6 @@ struct AppDomain {
 
         var unreadOrderMessageCount: Int
         var unreadInternalCommunicationCount: Int
-        var isDemoMode: Bool
 
         init(
             destination: Destinations.State,
@@ -78,8 +81,7 @@ struct AppDomain {
             orders: OrdersDomain.State,
             settings: SettingsDomain.State,
             unreadOrderMessageCount: Int,
-            unreadInternalCommunicationCount: Int,
-            isDemoMode: Bool
+            unreadInternalCommunicationCount: Int
         ) {
             self.destination = destination
             self.main = main
@@ -88,15 +90,12 @@ struct AppDomain {
             self.settings = settings
             self.unreadOrderMessageCount = unreadOrderMessageCount
             self.unreadInternalCommunicationCount = unreadInternalCommunicationCount
-            self.isDemoMode = isDemoMode
         }
     }
 
     enum Action: Equatable {
         case task
 
-        case isDemoModeReceived(Bool)
-        case registerDemoModeListener
         case registerNewMessageListener
         case newOrderMessageReceived(Int)
         case newInternalCommunicationReceived(Int)
@@ -110,7 +109,7 @@ struct AppDomain {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.changeableUserSessionContainer) var userSessionContainer: UsersSessionContainer
-    @Dependency(\.entireErxTaskRepository) var entireErxTaskRepository
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
     @Dependency(\.internalCommunicationProtocol) var internalCommunicationProtocol: InternalCommunicationProtocol
 
     var body: some Reducer<State, Action> {
@@ -137,10 +136,7 @@ struct AppDomain {
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
-            return .merge(
-                .send(.registerDemoModeListener),
-                .send(.registerNewMessageListener)
-            )
+            return .send(.registerNewMessageListener)
         case .settings(
             action: .destination(
                 .presented(.editProfile(.destination(.presented(.alert(.confirmDeleteProfile)))))
@@ -157,26 +153,17 @@ struct AppDomain {
                 .send(.orders(action: .resetNavigation)),
                 .send(.pharmacy(action: .pharmacySearch(.resetNavigation)))
             )
-        case let .isDemoModeReceived(isDemoMode):
-            state.isDemoMode = isDemoMode
-            state.settings.isDemoMode = isDemoMode
-            return .none
-        case .registerDemoModeListener:
-            return .publisher(
-                userSessionContainer.isDemoMode
-                    .map(AppDomain.Action.isDemoModeReceived)
-                    .eraseToAnyPublisher
-            )
         case .registerNewMessageListener:
             return .merge(
-                .publisher(
-                    entireErxTaskRepository
-                        .countAllUnreadCommunicationsAndChargeItems(for: .all)
-                        .receive(on: schedulers.main.animation())
-                        .map(AppDomain.Action.newOrderMessageReceived)
-                        .catch { _ in Empty() }
-                        .eraseToAnyPublisher
-                ),
+                .run { [profileId = state.profileId] send in
+                    do {
+                        let count = try await erxTaskRepository.countAllUnreadCommunicationsAndChargeItems(
+                            profileId,
+                            .all
+                        )
+                        await send(.newOrderMessageReceived(count), animation: .default)
+                    } catch {}
+                },
                 .run { send in
                     do {
                         for try await counter in internalCommunicationProtocol.loadUnreadInternalCommunicationsCount() {
@@ -236,8 +223,7 @@ extension AppDomain {
             orders: OrdersDomain.Dummies.state,
             settings: SettingsDomain.Dummies.state,
             unreadOrderMessageCount: 0,
-            unreadInternalCommunicationCount: 0,
-            isDemoMode: false
+            unreadInternalCommunicationCount: 0
         )
     }
 }

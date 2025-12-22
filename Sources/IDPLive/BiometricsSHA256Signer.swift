@@ -21,6 +21,7 @@
 //
 
 import ASN1Kit
+import CodedError
 import Combine
 import Foundation
 import IDP
@@ -36,11 +37,11 @@ public class BiometricsSHA256Signer: JWTSigner {
         [Data()]
     }
 
-    // sourcery: CodedError = "102"
+    @CodedError("102")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case sessionClosed
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case signatureFailed
     }
 
@@ -54,9 +55,9 @@ public class BiometricsSHA256Signer: JWTSigner {
     }
 }
 
-// sourcery: CodedError = "107"
+@CodedError("107")
 public enum ConversionError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case generic(String?)
 }
 

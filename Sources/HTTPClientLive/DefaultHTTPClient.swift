@@ -55,40 +55,7 @@ public class DefaultHTTPClient: HTTPClient {
         self.delegate = delegate
     }
 
-    /// Send the given request. The request will be processed by the list of `Interceptors`.
-    ///
-    /// - Parameter request: The request to be (modified and) sent.
-    /// - Returns: `AnyPublisher` that emits a response as `URLSessionResponse`
-    public func sendPublisher(
-        request: URLRequest,
-        interceptors requestInterceptors: [Interceptor],
-        redirect handler: RedirectHandler?
-    ) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        let requestID = UUID().uuidString
-        let newRequest = request.add(requestID: requestID)
-        return URLRequestChain(request: newRequest, session: urlSession, with: interceptors + requestInterceptors)
-            .proceedPublisher(request: newRequest)
-            .handleEvents(
-                receiveSubscription: { _ in
-                    Task {
-                        await self.delegate?.setRedirectHandler(handler, for: requestID)
-                    }
-                },
-                receiveCompletion: { _ in
-                    Task {
-                        await self.delegate?.setRedirectHandler(nil, for: requestID)
-                    }
-                },
-                receiveCancel: {
-                    Task {
-                        await self.delegate?.setRedirectHandler(nil, for: requestID)
-                    }
-                }
-            )
-            .eraseToAnyPublisher()
-    }
-
-    public func sendAsync(
+    public func send(
         request: URLRequest,
         interceptors requestInterceptors: [Interceptor],
         redirect handler: RedirectHandler?
@@ -108,7 +75,7 @@ public class DefaultHTTPClient: HTTPClient {
             session: urlSession,
             with: interceptors + requestInterceptors
         )
-        .proceedAsync(request: newRequest)
+        .proceed(request: newRequest)
     }
 }
 

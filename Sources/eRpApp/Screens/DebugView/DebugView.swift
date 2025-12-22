@@ -160,26 +160,24 @@ extension DebugView {
                 Just go threw the regular 'Anmelden' screens. The entered CAN and PIN will be ignored.
                 """)
             ) {
-                Toggle("Use Virtual eGK instead of NFC", isOn: $store.useVirtualLogin.animation())
+                Toggle("Use Virtual eGK instead of NFC", isOn: Binding(store.$isVirtualEGKEnabled))
                     .accessibilityIdentifier("debug_enable_virtual_egk")
 
-                if store.useVirtualLogin {
-                    NavigationLink(
-                        destination: DebugEGKScannerView(
-                            show: $showScanVirtualEGK,
-                            prkCHAUTbase64: $store.virtualLoginPrivateKey,
-                            cCHAUTbase64: $store.virtualLoginCertKey
-                        ),
-                        isActive: $showScanVirtualEGK
-                    ) {
+                if store.isVirtualEGKEnabled {
+                    Button {
+                        showScanVirtualEGK = true
+                    } label: {
                         HStack {
                             Text("Scan virtual eGK")
                             Image(systemName: SFSymbolName.qrCode)
                         }
                     }
+                    .navigationDestination(isPresented: $showScanVirtualEGK) {
+                        DebugEGKScannerView(show: $showScanVirtualEGK)
+                    }
 
                     VStack {
-                        TextEditor(text: $store.virtualLoginPrivateKey)
+                        TextEditor(text: $store.virtualEGKPrkCHAut)
                             .accessibility(identifier: "debug_prk_ch_aut")
                             .frame(minHeight: 100, maxHeight: 100)
                             .foregroundColor(Colors.systemLabel)
@@ -191,7 +189,7 @@ extension DebugView {
                     }
 
                     VStack {
-                        TextEditor(text: $store.virtualLoginCertKey)
+                        TextEditor(text: $store.virtualEGKCCHAut)
                             .accessibility(identifier: "debug_c_ch_aut")
                             .frame(minHeight: 100, maxHeight: 100)
                             .foregroundColor(Colors.systemLabel)
@@ -238,7 +236,6 @@ extension DebugView {
                     Button("Mark as PKV") {
                         store.send(.setProfileInsuranceTypeToPKV)
                     }
-                    //                        .disabled(profile.insuranceType != .gKV)
                     .foregroundColor(profile.insuranceType == .gKV ? Color.orange : Color.gray)
                     .accessibilityIdentifier("debug_btn_mark_profile_as_pkv")
 
@@ -442,9 +439,9 @@ extension DebugView {
             var body: some View {
                 List {
                     Section {
-                        Toggle("Use Workflow 1.5 instead of 1.4 for sending communications", isOn: $store.useWorkflow15)
+                        Toggle("Enable EU Redeem feature", isOn: $store.euRedeemPrescriptionsFeature)
                     } header: {
-                        Text("FHIR Workflow 1.5")
+                        Text("EU Redeem prescriptions")
                     }
                     Section {
                         TextField(

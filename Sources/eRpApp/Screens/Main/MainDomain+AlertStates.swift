@@ -20,10 +20,15 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import ComposableArchitecture
+import ConsentService
+import eRpResources
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
 
-extension ChargeItemConsentService.AlertState {
+extension ConsentService.AlertState {
     var mainDomainErpAlertState: ErpAlertState<MainDomain.Destination.Alert> {
         erpAlertState(
             actionForOkay: MainDomain.Destination.Alert.consentServiceErrorOkay,
@@ -110,18 +115,18 @@ extension MainDomain {
         static let conflictToast
             = ToastState<Action>(
                 style: .action(
-                    ChargeItemConsentService.ToastState.conflict.message,
+                    ConsentService.ToastState.conflict.message,
                     .init(action: .routeToChargeItemsList) {
-                        TextState(ChargeItemConsentService.ToastState.routeToChargeItemsListMessage)
+                        TextState(ConsentService.ToastState.routeToChargeItemsListMessage)
                     }
                 )
             )
 
         static let grantConsentSuccess = ToastState<Destination.Toast>(
             style: .action(
-                ChargeItemConsentService.ToastState.successfullyGranted.message,
+                ConsentService.ToastState.successfullyGranted.message,
                 .init(action: .routeToChargeItemsList) {
-                    TextState(ChargeItemConsentService.ToastState.routeToChargeItemsListMessage)
+                    TextState(ConsentService.ToastState.routeToChargeItemsListMessage)
                 }
             )
         )

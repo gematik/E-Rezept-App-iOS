@@ -23,6 +23,7 @@
 import AVS
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
 import Foundation
 import Nimble
 import XCTest

@@ -1,0 +1,182 @@
+//
+//  Copyright (Change Date see Readme), gematik GmbH
+//
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
+//  You may not use this work except in compliance with the Licence.
+//
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+//
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
+//
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+//
+
+import AVFoundation
+import ComposableArchitecture
+import eRpStyleKit
+import SwiftUI
+
+public struct CANCameraScanner: View {
+    @Binding var canScan: ScanCAN?
+    var onSuccessfulScanAction: () -> Void
+    var closeAction: (ScanCAN?) -> Void
+
+    public init(
+        canScan: Binding<ScanCAN?>,
+        onSuccessfulScanAction: @escaping () -> Void,
+        closeAction: @escaping (ScanCAN?) -> Void
+    ) {
+        _canScan = canScan
+        self.onSuccessfulScanAction = onSuccessfulScanAction
+        self.closeAction = closeAction
+    }
+
+    public var body: some View {
+        ZStack(alignment: .top) {
+            VisionView(
+                can: $canScan,
+                onSuccessfulScanAction: onSuccessfulScanAction
+            )
+            .edgesIgnoringSafeArea([.top, .bottom])
+            .onAppear {
+                canScan = nil
+            }
+
+            VStack {
+                if let canScan = canScan {
+                    Text("\(L10n.cdwCanScanTxtResult.text) \n\(canScan.value)")
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(8)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 20))
+                } else {
+                    Text(L10n.cdwCanScanTxtHint.text)
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(8)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 20))
+                }
+
+                Spacer()
+
+                Button {
+                    if let canScan = canScan {
+                        closeAction(canScan)
+                    }
+                } label: {
+                    Label(L10n.cdwCanScanBtnConfirm)
+                }
+                .buttonStyle(.primary(isEnabled: canScan != nil))
+                .accessibilityIdentifier(A18n.cardWall.canScanner.cdwScnBtnDone)
+                .padding(.bottom)
+            }
+            .padding()
+        }
+        .navigationBarItems(
+            leading: CloseButton {
+                closeAction(nil)
+                toggleFlashlight(status: false)
+            }
+            .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnClose)
+            .accessibilityLabel(Text(L10n.cdwCanScanBtnClose)),
+            trailing: LightSwitch()
+        )
+    }
+}
+
+private func toggleFlashlight(status: Bool) {
+    guard
+        let device = AVCaptureDevice.default(for: AVMediaType.video),
+        device.hasTorch
+    else { return }
+
+    do {
+        try device.lockForConfiguration()
+        device.torchMode = status ? .on : .off
+        device.unlockForConfiguration()
+    } catch {
+        print("Torch could not be used")
+    }
+}
+
+struct LightSwitch: View {
+    @State private var isFlashOn = false
+
+    var body: some View {
+        VStack {
+            if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) != nil {
+                Button(action: {
+                    isFlashOn.toggle()
+                    toggleFlashlight(status: isFlashOn)
+                }, label: {
+                    HStack {
+                        Image(systemName: !isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                            .lightbulbSlash).foregroundColor(Color.primary)
+                        Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                            .foregroundColor(Color.primary)
+                            .padding(.trailing)
+                    }
+                })
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color(.systemGray5))
+                    .cornerRadius(8)
+                    .padding()
+                    .accessibilityLabel(Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff))
+                    .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnFlashlight)
+            }
+        }.onReceive(NotificationCenter.default
+            .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                toggleFlashlight(status: false)
+                isFlashOn = false
+        }
+        .onChange(of: isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
+    }
+}
+
+struct KVNRCameraScanner_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            CANCameraScanner(
+                canScan: .constant(ScanCAN(value: "123123")),
+                onSuccessfulScanAction: {
+                    print("Successfully scanned CAN")
+                },
+                closeAction: { _ in
+                }
+            )
+        }
+    }
+}
+
+struct VisionView: UIViewControllerRepresentable {
+    @Binding var can: ScanCAN?
+    var onSuccessfulScanAction: () -> Void
+
+    func makeUIViewController(context _: Context) -> CANCameraScannerViewController {
+        CANCameraScannerViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: CANCameraScannerViewController, context _: Context) {
+        uiViewController.canScanned = { can in
+            self.can = can
+        }
+        uiViewController.onSuccessfulScanAction = {
+            self.onSuccessfulScanAction()
+        }
+    }
+}

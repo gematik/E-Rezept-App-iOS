@@ -40,6 +40,8 @@ extension ErxTaskEntity {
     @NSManaged public var form: String?
     @NSManaged public var fullUrl: String?
     @NSManaged public var identifier: String?
+    @NSManaged public var isEURedeemable: Bool
+    @NSManaged public var isSetEURedeemableByPatient: Bool
     @NSManaged public var lastMedicationDispense: String?
     @NSManaged public var lastModified: String?
     @NSManaged public var noctuFeeWaiver: Bool

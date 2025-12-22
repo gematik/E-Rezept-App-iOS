@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 import Foundation
 import Pharmacy
 

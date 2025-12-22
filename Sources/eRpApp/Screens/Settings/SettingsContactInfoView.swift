@@ -54,13 +54,13 @@ struct SettingsContactInfoView: View {
                 .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
                 .buttonStyle(.navigation)
 
-            if appDefaults.diga.hasPrescripedDiga {
+            if showDiGaBadge {
                 Button(action: {
                     if appDefaults.diga.hasRedeemdADiga {
                         $appDefaults.withLock { $0.diga.hasSeenDigaSurvery = true }
                     }
 
-                    guard let url = URL(string: "https://gematik.shortcm.li/DIGA_Feedback"),
+                    guard let url = URL(string: "https://gematik.shortcm.li/DIGA_Meinung"),
                           UIApplication.shared.canOpenURL(url) else { return }
 
                     UIApplication.shared.open(url)

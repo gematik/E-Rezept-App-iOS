@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
 /// Represents a scanned eRx task holding the information of its ID and accessCode
@@ -74,16 +75,16 @@ public struct ScannedErxTask: Identifiable, Hashable {
 }
 
 extension ScannedErxTask {
-    // sourcery: CodedError = "205"
     /// Error cases for the ScannedErxTask
+    @CodedError("205")
     public enum Error: Swift.Error, LocalizedError, Equatable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case format
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case invalidID
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case invalidAccessCode
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case invalidJSON(Swift.Error)
 
         public var errorDescription: String? {

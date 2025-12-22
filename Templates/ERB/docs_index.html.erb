@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Rezept App Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.2);
+        }
+        .header h1 {
+            margin: 0 0 16px 0;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .header p {
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .version {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+        .module-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e5e7;
+        }
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border-color: #007AFF;
+        }
+        .module-card h2 {
+            margin: 0 0 12px 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #007AFF;
+        }
+        .module-card p {
+            margin: 0;
+            color: #666;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        .category {
+            margin-bottom: 48px;
+        }
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 24px 0;
+            color: #1d1d1f;
+            border-bottom: 4px solid #007AFF;
+            padding-bottom: 12px;
+            padding-top: 12px;
+        }
+        .category h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0 0 24px 0;
+            color: #1d1d1f;
+            border-bottom: 2px solid #007AFF;
+            padding-bottom: 12px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 80px;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+        }
+        .footer p {
+            margin: 8px 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>E-Rezept-App iOS Documentation</h1>
+        <p>Documentation for the German E-Prescription iOS application</p>
+        <div class="version">Version <%= version %></div>
+    </div>
+
+    <div class="category">
+        <h2>Error Documentation</h2>
+        <p style="margin-bottom: 24px; color: #666;">Comprehensive error handling and error code documentation</p>
+        <div class="modules-grid">
+            <a href="errors/error_details.html" class="module-card">
+                <h3>Error Details</h3>
+                <p>In-depth information about specific error codes and their causes</p>
+            </a>
+            <a href="errors/error_search.html" class="module-card">
+                <h3>Error Search</h3>
+                <p>Interactive search interface for finding specific error codes and descriptions</p>
+            </a>
+            <a href="errors/error_graph.html" class="module-card">
+                <h3>Error Graph</h3>
+                <p>Visual representation of error relationships and dependencies between modules</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="category">
+        <h2>Technical Documentation</h2>
+        <p style="margin-bottom: 24px; color: #666;">Documentation of the projects components and architecture</p>
+        <div class="modules-grid">
+            <a href="./technical/documentation/" class="module-card">
+                <h3>Modules</h3>
+                <p>Overview of the different modules within the project and their responsibilities</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="category">
+        <h2>Security & Audits</h2>
+        <p style="margin-bottom: 24px; color: #666;">Documentation related to security measures and audit processes</p>
+        <div class="modules-grid">
+            <a href="./sbom.json" class="module-card">
+                <h3>SBOM</h3>
+                <p>Detailed information about the Software Bill of Materials as cyclonedx json format.</p>
+            </a>
+            <a href="./requirements/requirements_filtered.html" class="module-card">
+                <h3>Requirements</h3>
+                <p>Detailed information about the requirements and dependencies of the project.</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>E-Rezept App</strong> - German Electronic Prescription Application</p>
+        <p>Generated on <%= Time.now.strftime("%B %d, %Y") %> | Version <%= version %></p>
+        <p>© gematik GmbH - Licensed under EUPL 1.2</p>
+    </div>
+</body>
+</html>

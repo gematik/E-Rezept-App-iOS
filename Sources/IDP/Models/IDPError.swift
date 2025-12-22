@@ -20,73 +20,75 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
+import eRpResources
 import Foundation
 
-// sourcery: CodedError = "100"
 /// The specific error types for the IDP module
+@CodedError("100")
 public enum IDPError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     /// In case of HTTP/Connection error
     case network(error: Swift.Error)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     /// In case a response (or request) could not be (cryptographically) verified
     case validation(error: Swift.Error)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     /// When a token is being requested, but none can be found
     case tokenUnavailable
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     /// Other error cases
     case unspecified(error: Swift.Error)
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     /// Message failed to decode/parse
     case decoding(error: Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     /// When failed to extract a X.509 certificate from the DiscoveryDocument
     case noCertificateFound
-    // sourcery: errorCode = "07"
+    @ErrorCode("07")
     /// When the discovery document has expired or the trust anchors could not be verified
     case invalidDiscoveryDocument
-    // sourcery: errorCode = "08"
+    @ErrorCode("08")
     /// When the state parameter received from the server is not equal to the one sent
     case invalidStateParameter
-    // sourcery: errorCode = "09"
+    @ErrorCode("09")
     /// When the nonce received from the server is not equal to the one sent
     case invalidNonce
-    // sourcery: errorCode = "10"
+    @ErrorCode("10")
     /// When a method/algorithm is unsupported
     case unsupported(String?)
-    // sourcery: errorCode = "11"
+    @ErrorCode("11")
     /// When encryption fails
     case encryption
-    // sourcery: errorCode = "12"
+    @ErrorCode("12")
     /// When decryption fails
     case decryption
-    // sourcery: errorCode = "13"
+    @ErrorCode("13")
     /// Internal error
     case `internal`(error: InternalError)
-    // sourcery: errorCode = "14"
+    @ErrorCode("14")
     /// Issues related to Building or Verifying the trust store
     case trustStore(error: Swift.Error)
 
-    // sourcery: errorCode = "15"
+    @ErrorCode("15")
     case pairing(Swift.Error)
 
-    // sourcery: errorCode = "16"
+    @ErrorCode("16")
     case invalidSignature(String)
 
-    // sourcery: errorCode = "17"
+    @ErrorCode("17")
     /// Server responded with an error
     case serverError(ServerResponse)
 
-    // sourcery: errorCode = "18"
+    @ErrorCode("18")
     /// Any biometrics related error
     case biometrics(SecureEnclaveSignatureProviderError)
 
-    // sourcery: errorCode = "19"
+    @ErrorCode("19")
     /// External authentication failed due to missing or invalid original request
     case extAuthOriginalRequestMissing
 
-    // sourcery: errorCode = "20"
+    @ErrorCode("20")
     /// Not implemented as the conforming instance is meant for demo purpose only
     case notAvailableInDemoMode
 
@@ -182,95 +184,95 @@ public enum IDPError: Swift.Error {
         case keyRegistrationDataNotReadable = "4005"
     }
 
-    // sourcery: CodedError = "101"
+    @CodedError("101")
     public enum InternalError: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case loadDiscoveryDocumentUnexpectedNil
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case requestChallengeUnexpectedNil
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case constructingChallengeRequestUrl
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case getAndValidateUnexpectedNil
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case constructingRefreshWithSSOTokenRequest
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         case refreshResponseMissingHeaderValue
-        // sourcery: errorCode = "07"
+        @ErrorCode("07")
         case challengeExpired
-        // sourcery: errorCode = "08"
+        @ErrorCode("08")
         case verifyUnexpectedNil
-        // sourcery: errorCode = "09"
+        @ErrorCode("09")
         case verifyResponseMissingHeaderValue
-        // sourcery: errorCode = "10"
+        @ErrorCode("10")
         case verifierCodeCreation
-        // sourcery: errorCode = "11"
+        @ErrorCode("11")
         case stateNonceCreation
-        // sourcery: errorCode = "12"
+        @ErrorCode("12")
         case signedChallengeEncoded
-        // sourcery: errorCode = "13"
+        @ErrorCode("13")
         case signedChallengeEncryption
-        // sourcery: errorCode = "14"
+        @ErrorCode("14")
         case altVerifyResponseMissingHeaderValue
-        // sourcery: errorCode = "15"
+        @ErrorCode("15")
         case encryptedSignedChallengeEncoding
-        // sourcery: errorCode = "16"
+        @ErrorCode("16")
         case exchangeUnexpectedNil
-        // sourcery: errorCode = "17"
+        @ErrorCode("17")
         case exchangeTokenUnexpectedNil
-        // sourcery: errorCode = "18"
+        @ErrorCode("18")
         case ssoLoginAndExchangeUnexpectedNil
-        // sourcery: errorCode = "19"
+        @ErrorCode("19")
         case registrationDataEncryption
-        // sourcery: errorCode = "20"
+        @ErrorCode("20")
         case keyVerifierEncoding
-        // sourcery: errorCode = "21"
+        @ErrorCode("21")
         case encryptedKeyVerifierEncoding
-        // sourcery: errorCode = "22"
+        @ErrorCode("22")
         case keyVerifierJweHeaderEncryption
-        // sourcery: errorCode = "23"
+        @ErrorCode("23")
         case keyVerifierJwePayloadEncryption
-        // sourcery: errorCode = "24"
+        @ErrorCode("24")
         case nestJwtInJwePayloadEncryption
-        // sourcery: errorCode = "25"
+        @ErrorCode("25")
         case invalidByteBuffer
-        // sourcery: errorCode = "26"
+        @ErrorCode("26")
         case generatingSecureRandom(length: Int)
-        // sourcery: errorCode = "27"
+        @ErrorCode("27")
         case registeredDeviceEncoding
-        // sourcery: errorCode = "28"
+        @ErrorCode("28")
         case signedAuthenticationDataEncryption
-        // sourcery: errorCode = "29"
+        @ErrorCode("29")
         case constructingExtAuthRequestUrl
-        // sourcery: errorCode = "30"
+        @ErrorCode("30")
         case refreshTokenUnexpectedNil
-        // sourcery: errorCode = "31"
+        @ErrorCode("31")
         case loadDirectoryKKAppsUnexpectedNil
-        // sourcery: errorCode = "32"
+        @ErrorCode("32")
         case extAuthVerifyResponseMissingHeaderValue
-        // sourcery: errorCode = "33"
+        @ErrorCode("33")
         case extAuthVerifierCodeCreation
-        // sourcery: errorCode = "34"
+        @ErrorCode("34")
         case extAuthStateNonceCreation
-        // sourcery: errorCode = "35"
+        @ErrorCode("35")
         case extAuthVerifyAndExchangeUnexpectedNil
-        // sourcery: errorCode = "36"
+        @ErrorCode("36")
         case extAuthVerifyAndExchangeMissingQueryItem
-        // sourcery: errorCode = "37"
+        @ErrorCode("37")
         case extAuthConstructingRedirectUri
-        // sourcery: errorCode = "38"
+        @ErrorCode("38")
         case startExtAuthUnexpectedNil
-        // sourcery: errorCode = "39"
+        @ErrorCode("39")
         case extAuthVerifyUnexpectedNil
-        // sourcery: errorCode = "40"
+        @ErrorCode("40")
         case pairDeviceUnexpectedNil
-        // sourcery: errorCode = "41"
+        @ErrorCode("41")
         case unregisterDeviceUnexpectedNil
-        // sourcery: errorCode = "42"
+        @ErrorCode("42")
         case listDevicesUnexpectedNil
-        // sourcery: errorCode = "43"
+        @ErrorCode("43")
         case altVerifyUnexpectedNil
-        // sourcery: errorCode = "44"
+        @ErrorCode("44")
         case notImplemented
     }
 }
@@ -425,6 +427,57 @@ extension IDPError: Codable {
             try container.encode(error.localizedDescription, forKey: .value)
         case .notAvailableInDemoMode:
             try container.encode("notAvailableInDemoMode", forKey: .type)
+        }
+    }
+}
+
+extension IDPError: LocalizedError {
+    public var errorDescription: String? {
+        // [REQ:gemSpec_IDP_Frontend:A_20085] Error localization is not done yet, this is the place to localize
+        // accordingly.
+        switch self {
+        case let .network(error: error): return error.localizedDescription
+        case let .validation(error: error): return error.localizedDescription
+        case .tokenUnavailable: return "IDPError.tokenUnavailable"
+        case let .unspecified(error: error): return error.localizedDescription
+        case let .decoding(error: error): return error.localizedDescription
+        case .noCertificateFound: return "IDPError.noCertificateFound"
+        case .invalidDiscoveryDocument: return "IDPError.invalidDiscoveryDocument"
+        case let .unsupported(string): return "IDPError.unsupported method \(String(describing: string))"
+        // [REQ:gemSpec_IDP_Frontend:A_19937#1,A_20605,A_20085] Localized description of server errors
+        case let .internal(error: error): return error.localizedDescription
+        case let .serverError(error): return "IDPError.serverError '\(error)'"
+        case .invalidStateParameter:
+            return "IDPError.invalidStateParameter"
+        case let .invalidSignature(text):
+            return "IDPError.invalidSignature \(text)"
+        case .invalidNonce:
+            return "IDPError.invalidNonce"
+        case .encryption:
+            return "IDPError.encryption"
+        case .decryption:
+            return "IDPError.decryption"
+        case let .trustStore(error: error):
+            return "Trust store error: \(error)"
+        case let .pairing(error):
+            return "Pairing error: \(error)"
+        case .biometrics where contains(PrivateKeyContainer.Error.canceledByUser):
+            return L10n.errSpecificI10808Description.text
+        case .biometrics:
+            return L10n.errSpecificI10018Description.text
+        case .extAuthOriginalRequestMissing:
+            return "Error while processing external authentication: original request not found."
+        case .notAvailableInDemoMode:
+            return L10n.idpErrNotAvailableInDemoModeText.text
+        }
+    }
+
+    public var recoverySuggestion: String? {
+        switch self {
+        case .notAvailableInDemoMode:
+            return L10n.idpErrNotAvailableInDemoModeRecovery.text
+        default:
+            return "Try again later"
         }
     }
 }

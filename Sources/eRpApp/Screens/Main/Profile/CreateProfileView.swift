@@ -30,6 +30,7 @@ struct CreateProfileView: View {
         EnterProfileNameSubView(
             displayName: $store.profileName.sending(\.setProfileName),
             didTapButtonAction: { store.send(.createAndSaveProfile(name: store.profileName)) },
+            closeAction: { store.send(.delegate(.close)) },
             validating: { name in
                 !name.trimmed().isEmpty
             }

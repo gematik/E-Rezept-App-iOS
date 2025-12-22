@@ -72,7 +72,7 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
             }
             .padding(.vertical, 8)
         }
-        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
+        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { scrollView in
             scrollView.clipsToBounds = false
             scrollView.alwaysBounceHorizontal = false
         }
@@ -94,12 +94,12 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
                 Button(action: closeButtonAction) {
                     Image(systemName: SFSymbolName.crossIconFill)
                 }
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
             }
             .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 8))
             .background(Color(.systemGray6))
             .cornerRadius(8)
-            .foregroundColor(Color(.label))
+            .foregroundColor(Colors.systemLabel)
             .font(.subheadline)
         }
     }

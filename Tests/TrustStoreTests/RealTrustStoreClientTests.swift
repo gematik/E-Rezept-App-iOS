@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import HTTPClient
 import HTTPClientLive
 import Nimble
@@ -37,7 +36,6 @@ final class RealTrustStoreClientTests: XCTestCase {
     }
 
     let serviceURL = URL(string: "http://vau.gematik")!
-    let certListURL = URL(string: "http://vau.gematik/CertList")!
     let pkiCertificatesURL = URL(string: "http://vau.gematik/PKICertificates")!
     let vauCertURL = URL(string: "http://vau.gematik/VAUCertificate")!
     let ocspResponseURL = URL(string: "http://vau.gematik/OCSPResponse")!
@@ -49,29 +47,6 @@ final class RealTrustStoreClientTests: XCTestCase {
             fatalError("Could not load  discovery document")
         }
         return certListPath
-    }
-
-    func testLoadCertList() throws {
-        // given
-        var counter = 0
-        stub(condition: isAbsoluteURLString(certListURL.absoluteString) && isMethodGET()) { _ in
-            counter += 1
-            return fixture(filePath: self.certListPath, headers: nil)
-        }
-
-        // when
-        let sut = RealTrustStoreClient(
-            serverURL: serviceURL,
-            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
-        )
-
-        // then
-        sut.loadCertListFromServer()
-            .test(expectations: { certList in
-                expect(certList.caCerts.count) == 1
-                expect(certList.eeCerts.count) == 2
-            })
-        expect(counter) == 1
     }
 
     func testLoadPKICertificates() async throws {

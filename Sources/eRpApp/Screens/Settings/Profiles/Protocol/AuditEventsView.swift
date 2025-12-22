@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import FeatureCardWall
 import Perception
 import SwiftUI
 
@@ -139,7 +140,7 @@ struct AuditEventsView: View {
                                     }
                                     Text(entry.date, placeholder: L10n.stgTxtAuditEventsMissingDate)
                                         .font(.subheadline)
-                                        .foregroundColor(Color(.secondaryLabel))
+                                        .foregroundColor(Colors.systemLabelSecondary)
                                         .multilineTextAlignment(.leading)
                                         .accessibility(identifier: A11y.settings.auditEvents
                                             .stgCtnAuditEventsEventDate)
@@ -174,7 +175,7 @@ struct AuditEventsView: View {
                         .accessibilityIdentifier(A11y.settings.auditEvents.stgTxtAuditEventsNoProtocolTitle)
                     Text(L10n.stgTxtAuditEventsNoProtocolDescription)
                         .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .multilineTextAlignment(.center)
                         .accessibilityIdentifier(A11y.settings.auditEvents.stgTxtAuditEventsNoProtocolDescription)
                     Spacer()

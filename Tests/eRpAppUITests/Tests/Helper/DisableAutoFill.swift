@@ -42,8 +42,13 @@ func disableAutoFillPasswords() {
             generalDe.tap()
         }
 
-        expect(settingsApp.staticTexts["AUTOFILL"].waitForExistence(timeout: TimeInterval(5))).to(beTrue())
-        settingsApp.staticTexts["AUTOFILL"].tap()
+        if #available(iOS 26.0, *) {
+            expect(settingsApp.buttons["AUTOFILL"].waitForExistence(timeout: TimeInterval(5))).to(beTrue())
+            settingsApp.buttons["AUTOFILL"].tap()
+        } else {
+            expect(settingsApp.staticTexts["AUTOFILL"].waitForExistence(timeout: TimeInterval(5))).to(beTrue())
+            settingsApp.staticTexts["AUTOFILL"].tap()
+        }
 
         let switcher = settingsApp.switches["Passwörter und Passkeys automatisch ausfüllen"].switches.firstMatch
 

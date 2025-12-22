@@ -27,7 +27,8 @@ import eRpKit
 /// MedicationDispense related local store interfaces
 extension DefaultErxTaskCoreDataStore {
     /// List all medication dispenses contained in the store
-    public func listAllMedicationDispenses() -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
+    public func listAllMedicationDispenses(of profileId: UUID?)
+        -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
             key: #keyPath(ErxTaskMedicationDispenseEntity.whenHandedOver),

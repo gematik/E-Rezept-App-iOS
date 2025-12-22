@@ -66,7 +66,7 @@ import SwiftUI
   }
     
   internal extension StringAsset {
-    init(_ string: String, arguments: [CVarArg]? = nil) {
+    init(_ string: String, arguments: [any EquatableCVarArg]? = nil) {
         self.init(string, arguments: arguments, bundle: Bundle.module)
     }
   }

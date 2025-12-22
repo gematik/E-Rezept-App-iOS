@@ -23,6 +23,7 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureCardWall
 import SwiftUI
 
 struct DiGaDetailView: View {
@@ -65,24 +66,31 @@ struct DiGaDetailView: View {
 
                 if !store.showSelectInsurance {
                     if let buttonText = store.diGaInfo.diGaState.buttonText {
-                        PrimaryTextButton(text: LocalizedStringKey(buttonText),
-                                          a11y: A11y.diga.detail.digaDtlBtnMainAction) {
+                        Button {
                             store.send(.mainButtonTapped)
-                        }.padding([.horizontal, .bottom], 8)
+                        } label: {
+                            Label(buttonText)
+                        }
+                        .buttonStyle(.primary)
+                        .accessibilityIdentifier(A11y.diga.detail.digaDtlBtnMainAction)
+                        .padding(.bottom, 8)
                     }
                 } else {
-                    PrimaryTextButton(text: store.isLoading ? L10n.digaDtlBtnMainRequest : L10n
-                        .digaDtlBtnMainSelectInsurance,
-                        a11y: A11y.diga.detail.digaDtlBtnMainSelectInsurance,
-                        isEnabled: !store.isLoading) {
-                            store.send(.setNavigation(tag: .insuranceList))
-                    }.padding([.horizontal, .bottom], 8)
+                    Button {
+                        store.send(.setNavigation(tag: .insuranceList))
+                    } label: {
+                        Label(store.isLoading ? L10n.digaDtlBtnMainRequest : L10n
+                            .digaDtlBtnMainSelectInsurance)
+                    }
+                    .buttonStyle(.primary(isEnabled: !store.isLoading))
+                    .accessibilityIdentifier(A11y.diga.detail.digaDtlBtnMainSelectInsurance)
+                    .padding(.bottom, 8)
 
                     if store.isLoading {
                         HStack(spacing: 4) {
                             Text(L10n.digaDtlTxtLoadingInsurance)
                                 .font(.subheadline)
-                                .foregroundColor(Color(.secondaryLabel))
+                                .foregroundColor(Colors.systemLabelSecondary)
 
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
@@ -151,7 +159,7 @@ struct DiGaDetailView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.leading)
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .accessibility(identifier: A11y.diga.detail.digaDtlTxtPatientHeader)
             }.padding()
         }

@@ -57,13 +57,20 @@ public protocol TrustStoreStorage {
     /// - Parameter vauCertificate: Data of the VAU certificate to save. Pass in nil
     func set(vauCertificate: Data?)
 
-    /// Retrieve the previously saved OCSP response for the VAU certificate
-    func getVauCertificateOcspResponse() -> Data?
+    /// Retrieve the previously saved OCSP response for a specific certificate
+    /// - Parameters:
+    ///   - issuerCn: The common name of the issuer certificate
+    ///   - serialNr: The serial number of the certificate
+    func getOcspResponse(issuerCn: String, serialNr: String) -> Data?
 
-    /// Set and save the OCSP response for the VAU certificate
-    ///
-    /// - Parameter vauCertificateOcspResponse: Data of the OCSP response to save. Pass in nil
-    func set(vauCertificateOcspResponse: Data?)
+    /// Set and save the OCSP response for a specific certificate
+    /// - Parameters:
+    ///  - issuerCn: The common name of the issuer certificate
+    ///  - serialNr: The serial number of the certificate
+    func setOcspResponse(issuerCn: String, serialNr: String, ocspResponse: Data?)
+
+    /// Reset all stored OCSP responses
+    func resetOcspResponses()
 }
 
 public class TrustStoreFileStorage: TrustStoreStorage {
@@ -71,7 +78,6 @@ public class TrustStoreFileStorage: TrustStoreStorage {
     let ocspListFilePath: URL
     let pkiCertificatesFilePath: URL
     let vauCertificateFilePath: URL
-    let vauCertificateOcspResponseFilePath: URL
     let writingOptions: Data.WritingOptions = [.atomicWrite, .completeFileProtectionUnlessOpen]
 
     public init(trustStoreStorageBaseFilePath: URL) {
@@ -79,8 +85,6 @@ public class TrustStoreFileStorage: TrustStoreStorage {
         ocspListFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStoreOCSPList")
         pkiCertificatesFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStorePKICertificates")
         vauCertificateFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("vauCertificate")
-        vauCertificateOcspResponseFilePath = trustStoreStorageBaseFilePath
-            .appendingPathComponent("vauCertificateOcspResponse")
     }
 
     public var certList: AnyPublisher<CertList?, Never> {
@@ -208,19 +212,55 @@ public class TrustStoreFileStorage: TrustStoreStorage {
         }
     }
 
-    public func getVauCertificateOcspResponse() -> Data? {
-        guard let data = try? Data(contentsOf: vauCertificateOcspResponseFilePath) else {
+    private static let ocspResponseDirectoryName = "ocspResponses"
+    public func getOcspResponse(issuerCn: String, serialNr: String) -> Data? {
+        do {
+            let ocspResponseDirectory = try FileManager.default
+                .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                .appendingPathComponent(Self.ocspResponseDirectoryName)
+            let fileName = "\(issuerCn)_\(serialNr).ocsp"
+            let fileURL = ocspResponseDirectory.appendingPathComponent(fileName)
+            return try Data(contentsOf: fileURL)
+        } catch {
             return nil
         }
-        return data
     }
 
-    public func set(vauCertificateOcspResponse: Data?) {
+    public func setOcspResponse(issuerCn: String, serialNr: String, ocspResponse: Data?) {
         do {
-            if let vauCertificateOcspResponse {
-                _ = vauCertificateOcspResponse.save(to: vauCertificateOcspResponseFilePath, options: writingOptions)
+            let ocspResponseDirectory = try FileManager.default
+                .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                .appendingPathComponent(Self.ocspResponseDirectoryName)
+            try FileManager.default.createDirectory(
+                at: ocspResponseDirectory,
+                withIntermediateDirectories: true
+            )
+            let fileName = "\(issuerCn)_\(serialNr).ocsp"
+            let fileURL = ocspResponseDirectory.appendingPathComponent(fileName)
+
+            if let ocspResponse {
+                _ = ocspResponse.save(to: fileURL, options: writingOptions)
             } else {
-                try FileManager.default.removeItem(at: vauCertificateOcspResponseFilePath)
+                try FileManager.default.removeItem(at: fileURL)
+            }
+        } catch {
+            // no feedback
+        }
+    }
+
+    public func resetOcspResponses() {
+        do {
+            let ocspResponseDirectory = try FileManager.default
+                .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                .appendingPathComponent(Self.ocspResponseDirectoryName)
+            if FileManager.default.fileExists(atPath: ocspResponseDirectory.path) {
+                let fileURLs = try FileManager.default.contentsOfDirectory(
+                    at: ocspResponseDirectory,
+                    includingPropertiesForKeys: nil
+                )
+                for url in fileURLs where url.pathExtension == "ocsp" {
+                    try? FileManager.default.removeItem(at: url)
+                }
             }
         } catch {
             // no feedback

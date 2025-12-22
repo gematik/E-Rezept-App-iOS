@@ -31,7 +31,7 @@ import TrustStore
 import XCTest
 
 final class VAUInterceptorTests: XCTestCase {
-    func testIntercept() throws {
+    func testIntercept() async throws {
         // given
         let vauAccessTokenProvider = MockVAUAccessTokenProvider()
         vauAccessTokenProvider.vauBearerToken = Just("SomeAccessToken").setFailureType(to: VAUError.self)
@@ -41,9 +41,8 @@ final class VAUInterceptorTests: XCTestCase {
         mockVAUCrypto.encryptReturnValue = Data()
         let mockVAUCryptoProvider = MockVAUCryptoProvider()
         mockVAUCryptoProvider.provideForVauCertificateBearerTokenReturnValue = mockVAUCrypto
-        let trustStoreSession = MockTrustStoreSession()
-        trustStoreSession.loadVauCertificateReturnValue = Just(Self.defaultVauCertificate)
-            .setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
+        let trustStoreSession = TrustStoreSessionMock()
+        trustStoreSession.vauCertificateX509ReturnValue = Self.defaultVauCertificate
 
         let session = VAUSession(
             vauServer: URL(string: "http://some-service.com")!,
@@ -58,10 +57,8 @@ final class VAUInterceptorTests: XCTestCase {
         let sut = VAUInterceptor(vauSession: session)
 
         // expectations
-        sut.interceptPublisher(chain: chain)
-            .test(expectations: { _ in
-                expect(chain.incomingProceedRequests.count) == 1
-            })
+        _ = try? await sut.intercept(chain: chain)
+        expect(chain.incomingProceedRequests.count) == 1
     }
 
     func testProcessToVauRequest() throws {

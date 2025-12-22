@@ -21,30 +21,33 @@
 //
 
 import AVS
+import CodedError
 import eRpKit
+import eRpResources
+import FeatureCardWall
 import Foundation
 
-// sourcery: CodedError = "024"
+@CodedError("024")
 enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     /// When redeeming a task via Fachdienst
     case eRxRepository(ErxRepositoryError)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     /// When redeeming a task via AVS
     case avs(AVSError)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     /// When an internal error occurs which most likely is a programming error
     case internalError(InternalError)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     /// When error conversion into `RedeemServiceError` fails
     case unspecified(error: Swift.Error)
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     /// When the user has no valid token available while trying to redeem via Fachdienst
     case noTokenAvailable
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     /// When receiving an error while doing a login
     case loginHandler(error: LoginHandlerError)
-    // sourcery: errorCode = "07"
+    @ErrorCode("07")
     /// When the prescription has already been redeemed
     case prescriptionAlreadyRedeemed([Prescription])
 
@@ -65,30 +68,30 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
         }
     }
 
-    // sourcery: CodedError = "025"
+    @CodedError("025")
     enum InternalError: Swift.Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         /// When the AVS endpoint for the selected redeem option is missing
         case missingAVSEndpoint
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         /// When the required AVS certificates for redeeming via AVS are missing
         case missingAVSCertificate
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         /// When the Telematik-ID of the pharmacy to redeem in is missing
         case missingTelematikId
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         /// When converting AVS Version number
         case conversionVersionNumber
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         /// When no order can be found to the received response
         case idMissmatch
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         /// When no service can be found for the selected pharmacy
         case noService
-        // sourcery: errorCode = "07"
+        @ErrorCode("07")
         /// When the status code is not in [200..<300] but the service did not return an error beforehand
         case unexpectedHTTPStatusCode
-        // sourcery: errorCode = "08"
+        @ErrorCode("08")
         /// When persisting/extracting information from the store went wrong
         case localStoreError(LocalStoreError)
 

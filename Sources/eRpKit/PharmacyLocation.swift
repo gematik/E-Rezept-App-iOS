@@ -42,6 +42,8 @@ public struct PharmacyLocation: Identifiable, Equatable {
         imagePath: String? = nil,
         countUsage: Int = 0,
         hoursOfOperation: [HoursOfOperation] = [],
+        specialClosingHours: [SpecialOperationHours] = [],
+        emergencyServiceHours: [SpecialOperationHours] = [],
         avsEndpoints: AVSEndpoints? = nil,
         avsCertificates: [X509] = []
     ) {
@@ -59,6 +61,8 @@ public struct PharmacyLocation: Identifiable, Equatable {
         self.imagePath = imagePath
         self.countUsage = countUsage
         self.hoursOfOperation = hoursOfOperation
+        self.specialClosingHours = specialClosingHours
+        self.emergencyServiceHours = emergencyServiceHours
         self.avsEndpoints = avsEndpoints
         self.avsCertificates = avsCertificates
     }
@@ -94,6 +98,10 @@ public struct PharmacyLocation: Identifiable, Equatable {
     public var countUsage: Int
     /// HoursOfOperation (opening hours)
     public var hoursOfOperation: [HoursOfOperation]
+    /// Special closing hours
+    public var specialClosingHours: [SpecialOperationHours]
+    /// Emergency Service Hours
+    public var emergencyServiceHours: [SpecialOperationHours]
     /// Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul
     public var avsEndpoints: AVSEndpoints?
     /// Array of certificates for all recipients
@@ -385,6 +393,20 @@ extension PharmacyLocation {
         public let openingTime: String?
         public let closingTime: String?
     }
+
+    public struct SpecialOperationHours: Codable, Hashable {
+        public init(reason: String? = nil,
+                    startDate: String? = nil,
+                    endDate: String? = nil) {
+            self.reason = reason
+            self.startDate = startDate
+            self.endDate = endDate
+        }
+
+        public let reason: String?
+        public let startDate: String?
+        public let endDate: String?
+    }
 }
 
 extension Decimal {
@@ -410,6 +432,8 @@ extension PharmacyLocation: Codable {
         case imagePath
         case countUsage
         case hoursOfOperation
+        case specialClosingHours
+        case emergencyServiceHours
         case avsEndpoints
     }
 }

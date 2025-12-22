@@ -20,10 +20,17 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
+import CodedError
 import Combine
 import ComposableArchitecture
+import ConsentService
 import Dependencies
 import eRpKit
+import eRpLocalStorage
+import eRpResources
+import ErxTaskRepository
+import FeatureHelpers
 import FHIRClient
 import IDP
 import SwiftUI
@@ -34,6 +41,7 @@ import SwiftUI
 struct PrescriptionDetailDomain {
     @ObservableState
     struct State: Equatable {
+        @Shared(.selectedProfileId) var profileId
         var prescription: Prescription
         var profile: UserProfile?
         var chargeItemConsentState: ChargeItemConsentState = .notAuthenticated
@@ -45,6 +53,11 @@ struct PrescriptionDetailDomain {
         // holdes the handoff feature in memory as long as the view is visible
         var userActivity: NSUserActivity?
         var focus: Field?
+
+        var isEURedeemable: Bool {
+            @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+            return euRedeemPrescriptionsFeature && prescription.erxTask.isEURedeemable
+        }
     }
 
     enum Action: Equatable, BindableAction {
@@ -82,6 +95,8 @@ struct PrescriptionDetailDomain {
             case close
             /// Closes the details page and starts the redeem process
             case redeem(Prescription)
+            /// Closes the details page and starts the EU redeem process
+            case euRedeemButtonTapped
         }
 
         enum Response: Equatable {
@@ -94,8 +109,8 @@ struct PrescriptionDetailDomain {
             /// Responds after update Medication.name
             case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
             case changeNameReceived(Result<ErxTask, ErxRepositoryError>)
-            case chargeItemConsentCheckReceived(ChargeItemConsentService.CheckResult)
-            case chargeItemGrantConsentReceived(ChargeItemConsentService.GrantResult)
+            case chargeItemConsentCheckReceived(ConsentService.CheckResult)
+            case chargeItemGrantConsentReceived(ConsentService.GrantResult)
             case fetchChargeItemLocal(Result<ErxSparseChargeItem?, ErxRepositoryError>)
         }
     }
@@ -104,14 +119,14 @@ struct PrescriptionDetailDomain {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
-    @Dependency(\.chargeItemConsentService) var chargeItemConsentService: ChargeItemConsentService
+    @Dependency(\.consentService) var consentService: ConsentService
     // [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
     // the screen nor the state.
     @Dependency(\.erxMatrixCodeGenerator) var matrixCodeGenerator: ErxMatrixCodeGenerator
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.dateProvider) var dateProvider: () -> Date
     @Dependency(\.uiDateFormatter) var uiDateFormatter
-    @Dependency(\.resourceHandler) var resourceHandler
+    @Dependency(\.openURLHandler) var openURLHandler
     @Dependency(\.medicationReminderParser) var medicationParser
     @Dependency(\.imageGenerator) var imageGenerator: ImageGenerator
 
@@ -126,24 +141,27 @@ struct PrescriptionDetailDomain {
     private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
-            let isPKVInsured = state.profile?.profile.insuranceType == .pKV
+            let canReceiveChargeItems = state.profile?.profile.insuranceType.canReceiveChargeItems ?? false
             return .run { send in
                 await send(.registerActiveUserProfileListener)
                 await send(.fetchChargeItemLocal)
-                if isPKVInsured {
+                if canReceiveChargeItems {
                     await send(.chargeItemConsentCheck)
                 }
             }
         case .chargeItemConsentCheck:
             return .run { send in
-                let result = try await chargeItemConsentService.checkForConsent(userSession.profileId)
+                let result = try await consentService.checkForConsent(.chargcons, userSession.profileId)
                 await send(.response(.chargeItemConsentCheckReceived(result)))
             }
         case .fetchChargeItemLocal:
-            return .run { [identifier = state.prescription.id] send in
-                let result = try await erxTaskRepository.loadLocal(by: identifier)
-                    .asyncResult(\.self)
-                await send(.response(.fetchChargeItemLocal(result)))
+            return .run { [profileId = state.profileId, identifier = state.prescription.id] send in
+                do {
+                    let chargeItem = try await erxTaskRepository.loadLocalChargeItem(profileId, identifier)
+                    await send(.response(.fetchChargeItemLocal(.success(chargeItem))))
+                } catch let error as ErxRepositoryError {
+                    await send(.response(.fetchChargeItemLocal(.failure(error))))
+                }
             }
         case .registerActiveUserProfileListener:
             return .run { send in
@@ -173,8 +191,8 @@ struct PrescriptionDetailDomain {
                 state.chargeItemConsentState = .notGranted
             case .notAuthenticated:
                 state.chargeItemConsentState = .notAuthenticated
-            case let .error(chargeItemConsentServiceError):
-                switch chargeItemConsentServiceError {
+            case let .error(consentServiceError):
+                switch consentServiceError {
                 // state.chargeItemConsentState = ???
                 default: break // todo ralph
                 }
@@ -240,11 +258,11 @@ struct PrescriptionDetailDomain {
 
             state.destination = nil
             state.isDeleting = true
-            return delete(erxTask: state.prescription.erxTask)
+            return delete(erxTask: state.prescription.erxTask, profileId: state.profileId)
         case .destination(.presented(.alert(.confirmedDeleteWithChargeItem))):
             state.destination = nil
             state.isDeleting = true
-            return delete(erxTask: state.prescription.erxTask)
+            return delete(erxTask: state.prescription.erxTask, profileId: state.profileId)
         case let .destination(.presented(.sharePrescription(.delegate(.close(error))))):
             state.destination = nil
             if let shareError = error {
@@ -276,7 +294,7 @@ struct PrescriptionDetailDomain {
             if success,
                state.prescription.erxTask.flowType == .directAssignmentForPKV
                || state.prescription.erxTask.flowType == .pharmacyOnlyForPKV {
-                return deleteChargeItem(erxTask: state.prescription.erxTask)
+                return deleteChargeItem(profileId: state.profileId, erxTask: state.prescription.erxTask)
             }
             state.isDeleting = false
             if success {
@@ -308,8 +326,8 @@ struct PrescriptionDetailDomain {
             } else {
                 erxTask.update(with: nil)
             }
-            state.prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
-            return save(erxTasks: [erxTask])
+            state.prescription = Prescription(erxTask: erxTask)
+            return save(erxTasks: [erxTask], profileId: state.profileId)
         case let .response(.redeemedOnSavedReceived(success)):
             if !success {
                 state.isArchived.toggle()
@@ -334,7 +352,7 @@ struct PrescriptionDetailDomain {
             guard let profileId = state.profile?.id
             else { return .none }
             return .run { send in
-                let result = try await chargeItemConsentService.grantConsent(profileId)
+                let result = try await consentService.grantConsent(.chargcons, profileId)
                 await send(.response(.chargeItemGrantConsentReceived(result)))
             }
         case let .response(.chargeItemGrantConsentReceived(grantResult)):
@@ -346,18 +364,18 @@ struct PrescriptionDetailDomain {
             case .conflict:
                 state.chargeItemConsentState = .granted
                 state.destination = .toast(ToastStates.conflictToast)
-            case let .error(chargeItemConsentServiceError):
-                switch chargeItemConsentServiceError {
+            case let .error(consentServiceError):
+                switch consentServiceError {
                 // state.chargeItemConsentState = ???
                 default: break // todo ralph
                 }
-                if let alertState = chargeItemConsentServiceError.alertState {
+                if let alertState = consentServiceError.alertState {
                     state.destination = .alert(alertState.prescriptionDetailDomainErpAlertState)
                 } else {
                     state.destination = .alert(
                         Alerts.deleteFailedAlertState(
-                            error: chargeItemConsentServiceError,
-                            localizedError: chargeItemConsentServiceError.localizedDescriptionWithErrorList
+                            error: consentServiceError,
+                            localizedError: consentServiceError.localizedDescriptionWithErrorList
                         )
                     )
                 }
@@ -509,11 +527,12 @@ struct PrescriptionDetailDomain {
             }
             return .none
         case .openUrlGesundBundDe:
-            guard let url = URL(string: "https://gesund.bund.de"),
-                  resourceHandler.canOpenURL(url) else { return .none }
+            guard let url = URL(string: "https://gesund.bund.de") else { return .none }
 
-            resourceHandler.open(url)
-            return .none
+            return .run { _ in
+                guard await openURLHandler.canOpenURL(url) else { return }
+                await openURLHandler.open(url)
+            }
         case let .setName(newName):
             let name = newName
             guard
@@ -524,15 +543,14 @@ struct PrescriptionDetailDomain {
             let newErxTask = ErxTask.lens.medication.set(newErxMedication)(state.prescription.erxTask)
             state.prescription = Prescription.lens.erxTask.set(newErxTask)(state.prescription)
 
-            return .publisher(
-                erxTaskRepository.save(erxTasks: [newErxTask])
-                    .first()
-                    .map { _ in newErxTask } // erxTaskRepository.save does only return `true` or Error
-                    .receive(on: schedulers.main)
-                    .catchToPublisher()
-                    .map { .response(.changeNameReceived($0)) }
-                    .eraseToAnyPublisher
-            )
+            return .run { [profileId = state.profileId] send in
+                do {
+                    try await erxTaskRepository.saveTask([newErxTask], profileId)
+                    await send(.response(.changeNameReceived(.success(newErxTask))))
+                } catch let error as ErxRepositoryError {
+                    await send(.response(.changeNameReceived(.failure(error))))
+                }
+            }
         case let .response(.changeNameReceived(.failure(error))):
             state.destination = .alert(Alerts.changeNameReceivedAlertState(error: error))
             return .none
@@ -549,6 +567,18 @@ struct PrescriptionDetailDomain {
                 state.destination = nil
             }
             return .none
+        case .destination(.presented(.prescriptionValidityInfo(.delegate(.close)))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.substitutionInfo(.delegate(.close)))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.coPaymentInfo(.delegate(.close)))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.dosageInstructionsInfo(.delegate(.close)))):
+            state.destination = nil
+            return .none
         case let .setFocus(field):
             state.focus = field
             return .none
@@ -560,16 +590,16 @@ struct PrescriptionDetailDomain {
     }
 
     private func handleResponse(error: ErxRepositoryError) -> PrescriptionDetailDomain.Destination.State {
-        // for now we wrap the erxRepositoryError in an ChargeItemConsentService.Error to get access
+        // for now we wrap the erxRepositoryError in an ConsentService.Error to get access
         // to the localized error messages for http codes 400...500
         // it's technically not correct, since the consent service is not
         // these lines will be corrected (automatically) when the task deletion is implemented using
         // structured concurrency
-        let chargeItemConsentServiceError = ChargeItemConsentService.Error.erxRepository(error)
+        let consentServiceError = ConsentService.Error.erxRepository(error)
         if case let .remote(.fhirClient(.http(fhirClientHttpError))) = error,
            fhirClientHttpError.httpClientError == .authentication(IDPError.tokenUnavailable) {
             return .alert(Alerts.missingTokenAlertState())
-        } else if let alertState = chargeItemConsentServiceError.alertState {
+        } else if let alertState = consentServiceError.alertState {
             return .alert(alertState.prescriptionDetailDomainErpAlertState)
         } else {
             return .alert(
@@ -578,9 +608,9 @@ struct PrescriptionDetailDomain {
         }
     }
 
-    // sourcery: CodedError = "016"
+    @CodedError("016")
     enum LoadingImageError: Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case matrixCodeGenerationFailed
     }
 

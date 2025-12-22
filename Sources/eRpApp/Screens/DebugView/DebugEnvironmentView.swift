@@ -23,6 +23,9 @@
 import Combine
 import eRpLocalStorage
 import eRpStyleKit
+import FeatureCardWall
+import Settings
+import Sharing
 import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
@@ -30,7 +33,6 @@ struct DebugEnvironmentView: View {
     private class State: ObservableObject {
         @Published var environmentName: String = defaultConfiguration.name
         @Published var loggingEnabled = false
-        @Published var virtualEGKEnabled = false
 
         private var disposeBag: Set<AnyCancellable> = []
 
@@ -46,16 +48,12 @@ struct DebugEnvironmentView: View {
                     self?.loggingEnabled = value
                 }
                 .store(in: &disposeBag)
-
-            UserDefaults.standard.publisher(for: \.isVirtualEGKEnabled)
-                .sink { [weak self] value in
-                    self?.virtualEGKEnabled = value
-                }
-                .store(in: &disposeBag)
         }
     }
 
     @StateObject private var state = State()
+
+    @Shared(.isVirtualEGKEnabled) var isVirtualEGKEnabled
 
     var body: some View {
         HStack {
@@ -74,7 +72,7 @@ struct DebugEnvironmentView: View {
                         .frame(width: 8, height: 8)
                         .offset(x: 12, y: 0)
                 }
-                if state.virtualEGKEnabled {
+                if isVirtualEGKEnabled {
                     Text("v-eGK")
                         .font(.footnote)
                         .offset(x: 40, y: 8)

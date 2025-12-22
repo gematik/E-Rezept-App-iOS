@@ -36,16 +36,18 @@ public struct TertiaryFilledButtonStyle: ButtonStyle {
         isDestructive = destructive
     }
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var foregroundColor: Color {
         switch (isDestructive, isEnabled) {
         case (false, true):
             return Colors.primary
         case (false, false):
-            return Color(.systemGray)
+            return Colors.primary.disabled(for: colorScheme)
         case (true, true):
             return Colors.red600
         case (true, false):
-            return Color(.systemGray)
+            return Colors.red600.disabled(for: colorScheme)
         }
     }
 

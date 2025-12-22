@@ -23,6 +23,8 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import Foundation
 
 @Reducer
@@ -42,6 +44,8 @@ struct PrescriptionArchiveDomain {
         var diGaPrescriptions: [Prescription] {
             prescriptions.filter(\.isDiGaPrescription)
         }
+
+        @Shared(.selectedProfileId) var profileId
 
         @Presents var destination: Destination.State?
     }
@@ -102,7 +106,7 @@ struct PrescriptionArchiveDomain {
         case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
             return .publisher(
-                prescriptionRepository.loadLocal()
+                prescriptionRepository.loadLocal(for: state.profileId)
                     .receive(on: schedulers.main)
                     .catchToLoadingStateEffect()
                     .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
@@ -158,7 +162,7 @@ extension PrescriptionArchiveDomain {
             ErxTask.Demo.expiredErxTask(with: .completed),
             ErxTask.Demo.erxTask10,
         ].map {
-            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+            Prescription(erxTask: $0)
         }
 
         static let state = State(prescriptions: prescriptions)

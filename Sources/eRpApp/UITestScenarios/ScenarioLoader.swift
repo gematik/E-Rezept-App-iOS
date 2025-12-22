@@ -27,6 +27,8 @@ import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import eRpStyleKit
+import ErxTaskRepository
+import FeatureCardWall
 import FHIRClient
 import FHIRVZD
 import Foundation
@@ -61,7 +63,9 @@ extension View {
 extension SceneDelegate {
     func setupUITests() {
         #if DEBUG
-        _ = try? UITestBridgeServer.shared()
+        if ProcessInfo.processInfo.environment["UITEST.SCENARIO_NAME"] != nil {
+            _ = try? UITestBridgeServer.shared()
+        }
 
         if ProcessInfo.processInfo.environment["UITEST.DISABLE_ANIMATIONS"] != nil {
             mainWindow?.layer.speed = 1000
@@ -80,7 +84,7 @@ extension SceneDelegate {
                 UserDefaults.standard.removePersistentDomain(forName: domain)
                 UserDefaults.standard.synchronize()
             }
-            _ = try? FileManager.default.removeItem(at: LocalStoreFactory.defaultDatabaseUrl)
+            _ = try? FileManager.default.removeItem(at: CoreDataControllerFactory.defaultDatabaseUrl)
 
             _ = try? appSecurityManager.save(password: "")
 
@@ -127,30 +131,22 @@ extension Reducer {
             guard scenario != nil || isRecording else { return }
 
             dependencies.userDataStore = SmartMocks.shared.smartMockUserDataStore(scenario, isRecording)
-            dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient, fhirVZDSession in
-                SmartMocks.shared.smartMockPharmacyService(
-                    fhirClient: fhirClient,
-                    fhirVZDSession: fhirVZDSession,
-                    scenario,
-                    isRecording
-                )
-            }
-            dependencies.erxTaskCoreDataStoreFactory = ErxTaskCoreDataStoreFactory { uuid, coreDataControllerFactory in
-                SmartMocks.shared.smartMockErxTaskCoreDataStore(
-                    uuid: uuid,
-                    coreDataControllerFactory: coreDataControllerFactory,
-                    scenario,
-                    isRecording
-                )
-            }
-            dependencies.erxRemoteDataStoreFactory = ErxRemoteDataStoreFactory { fhirClient in
-                SmartMocks.shared.smartMockErxRemoteDataStore(fhirClient: fhirClient, scenario, isRecording)
-            }
+
+            dependencies.erxLocalDataStore = SmartMocks.shared.smartMockErxTaskCoreDataStore(scenario, isRecording)
+            dependencies.erxRemoteDataStore = SmartMocks.shared.smartMockErxRemoteDataStore(
+                fhirClientFactory: dependencies.fhirClientServiceFactory.erpClient,
+                scenario,
+                isRecording
+            )
+
             // this clashes with erxRemoteDataStoreFactory, as accessing the underlying IDPSession calls the usersession
             // that then prematurely calls the erxRemoteDataStoreFactory from above. The `if`can be removed as soon as
             // we use shared state for the current user
             if scenario?.idpSession != nil {
                 dependencies.idpSession = SmartMocks.shared.smartMockIDPSession(scenario, isRecording)
+                dependencies.profileBasedSessionProvider.idpSession = { _ in
+                    SmartMocks.shared.smartMockIDPSession(scenario, isRecording)
+                }
             }
 
             if !isRecording {
@@ -167,6 +163,11 @@ extension Reducer {
             dependencies.drawerEvaluation.showDrawerEvaluation = { .none }
 
             dependencies.bfArMSession = SmartMocks.shared.smartMockBfArMSession(scenario, isRecording)
+
+            dependencies.pharmacyRemoteDataStore = SmartMocks.shared.smartMockPharmacyRemoteDataStore(
+                scenario,
+                isRecording
+            )
         }
     }
 }
@@ -207,45 +208,37 @@ struct SmartMocks {
         return mock
     }
 
-    private var smartMockPharmacyService: SmartMockPharmacyRemoteDataStore?
-    mutating func smartMockPharmacyService(
-        fhirClient: FHIRClient,
-        fhirVZDSession: FHIRVZDSession,
+    private var smartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore?
+    mutating func smartMockPharmacyRemoteDataStore(
         _ scenario: Scenario?,
         _ isRecording: Bool
     ) -> PharmacyRemoteDataStore {
-        if let existingMock = smartMockPharmacyService {
+        if let existingMock = smartMockPharmacyRemoteDataStore {
             return existingMock
         }
-        let pharmacyFhirDataSource = HealthcareServiceFHIRDataSource(fhirClient: fhirClient, session: fhirVZDSession)
 
-        let mock = SmartMockPharmacyRemoteDataStore(
-            wrapped: pharmacyFhirDataSource,
+        @Dependency(\.pharmacyRemoteDataStore) var pharmacyRemoteDataStore
+        let mock = PharmacyRemoteDataStore.smartMock(
+            wrapped: pharmacyRemoteDataStore,
             mocks: scenario?.pharmacyRemoteDataStore,
             isRecording: isRecording
         )
         smartMockRegister.register(mock)
-        smartMockPharmacyService = mock
+        smartMockPharmacyRemoteDataStore = mock
         return mock
     }
 
-    private var smartMockErxTaskCoreDataStore: SmartMockErxTaskCoreDataStore?
+    private var smartMockErxTaskCoreDataStore: SmartMockErxLocalDataStore?
     mutating func smartMockErxTaskCoreDataStore(
-        uuid: UUID?,
-        coreDataControllerFactory: CoreDataControllerFactory,
         _ scenario: Scenario?,
         _ isRecording: Bool
-    ) -> ErxTaskCoreDataStore {
+    ) -> SmartMockErxLocalDataStore {
         if let existingMock = smartMockErxTaskCoreDataStore {
             return existingMock
         }
-        let erxTaskCoreDataStore = DefaultErxTaskCoreDataStore(
-            profileId: uuid,
-            coreDataControllerFactory: coreDataControllerFactory
-        )
-
-        let mock = SmartMockErxTaskCoreDataStore(
-            wrapped: erxTaskCoreDataStore,
+        @Dependency(\.erxLocalDataStore) var erxLocalDataStore
+        let mock = SmartMockErxLocalDataStore(
+            wrapped: erxLocalDataStore,
             mocks: scenario?.erxTaskCoreDataStore,
             isRecording: isRecording
         )
@@ -256,14 +249,14 @@ struct SmartMocks {
 
     private var smartMockErxRemoteDataStore: SmartMockErxRemoteDataStore?
     mutating func smartMockErxRemoteDataStore(
-        fhirClient: FHIRClient,
+        fhirClientFactory: @escaping () -> FHIRClient,
         _ scenario: Scenario?,
         _ isRecording: Bool
     ) -> ErxRemoteDataStore {
         if let existingMock = smartMockErxRemoteDataStore {
             return existingMock
         }
-        let erxTaskFHIRDataStore = ErxTaskFHIRDataStore(fhirClient: fhirClient)
+        let erxTaskFHIRDataStore = ErxTaskFHIRDataStore(factory: fhirClientFactory)
 
         let mock = SmartMockErxRemoteDataStore(
             wrapped: erxTaskFHIRDataStore,
@@ -282,11 +275,9 @@ struct SmartMocks {
             return existingMock
         }
         @Dependency(\.redeemService) var redeemService: RedeemService
-
         @Dependency(\.userSession) var userSession
 
         let erxTaskRepositoryRedeemService = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: userSession.erxTaskRepository,
             loginHandler: loginHandler
         )
 
@@ -335,8 +326,8 @@ struct SmartMocks {
 
 struct Scenario {
     var userDataStore: SmartMockUserDataStore.Mocks?
-    var pharmacyRemoteDataStore: SmartMockPharmacyRemoteDataStore.Mocks?
-    var erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks?
+    var pharmacyRemoteDataStore: PharmacyRemoteDataStore.Mocks?
+    var erxTaskCoreDataStore: SmartMockErxLocalDataStore.Mocks?
     var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
     var redeemService: SmartMockRedeemService.Mocks?
     var idpSession: SmartMockIDPSession.Mocks?
@@ -362,11 +353,11 @@ struct ScenarioLoader {
             scenarioUrl: scenarioPath,
             with: "UserDataStore"
         )
-        let pharmacyMock: SmartMockPharmacyRemoteDataStore.Mocks? = loadMockData(
+        let pharmacyMock: PharmacyRemoteDataStore.Mocks? = loadMockData(
             scenarioUrl: scenarioPath,
             with: "PharmacyRemoteDataStore"
         )
-        let erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks? = loadMockData(
+        let erxTaskCoreDataStore: SmartMockErxLocalDataStore.Mocks? = loadMockData(
             scenarioUrl: scenarioPath,
             with: "ErxTaskCoreDataStore"
         )
@@ -728,9 +719,8 @@ extension String {
 
 // sourcery:begin: SmartMock
 extension UserDataStore {}
-extension PharmacyRemoteDataStore {}
-extension ErxTaskCoreDataStore {}
 extension ErxRemoteDataStore {}
+extension ErxLocalDataStore {}
 extension RedeemService {}
 extension IDPSession {}
 // sourcery:end
@@ -739,6 +729,7 @@ import BfArM
 
 // sourcery:begin: SmartMockStruct
 extension BfArMSession {}
+extension PharmacyRemoteDataStore {}
 // sourcery:end
 
 #endif

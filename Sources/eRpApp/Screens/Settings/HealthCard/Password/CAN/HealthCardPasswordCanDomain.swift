@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import FeatureHelpers
 import Foundation
 
 @Reducer
@@ -65,7 +66,7 @@ struct HealthCardPasswordCanDomain {
         case scanner
     }
 
-    @Dependency(\.feedbackReceiver) var feedbackReceiver
+    @Dependency(\.hapticFeedbackGenerator) var hapticFeedback
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
@@ -82,7 +83,7 @@ struct HealthCardPasswordCanDomain {
             state.destination = .scanner
             return .none
         case .successfulScan:
-            feedbackReceiver.hapticFeedbackSuccess()
+            hapticFeedback.success()
             return .none
 
         case .advance:

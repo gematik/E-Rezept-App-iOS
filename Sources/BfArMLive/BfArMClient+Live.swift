@@ -43,7 +43,7 @@ extension BfArMClient: DependencyKey {
             }
 
             do {
-                let result = try await httpClient.sendAsync(request: request)
+                let result = try await httpClient.send(request: request)
                 return try decoder.decode(BfArMDiGaDetails.self, from: result.data)
             } catch let error as HTTPClientError {
                 throw BfArMError.network(error: error)
@@ -66,7 +66,7 @@ extension BfArMClient: DependencyKey {
             }
 
             do {
-                return try await httpClient.sendAsync(request: request).data
+                return try await httpClient.send(request: request).data
             } catch let error as HTTPClientError {
                 throw BfArMError.network(error: error)
             } catch let error as DecodingError {

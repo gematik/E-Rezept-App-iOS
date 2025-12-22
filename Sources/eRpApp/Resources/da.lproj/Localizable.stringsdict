@@ -29,11 +29,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>Forkert adgangskode. Prøv igen om 1 sekund.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
-			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>Forkert adgangskode. Prøv igen om %u sekunder.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -47,7 +45,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>Prøv venligst igen om %u sekund.</string>
 			<key>other</key>
 			<string>Prøv igen om %u sekunder.</string>
 		</dict>
@@ -63,7 +61,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>Denne recept blev %%@ indløst for dig som led i en behandling.</string>
 			<key>other</key>
 			<string>Denne recept blev udskrevet til dig den % %@ som en del af en behandling.</string>
 		</dict>

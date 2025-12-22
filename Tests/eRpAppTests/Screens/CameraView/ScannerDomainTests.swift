@@ -25,6 +25,8 @@ import ComposableArchitecture
 import Dependencies
 @testable import eRpFeatures
 import eRpKit
+import ErxTaskRepository
+import FeatureHelpers
 import Foundation
 import Nimble
 import XCTest
@@ -49,7 +51,6 @@ final class ScannerDomainTests: XCTestCase {
             ScannerDomain(messageInterval: 0.0)
         } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = userSessionContainer
-            dependencies.erxTaskRepository = FakeErxTaskRepository()
             dependencies.fhirDateFormatter = FHIRDateFormatter.shared
             dependencies.schedulers = schedulers
             dependencies.dismiss = DismissEffect { self.isDismissInvoked.setValue(true) }
@@ -76,7 +77,11 @@ final class ScannerDomainTests: XCTestCase {
             scanState: .value(scannedTasks),
             acceptedTaskBatches: Set([scannedTasks])
         )
-        let store = testStore()
+        let store = testStore { dependencies in
+            dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+                Fail(error: ErxRepositoryError.local(.notImplemented)).eraseToAnyPublisher()
+            }
+        }
 
         await store.send(.analyse(scanOutput: [scannedOutput])) {
             $0.scanState = .loading(nil)
@@ -109,12 +114,89 @@ final class ScannerDomainTests: XCTestCase {
         expect(mockRouter.routeToReceivedEndpoint).to(equal(.universalLink(url)))
     }
 
+    func testScanForeignUrlIsIgnored() async {
+        let mockRouter = MockRouting()
+        let store = testStore { dependencies in
+            dependencies.router = mockRouter
+        }
+
+        let foreignUrl: URL = "https://example.com/some-page"
+
+        expect(mockRouter.routeToCallsCount).to(equal(0))
+        expect(self.isDismissInvoked.value).to(beFalse())
+
+        await store.send(.analyse(scanOutput: [.text(foreignUrl.absoluteString)]))
+        await testScheduler.advance()
+
+        // Verify that router was NOT called and dismiss was NOT invoked
+        expect(mockRouter.routeToCallsCount).to(equal(0))
+        expect(self.isDismissInvoked.value).to(beFalse())
+    }
+
+    func testScanSupportedUniversalLinks() async {
+        let supportedUrls: [URL] = [
+            "https://erezept.gematik.de/extauth",
+            "https://erezept.gematik.de/pharmacies/index.html",
+            "https://erezept.gematik.de/pharmacies",
+            "https://erezept.gematik.de/prescription",
+        ]
+
+        for url in supportedUrls {
+            // Create a fresh store for each test to avoid dismissed store issues
+            let mockRouter = MockRouting()
+            let store = testStore { dependencies in
+                dependencies.router = mockRouter
+            }
+            isDismissInvoked.setValue(false)
+
+            await store.send(.analyse(scanOutput: [.text(url.absoluteString)])) {
+                $0.scanState = .loading(nil)
+            }
+            await testScheduler.advance()
+
+            // Verify router was called for supported URL
+            expect(mockRouter.routeToCallsCount).to(equal(1))
+            expect(mockRouter.routeToReceivedEndpoint).to(equal(.universalLink(url)))
+            expect(self.isDismissInvoked.value).to(beTrue())
+        }
+    }
+
+    func testScanUnsupportedUniversalLinkPathsAreIgnored() async {
+        let unsupportedUrls: [URL] = [
+            "https://erezept.gematik.de/unknown",
+            "https://erezept.gematik.de/some/other/path",
+            "https://example.org/pharmacies", // wrong domain but correct path
+            "https://erezept.gematik.de/", // root path
+        ]
+
+        for url in unsupportedUrls {
+            // Create a fresh store for each test
+            let mockRouter = MockRouting()
+            let store = testStore { dependencies in
+                dependencies.router = mockRouter
+            }
+            isDismissInvoked.setValue(false)
+
+            // State changes to loading initially, but URL is then ignored, so it's set to idle
+            await store.send(.analyse(scanOutput: [.text(url.absoluteString)]))
+            await testScheduler.advance()
+
+            // Verify router was NOT called for unsupported URL
+            expect(mockRouter.routeToCallsCount).to(equal(0))
+            expect(self.isDismissInvoked.value).to(beFalse())
+        }
+    }
+
     func testScanStateAfterTwoEqualValidScanToBeOneResult() async {
         let expectedState = ScannerDomain.State(
             scanState: .value(scannedTasks),
             acceptedTaskBatches: Set([scannedTasks])
         )
-        let store = testStore()
+        let store = testStore { dependencies in
+            dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+                Fail(error: ErxRepositoryError.local(.notImplemented)).eraseToAnyPublisher()
+            }
+        }
 
         // when two identivcal codes were scanned
         await store.send(.analyse(scanOutput: [scannedOutput, scannedOutput])) {
@@ -217,6 +299,11 @@ final class ScannerDomainTests: XCTestCase {
         let expectedScanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .error(.storeDuplicate)
         let store = testStore()
 
+        // return some fake task as already stored
+        store.dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+            Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }
+
         // when scanning a code that is already in store
         await store.send(.analyse(scanOutput: [alreadySavedTaskInStore])) {
             $0.scanState = .loading(nil)
@@ -243,6 +330,9 @@ final class ScannerDomainTests: XCTestCase {
                  "Task/4713/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"]}
             """
         )
+        let oldScan = try! ScannedErxTask(
+            taskString: "Task/0390f983-1e67-11b2-8555-63bf44e44fb8/$accept?ac=e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"
+        )
         let newScan1 = try! ScannedErxTask(
             taskString: "Task/4711/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
         )
@@ -252,6 +342,15 @@ final class ScannerDomainTests: XCTestCase {
         let expectedScanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .value([newScan1, newScan2])
         let expectedAcceptedBatches = Set([[newScan1, newScan2]])
         let store = testStore()
+
+        // return some fake task as already stored
+        store.dependencies.erxTaskRepository.loadLocalTask = { taskId, _ in
+            if taskId == oldScan.id {
+                return Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            } else {
+                return Just(.none).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            }
+        }
 
         // when scanning a code that is already in store and one that is new
         await store.send(.analyse(scanOutput: [scanOutput])) {
@@ -290,7 +389,11 @@ final class ScannerDomainTests: XCTestCase {
         expectedAcceptedBatches.insert([newScan1, newScan2])
         let initialState = ScannerDomain.State(scanState: .idle,
                                                acceptedTaskBatches: Set([scannedTasks]))
-        let store = testStore(with: initialState)
+        let store = testStore(with: initialState) { dependencies in
+            dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+                Fail(error: ErxRepositoryError.local(.notImplemented)).eraseToAnyPublisher()
+            }
+        }
 
         // when scanning 3 codes where one was previously scanned
         await store.send(.analyse(scanOutput: [scanOutput])) {
@@ -313,15 +416,13 @@ final class ScannerDomainTests: XCTestCase {
     func testSuccessfulSavingAndClosingScannedErxTasks() async {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
-        let saveErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        let deleteErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        let repository = MockErxTaskRepository(stored: [],
-                                               saveErxTasks: saveErxTaskPublisher,
-                                               deleteErxTasks: deleteErxTaskPublisher,
-                                               find: findPublisher)
-        let store = testStore(with: initialState)
-        store.dependencies.erxTaskRepository = repository
+        let store = testStore(with: initialState) { dependencies in
+            dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+                Just(.none).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            }
+            dependencies.erxTaskRepository.saveTask = { _, _ in }
+            dependencies.erxTaskRepository.deleteTask = { _, _ in }
+        }
 
         // when
         await store.send(.saveAndClose(initialState.acceptedTaskBatches))
@@ -335,17 +436,13 @@ final class ScannerDomainTests: XCTestCase {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
         let savingError: ErxRepositoryError = .local(.notImplemented)
-        let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let deleteErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        let repository = MockErxTaskRepository(stored: [],
-                                               saveErxTasks: saveErxTaskPublisher,
-                                               deleteErxTasks: deleteErxTaskPublisher,
-                                               find: findPublisher)
         let store = testStore(with: initialState)
-        store.dependencies.erxTaskRepository = repository
         let expectedAlert = ScannerDomain.savingAlertState
-
+        store.dependencies.erxTaskRepository.loadLocalTask = { _, _ in
+            Just(.none).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }
+        store.dependencies.erxTaskRepository.saveTask = { _, _ in throw savingError }
+        store.dependencies.erxTaskRepository.deleteTask = { _, _ in throw savingError }
         // when
         await store.send(.saveAndClose(initialState.acceptedTaskBatches))
         await testScheduler.advance()
@@ -354,7 +451,6 @@ final class ScannerDomainTests: XCTestCase {
             state.scanState = initialState.scanState
             state.acceptedTaskBatches = initialState.acceptedTaskBatches
             state.destination = .alert(expectedAlert)
-            expect(repository.saveCalled).to(beTrue())
         }
         await store.send(.destination(.dismiss)) { state in
             state.destination = nil

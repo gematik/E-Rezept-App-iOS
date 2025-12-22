@@ -46,5 +46,11 @@
         "text": "**♿ Inrochtaineacht** \nAthbhreithníodh na socruithe próifíle chun inrochtaineacht a mhéadú tuilleadh.",
         "timestamp": "2025-08-26T08:00:00.000Z",
         "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Clárú do Tuilleadh Daoine** \nIs féidir clárú anois freisin do dhaoine atá árachaithe de chuid institiúidí feidearálacha, amhail na Póilíní Feidearálacha agus eile. \n \n **🕒 Uaireanta Oscailte Feabhsaithe na Cógaslanna** \nTaispeántar seirbhís éigeandála agus amanna dúnta speisialta do chógaslanna anois, más féidir. \n \n **💊 Roghnú na nOideas Uile** \nAgus oidis á bhfuascailt, is féidir na hoidis uile a roghnú ag an am céanna anois. \n \n **♿ Inrochtaineacht** \nTá dathanna na gclónna agus na ndeilbhíní coigeartaithe chun codarsnacht níos airde a bhaint amach. Ina theannta sin, tá feabhas curtha ar aschur cainte VoiceOver chun an pictiúr próifíle a chur in eagar agus stádas logála isteach a aithint.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
     }
 ]

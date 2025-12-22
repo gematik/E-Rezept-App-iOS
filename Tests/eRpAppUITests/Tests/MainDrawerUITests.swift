@@ -57,11 +57,12 @@ class MainDrawerUITests: XCTestCase, Sendable {
         let tabBar = TabBarScreen(app: app)
 
         await tabBar.tapPrescriptionsTab { mainScreen in
-            await mainScreen.tapRegister()
-                .tapWelcomeDrawerGkvUser { cardWallIntroScreen in
+            await mainScreen.tapRegister { insuranceDrawerScreen in
+                await insuranceDrawerScreen.tapWelcomeDrawerGkvUser { cardWallIntroScreen in
                     expect(cardWallIntroScreen.app.buttons["cdw_btn_intro_advance"].exists).to(beTrue())
                     expect(cardWallIntroScreen.app.buttons["cdw_btn_intro_later"].exists).to(beTrue())
                 }
+            }
         }
     }
 
@@ -71,14 +72,15 @@ class MainDrawerUITests: XCTestCase, Sendable {
         let tabBar = TabBarScreen(app: app)
 
         await tabBar.tapPrescriptionsTab { mainScreen in
-            await mainScreen.tapRegister()
-                .tapWelcomeDrawerPkvUser { cardWallExthAuthScreen in
+            await mainScreen.tapRegister { insuranceDrawerScreen in
+                await insuranceDrawerScreen.tapWelcomeDrawerPkvUser { cardWallExthAuthScreen in
                     expect(cardWallExthAuthScreen.navigationTitle()).to(exist("Navigation Title"))
 
                     await cardWallExthAuthScreen.tapHelpButton { cardWallHelpScreen in
                         expect(cardWallHelpScreen.navigationTitle()).to(exist("Navigation Title"))
                     }
                 }
+            }
         }
     }
 }

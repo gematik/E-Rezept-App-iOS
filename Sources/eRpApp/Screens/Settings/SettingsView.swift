@@ -221,14 +221,15 @@ extension SettingsView {
                             .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
                     }
                     VStack(alignment: .center, spacing: 4) {
-                        PrimaryTextButton(
-                            text: L10n.stgTrkBtnAlertYes,
-                            a11y: A11y.settings.tracking.stgTrkBtnYes
-                        ) {
+                        Button {
                             store.send(.confirmedOptInTracking)
+                        } label: {
+                            Label(L10n.stgTrkBtnAlertYes)
                         }
-                        .font(Font.body.weight(.semibold))
-                        .padding()
+                        .buttonStyle(.primary)
+                        .accessibilityIdentifier(A11y.settings.tracking.stgTrkBtnYes)
+                        .padding(.vertical)
+
                         Button(L10n.stgTrkBtnAlertNo) {
                             store.send(.resetNavigation)
                         }

@@ -29,13 +29,6 @@ import SwiftUI
 struct EditProfileView: View {
     @Bindable var store: StoreOf<EditProfileDomain>
 
-    var showChargeItemsSection: Bool {
-        switch store.insuranceType {
-        case .pKV: return true
-        case .gKV, .unknown: return false
-        }
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
@@ -78,7 +71,7 @@ struct EditProfileView: View {
                         }
                         .padding()
                         .font(Font.body)
-                        .foregroundColor(Color(.label))
+                        .foregroundColor(Colors.systemLabel)
                         .accessibility(label: Text(L10n.stgTxtEditProfileNamePlaceholder.key, bundle: .module))
                         .animation(.easeInOut, value: store.name)
                         .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileNameInput)
@@ -87,7 +80,7 @@ struct EditProfileView: View {
 
                 ConnectedProfile(store: store)
 
-                if showChargeItemsSection {
+                if store.insuranceType.canReceiveChargeItems {
                     ChargeItemsSectionView(store: store)
                 }
 
@@ -119,6 +112,8 @@ struct EditProfileView: View {
                             store.send(.setUserToGKVInsured, animation: .easeInOut)
                         } pkvInsuredAction: {
                             store.send(.setUserToPKVInsured, animation: .easeInOut)
+                        } federalInsuredAction: {
+                            store.send(.setUserToFederalInsured, animation: .easeInOut)
                         }
                     }
                     .accessibilityHidden(true)
@@ -240,18 +235,18 @@ extension EditProfileView {
 
             if store.token != nil {
                 // [REQ:BSI-eRp-ePA:O.Auth_14#2|5] The user may use the logout button within each profile
-                Button(action: {
+                Button {
                     store.send(.delegate(.logout))
-                }, label: {
+                } label: {
                     Text(L10n.stgBtnEditProfileLogout)
-                })
-                    .buttonStyle(eRpStyleKit.SecondaryButtonStyle(enabled: true, destructive: true))
-                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogout)
+                }
+                .buttonStyle(.secondary(isDestructive: true, background: Colors.systemBackgroundSecondary))
+                .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogout)
 
                 Text(L10n.stgTxtEditProfileLogoutInfo)
                     .padding(.horizontal)
                     .font(.footnote)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .padding(.bottom)
                     .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileLogoutInfo)
             } else {

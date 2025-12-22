@@ -20,13 +20,19 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpLocalStorage
 import eRpRemoteStorage
+import ErxTaskRepository
+import FeatureCardWall
+import FeatureHelpers
 import FHIRVZD
 import Foundation
 import IDP
+import Settings
 
 // swiftlint:disable type_body_length file_length
 @Reducer
@@ -40,7 +46,13 @@ struct DebugDomain {
         @Shared(.fhirVZDToken) var fhirVZDToken
         @Shared(.overwriteDIGAIK) var overwriteDIGAIK
         @Shared(.appDefaults) var appDefaults
-        @Shared(.useWorkflow15ForSendingCommunications) var useWorkflow15: Bool
+        @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+
+        @Shared(.isVirtualEGKEnabled) var isVirtualEGKEnabled
+        @Shared(.virtualEGKCCHAut) var virtualEGKCCHAut
+        @Shared(.virtualEGKPrkCHAut) var virtualEGKPrkCHAut
+
+        @Shared(.selectedProfileId) var profileId
 
         var localTasks: [ErxTask] = []
         var hideOnboarding = true
@@ -60,10 +72,6 @@ struct DebugDomain {
         var hidePkvConsentDrawerOnMainView: Bool { profile?.hidePkvConsentDrawerOnMainView ?? false }
 
         var fakeTaskStatus = String(ErxTask.minTimeIntervalForCompletion)
-
-        var useVirtualLogin: Bool = UserDefaults.standard.isVirtualEGKEnabled
-        var virtualLoginPrivateKey: String = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
-        var virtualLoginCertKey: String = UserDefaults.standard.virtualEGKCCHAut ?? ""
 
         var vauUrlText: String = "http://some-service.com:8003/"
         var idpUrlText: String = "http://some-service.com:8003/"
@@ -135,7 +143,7 @@ struct DebugDomain {
     @Dependency(\.userDataStore) var localUserStore: UserDataStore
     @Dependency(\.tracker) var tracker: Tracker
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
-
+    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
     @Dependency(\.secureEnclaveSignatureProvider) var signatureProvider: SecureEnclaveSignatureProvider
     @Dependency(\.serviceLocatorDebugAccess) var serviceLocatorDebugAccess: ServiceLocatorDebugAccess
 
@@ -233,15 +241,6 @@ struct DebugDomain {
         case let .isAuthenticatedReceived(isAuthenticated):
             state.isAuthenticated = isAuthenticated
             return .none
-        case .binding(\.useVirtualLogin):
-            UserDefaults.standard.isVirtualEGKEnabled = state.useVirtualLogin
-            return .none
-        case .binding(\.virtualLoginCertKey):
-            UserDefaults.standard.virtualEGKCCHAut = state.virtualLoginCertKey
-            return .none
-        case .binding(\.virtualLoginPrivateKey):
-            UserDefaults.standard.virtualEGKPrkCHAut = state.virtualLoginPrivateKey
-            return .none
         case .binding(\.fakeTaskStatus):
             ErxTask.minTimeIntervalForCompletion = Double(state.fakeTaskStatus) ?? 0
             return .none
@@ -279,12 +278,11 @@ struct DebugDomain {
             guard !state.localTasks.isEmpty else {
                 return .none
             }
-            return .run { [tasks = state.localTasks] send in
+            return .run { [tasks = state.localTasks, profileId = state.profileId] send in
                 var responses: [Response<ErxTask>] = []
                 for task in tasks {
                     do {
-                        _ = try await userSession.erxTaskRepository.delete(erxTasks: [task])
-                            .async(\.self)
+                        _ = try await erxTaskRepository.deleteTask([task], profileId)
                         responses.append(.init(value: task, result: .success))
                     } catch {
                         responses.append(.init(value: task, result: .failure(error)))
@@ -319,15 +317,14 @@ struct DebugDomain {
                     return readCommunication
                 }
 
-            return .run { [profile = state.profile] _ in
-                _ = try await userSession.erxTaskRepository.saveLocal(communications: communications).async()
+            return .run { [profileId = state.profileId, profile = state.profile] _ in
+                _ = try await erxTaskRepository.saveLocalCommunications(communications, profileId)
                 if profile?.insuranceType == .pKV {
                     for taskId in Set(communications.map(\.taskId)) {
-                        if var chargeItem = try await userSession.erxTaskRepository.loadLocal(by: taskId).async()?
+                        if var chargeItem = try await erxTaskRepository.loadLocalChargeItem(profileId, taskId)?
                             .chargeItem {
                             chargeItem.isRead = true
-                            _ = try await userSession.erxTaskRepository.save(chargeItems: [chargeItem.sparseChargeItem])
-                                .async()
+                            _ = try await erxTaskRepository.saveChargeItems([chargeItem.sparseChargeItem], profileId)
                         }
                     }
                 }
@@ -372,7 +369,6 @@ struct DebugDomain {
                 onReceiveIsAuthenticated(),
                 onReceiveToken(),
                 onReceiveConfigurationName(for: state.availableEnvironments),
-                onReceiveVirtualEGK(),
                 onReceiveCurrentProfile()
             )
         case let .profileReceived(.success(profile)):
@@ -390,7 +386,7 @@ struct DebugDomain {
 
             return setProfileInsuranceTypeToPKV(profileId: profile.id)
         case .hidePkvConsentDrawerMainViewToggleTapped:
-            guard let profile = state.profile, profile.insuranceType == .pKV else {
+            guard let profile = state.profile, profile.insuranceType.canReceiveChargeItems else {
                 return .none
             }
             let newValue = !profile.hidePkvConsentDrawerOnMainView
@@ -469,7 +465,7 @@ extension DebugDomain {
 
     func loadAllLocalTasks() -> Effect<DebugDomain.Action> {
         .publisher(
-            userSession.erxTaskRepository.loadLocalAll()
+            erxTaskRepository.loadLocalAllTasks(nil)
                 .catchToPublisher()
                 .receive(on: schedulers.main)
                 .map(DebugDomain.Action.loadAllLocalTasksReceived)
@@ -534,14 +530,6 @@ extension DebugDomain {
                 .map(DebugDomain.Action.configurationReceived)
                 .eraseToAnyPublisher
         )
-    }
-
-    func onReceiveVirtualEGK() -> Effect<DebugDomain.Action> {
-        .run { send in
-            await send(.binding(.set(\.useVirtualLogin, UserDefaults.standard.isVirtualEGKEnabled)))
-            await send(.binding(.set(\.virtualLoginPrivateKey, UserDefaults.standard.virtualEGKPrkCHAut ?? "")))
-            await send(.binding(.set(\.virtualLoginCertKey, UserDefaults.standard.virtualEGKCCHAut ?? "")))
-        }
     }
 
     func onReceiveCurrentProfile() -> Effect<DebugDomain.Action> {

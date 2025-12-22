@@ -30,7 +30,7 @@ struct LegalNoticeView: View {
             VStack(alignment: .leading) {
                 LegalNoticeSectionView(
                     title: L10n.stgLnoTxtTitleIssuer,
-                    text: L10n.stgLnoTxtTextIssuer
+                    text: L10n.stgLnoTxtTextIssuerRosenthaler
                 )
                 LegalNoticeSectionView(
                     title: nil,

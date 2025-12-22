@@ -21,12 +21,14 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpResources
 import eRpStyleKit
 import SwiftUI
 
 public struct EURedeemSelectionView: View {
     @Bindable var store: StoreOf<EURedeemSelectionDomain>
+    @State var calculatedHeight = CGFloat(1)
 
     public init(store: StoreOf<EURedeemSelectionDomain>) {
         self.store = store
@@ -34,44 +36,43 @@ public struct EURedeemSelectionView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            // Illustration placeholder
-            ZStack {
-                Colors.primary100
-                // Replace with actual illustration asset
-                Image(asset: Asset.EUReedem.banner)
-                    .frame(width: 120, height: 120)
-                    .foregroundColor(.yellow)
-            }
-            .frame(height: 240)
-            .clipShape(RoundedRectangle(cornerRadius: 32))
-            .ignoresSafeArea(edges: .top)
-
             ScrollView {
+                // Illustration placeholder
+                ZStack {
+                    Colors.primary100
+                    // Replace with actual illustration asset
+                    Image(asset: Asset.EUReedem.banner)
+                        .frame(width: 120, height: 120)
+                        .foregroundColor(.yellow)
+                }
+                .cornerRadius(32, corners: [.bottomLeft, .bottomRight])
+                .frame(height: 240)
+
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Im EU Ausland einlösen")
+                    Text(L10n.euredeemSelectionTitle)
                         .font(.title)
                         .bold()
                         .padding(.top, 8)
-                    Text("Wie Sie im EU Ausland Rezepte einlösen können, lesen Sie in der ")
 
-                    Button {
-                        store.send(.selectInstructionButtonTapped)
-                    } label: {
-                        Text("Anleitung.")
-                            .foregroundColor(.blue)
-                            .underline()
+                    UIKitTextView(
+                        attributedString: attributedSubtitle,
+                        calculatedHeight: $calculatedHeight,
+                        font: .preferredFont(forTextStyle: .body),
+                        foregroundColor: .label
+                    ) { _ in
+                        store.send(.delegate(.selectInstructionButtonTapped))
                     }
-                    .font(.body)
+                    .frame(height: calculatedHeight)
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 8)
+                .padding(.bottom)
+                .padding(.top, 32)
 
                 VStack(spacing: 16) {
                     prescriptionCell
                     countryCell
                 }
                 .padding(.horizontal)
-                .padding(.top, 8)
             }
 
             Spacer()
@@ -79,70 +80,71 @@ public struct EURedeemSelectionView: View {
             VStack(spacing: 8) {
                 GreyDivider()
 
+                let isDisabled = store.selectedPrescriptions.isEmpty || store.selectedCountry == nil
                 Button(
-                    action: { store.send(.redeemButtonTapped) },
-                    label: { Text("Einlösen") }
+                    action: { store.send(.delegate(.redeemButtonTapped)) },
+                    label: { Text(L10n.euredeemSelectionBtnRedeem) }
                 )
-                .buttonStyle(.primaryHugging)
-                .disabled(store.selectedPrescriptions.isEmpty || store.selectedCountry == nil)
-                .padding([.horizontal, .bottom])
+                .buttonStyle(.primary(isEnabled: !isDisabled, width: .wideHugging))
+                .disabled(isDisabled)
+                .padding(.horizontal)
+                .padding(.top, 4)
+                .padding(.bottom)
             }
-            .frame(height: 240)
-            .clipShape(RoundedRectangle(cornerRadius: 32))
-            .ignoresSafeArea(edges: .top)
+        }
+        .sheet(item: $store.scope(state: \.destination?.consent, action: \.destination.consent)) { store in
+            ConsentView(store: store)
         }
         .sheet(item: $store.scope(state: \.destination?.consent, action: \.destination.consent)) { store in
             ConsentView(store: store)
         }
         .background(Color(uiColor: .systemBackground))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    store.send(.delegate(.close))
+                }, label: {
+                    Text(L10n.euredeemSelectionBtnClose)
+                })
+                    .accessibility(identifier: "euredeem_selection_close_button")
+            }
+        }
+        .toolbarBackground(.visible)
+        .toolbarBackground(Colors.primary100, for: .navigationBar)
     }
 
     private var prescriptionCell: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
-                store.send(.selectPrescriptionsButtonTapped)
+                store.send(.delegate(.selectPrescriptionsButtonTapped))
             } label: {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         if store.prescriptions.isEmpty {
-                            Text("Keine Rezepte")
+                            Text(L10n.euredeemSelectionPrescriptionTitleNone)
                                 .font(.body)
                                 .foregroundColor(.red)
                         } else {
-                            Text("Rezepte")
-                                .font(.caption)
-                                .foregroundColor(.gray)
                             if store.selectedPrescriptions.isEmpty {
-                                // Show all prescriptions if none selected
-                                ForEach(store.prescriptions.prefix(2)) { prescription in
-                                    Text(prescription.name)
-                                        .font(.body)
-                                        .foregroundColor(.primary)
-                                }
-                                if store.prescriptions.count > 2 {
-                                    Text("+\(store.prescriptions.count - 2) weitere")
-                                        .font(.body)
-                                        .foregroundColor(.secondary)
-                                }
+                                Text(L10n.euredeemSelectionPrescriptionTitleNone)
+                                    .font(.body)
                             } else {
+                                Text(L10n.euredeemSelectionPrescriptionTitle)
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
                                 // Show selected prescriptions
-                                ForEach(store.selectedPrescriptions.prefix(2)) { prescription in
+                                ForEach(store.selectedPrescriptions) { prescription in
                                     Text(prescription.name)
                                         .font(.body)
                                         .foregroundColor(.primary)
-                                }
-                                if store.selectedPrescriptions.count > 2 {
-                                    Text("+\(store.selectedPrescriptions.count - 2) weitere")
-                                        .font(.body)
-                                        .foregroundColor(.secondary)
                                 }
                             }
                         }
                     }
 
                     Spacer()
-                    Image(systemName: "chevron.forward")
+                    Image(systemName: SFSymbolName.chevronForward)
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -160,7 +162,7 @@ public struct EURedeemSelectionView: View {
             .buttonStyle(PlainButtonStyle())
 
             if store.prescriptions.isEmpty {
-                Text("Sie haben keine einlöbaren Rezepte")
+                Text(L10n.euredeemSelectionPrescriptionCaptionNone)
                     .font(.caption)
                     .foregroundColor(.red)
                     .padding(.leading)
@@ -171,25 +173,31 @@ public struct EURedeemSelectionView: View {
 
     private var countryCell: some View {
         Button(
-            action: { store.send(.selectCountryButtonTapped) },
+            action: { store.send(.delegate(.selectCountryButtonTapped)) },
             label: {
                 HStack {
                     if let country = store.selectedCountry {
-                        Image(country.id.lowercased()) // expects asset named by country code
-                            .resizable()
-                            .frame(width: 32, height: 22)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                    }
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Land")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Text(store.selectedCountry?.name ?? "")
+                        Text(country.flag)
+                            .font(.largeTitle)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L10n.euredeemSelectionCountryTitle)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            Text(store.selectedCountry?.name ?? "")
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
+                    } else {
+                        let euCountry = Country(id: "EU", name: "European Union", telematikId: "")
+                        Text(euCountry.flag)
+                            .font(.largeTitle)
+                        Text(L10n.euredeemSelectionTxtNoCountry)
                             .font(.body)
                             .foregroundColor(.primary)
                     }
                     Spacer()
-                    Image(systemName: "chevron.forward")
+                    Image(systemName: SFSymbolName.chevronForward)
                         .foregroundColor(.gray)
                 }
                 .padding()
@@ -198,6 +206,24 @@ public struct EURedeemSelectionView: View {
             }
         )
         .buttonStyle(PlainButtonStyle())
+    }
+
+    private var attributedSubtitle: AttributedString {
+        let text = L10n.euredeemSelectionSubtitleWithLink(
+            Markdown.instructionsView(L10n.euredeemSelectionSubtitleLink.text).link
+        ).text
+        return (try? AttributedString(markdown: text)) ?? AttributedString(text)
+    }
+
+    enum Markdown: Equatable {
+        case instructionsView(_ name: String)
+
+        var link: String {
+            switch self {
+            case let .instructionsView(name):
+                return "[\(name)](screen://InstructionsView)"
+            }
+        }
     }
 }
 

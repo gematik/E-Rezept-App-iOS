@@ -24,6 +24,7 @@ import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
 import eRpKit
+import eRpResources
 import Pharmacy
 import SwiftUI
 

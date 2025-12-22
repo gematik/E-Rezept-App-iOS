@@ -22,6 +22,7 @@
 
 import Combine
 import eRpKit
+import FeatureHelpers
 import Foundation
 import IDP
 import OpenSSL

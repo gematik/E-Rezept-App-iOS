@@ -20,23 +20,24 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import Foundation
 import OpenSSL
 
-// sourcery: CodedError = "109"
+@CodedError("109")
 public enum SecureEnclaveSignatureProviderError: Swift.Error {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case fetchingPrivateKey(Swift.Error?)
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case signing(Swift.Error?)
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case packagingAuthCertificate
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case packagingSeCertificate
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     case gatheringPairingData(Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     case `internal`(String, Swift.Error?)
 }
 

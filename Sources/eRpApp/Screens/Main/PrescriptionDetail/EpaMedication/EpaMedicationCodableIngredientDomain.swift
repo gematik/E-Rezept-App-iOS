@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 
 @Reducer
 struct EpaMedicationCodableIngredientDomain {
@@ -58,9 +59,7 @@ extension EpaMedicationCodeCodableConcept {
     }
 
     var idCode: String? {
-        codings.first {
-            $0.code != nil
-        }?.code
+        codings.first?.code
     }
 }
 

@@ -21,6 +21,8 @@
 //
 
 import AVFoundation
+import CodedError
+import eRpResources
 import SwiftUI
 
 /// View that forwards the scanned `AVMetadataObject`s as `ScanOutput` while presenting the camera feed.
@@ -193,11 +195,11 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
 }
 
 extension AVScannerViewController: AVScannerViewErrorDelegate {
-    // sourcery: CodedError = "002"
+    @CodedError("002")
     enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case initalizationError
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case other(Swift.Error)
 
         static var kAuthorizaionErrorCode = -11852

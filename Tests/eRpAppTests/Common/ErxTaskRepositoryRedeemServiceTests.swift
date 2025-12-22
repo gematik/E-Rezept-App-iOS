@@ -20,10 +20,13 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import Dependencies
 @testable import eRpFeatures
 import eRpKit
+import ErxTaskRepository
+import FeatureCardWall
 import Foundation
 import IdentifiedCollections
 import Nimble
@@ -33,8 +36,6 @@ import TestUtils
 import XCTest
 
 final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
-    let mockRepository = MockErxTaskRepository()
-
     lazy var order1 = OrderRequest(
         redeemType: .onPremise,
         flowType: "160",
@@ -62,148 +63,152 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
 
     func testRedeemResponses_Success() throws {
         let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
             loginHandler: loginHandlerMock(authenticated: true)
         )
 
-        mockRepository.redeemClosure = { erxTaskOrder in
-            Just(erxTaskOrder)
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
-        }
-
         var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
-        sut.redeem([order1, order2, order3])
-            .test(failure: { error in
-                print(error)
-                fail("no error expected")
-            }, expectations: { orderResponses in
-                receivedResponse = orderResponses
-            })
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.redeem = { erxTaskOrder in
+                erxTaskOrder
+            }
+            dependencies.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                []
+            }
+        } operation: {
+            sut.redeem([order1, order2, order3], profileId: UUID())
+                .testWait(failure: { error in
+                    print(error)
+                    fail("no error expected")
+                }, expectations: { orderResponses in
+                    receivedResponse = orderResponses
+                })
 
-        expect(receivedResponse.count).toEventually(equal(3))
+            expect(receivedResponse.count).toEventually(equal(3))
 
-        expect(receivedResponse.inProgress).to(beFalse())
-        expect(receivedResponse.areFailing).to(beFalse())
-        expect(receivedResponse.areSuccessful).to(beTrue())
-        expect(receivedResponse.arePartiallySuccessful).to(beFalse())
-        expect(receivedResponse.progress).to(equal(1.0))
-        expect(receivedResponse.count) == 3
-        expect(receivedResponse[id: self.order1.taskID]?.isSuccess).to(beTrue())
-        expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
-        expect(receivedResponse[id: self.order2.taskID]?.isSuccess).to(beTrue())
-        expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
-        expect(receivedResponse[id: self.order3.taskID]?.isSuccess).to(beTrue())
-        expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
+            expect(receivedResponse.inProgress).to(beFalse())
+            expect(receivedResponse.areFailing).to(beFalse())
+            expect(receivedResponse.areSuccessful).to(beTrue())
+            expect(receivedResponse.arePartiallySuccessful).to(beFalse())
+            expect(receivedResponse.progress).to(equal(1.0))
+            expect(receivedResponse.count) == 3
+            expect(receivedResponse[id: self.order1.taskID]?.isSuccess).to(beTrue())
+            expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
+            expect(receivedResponse[id: self.order2.taskID]?.isSuccess).to(beTrue())
+            expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
+            expect(receivedResponse[id: self.order3.taskID]?.isSuccess).to(beTrue())
+            expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
+        }
     }
 
-    func testRedeemResponses_PartialSuccess() throws {
+    func testRedeemResponses_PartialSuccess() async throws {
+        let callsCount = LockIsolated(0)
+
         let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
             loginHandler: loginHandlerMock(authenticated: true)
         )
 
-        var callsCount = 0
-        mockRepository.redeemClosure = { erxTaskOrder in
-            callsCount += 1
-            if callsCount == 1 {
-                return Fail(error: ErxRepositoryError.remote(.notImplemented))
-                    .eraseToAnyPublisher()
-            } else {
-                return Just(erxTaskOrder)
-                    .setFailureType(to: ErxRepositoryError.self)
-                    .eraseToAnyPublisher()
-            }
-        }
-
         var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
-        sut.redeem([order1, order2, order3])
-            .test(failure: { error in
-                print(error)
-                fail("no error expected")
-            }, expectations: { orderResponses in
-                receivedResponse = orderResponses
-            })
+        withDependencies { dependency in
+            dependency.erxTaskRepository.redeem = { erxTaskOrder in
+                callsCount.withValue { $0 += 1 }
+                if self.order1.taskID == erxTaskOrder.erxTaskId {
+                    throw ErxRepositoryError.remote(.notImplemented)
+                } else {
+                    return erxTaskOrder
+                }
+            }
+            dependency.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                []
+            }
+            dependency.schedulers = Schedulers(uiScheduler: .immediate,
+                                               networkScheduler: .immediate,
+                                               ioScheduler: .immediate,
+                                               computeScheduler: .immediate)
+        } operation: {
+            sut.redeem([order1, order2, order3], profileId: UUID())
+                .testWait(failure: { error in
+                    print(error)
+                    fail("no error expected")
+                }, expectations: { orderResponses in
+                    receivedResponse = orderResponses
+                })
 
-        expect(receivedResponse.count).toEventually(equal(3))
+            expect(receivedResponse.count).to(equal(3))
 
-        expect(receivedResponse.inProgress).to(beFalse())
-        expect(receivedResponse.areFailing).to(beFalse())
-        expect(receivedResponse.areSuccessful).to(beFalse())
-        expect(receivedResponse.arePartiallySuccessful).to(beTrue())
-        expect(receivedResponse.progress).to(equal(1.0))
-        expect(receivedResponse.count) == 3
-        expect(receivedResponse[id: self.order1.taskID]?.isFailure).to(beTrue())
-        expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
-        expect(receivedResponse[id: self.order2.taskID]?.isSuccess).to(beTrue())
-        expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
-        expect(receivedResponse[id: self.order3.taskID]?.isSuccess).to(beTrue())
-        expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
+            expect(receivedResponse.inProgress).to(beFalse())
+            expect(receivedResponse.areFailing).to(beFalse())
+            expect(receivedResponse.areSuccessful).to(beFalse())
+            expect(receivedResponse.arePartiallySuccessful).to(beTrue())
+            expect(receivedResponse.progress).to(equal(1.0))
+            expect(receivedResponse.count) == 3
+            expect(receivedResponse[id: self.order1.taskID]?.isFailure).to(beTrue())
+            expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
+            expect(receivedResponse[id: self.order2.taskID]?.isSuccess).to(beTrue())
+            expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
+            expect(receivedResponse[id: self.order3.taskID]?.isSuccess).to(beTrue())
+            expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
+        }
     }
 
     let now = Date()
 
     func testRedeemFailsDueToOutdatedPrescriptions() throws {
-        let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
-            loginHandler: loginHandlerMock(authenticated: true)
-        )
-
         let task1 = ErxTask(identifier: "task_id_1", status: .inProgress, flowType: .pharmacyOnly)
         let task2 = ErxTask(identifier: "task_id_2", status: .ready, flowType: .pharmacyOnly)
 
-        mockRepository.loadRemoteAndSavedPublisher = Just([task1, task2])
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
+        let callsCount = LockIsolated(0)
 
-        @Dependency(\.uiDateFormatter) var uiDateFormatter
+        let sut = ErxTaskRepositoryRedeemService(
+            loginHandler: loginHandlerMock(authenticated: true)
+        )
 
-        let prescription1 = Prescription(erxTask: task1, date: now, dateFormatter: uiDateFormatter)
-
-        var callsCount = 0
-        mockRepository.redeemClosure = { erxTaskOrder in
-            callsCount += 1
-            return Just(erxTaskOrder)
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
-        }
+        let prescription1 = Prescription(erxTask: task1, date: now)
 
         withDependencies { dependencies in
             dependencies.date = .constant(now)
+            dependencies.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                [task1, task2]
+            }
+            dependencies.erxTaskRepository.redeem = { order in
+                callsCount.withValue { $0 += 1 }
+                return order
+            }
         } operation: {
-            sut.redeem([order1, order2])
-                .test(failure: { error in
+            sut.redeem([order1, order2], profileId: UUID())
+                .testWait(failure: { error in
                     expect(error).to(equal(RedeemServiceError.prescriptionAlreadyRedeemed([prescription1])))
                 }, expectations: { _ in
                     fail("not expected to receive any response")
                 })
         }
 
-        expect(callsCount).to(equal(0))
+        expect(callsCount.withValue { $0 }).to(equal(0))
     }
 
     func testRedeemResponses_All_Fail() throws {
         let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
             loginHandler: loginHandlerMock(authenticated: true)
         )
 
-        mockRepository.redeemClosure = { _ in
-            Fail(error: ErxRepositoryError.remote(.notImplemented))
-                .eraseToAnyPublisher()
+        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.redeem = { _ in
+                throw ErxRepositoryError.remote(.notImplemented)
+            }
+            dependencies.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                []
+            }
+        } operation: {
+            sut.redeem([order1, order2, order3], profileId: UUID())
+                .testWait(failure: { error in
+                    print(error)
+                    fail("no error expected")
+                }, expectations: { orderResponses in
+                    receivedResponse = orderResponses
+                })
         }
 
-        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
-        sut.redeem([order1, order2, order3])
-            .test(failure: { error in
-                print(error)
-                fail("no error expected")
-            }, expectations: { orderResponses in
-                receivedResponse = orderResponses
-            })
-
         expect(receivedResponse.count).toEventually(equal(3))
-
         expect(receivedResponse.inProgress).to(beFalse())
         expect(receivedResponse.areFailing).to(beTrue())
         expect(receivedResponse.areSuccessful).to(beFalse())
@@ -220,15 +225,8 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
 
     func testRedeemResponses_InputFailure() throws {
         let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
             loginHandler: loginHandlerMock(authenticated: true)
         )
-
-        mockRepository.redeemClosure = { erxTaskOrder in
-            Just(erxTaskOrder)
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
-        }
 
         let orderWithMissingTelematikId = OrderRequest(
             redeemType: .shipment,
@@ -237,32 +235,40 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
             accessCode: "access_code_3"
         )
 
-        sut.redeem([order1, order2, orderWithMissingTelematikId])
-            .test(failure: { error in
-                expect(error).to(equal(RedeemServiceError.internalError(.missingTelematikId)))
-            }, expectations: { _ in
-                fail("not expected to receive any response")
-            })
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.redeem = { order in
+                order
+            }
+            dependencies.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                []
+            }
+        } operation: {
+            sut.redeem([order1, order2, orderWithMissingTelematikId], profileId: UUID())
+                .testWait(failure: { error in
+                    expect(error).to(equal(RedeemServiceError.internalError(.missingTelematikId)))
+                }, expectations: { _ in
+                    fail("not expected to receive any response")
+                })
+        }
     }
 
     func testRedeemResponses_When_Not_Authenticated() throws {
         let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
             loginHandler: loginHandlerMock(authenticated: false)
         )
 
-        mockRepository.redeemClosure = { erxTaskOrder in
-            Just(erxTaskOrder)
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.redeem = { order in
+                order
+            }
+        } operation: {
+            sut.redeem([order1, order2], profileId: UUID())
+                .test(failure: { error in
+                    expect(error).to(equal(RedeemServiceError.noTokenAvailable))
+                }, expectations: { _ in
+                    fail("not expected to receive any response")
+                })
         }
-
-        sut.redeem([order1, order2])
-            .test(failure: { error in
-                expect(error).to(equal(RedeemServiceError.noTokenAvailable))
-            }, expectations: { _ in
-                fail("not expected to receive any response")
-            })
     }
 
     func testRedeemResponses_With_Error_From_LoginHandler() throws {
@@ -271,22 +277,21 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
         loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.failure(expectedError))
             .eraseToAnyPublisher()
         let sut = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: mockRepository,
             loginHandler: loginHandlerMock
         )
 
-        mockRepository.redeemClosure = { erxTaskOrder in
-            Just(erxTaskOrder)
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.redeem = { order in
+                order
+            }
+        } operation: {
+            sut.redeem([order1, order2], profileId: UUID())
+                .test(failure: { error in
+                    expect(error).to(equal(RedeemServiceError.loginHandler(error: expectedError)))
+                }, expectations: { _ in
+                    fail("not expected to receive any response")
+                })
         }
-
-        sut.redeem([order1, order2])
-            .test(failure: { error in
-                expect(error).to(equal(RedeemServiceError.loginHandler(error: expectedError)))
-            }, expectations: { _ in
-                fail("not expected to receive any response")
-            })
     }
 
     private func loginHandlerMock(authenticated: Bool) -> MockLoginHandler {

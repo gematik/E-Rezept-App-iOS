@@ -53,7 +53,7 @@ struct HealthcareServiceFHIRDataSourceTests {
                 .eraseToAnyPublisher()
         }
 
-        let mockSession = MockFHIRVZDSession()
+        let mockSession = FHIRVZDSession(autoRefreshedToken: { FHIRVZDToken(string: "mockToken") })
         let sut = HealthcareServiceFHIRDataSource(fhirClient: mockFhirClient, session: mockSession)
 
         let publisher = sut.searchPharmacies(
@@ -90,7 +90,7 @@ struct HealthcareServiceFHIRDataSourceTests {
                 .eraseToAnyPublisher()
         }
 
-        let mockSession = MockFHIRVZDSession()
+        let mockSession = FHIRVZDSession(autoRefreshedToken: { FHIRVZDToken(string: "mockToken") })
         let sut = HealthcareServiceFHIRDataSource(fhirClient: mockFhirClient, session: mockSession)
 
         let publisher = sut.searchPharmacies(
@@ -104,7 +104,7 @@ struct HealthcareServiceFHIRDataSourceTests {
             #expect(value.first == PharmacyLocation.Fixtures.hundredPharmacies.first)
         }
 
-        #expect(calledCount == 2)
+        #expect(calledCount == 1)
     }
 
     @Test
@@ -127,7 +127,7 @@ struct HealthcareServiceFHIRDataSourceTests {
                 .eraseToAnyPublisher()
         }
 
-        let mockSession = MockFHIRVZDSession()
+        let mockSession = FHIRVZDSession(autoRefreshedToken: { FHIRVZDToken(string: "mockToken") })
         let sut = HealthcareServiceFHIRDataSource(fhirClient: mockFhirClient, session: mockSession)
 
         let publisher = sut.searchPharmacies(

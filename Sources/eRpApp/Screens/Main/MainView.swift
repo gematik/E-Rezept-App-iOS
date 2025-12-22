@@ -23,7 +23,10 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 import eRpStyleKit
+import FeatureCardWall
+import FeatureEURedeem
 import Perception
 import SwiftUI
 import SwiftUIIntrospect
@@ -32,16 +35,6 @@ struct MainView: View {
     @Bindable var store: StoreOf<MainDomain>
 
     @State var scrollOffset: CGFloat = 0
-
-    struct ViewState: Equatable {
-        let isDemoModeEnabled: Bool
-        let showTooltips: Bool
-
-        init(state: MainDomain.State) {
-            isDemoModeEnabled = state.isDemoMode
-            showTooltips = state.destination == nil
-        }
-    }
 
     var body: some View {
         NavigationStack(
@@ -82,7 +75,8 @@ struct MainView: View {
             .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
             .navigationTitle(Text(L10n.erxTitle))
             .navigationBarTitleDisplayMode(.automatic)
-            .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
+            .introspect(.navigationView(style: .stack),
+                        on: .iOS(.v17, .v18, .v26)) { navigationController in
                 let navigationBar = navigationController.navigationBar
                 navigationBar.barTintColor = UIColor(Colors.systemBackground)
                 let navigationBarAppearance = UINavigationBarAppearance()
@@ -102,9 +96,6 @@ struct MainView: View {
                         .embedToolbarContent()
                         .tooltip(tooltip: MainViewTooltip.scan)
                 }
-            }
-            .task {
-                await store.send(.subscribeToDemoModeChange).finish()
             }
             .task {
                 // [REQ:BSI-eRp-ePA:O.Arch_10#2] Trigger for the update check
@@ -127,6 +118,16 @@ struct MainView: View {
                 PharmacyRedeemView(store: store)
             case let .pharmacy(store):
                 PharmacySearchView(store: store)
+            case let .euRedeemSelection(store):
+                EURedeemSelectionView(store: store)
+            case let .countrySelection(countrySelectionStore):
+                CountrySelectionView(store: countrySelectionStore)
+            case let .prescriptionSelection(prescriptionSelectionStore):
+                SelectEUPrescriptionsView(store: prescriptionSelectionStore)
+            case let .instructions(instructionsStore):
+                InstructionsView(store: instructionsStore)
+            case let .code(codeStore):
+                CodeView(store: codeStore)
             }
         }
         .tint(Colors.primary700)
@@ -190,6 +191,8 @@ private extension MainView {
                         store.send(.gkvInsuredButtonTapped, animation: .easeInOut)
                     } pkvInsuredAction: {
                         store.send(.pkvInsuredButtonTapped, animation: .easeInOut)
+                    } federalInsuredAction: {
+                        store.send(.federalInsuredButtonTapped, animation: .easeInOut)
                     }
                 }
                 .accessibilityHidden(true)

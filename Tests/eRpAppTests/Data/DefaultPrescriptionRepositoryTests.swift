@@ -26,101 +26,116 @@ import Dependencies
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
+import ErxTaskRepository
+import FeatureCardWall
 import Nimble
 import XCTest
 
 final class DefaultPrescriptionRepositoryTests: XCTestCase {
     var loginHandler: MockLoginHandler!
-    var erxTaskRepository: MockErxTaskRepository!
 
     override func setUp() {
         super.setUp()
 
         loginHandler = MockLoginHandler()
-        erxTaskRepository = MockErxTaskRepository()
     }
 
     func testLoadLocal() {
         let sut = DefaultPrescriptionRepository(
-            loginHandler: MockLoginHandler(),
-            erxTaskRepository: FakeErxTaskRepository()
+            loginHandler: MockLoginHandler()
         )
 
-        sut.loadLocal()
-            .test(
-                expectations: { prescriptions in
-                    // swiftlint:disable:previous trailing_closure
-                    expect(prescriptions.count) == 15
+        withDependencies {
+            $0.erxTaskRepository.loadLocalAllTasks = { _ in
+                Just(Array(ErxTaskRepository.exampleStore.values))
+                    .setFailureType(to: ErxRepositoryError.self)
+                    .eraseToAnyPublisher()
+            }
+        } operation: {
+            sut.loadLocal(for: UUID())
+                .testWait(
+                    expectations: { prescriptions in
+                        // swiftlint:disable:previous trailing_closure
+                        expect(prescriptions.count) == 15
 
-                    // Note: This can only work if we'd inject the refer
-                    let notArchivedPrescriptions = prescriptions.filter { !$0.isArchived }
-                    expect(notArchivedPrescriptions.count) == 10
+                        // Note: This can only work if we'd inject the refer
+                        let notArchivedPrescriptions = prescriptions.filter { !$0.isArchived }
+                        expect(notArchivedPrescriptions.count) == 10
 
-                    let archivedPrescriptions = prescriptions.filter(\.isArchived)
-                    expect(archivedPrescriptions.count) == 5
-                }
-            )
+                        let archivedPrescriptions = prescriptions.filter(\.isArchived)
+                        expect(archivedPrescriptions.count) == 5
+                    }
+                )
+        }
     }
 
     func testSilentLoadRemote_loggedIn() {
         let sut = DefaultPrescriptionRepository(
-            loginHandler: loginHandler,
-            erxTaskRepository: FakeErxTaskRepository()
+            loginHandler: loginHandler
         )
 
         loginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
 
-        sut.silentLoadRemote(for: nil)
-            .test(
-                expectations: { result in
-                    // swiftlint:disable:previous trailing_closure
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                Array(ErxTaskRepository.exampleStore.values)
+            }
+        } operation: {
+            sut.silentLoadRemote(for: nil, for: UUID())
+                .testWait(
+                    expectations: { result in
+                        // swiftlint:disable:previous trailing_closure
 
-                    guard case let .prescriptions(prescriptions) = result else {
-                        Nimble.fail("expected list of prescriptions")
-                        return
+                        guard case let .prescriptions(prescriptions) = result else {
+                            Nimble.fail("expected list of prescriptions")
+                            return
+                        }
+                        expect(prescriptions.count) == 15
+
+                        let notArchivedPrescriptions = prescriptions.filter { !$0.isArchived }
+                        expect(notArchivedPrescriptions.count) == 10
+
+                        let archivedPrescriptions = prescriptions.filter(\.isArchived)
+                        expect(archivedPrescriptions.count) == 5
                     }
-                    expect(prescriptions.count) == 15
-
-                    let notArchivedPrescriptions = prescriptions.filter { !$0.isArchived }
-                    expect(notArchivedPrescriptions.count) == 10
-
-                    let archivedPrescriptions = prescriptions.filter(\.isArchived)
-                    expect(archivedPrescriptions.count) == 5
-                }
-            )
+                )
+        }
     }
 
     func testSilentLoadRemote_loggedOut() {
         let sut = DefaultPrescriptionRepository(
-            loginHandler: loginHandler,
-            erxTaskRepository: FakeErxTaskRepository()
+            loginHandler: loginHandler
         )
 
         loginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(false)).eraseToAnyPublisher()
 
-        sut.silentLoadRemote(for: nil)
-            .test(
-                expectations: { result in
-                    expect(result) == PrescriptionRepositoryLoadRemoteResult.notAuthenticated
-                }
-            )
+        withDependencies { dependencies in
+            dependencies.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                Array(ErxTaskRepository.exampleStore.values)
+            }
+        } operation: {
+            sut.silentLoadRemote(for: nil, for: UUID())
+                .test(
+                    expectations: { result in
+                        expect(result) == PrescriptionRepositoryLoadRemoteResult.notAuthenticated
+                    }
+                )
+        }
     }
 
     func testActivityIndicating() {
         withDependencies {
             $0.date = DateGenerator { Date() }
+            $0.erxTaskRepository.loadRemoteAllTasks = { _, _ in
+                ErxTask.Fixtures.erxTasks
+            }
         } operation: {
             // given
             let sut = DefaultPrescriptionRepository(
-                loginHandler: loginHandler,
-                erxTaskRepository: erxTaskRepository
+                loginHandler: loginHandler
             )
 
             loginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
-            let erxTasks = ErxTask.Fixtures.erxTasks
-            erxTaskRepository.loadRemoteAndSavedPublisher = Just(erxTasks)
-                .setFailureType(to: ErxRepositoryError.self)
-                .eraseToAnyPublisher()
 
             var isActiveResult: [Bool] = []
             // when
@@ -130,11 +145,11 @@ final class DefaultPrescriptionRepositoryTests: XCTestCase {
             expect(isActiveResult) == [false]
             isActiveResult = []
 
-            sut.silentLoadRemote(for: nil)
-                .test(
+            sut.silentLoadRemote(for: nil, for: UUID())
+                .testWait(
                     expectations: { output in
                         expect(output) == .prescriptions(ErxTask.Fixtures.erxTasks.map {
-                            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.testValue)
+                            Prescription(erxTask: $0)
                         })
                     }
                 )

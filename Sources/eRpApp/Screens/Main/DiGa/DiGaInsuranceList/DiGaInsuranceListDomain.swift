@@ -24,6 +24,7 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureHelpers
 import Foundation
 import IDP
 import Pharmacy
@@ -79,13 +80,14 @@ struct DiGaInsuranceListDomain {
         switch action {
         case .task:
             state.isLoading = true
-            return .publisher(
-                pharmacyRepository.fetchAllInsurances()
-                    .catchToPublisher()
-                    .map { Action.response(.receivedInsurances($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
+            return .run { send in
+                do {
+                    let response = try await pharmacyRepository.fetchAllInsurances()
+                    await send(.response(.receivedInsurances(.success(response))))
+                } catch let error as PharmacyRepositoryError {
+                    await send(.response(.receivedInsurances(.failure(error))))
+                }
+            }
         case let .response(.receivedInsurances(result)):
             switch result {
             case let .success(insurances):

@@ -63,7 +63,7 @@ public struct InitialsImage: View {
             .overlay(
                 Text(text)
                     .font(.system(size: size == .regular ? 11 : 13).weight(.bold))
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             )
             .frame(width: dimension, height: dimension, alignment: .center)
             .overlay(ConnectionStatusCircle(statusColor: statusColor),

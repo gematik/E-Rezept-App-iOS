@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureHelpers
 import IDP
 import SwiftUI
 
@@ -76,12 +77,9 @@ struct AppStartDomain {
                             )
                         ),
                         orders: OrdersDomain.State(),
-                        settings: .init(
-                            isDemoMode: userSession.isDemoMode
-                        ),
+                        settings: .init(),
                         unreadOrderMessageCount: 0,
-                        unreadInternalCommunicationCount: 0,
-                        isDemoMode: false
+                        unreadInternalCommunicationCount: 0
                     )
                 )
                 return .none
@@ -112,10 +110,9 @@ struct AppStartDomain {
                             )
                         ),
                         orders: OrdersDomain.State(),
-                        settings: .init(isDemoMode: userSession.isDemoMode),
+                        settings: .init(),
                         unreadOrderMessageCount: 0,
-                        unreadInternalCommunicationCount: 0,
-                        isDemoMode: false
+                        unreadInternalCommunicationCount: 0
                     )
                 )
                 return .none

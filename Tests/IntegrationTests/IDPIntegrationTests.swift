@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 @testable import eRpFeatures
 import Foundation
@@ -72,11 +73,9 @@ final class IDPIntegrationTests: XCTestCase {
         )
 
         let trustStoreSession = TrustStoreSessionMock()
-        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+        trustStoreSession.validateEeCertificateX509BoolReturnValue = true
 
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        let schedulers = Schedulers(computeScheduler: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let session = DefaultIDPSession(
             config: configuration,
             storage: storage,
@@ -208,7 +207,7 @@ final class IDPIntegrationTests: XCTestCase {
             discoveryURL: environment.appConfiguration.idp,
             scopes: ["pairing", "openid"]
         )
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        let schedulers = Schedulers(computeScheduler: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: [
@@ -217,9 +216,7 @@ final class IDPIntegrationTests: XCTestCase {
             ]
         )
         let trustStoreSession = TrustStoreSessionMock()
-        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+        trustStoreSession.validateEeCertificateX509BoolReturnValue = true
 
         let pairingIDPSession = DefaultIDPSession(
             config: pairingIDPSessionConfiguration,
@@ -351,7 +348,7 @@ final class IDPIntegrationTests: XCTestCase {
             discoveryURL: environment.appConfiguration.idp,
             scopes: ["pairing", "openid"]
         )
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        let schedulers = Schedulers(computeScheduler: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: [
@@ -360,9 +357,7 @@ final class IDPIntegrationTests: XCTestCase {
             ]
         )
         let trustStoreSession = TrustStoreSessionMock()
-        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+        trustStoreSession.validateEeCertificateX509BoolReturnValue = true
 
         let pairingIDPSession = DefaultIDPSession(
             config: pairingIDPSessionConfiguration,
@@ -422,7 +417,7 @@ final class IDPIntegrationTests: XCTestCase {
         expect(success) == true
     }
 
-    func testExternalAuthenticationLoginGid() throws {
+    func testExternalAuthenticationLoginGid() async throws {
         guard let idpsekServer = environment.idpsekURLServer else {
             throw XCTSkip("Skip test because no IDP Server was provided")
         }
@@ -444,10 +439,8 @@ final class IDPIntegrationTests: XCTestCase {
         )
 
         let trustStoreSession = TrustStoreSessionMock()
-        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        trustStoreSession.validateEeCertificateX509BoolReturnValue = true
+        let schedulers = Schedulers(computeScheduler: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let session = DefaultIDPSession(
             config: configuration,
             storage: storage,
@@ -538,27 +531,18 @@ final class IDPIntegrationTests: XCTestCase {
         let request = URLRequest(url: urlStep4)
 
         var urlStep7RedirectVal: URL?
-        httpClient
-            .sendPublisher(
-                request: request,
-                interceptors: [
-                    LoggingInterceptor(log: .url),
-                    AdditionalHeaderInterceptor(additionalHeader: idpsekServer.header),
-                ]
-            ) { _, redirect in
-                urlStep7RedirectVal = redirect.url
-                return nil
-            }
-            .test(
-                timeout: 10,
-                failure: { error in
-                    fail("\(error)")
-                },
-                expectations: { result in
-                    print(result)
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
+
+        let result = try await httpClient.send(
+            request: request,
+            interceptors: [
+                LoggingInterceptor(log: .url),
+                AdditionalHeaderInterceptor(additionalHeader: idpsekServer.header),
+            ]
+        ) { _, redirect in
+            urlStep7RedirectVal = redirect.url
+            return nil
+        }
+        print(result)
 
         expect(urlStep7RedirectVal).toNot(beNil())
         guard let urlStep7Redirect = urlStep7RedirectVal else {

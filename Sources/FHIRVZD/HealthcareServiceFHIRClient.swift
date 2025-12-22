@@ -66,4 +66,11 @@ public protocol HealthcareServiceFHIRClient {
     /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
     func fetchAllInsurances(accessToken: String?)
         -> AnyPublisher<[Insurance], FHIRClient.Error>
+
+    /// Loads an array of `Country` from a remote (server).
+    ///
+    /// - Parameters:
+    /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
+    func fetchEuCountries(accessToken: String?)
+        -> AnyPublisher<[Country], FHIRClient.Error>
 }

@@ -37,6 +37,7 @@ struct SectionHeaderView: View {
                 .accessibility(identifier: a11y)
                 .padding([.top, .trailing])
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
             Spacer()
         }
     }

@@ -24,16 +24,16 @@ import eRpStyleKit
 import SwiftUI
 
 @dynamicMemberLookup
-/// sourcery: StringAssetInitialized
-struct Hint<Action: Equatable>: Equatable, Identifiable { // swiftlint:disable:this attributes
+struct Hint<Action: Equatable>: Equatable, Identifiable {
     let id: String
-    var title: String?
-    var message: String?
-    var actionText: LocalizedStringKey?
+    var title: StringAsset?
+    var message: StringAsset?
+    var actionText: StringAsset?
     var actionImageName: String?
     var action: Action?
-    let image: AccessibilityImage
-    var closeAction: Action?
+    var actionStyle: ActionStyle = .leftAligned
+    var image: AccessibilityImage?
+    var emoji: String?
     var style: Style = .neutral
     var buttonStyle: ButtonStyle = .quaternary
     var imageStyle: ImageStyle = .topAligned
@@ -107,14 +107,22 @@ struct Hint<Action: Equatable>: Equatable, Identifiable { // swiftlint:disable:t
             }
         }
     }
+
+    enum ActionStyle {
+        case leftAligned
+        case rightAligned
+
+        var isRightAligned: Bool {
+            switch self {
+            case .leftAligned: return false
+            case .rightAligned: return true
+            }
+        }
+    }
 }
 
 extension Hint {
     var hasAction: Bool {
         actionText != nil && action != nil
-    }
-
-    var hasCloseAction: Bool {
-        closeAction != nil
     }
 }

@@ -48,25 +48,30 @@ struct RedeemSuccessView: View {
                         )
                         .clipShape(Circle())
                         .padding(.vertical, 8)
+                        .padding(.horizontal)
                 }
 
                 Text(titlelForSource(store.redeemOption), bundle: .module)
                     .font(Font.title3.bold())
+                    .padding(.horizontal)
 
                 ContentView(option: store.state.redeemOption)
+                    .padding(.horizontal)
 
                 Spacer()
 
-                LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
-                                     isLoading: false) {
+                Button {
                     store.send(.closeButtonTapped)
+                } label: {
+                    Label(L10n.rdmSccBtnReturnToMain)
                 }
+                .buttonStyle(.primary)
                 .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
             }
             .navigationBarBackButtonHidden(true)
             .navigationTitle(L10n.phaSuccessRedeemTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .padding()
+            .padding(.vertical)
         }
     }
 

@@ -55,6 +55,13 @@ class OrderPharmacyDetailsUITests: XCTestCase, Sendable {
         let bridge = UITestBridgeClient()
         let pharmacyName = "Schloss Apotheke"
         let tabBar = TabBarScreen(app: app)
+
+        // Prefill local Pharmacy by adding favorites
+        let pharmacySearch = tabBar.tapPharmacySearchTab()
+        let details = pharmacySearch.pharmacyDetailsForPharmacy(pharmacyName)
+        details.tapFavorite()
+        details.tapBackButton()
+
         let orderView = tabBar.tapOrderTab()
 
         let orderDetailsView = orderView.tapOrderDetailsForPharmacyNamed(pharmacyName)

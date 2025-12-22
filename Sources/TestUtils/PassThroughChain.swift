@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
 import HTTPClient
 
@@ -38,15 +37,7 @@ public class PassThroughChain: Chain {
     /// if set this response is used in favor of individual properties
     public var httpResponse: HTTPResponse?
 
-    public func proceedPublisher(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        incomingProceedRequests.append(request)
-        let fallback = HTTPResponse(data: responseData, response: response, status: statusCode)
-        return Just(httpResponse ?? fallback)
-            .setFailureType(to: HTTPClientError.self)
-            .eraseToAnyPublisher()
-    }
-
-    public func proceedAsync(request: URLRequest) async -> HTTPResponse {
+    public func proceed(request: URLRequest) async -> HTTPResponse {
         incomingProceedRequests.append(request)
         let fallback = HTTPResponse(data: responseData, response: response, status: statusCode)
         return httpResponse ?? fallback

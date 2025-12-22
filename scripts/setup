@@ -17,7 +17,7 @@ touch development.env
 touch development.apikeys.env
 touch development.static.env
 # Link to the environment variables file
-ln -sf ../../development.env.default Sources/eRpApp/development.env.default
-ln -sf ../../development.env Sources/eRpApp/development.env
-ln -sf ../../development.apikeys.env Sources/eRpApp/development.apikeys.env
-ln -sf ../../development.static.env Sources/eRpApp/development.static.env
+ln -sf ../../development.env.default Sources/Settings/development.env.default
+ln -sf ../../development.env Sources/Settings/development.env
+ln -sf ../../development.apikeys.env Sources/Settings/development.apikeys.env
+ln -sf ../../development.static.env Sources/Settings/development.static.env

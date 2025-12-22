@@ -48,7 +48,7 @@ public struct SectionContainerButtonLabelStyle: LabelStyle {
             }
         }
         .font(.body.weight(.semibold))
-        .foregroundColor(isEnabled ? Colors.primary : Color(.secondaryLabel))
+        .foregroundColor(isEnabled ? Colors.primary : Colors.systemLabelSecondary)
         .padding(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
         .subTitleStyle(PlainSectionContainerSubTitleStyle())

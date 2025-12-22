@@ -98,13 +98,24 @@ public class MemStorage: IDPStorage, SecureEGKCertificateStorage, TrustStoreStor
         vauCertificateState = vauCertificate
     }
 
-    @Published private(set) var vauCertificateOcspResponseState: Data?
-    public func getVauCertificateOcspResponse() -> Data? {
-        vauCertificateOcspResponseState
+    @Published private(set) var ocspResponsesState: [String: [String: Data]] = [:]
+    public func getOcspResponse(issuerCn: String, serialNr: String) -> Data? {
+        ocspResponsesState[issuerCn]?[serialNr]
     }
 
-    public func set(vauCertificateOcspResponse: Data?) {
-        vauCertificateOcspResponseState = vauCertificateOcspResponse
+    public func setOcspResponse(issuerCn: String, serialNr: String, ocspResponse: Data?) {
+        if ocspResponse == nil {
+            ocspResponsesState[issuerCn]?.removeValue(forKey: serialNr)
+        } else {
+            if ocspResponsesState[issuerCn] == nil {
+                ocspResponsesState[issuerCn] = [:]
+            }
+            ocspResponsesState[issuerCn]?[serialNr] = ocspResponse
+        }
+    }
+
+    public func resetOcspResponses() {
+        ocspResponsesState.removeAll()
     }
 
     @Published private(set) var userPseudonymState: String?

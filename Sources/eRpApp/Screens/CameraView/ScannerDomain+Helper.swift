@@ -20,7 +20,9 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import eRpKit
+import eRpResources
 import Foundation
 
 extension ScannerDomain {
@@ -92,19 +94,19 @@ extension ScannerDomain {
         }
     }
 
-    // sourcery: CodedError = "001"
+    @CodedError("001")
     enum Error: Swift.Error, Equatable, LocalizedError {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case duplicate
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case empty
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case invalid
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case storeDuplicate
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case scannedErxTask(ScannedErxTask.Error)
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         case unknown
 
         var isFailure: Bool {

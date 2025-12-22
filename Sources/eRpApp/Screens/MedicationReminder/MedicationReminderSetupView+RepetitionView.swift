@@ -41,7 +41,7 @@ extension MedicationReminderSetupView {
                             } label: {
                                 HStack {
                                     Text(weekday.name)
-                                        .foregroundColor(Colors.text)
+                                        .foregroundColor(Colors.systemLabel)
                                     Spacer()
                                     Image(systemName: SFSymbolName.checkmark)
                                         .font(.body.weight(.semibold))
@@ -70,7 +70,7 @@ extension MedicationReminderSetupView {
                         } label: {
                             HStack {
                                 Text(L10n.medReminderTxtRepetitionTypeInfinite)
-                                    .foregroundColor(Colors.text)
+                                    .foregroundColor(Colors.systemLabel)
                                 Spacer()
                                 if store.medicationSchedule.repetitionType == .infinite {
                                     Image(systemName: SFSymbolName.checkmark)
@@ -86,7 +86,7 @@ extension MedicationReminderSetupView {
                         } label: {
                             HStack {
                                 Text(L10n.medReminderTxtRepetitionTypeFinite)
-                                    .foregroundColor(Colors.text)
+                                    .foregroundColor(Colors.systemLabel)
                                 Spacer()
                                 if store.medicationSchedule.repetitionType == .finite {
                                     Image(systemName: SFSymbolName.checkmark)

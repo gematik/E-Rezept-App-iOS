@@ -20,12 +20,16 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import ComposableArchitecture
+import ConsentService
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import FHIRClient
 import SwiftUI
 
-extension ChargeItemConsentService.AlertState {
+extension ConsentService.AlertState {
     var prescriptionDetailDomainErpAlertState: ErpAlertState<PrescriptionDetailDomain.Destination.Alert> {
         erpAlertState(
             actionForOkay: PrescriptionDetailDomain.Destination.Alert.consentServiceErrorOkay,
@@ -158,6 +162,6 @@ extension PrescriptionDetailDomain {
         typealias Action = PrescriptionDetailDomain.Destination.Toast
 
         static let conflictToast: ToastState<Action> =
-            .init(style: .simple(ChargeItemConsentService.ToastState.conflict.message))
+            .init(style: .simple(ConsentService.ToastState.conflict.message))
     }
 }

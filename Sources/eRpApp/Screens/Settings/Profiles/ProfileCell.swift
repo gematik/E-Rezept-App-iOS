@@ -47,16 +47,16 @@ struct ProfileCell: View {
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(profile.name)
-                    .foregroundColor(Color(.label))
+                    .foregroundColor(Colors.systemLabel)
                     .font(.body)
 
                 if let date = profile.lastSuccessfulSync {
                     RelativeTimerView(date: date)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .font(.caption)
                 } else {
                     Text(L10n.ctlTxtProfileCellNotConnected)
-                        .foregroundColor(Color(.secondaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .font(.caption)
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)

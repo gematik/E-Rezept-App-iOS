@@ -33,8 +33,10 @@ public struct QuartaryButtonStyle: ButtonStyle {
         isEnabled = enabled
     }
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var foregroundColor: Color {
-        isEnabled ? Colors.primary : Color(.systemGray)
+        isEnabled ? Colors.primary : Colors.primary.disabled(for: colorScheme)
     }
 
     public func makeBody(configuration: Self.Configuration) -> some View {

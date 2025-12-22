@@ -24,6 +24,7 @@ import Combine
 import Dependencies
 @testable import eRpFeatures
 import eRpKit
+import eRpResources
 import Nimble
 import XCTest
 

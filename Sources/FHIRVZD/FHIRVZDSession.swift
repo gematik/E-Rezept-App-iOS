@@ -26,33 +26,12 @@ import HTTPClient
 import Sharing
 
 /// FHIRVZDSession acts as an interactor/mediator for the FHIRVZDClient and FHIRVZDStorage
-public protocol FHIRVZDSession {
+@DependencyClient
+public struct FHIRVZDSession {
     /// FHIR VZD token
     ///
     /// - Returns: renewed token or error
-    func autoRefreshedToken() async throws -> FHIRVZDToken
-}
-
-public class DefaultFHIRVZDSession: FHIRVZDSession {
-    private let config: FHIRVZDClient.Configuration
-
-    public init(config: FHIRVZDClient.Configuration) {
-        self.config = config
-    }
-
-    public func autoRefreshedToken() async throws -> FHIRVZDToken {
-        @Dependency(\.fhirVZDClient) var client
-        @Dependency(\.date.now) var now
-        @Shared(.fhirVZDToken) var token
-        // Return stored token if still valid (more than 15 min)
-        if let token, token.expires >= now.addingTimeInterval(-60 * 15) {
-            return token
-        }
-        // Otherwise refresh and store new token
-        let newToken = try await client.refresh(config)
-        await $token.withLock { $0 = newToken }
-        return newToken
-    }
+    public var autoRefreshedToken: @Sendable () async throws -> FHIRVZDToken
 }
 
 extension SharedReaderKey

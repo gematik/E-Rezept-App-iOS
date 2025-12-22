@@ -20,9 +20,12 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpResources
+import FeatureHelpers
 import Foundation
 import IDP
 import UserNotifications
@@ -40,9 +43,9 @@ struct MedicationReminderSetupDomain {
         case dosageInstructionsInfo(DosageInstructionsDomain)
     }
 
-    // sourcery: CodedError = "036"
+    @CodedError("036")
     enum Error: Swift.Error, Equatable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case generic(String)
     }
 
@@ -163,18 +166,18 @@ struct MedicationReminderSetupDomain {
                 break
             }
             return .none
+        case .destination(.presented(.dosageInstructionsInfo(.delegate(.close)))):
+            state.destination = nil
+            return .none
         case .destination:
             return .none
         case let .authorizationErrorReceived(error):
             // todomedicationReminder maybe a more specific error?
-            state.destination = .alert(.error(
-                error: error,
-                alertState: .init(for: error, actions: {
-                    ButtonState(role: .cancel) {
-                        .init(L10n.alertBtnOk)
-                    }
-                })
-            ))
+            state.destination = .alert(ErpAlertState(for: error, actions: {
+                ButtonState(role: .cancel) {
+                    .init(L10n.alertBtnOk)
+                }
+            }))
             return .none
         case .save:
             return .run { [medicationSchedule = state.medicationSchedule] send in
@@ -263,10 +266,21 @@ struct DosageInstructionsDomain {
         }
     }
 
-    enum Action: Equatable {}
+    enum Action: Equatable {
+        case delegate(Delegate)
+
+        enum Delegate: Equatable {
+            case close
+        }
+    }
 
     var body: some ReducerOf<Self> {
-        EmptyReducer()
+        Reduce { _, action in
+            switch action {
+            case .delegate:
+                return .none
+            }
+        }
     }
 }
 
@@ -414,13 +428,13 @@ extension MedicationSchedule.Weekday {
 
     var accessibilityIdentifier: String {
         switch self {
-        case .monday: return A18n.medicationReminder.medReminderBtnWeekdayMonday
-        case .tuesday: return A18n.medicationReminder.medReminderBtnWeekdayTuesday
-        case .wednesday: return A18n.medicationReminder.medReminderBtnWeekdayWednesday
-        case .thursday: return A18n.medicationReminder.medReminderBtnWeekdayThursday
-        case .friday: return A18n.medicationReminder.medReminderBtnWeekdayFriday
-        case .saturday: return A18n.medicationReminder.medReminderBtnWeekdaySaturday
-        case .sunday: return A18n.medicationReminder.medReminderBtnWeekdaySunday
+        case .monday: return A11y.medicationReminder.medReminderBtnWeekdayMonday
+        case .tuesday: return A11y.medicationReminder.medReminderBtnWeekdayTuesday
+        case .wednesday: return A11y.medicationReminder.medReminderBtnWeekdayWednesday
+        case .thursday: return A11y.medicationReminder.medReminderBtnWeekdayThursday
+        case .friday: return A11y.medicationReminder.medReminderBtnWeekdayFriday
+        case .saturday: return A11y.medicationReminder.medReminderBtnWeekdaySaturday
+        case .sunday: return A11y.medicationReminder.medReminderBtnWeekdaySunday
         }
     }
 }

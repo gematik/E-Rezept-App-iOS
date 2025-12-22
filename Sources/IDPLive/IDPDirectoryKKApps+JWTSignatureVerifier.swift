@@ -34,8 +34,7 @@ extension IDPDirectoryKKApps {
     }
 }
 
-extension X509: @retroactive
-JWTSignatureVerifier {
+extension X509: JWTSignatureVerifier {
     public func verify(signature: Data, message: Data) throws -> Bool {
         // [REQ:gemSpec_Krypt:A_17207]
         // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
@@ -46,7 +45,7 @@ JWTSignatureVerifier {
     }
 }
 
-extension BrainpoolP256r1.Verify.PublicKey: @retroactive JWTSignatureVerifier {
+extension BrainpoolP256r1.Verify.PublicKey: JWTSignatureVerifier {
     // [REQ:gemSpec_Krypt:A_17207]
     // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02]
     public func verify(signature raw: Data, message: Data) throws -> Bool {

@@ -27,17 +27,19 @@ import Combine
 @testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
 import IDP
 import OpenSSL
 import Pharmacy
+import Profiles
 import TrustStore
 import VAUClient
 
 // NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
 
 // sourcery:begin: AutoMockable
-extension JWTSigner {}
 extension SearchHistory {}
 // sourcery:end
 
@@ -50,7 +52,6 @@ extension ChargeItemListDomainService {}
 extension DeviceSecurityManagerSessionStorage {}
 extension ERPDateFormatter {}
 extension IDPSession {}
-extension FeedbackReceiver {}
 extension LoginHandler {}
 extension MatrixCodeGenerator {}
 extension MedicationScheduleStore {}
@@ -59,7 +60,6 @@ extension NFCHealthCardPasswordController {}
 extension NFCSignatureProvider {}
 extension PasswordStrengthTester {}
 extension PrescriptionRepository {}
-extension ProfileBasedSessionProvider {}
 extension ProfileDataStore {}
 extension ProfileOnlineChecker {}
 extension ProfileSecureDataWiper {}
@@ -81,4 +81,6 @@ extension OrdersRepository {}
 extension AppSecurityManager {}
 extension KeychainAccessHelper {}
 extension InternalCommunicationProtocol {}
+extension ErxLocalDataStore {}
+extension ErxRemoteDataStore {}
 // sourcery:end

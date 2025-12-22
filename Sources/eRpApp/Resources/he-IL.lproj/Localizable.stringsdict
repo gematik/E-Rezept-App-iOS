@@ -13,13 +13,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>זוהו %u ניסיונות התחברות לא מוצלחים</string>
 			<key>one</key>
 			<string>זוהה ניסיון התחברות לא מוצלח</string>
 			<key>other</key>
 			<string>זוהו %u ניסיונות התחברות לא מוצלחים</string>
 			<key>two</key>
-			<string></string>
+			<string>זוהו %u ניסיונות התחברות לא מוצלחים</string>
 		</dict>
 	</dict>
 	<key>auth_txt_password_failure_please_retry_with_delay</key>
@@ -32,12 +32,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>many</key>
+			<string>סיסמה שגויה. אנא נסו שוב בעוד %u שניות.</string>
 			<key>one</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<string>סיסמה שגויה. אנא נסו שוב בעוד שנייה אחת.</string>
 			<key>other</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
-			<key>zero</key>
-			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+			<string>סיסמה שגויה. אנא נסו שוב בעוד %u שניות.</string>
+			<key>two</key>
+			<string>סיסמה שגויה. אנא נסו שוב בעוד %u שניות.</string>
 		</dict>
 	</dict>
 	<key>auth_txt_please_retry_with_delay</key>
@@ -51,13 +53,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>אנא נסה שוב בעוד %u שניות.</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>אנא נסו שוב בעוד %u שנייה.</string>
 			<key>other</key>
 			<string>אנא נסה שוב בעוד %u שניות.</string>
 			<key>two</key>
-			<string></string>
+			<string>אנא נסה שוב בעוד %u שניות.</string>
 		</dict>
 	</dict>
 	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
@@ -71,13 +73,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>מרשם זה ניתן לך בתאריך % %@ כחלק מטיפול.</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>מרשם זה נפדה עבורכם %%@ כחלק מהטיפול.</string>
 			<key>other</key>
 			<string>מרשם זה ניתן לך בתאריך % %@ כחלק מטיפול.</string>
 			<key>two</key>
-			<string></string>
+			<string>מרשם זה ניתן לך בתאריך % %@ כחלק מטיפול.</string>
 		</dict>
 	</dict>
 	<key>erx_txt_accepted_until</key>
@@ -91,13 +93,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>עדיין ניתן למימוש למשך %u ימים</string>
 			<key>one</key>
 			<string>ניתן למימוש רק מחר</string>
 			<key>other</key>
 			<string>עדיין ניתן למימוש למשך %u ימים</string>
 			<key>two</key>
-			<string></string>
+			<string>עדיין ניתן למימוש למשך %u ימים</string>
 		</dict>
 	</dict>
 	<key>erx_txt_deleted_at</key>
@@ -111,13 +113,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>נמחק ב: %% @</string>
 			<key>one</key>
 			<string>נמחק: %% @</string>
 			<key>other</key>
 			<string>נמחק ב: %% @</string>
 			<key>two</key>
-			<string></string>
+			<string>נמחק ב: %% @</string>
 		</dict>
 	</dict>
 	<key>erx_txt_expires_in</key>
@@ -131,13 +133,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>עדיין ניתן לממש אותו בתור משלם עצמי למשך %u ימים</string>
 			<key>one</key>
 			<string>ניתן לממש רק מחר כמשלם עצמי</string>
 			<key>other</key>
 			<string>עדיין ניתן לממש אותו בתור משלם עצמי למשך %u ימים</string>
 			<key>two</key>
-			<string></string>
+			<string>עדיין ניתן לממש אותו בתור משלם עצמי למשך %u ימים</string>
 		</dict>
 	</dict>
 	<key>ord_detail_txt_presc</key>
@@ -151,13 +153,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>מתכונים</string>
 			<key>one</key>
 			<string>מתכון</string>
 			<key>other</key>
 			<string>מתכונים</string>
 			<key>two</key>
-			<string></string>
+			<string>מתכונים</string>
 		</dict>
 	</dict>
 	<key>ord_list_status_count</key>
@@ -171,13 +173,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>%lu מתכונים</string>
 			<key>one</key>
 			<string>%lu מתכון</string>
 			<key>other</key>
 			<string>%lu מתכונים</string>
 			<key>two</key>
-			<string></string>
+			<string>%lu מתכונים</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>
@@ -191,13 +193,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>לא ניתן היה לממש %li מרשמים</string>
 			<key>one</key>
 			<string>לא ניתן היה לממש את המתכון שנבחר</string>
 			<key>other</key>
 			<string>לא ניתן היה לממש %li מרשמים</string>
 			<key>two</key>
-			<string></string>
+			<string>לא ניתן היה לממש %li מרשמים</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
@@ -211,13 +213,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>לא ניתן לממש מרשמים</string>
 			<key>one</key>
 			<string>לא ניתן לממש מרשם</string>
 			<key>other</key>
 			<string>לא ניתן לממש מרשמים</string>
 			<key>two</key>
-			<string></string>
+			<string>לא ניתן לממש מרשמים</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
@@ -231,13 +233,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>לא ניתן עוד לממש את המתכונים הבאים: %% @. ייתכן שכבר מימשת אותם באמצעים אחרים או שהם נמחקו.</string>
 			<key>one</key>
 			<string>המתכון %% @ אינו ניתן עוד למימוש. ייתכן שכבר מימשת אותו באמצעי אחר או שהוא נמחק.</string>
 			<key>other</key>
 			<string>לא ניתן עוד לממש את המתכונים הבאים: %% @. ייתכן שכבר מימשת אותם באמצעים אחרים או שהם נמחקו.</string>
 			<key>two</key>
-			<string></string>
+			<string>לא ניתן עוד לממש את המתכונים הבאים: %% @. ייתכן שכבר מימשת אותם באמצעים אחרים או שהם נמחקו.</string>
 		</dict>
 	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
@@ -251,13 +253,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>התקבלה תרופה</string>
 			<key>one</key>
 			<string>קיבל תרופות</string>
 			<key>other</key>
 			<string>התקבלה תרופה</string>
 			<key>two</key>
-			<string></string>
+			<string>התקבלה תרופה</string>
 		</dict>
 	</dict>
 	<key>scn_btn_scanning_done</key>
@@ -271,13 +273,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>סיימת, הוסף מתכונים</string>
 			<key>one</key>
 			<string>סיים, הוסף מתכון</string>
 			<key>other</key>
 			<string>סיימת, הוסף מתכונים</string>
 			<key>two</key>
-			<string></string>
+			<string>סיימת, הוסף מתכונים</string>
 		</dict>
 	</dict>
 	<key>self_payer_warning_txt_message</key>
@@ -291,13 +293,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>את המרשמים</string>
 			<key>one</key>
 			<string>המרשם</string>
 			<key>other</key>
 			<string>את המרשמים</string>
 			<key>two</key>
-			<string></string>
+			<string>את המרשמים</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
@@ -311,13 +313,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>עדיין יש לך %u ניסיונות להזין את ה-PIN הנוכחי.</string>
 			<key>one</key>
 			<string>יש לך ניסיון נוסף להזין את ה-PIN הנוכחי.</string>
 			<key>other</key>
 			<string>עדיין יש לך %u ניסיונות להזין את ה-PIN הנוכחי.</string>
 			<key>two</key>
-			<string></string>
+			<string>עדיין יש לך %u ניסיונות להזין את ה-PIN הנוכחי.</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
@@ -331,13 +333,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>many</key>
-			<string></string>
+			<string>עדיין יש לך %u ניסיונות להזין את ה-PUK.</string>
 			<key>one</key>
 			<string>יש לך ניסיון נוסף להיכנס ל-PUK.</string>
 			<key>other</key>
 			<string>עדיין יש לך %u ניסיונות להזין את ה-PUK.</string>
 			<key>two</key>
-			<string></string>
+			<string>עדיין יש לך %u ניסיונות להזין את ה-PUK.</string>
 		</dict>
 	</dict>
 </dict>

@@ -24,9 +24,9 @@ import Foundation
 import OpenSSL
 
 struct X509TrustStore {
-    // [REQ:gemSpec_Krypt:A_21218]
     // [REQ:gemSpec_Krypt:A_24470]
     // [REQ:gemSpec_eRp_FdV:A_20032-01]
+    // [REQ:gemSpec_eRp_FdV:A_25063]
     // Category A: Cross root certificates
     let rootCa: X509
     let addRoots: [X509]
@@ -53,12 +53,14 @@ struct X509TrustStore {
         // Before adding an addRoot we check if it can be validated by the currently potential trust store.
         // We expect the incoming addRoots to be chronically ordered (i.e. ["RCA3->RCA4", "RCA4->RCA5", ...])
         //  so a simple forEach loop is already sufficient here. See also gemSpec_Krypt A_21216.
+        // [REQ:gemSpec_Krypt:A_25063] Check add_roots against category A certificates
         var validatedAddRoots: [X509] = []
         try addRoots.forEach { addRoot in
             if try addRoot.validateWith(
                 trustStore: [trustAnchor] + validatedAddRoots,
                 validationTime: validationTime
-            ) {
+            ),
+                Self.checkRcaRegex(certificate: addRoot) {
                 validatedAddRoots.append(addRoot)
             }
         }
@@ -96,8 +98,12 @@ struct X509TrustStore {
         )
     }
 
-    init(trustAnchor: TrustAnchor, pkiCertificates: PKICertificates, vauCertData: Data,
-         validationTime: Date? = nil) throws {
+    init(
+        trustAnchor: TrustAnchor,
+        pkiCertificates: PKICertificates,
+        vauCertData: Data,
+        validationTime: Date? = nil
+    ) throws {
         // Expect certificates to be DER formatted
         let addRoots = pkiCertificates.addRoots.compactMap { try? X509(der: $0) }
         let caCerts = pkiCertificates.caCerts.compactMap { try? X509(der: $0) }
@@ -127,8 +133,11 @@ struct X509TrustStore {
         return PKICertificates(addRoots: addRoots, caCerts: caCerts)
     }
 
-    func validate(certificate: X509) -> Bool {
-        guard let result = try? certificate.validateWith(trustStore: [rootCa] + addRoots + caCerts)
+    func validate(certificate: X509, validationTime: Date? = nil) -> Bool {
+        guard let result = try? certificate.validateWith(
+            trustStore: [rootCa] + addRoots + caCerts,
+            validationTime: validationTime
+        )
         else {
             return false
         }
@@ -137,18 +146,60 @@ struct X509TrustStore {
 }
 
 extension X509TrustStore {
+    /// Checks the status of an end entity certificate against an OCSP response.
+    /// Checks response status, revocation status for the certificate
+    /// and validates the signer certificates of the OCSP response itself.
+    ///
+    /// - Parameters:
+    ///   - eeCertificate: The end entity certificate to check.
+    ///   - ocspResponse: The OCSP response to check against.
+    ///   - validationTime: Optional validation time for the certificate.
+    ///
+    /// - Note: This function assumes that up-to-dateness of the response itself has already been checked.
+    ///
+    /// - Returns: true if the certificate is valid and not revoked according to the OCSP response.
+    func checkEeCertificateStatus(
+        eeCertificate: X509,
+        ocspResponse: OCSPResponse,
+        validationTime: Date? = nil
+    ) throws -> Bool {
+        // [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
+        // 1) Response must be successful
+        guard ocspResponse.status() == .successful else { return false }
+
+        do {
+            // 2) Full chain validation of the OCSP responder against this trust store
+            guard try ocspResponse.basicVerifyWith(
+                trustedStore: [rootCa] + addRoots + caCerts,
+                validationTime: validationTime
+            )
+            else {
+                // map inability to validate responder to a defined error
+                throw TrustStoreError.eeCertificateOCSPStatusVerification
+            }
+            // 3) Determine the issuer CA of the EE certificate from category B certificates
+            let issuer = try retrieveSignerFromCaCertificates(eeCertificate: eeCertificate)
+
+            // 4) Check certificate status in the response with the proper issuer
+            let status = try ocspResponse.certificateStatus(for: eeCertificate, issuer: issuer)
+            return status == OCSPResponse.CertStatus.good
+        } catch {
+            throw error.asTrustStoreError()
+        }
+    }
+
     /// Match a collection of `OCSPResponse`s with the end entity certificates of this `X509TrustStore`.
     /// Checks response status, revocation status for each certificate and validates the signer certificates of
     ///   the responses itself.
     ///
-    /// [REQ:gemSpec_Krypt:A_21218]
+    /// [REQ:gemSpec_Krypt:A_25063]
     /// [REQ:gemSpec_eRp_FdV:A_20032-01]
     ///
     /// - Note: This function assumes that up-to-dateness of the responses itself has already been checked.
     ///
     /// - Returns: true on successful matching/validation, false if not successful or error
     func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -> Bool {
-        // [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the TrustStore
+        // [REQ:gemSpec_Krypt:A_25063] OCSP responder certificates must be verifiable by the TrustStore
         // [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
         let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
         guard
@@ -160,7 +211,7 @@ extension X509TrustStore {
             try (eeCertificate, retrieveSignerFromCaCertificates(eeCertificate: eeCertificate))
         }
 
-        // [REQ:gemSpec_Krypt:A_21218] For every EE certificate there must be a matching OCSP response
+        // [REQ:gemSpec_Krypt:A_25063] For every EE certificate there must be a matching OCSP response
         let matchedResponses = try eeCertAndSignerTuple.map { eeCertificate, signer in
             try verifiedOCSPResponses.first { response in
                 try response.certificateStatus(for: eeCertificate, issuer: signer) == OCSPResponse.CertStatus.good
@@ -169,7 +220,7 @@ extension X509TrustStore {
         guard matchedResponses.allSatisfy({ $0 != nil })
         else { return false }
 
-        // [REQ:gemSpec_Krypt:A_21218] For every OCSP response there must be a matching EE certificate
+        // [REQ:gemSpec_Krypt:A_25063] For every OCSP response there must be a matching EE certificate
         let matchedEeCerts = try ocspResponses.map { response in
             try eeCertAndSignerTuple.first { eeCertificate, signer in
                 try response.certificateStatus(for: eeCertificate, issuer: signer) == OCSPResponse.CertStatus.good
@@ -180,7 +231,7 @@ extension X509TrustStore {
         return true
     }
 
-    // [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the TrustStore
+    // [REQ:gemSpec_Krypt:A_25063] OCSP responder certificates must be verifiable by the TrustStore
     // [REQ:gemSpec_Krypt:A_25060#4] OCSP responder certificates must be verifiable by the TrustStore
     private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -> [OCSPResponse] {
         ocspResponses.filter { ocspResponse in
@@ -202,7 +253,20 @@ extension X509TrustStore {
 
 // Helping functions to filter proper certificates before adding them to the trust store
 extension X509TrustStore {
-    // [REQ:gemSpec_Krypt:A_21218:(3)] Check ca_certs against category A certificates
+    private static let rcaRegex =
+        try! NSRegularExpression(pattern: "CN=GEM\\.RCA\\d+") // swiftlint:disable:this force_try
+    // [REQ:gemSpec_Krypt:A_25063:(2)] Check add_roots against category A certificates
+    static func checkRcaRegex(certificate: X509) -> Bool {
+        guard let subjectOneLine = try? certificate.subjectOneLine() else {
+            return false
+        }
+        return !Self.rcaRegex.matches(
+            in: subjectOneLine,
+            range: NSRange(location: 0, length: subjectOneLine.count)
+        ).isEmpty
+    }
+
+    // [REQ:gemSpec_Krypt:A_25063:(3)] Check ca_certs against category A certificates
     private static let caCertRegex =
         try! NSRegularExpression(pattern: "CN=GEM\\.KOMP-CA\\d+") // swiftlint:disable:this force_try
 
@@ -222,7 +286,7 @@ extension X509TrustStore {
         }
     }
 
-    // [REQ:gemSpec_Krypt:A_21218:(4)] Check ee_certs against category A+B certificates
+    // [REQ:gemSpec_Krypt:A_25063:(4)] Check ee_certs against category A+B certificates
     // [REQ:gemSpec_Krypt:A_A_25061] Check ee_certs against category A+B certificates
     typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
     static func filter(

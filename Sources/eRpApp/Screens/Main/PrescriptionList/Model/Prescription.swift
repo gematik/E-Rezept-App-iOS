@@ -64,9 +64,10 @@ struct Prescription: Equatable, Identifiable {
 
     init(
         erxTask: ErxTask,
-        date: Date = Date(),
-        dateFormatter: UIDateFormatter
+        date: Date = Date()
     ) {
+        assert(Thread.isMainThread, "UI-Related code should be executed on the main thread")
+
         if erxTask.medicationRequest.multiplePrescription?.mark == true {
             type = .multiplePrescription
         }
@@ -76,17 +77,17 @@ struct Prescription: Equatable, Identifiable {
         if erxTask.source == .scanner {
             type = .scanned
         }
-
-        authoredOnDate = dateFormatter.date(erxTask.authoredOn)
         self.erxTask = erxTask
+
+        @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
+        self.authoredOnDate = uiDateFormatter.date(erxTask.authoredOn)
 
         viewStatus = Self.evaluateViewStatus(
             for: erxTask,
             type: type,
             whenHandedOver: erxTask.medicationDispenses.first?.whenHandedOver ?? erxTask
                 .lastMedicationDispense ?? erxTask.redeemedOn,
-            date: date,
-            uiDateFormatter: dateFormatter
+            date: date
         )
     }
 
@@ -100,8 +101,9 @@ struct Prescription: Equatable, Identifiable {
         type: PrescriptionType,
         whenHandedOver: String?,
         date: Date = Date(),
-        uiDateFormatter: UIDateFormatter
     ) -> Status {
+        @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
+
         switch erxTask.status {
         case .inProgress:
             if let expiresDate = erxTask.expiresOn?.date,
@@ -585,26 +587,19 @@ extension Prescription: Hashable {
 
 extension Prescription {
     enum Dummies {
-        static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady,
-                                                    dateFormatter: UIDateFormatter.previewValue)
-        static let prescriptionRedeemed = Prescription(erxTask: ErxTask.Demo.erxTaskRedeemed,
-                                                       dateFormatter: UIDateFormatter.previewValue)
-        static let prescriptionDirectAssignment = Prescription(erxTask: ErxTask.Demo.erxTaskDirectAssignment,
-                                                               dateFormatter: UIDateFormatter.previewValue)
-        static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError,
-                                                    dateFormatter: UIDateFormatter.previewValue)
-        static let scanned = Prescription(erxTask: ErxTask.Demo.erxTaskScanned1,
-                                          dateFormatter: UIDateFormatter.previewValue)
+        static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady)
+        static let prescriptionRedeemed = Prescription(erxTask: ErxTask.Demo.erxTaskRedeemed)
+        static let prescriptionDirectAssignment = Prescription(erxTask: ErxTask.Demo.erxTaskDirectAssignment)
+        static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError)
+        static let scanned = Prescription(erxTask: ErxTask.Demo.erxTaskScanned1)
         static let prescriptions = ErxTask.Demo.erxTasks.map {
-            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+            Prescription(erxTask: $0)
         }
 
         static let prescriptionsScanned = ErxTask.Demo.erxTasksScanned
-            .map { Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue) }
-        static let prescriptionMVO = Prescription(erxTask: ErxTask.Demo.erxTask14,
-                                                  dateFormatter: UIDateFormatter.previewValue)
-        static let prescriptionSelfPayer = Prescription(erxTask: ErxTask.Demo.erxTaskSelfPayer,
-                                                        dateFormatter: UIDateFormatter.previewValue)
+            .map { Prescription(erxTask: $0) }
+        static let prescriptionMVO = Prescription(erxTask: ErxTask.Demo.erxTask14)
+        static let prescriptionSelfPayer = Prescription(erxTask: ErxTask.Demo.erxTaskSelfPayer)
     }
 }
 

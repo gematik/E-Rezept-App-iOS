@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 import SwiftUI
 
 extension ChargeItemListDomain {

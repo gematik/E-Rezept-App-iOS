@@ -79,7 +79,7 @@ struct ProfilesView: View {
                             Text(L10n.ctlTxtProfileCellNotConnected)
                         }
                     }
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .font(.subheadline)
                 }
             }, icon: {

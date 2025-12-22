@@ -20,10 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import ComposableArchitecture
+import ConsentService
+import eRpResources
+import FeatureHelpers
 import Foundation
 
-extension ChargeItemConsentService.AlertState {
+extension ConsentService.AlertState {
     var chargeItemListDomainErpAlertState: ErpAlertState<ChargeItemListDomain.Destination.Alert> {
         erpAlertState(
             actionForOkay: ChargeItemListDomain.Destination.Alert.consentServiceErrorOkay,
@@ -127,7 +131,7 @@ extension ChargeItemListDomain {
         static func deleteChargeItemsErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: .init("Löschen fehlgeschlagen")
+                title: StringAsset("Löschen fehlgeschlagen", bundle: .main)
             ) {
                 ButtonState(action: .deleteChargeItemsErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
@@ -143,6 +147,6 @@ extension ChargeItemListDomain {
         typealias Action = ChargeItemListDomain.Destination.Toast
 
         static let conflictToast: ToastState<Action> =
-            .init(style: .simple(ChargeItemConsentService.ToastState.conflict.message))
+            .init(style: .simple(ConsentService.ToastState.conflict.message))
     }
 }

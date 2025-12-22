@@ -1,42 +1,27 @@
 <html>
 <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="shared_styles.css">
     <style type="text/css">
-        #searchbar {
-            width:  100%;
+        /* Graph-specific overrides for fixed positioning */
+        .nav-buttons { 
             position: fixed;
             top: 0;
             left: 0;
-            margin: 0;
-            padding: 16px;
-            background: #ddd;
+            width: 100%;
+            background: white;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            margin-bottom: 0; /* Override shared style */
         }
-
-        h1 {
-            clear:  none;
-            float:  left;
-            padding: 4px;
-            margin: 0 16px 0 0;
-            font: 16px/20px bold Verdana,sans-serif;
-            font-weight: semibold;
+        
+        .nav-button { 
+            padding: 8px 12px; /* Slightly smaller for fixed nav */
+            margin-right: 8px;
+            font-size: 14px;
         }
-
-        input,button {
-            font: 16px/20px Verdana,sans-serif;
-        }
-
-        input[type=text] {
-            width: 50%;
-        }
-
-        .flash {
-            opacity: 0.1;
-            
-            animation: blink 1s;
-            animation-iteration-count: 3;
-        }
-
-        @keyframes blink { 50% { opacity: 1; }  }
-
     </style>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function(event) {
@@ -104,12 +89,20 @@
     </script>
 </head>
 <body>
+    <div class="nav-buttons">
+        <a href="error_search.html" class="nav-button">⛓ Error-Chains Search</a>
+        <a href="error_graph.html" class="nav-button active">📊 Visual Graph Search</a>
+        <a href="error_details.html" class="nav-button">📋 Error Details</a>
+        <a href="errors.md" class="nav-button">📝 Markdown</a>
+        <a href="errors.json" class="nav-button">📄 Raw JSON Data</a>
+    </div>
+    
     <div id="searchbar">
         <h1>iOS Fehlermatrix</h1>
         <input type="text" name="search" onchange="search()" onsubmit="search()" placeholder="Beispiel:i-01803,i-01305,i-10014,i-56001" />
         <button onclick="search()">Suche Starten</input></button>
     </div>
-    <br /><br /><br />
+    <br /><br /><br /><br />
     <object id="svg-object" data="error_graph.svg" type="image/svg+xml"></object>
 </body>
 </html>

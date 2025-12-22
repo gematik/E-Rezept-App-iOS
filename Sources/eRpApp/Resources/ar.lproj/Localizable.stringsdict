@@ -13,15 +13,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>تم اكتشاف %u من محاولات تسجيل الدخول غير الناجحة</string>
 			<key>many</key>
-			<string></string>
+			<string>تم اكتشاف %u من محاولات تسجيل الدخول غير الناجحة</string>
 			<key>one</key>
 			<string>تم اكتشاف محاولة تسجيل دخول غير ناجحة</string>
 			<key>other</key>
 			<string>تم اكتشاف %u من محاولات تسجيل الدخول غير الناجحة</string>
 			<key>two</key>
-			<string></string>
+			<string>تم اكتشاف %u من محاولات تسجيل الدخول غير الناجحة</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -37,15 +37,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى بعد %u ثوانٍ.</string>
 			<key>many</key>
-			<string></string>
+			<string>كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى بعد %u ثوانٍ.</string>
 			<key>one</key>
 			<string>كلمة مرور خاطئة. يرجى المحاولة مرة أخرى بعد ثانية واحدة.</string>
 			<key>other</key>
 			<string>كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى بعد %u ثوانٍ.</string>
 			<key>two</key>
-			<string></string>
+			<string>كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى بعد %u ثوانٍ.</string>
 			<key>zero</key>
 			<string>كلمة مرور خاطئة. يرجى المحاولة مرة أخرى بعد 0 ثوانٍ.</string>
 		</dict>
@@ -61,17 +61,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>يرجى المحاولة مرة أخرى خلال %u ثانية.</string>
 			<key>many</key>
-			<string></string>
+			<string>يرجى المحاولة مرة أخرى خلال %u ثانية.</string>
 			<key>one</key>
-			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<string>يرجى المحاولة مرة أخرى خلال %u ثانية.</string>
 			<key>other</key>
 			<string>يرجى المحاولة مرة أخرى خلال %u ثانية.</string>
 			<key>two</key>
-			<string></string>
+			<string>يرجى المحاولة مرة أخرى خلال %u ثانية.</string>
 			<key>zero</key>
-			<string>Bitte probieren Sie es in %u Sekunden erneut.</string>
+			<string>يرجى المحاولة مرة أخرى خلال %u ثانية.</string>
 		</dict>
 	</dict>
 	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
@@ -85,15 +85,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>تم صرف هذه الوصفة الطبية لك في % %@ كجزء من العلاج.</string>
 			<key>many</key>
-			<string></string>
+			<string>تم صرف هذه الوصفة الطبية لك في % %@ كجزء من العلاج.</string>
 			<key>one</key>
-			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<string>تم صرف هذه الوصفة الطبية %%@ كجزء من علاج لك.</string>
 			<key>other</key>
 			<string>تم صرف هذه الوصفة الطبية لك في % %@ كجزء من العلاج.</string>
 			<key>two</key>
-			<string></string>
+			<string>تم صرف هذه الوصفة الطبية لك في % %@ كجزء من العلاج.</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -109,15 +109,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>لا يزال قابلاً للاسترداد لمدة %u من الأيام</string>
 			<key>many</key>
-			<string></string>
+			<string>لا يزال قابلاً للاسترداد لمدة %u من الأيام</string>
 			<key>one</key>
 			<string>قابلة للاسترداد فقط غدا</string>
 			<key>other</key>
 			<string>لا يزال قابلاً للاسترداد لمدة %u من الأيام</string>
 			<key>two</key>
-			<string></string>
+			<string>لا يزال قابلاً للاسترداد لمدة %u من الأيام</string>
 			<key>zero</key>
 			<string>قابلة للاسترداد فقط اليوم</string>
 		</dict>
@@ -133,15 +133,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>تم الحذف في: %% @</string>
 			<key>many</key>
-			<string></string>
+			<string>تم الحذف في: %% @</string>
 			<key>one</key>
 			<string>محذوف: %% @</string>
 			<key>other</key>
 			<string>تم الحذف في: %% @</string>
 			<key>two</key>
-			<string></string>
+			<string>تم الحذف في: %% @</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -157,15 +157,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>لا يزال من الممكن استردادها كدافع ذاتي لمدة %u يوم</string>
 			<key>many</key>
-			<string></string>
+			<string>لا يزال من الممكن استردادها كدافع ذاتي لمدة %u يوم</string>
 			<key>one</key>
 			<string>لا يمكن استبدالها إلا غدًا كدافع ذاتي</string>
 			<key>other</key>
 			<string>لا يزال من الممكن استردادها كدافع ذاتي لمدة %u يوم</string>
 			<key>two</key>
-			<string></string>
+			<string>لا يزال من الممكن استردادها كدافع ذاتي لمدة %u يوم</string>
 			<key>zero</key>
 			<string>يمكن استردادها اليوم فقط كدافع ذاتي</string>
 		</dict>
@@ -181,15 +181,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>وصفات</string>
 			<key>many</key>
-			<string></string>
+			<string>وصفات</string>
 			<key>one</key>
 			<string>وصفة</string>
 			<key>other</key>
 			<string>وصفات</string>
 			<key>two</key>
-			<string></string>
+			<string>وصفات</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -205,15 +205,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>%lu وصفات</string>
 			<key>many</key>
-			<string></string>
+			<string>%lu وصفات</string>
 			<key>one</key>
 			<string>وصفة %lu</string>
 			<key>other</key>
 			<string>%lu وصفات</string>
 			<key>two</key>
-			<string></string>
+			<string>%lu وصفات</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -229,15 +229,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>تعذر استرداد %li الوصفات الطبية</string>
 			<key>many</key>
-			<string></string>
+			<string>تعذر استرداد %li الوصفات الطبية</string>
 			<key>one</key>
 			<string>لا يمكن استرداد الوصفة المحددة</string>
 			<key>other</key>
 			<string>تعذر استرداد %li الوصفات الطبية</string>
 			<key>two</key>
-			<string></string>
+			<string>تعذر استرداد %li الوصفات الطبية</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -253,15 +253,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>لا يمكن استبدال الوصفات الطبية</string>
 			<key>many</key>
-			<string></string>
+			<string>لا يمكن استبدال الوصفات الطبية</string>
 			<key>one</key>
 			<string>لا يمكن استبدال الوصفة الطبية</string>
 			<key>other</key>
 			<string>لا يمكن استبدال الوصفات الطبية</string>
 			<key>two</key>
-			<string></string>
+			<string>لا يمكن استبدال الوصفات الطبية</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -277,15 +277,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>لم يعد من الممكن استرداد الوصفات التالية: %% @. ربما تكون قد قمت باستردادها بالفعل من خلال وسائل أخرى أو ربما تم حذفها.</string>
 			<key>many</key>
-			<string></string>
+			<string>لم يعد من الممكن استرداد الوصفات التالية: %% @. ربما تكون قد قمت باستردادها بالفعل من خلال وسائل أخرى أو ربما تم حذفها.</string>
 			<key>one</key>
 			<string>لم تعد الوصفة %% @ قابلة للاسترداد. ربما تكون قد قمت باستردادها بالفعل من خلال وسيلة أخرى أو ربما تم حذفها.</string>
 			<key>other</key>
 			<string>لم يعد من الممكن استرداد الوصفات التالية: %% @. ربما تكون قد قمت باستردادها بالفعل من خلال وسائل أخرى أو ربما تم حذفها.</string>
 			<key>two</key>
-			<string></string>
+			<string>لم يعد من الممكن استرداد الوصفات التالية: %% @. ربما تكون قد قمت باستردادها بالفعل من خلال وسائل أخرى أو ربما تم حذفها.</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -301,15 +301,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>تلقى الدواء</string>
 			<key>many</key>
-			<string></string>
+			<string>تلقى الدواء</string>
 			<key>one</key>
 			<string>تلقى الدواء</string>
 			<key>other</key>
 			<string>تلقى الدواء</string>
 			<key>two</key>
-			<string></string>
+			<string>تلقى الدواء</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -325,15 +325,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>تم، إضافة وصفات</string>
 			<key>many</key>
-			<string></string>
+			<string>تم، إضافة وصفات</string>
 			<key>one</key>
 			<string>تم، أضف الوصفة</string>
 			<key>other</key>
 			<string>تم، إضافة وصفات</string>
 			<key>two</key>
-			<string></string>
+			<string>تم، إضافة وصفات</string>
 			<key>zero</key>
 			<string>[فارغ]</string>
 		</dict>
@@ -349,15 +349,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>الوصفات الطبية</string>
 			<key>many</key>
-			<string></string>
+			<string>الوصفات الطبية</string>
 			<key>one</key>
 			<string>الوصفة الطبية</string>
 			<key>other</key>
 			<string>الوصفات الطبية</string>
 			<key>two</key>
-			<string></string>
+			<string>الوصفات الطبية</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -373,15 +373,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>لا يزال لديك %u من المحاولات لإدخال رقم التعريف الشخصي الحالي.</string>
 			<key>many</key>
-			<string></string>
+			<string>لا يزال لديك %u من المحاولات لإدخال رقم التعريف الشخصي الحالي.</string>
 			<key>one</key>
 			<string>لديك محاولة أخرى لإدخال رقم التعريف الشخصي الحالي.</string>
 			<key>other</key>
 			<string>لا يزال لديك %u من المحاولات لإدخال رقم التعريف الشخصي الحالي.</string>
 			<key>two</key>
-			<string></string>
+			<string>لا يزال لديك %u من المحاولات لإدخال رقم التعريف الشخصي الحالي.</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -397,15 +397,15 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>few</key>
-			<string></string>
+			<string>لا يزال لديك %u من المحاولات للدخول إلى رمز PUK.</string>
 			<key>many</key>
-			<string></string>
+			<string>لا يزال لديك %u من المحاولات للدخول إلى رمز PUK.</string>
 			<key>one</key>
 			<string>لديك محاولة أخرى للدخول إلى رمز PUK.</string>
 			<key>other</key>
 			<string>لا يزال لديك %u من المحاولات للدخول إلى رمز PUK.</string>
 			<key>two</key>
-			<string></string>
+			<string>لا يزال لديك %u من المحاولات للدخول إلى رمز PUK.</string>
 			<key>zero</key>
 			<string></string>
 		</dict>

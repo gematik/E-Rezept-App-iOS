@@ -20,6 +20,8 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import eRpResources
+import eRpStyleKit
 import SwiftUI
 
 struct ProfilePicturePicker: View {
@@ -43,7 +45,7 @@ struct ProfilePicturePicker: View {
                             .font(.system(size: 64).weight(.bold))
                             .frame(width: 140, height: 140, alignment: .center)
                             .background(Circle().fill(color))
-                            .foregroundColor(Color(.secondaryLabel))
+                            .foregroundColor(Colors.systemLabelSecondary)
 
                         if editEmoji {
                             Circle()

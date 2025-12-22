@@ -35,11 +35,10 @@ opt_in_rules:
   - discouraged_optional_collection
   - closure_end_indentation
   - file_header
+included:
+  - ./Tests
+  - ./Sources
 excluded: # paths to ignore during linting. Takes precedence over `included`.
-  - Package.swift
-  - .build/
-  - vendor/
-  - DerivedData/
   - Sources/eRpApp/Generated/*
   - Sources/eRpResources/Generated/*
   - Sources/eRpStyleKit/Generated/*

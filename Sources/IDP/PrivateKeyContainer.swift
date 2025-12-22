@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import Foundation
 import OpenSSL
@@ -31,23 +32,23 @@ import Security
 /// authorization purposes
 /// [REQ:BSI-eRp-ePA:O.Cryp_7#2] Container for private key operations using secure enclave private keys
 public struct PrivateKeyContainer {
-    // sourcery: CodedError = "108"
+    @CodedError("108")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case keyNotFound(String)
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case unknownError(String)
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case retrievingPublicKeyFailed
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case creationFromBiometrie(Swift.Error?)
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case creationWithoutBiometrie(Swift.Error?)
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         case convertingKey(Swift.Error?)
-        // sourcery: errorCode = "07"
+        @ErrorCode("07")
         case signing(Swift.Error?)
-        // sourcery: errorCode = "08"
+        @ErrorCode("08")
         case canceledByUser
     }
 

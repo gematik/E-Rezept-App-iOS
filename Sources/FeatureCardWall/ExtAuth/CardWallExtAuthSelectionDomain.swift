@@ -1,0 +1,189 @@
+//
+//  Copyright (Change Date see Readme), gematik GmbH
+//
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
+//  You may not use this work except in compliance with the Licence.
+//
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+//
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
+//
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+//
+
+import Combine
+import ComposableArchitecture
+import eRpKit
+import FeatureHelpers
+import IDP
+import UIKit
+
+/// Domain for handling external authentication provider selection
+@Reducer
+public struct CardWallExtAuthSelectionDomain {
+    /// Initializes a new CardWallExtAuthSelectionDomain
+    public init() {}
+
+    /// State for the external authentication selection screen
+    @ObservableState
+    public struct State: Equatable {
+        init(
+            profileId: UUID,
+            insuranceType: Profile.InsuranceType = .unknown,
+            kkList: KKAppDirectory? = nil,
+            filteredKKList: KKAppDirectory = .init(apps: [KKAppDirectory.Entry]()),
+            error: IDPError? = nil,
+            searchText: String = "",
+            destination: CardWallExtAuthSelectionDomain.Destination.State? = nil
+        ) {
+            self.profileId = profileId
+            self.insuranceType = insuranceType
+            self.kkList = kkList
+            self.filteredKKList = filteredKKList
+            self.error = error
+            self.searchText = searchText
+            self.destination = destination
+        }
+
+        public init(profileId: UUID) {
+            self.profileId = profileId
+        }
+
+        let profileId: UUID
+        var insuranceType: Profile.InsuranceType = .unknown
+        var kkList: KKAppDirectory?
+        var filteredKKList: KKAppDirectory = .init(apps: [KKAppDirectory.Entry]())
+        var error: IDPError?
+        var searchText: String = ""
+
+        @Presents public var destination: Destination.State?
+    }
+
+    /// Destination states for navigation from selection screen
+    @Reducer(state: .equatable, action: .equatable)
+    public enum Destination {
+        // sourcery: AnalyticsScreen = cardWall_extAuthConfirm
+        /// Navigate to authentication confirmation
+        case confirmation(CardWallExtAuthConfirmationDomain)
+        // sourcery: AnalyticsScreen = cardWall_extAuthSelectionHelp
+        /// Navigate to help screen
+        case help(CardWallExtAuthHelpDomain)
+    }
+
+    /// Actions that can be performed in the selection domain
+    public enum Action: Equatable {
+        case loadKKList
+        case selectKK(KKAppDirectory.Entry)
+        case error(IDPError)
+        case updateSearchText(newString: String)
+
+        case filteredKKList(search: String)
+        case reset
+
+        case resetNavigation
+        case helpButtonTapped
+        case destination(PresentationAction<Destination.Action>)
+
+        case response(Response)
+        case delegate(Delegate)
+
+        public enum Response: Equatable {
+            case loadKKList(Result<KKAppDirectory, IDPError>)
+        }
+
+        public enum Delegate: Equatable {
+            case close
+        }
+    }
+
+    @Dependency(\.profileBasedSessionProvider) var profileBasedSessionProvider
+    @Dependency(\.schedulers) var schedulers: Schedulers
+
+    /// The reducer body that handles state transitions and effects
+    public var body: some Reducer<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> Effect<Action> {
+        switch action {
+        case .loadKKList:
+            state.error = nil
+            guard let idpSession = try? profileBasedSessionProvider.idpSession(state.profileId) else { return .none }
+            // [REQ:gemSpec_IDP_Frontend:A_22296-01] Load available apps
+            // [REQ:gemSpec_IDP_Frontend:A_23082#2] Load available apps
+            return .publisher(
+                idpSession
+                    .loadDirectoryKKApps()
+                    .first()
+                    .map(Result.success)
+                    .catch { Just(Result.failure($0)) }
+                    .map { Action.response(.loadKKList($0)) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
+        case let .response(.loadKKList(.success(result))):
+            state.error = nil
+            let kkListFilteredForInsuranceType = result.apps.filter { $0.pkv == (state.insuranceType == .pKV) }
+            state.kkList = KKAppDirectory(apps: kkListFilteredForInsuranceType)
+            return .none
+        case let .response(.loadKKList(.failure(error))):
+            state.error = error
+            return .none
+        case let .selectKK(entry):
+            // [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
+            // [REQ:gemSpec_IDP_Frontend:A_22294-01] Select KK
+            // [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen
+            state.destination = .confirmation(.init(profileId: state.profileId, selectedKK: entry))
+            return .none
+        case let .filteredKKList(search):
+            if let kkList = state.kkList {
+                state
+                    .filteredKKList = KKAppDirectory(apps: kkList.apps
+                        .filter { $0.name.lowercased().contains(search.lowercased()) })
+            }
+            return .none
+        case .reset:
+            state.filteredKKList = state.kkList ?? .init(apps: [KKAppDirectory.Entry]())
+            return .none
+        case let .updateSearchText(newString):
+            state.searchText = newString.trimmingCharacters(in: .whitespacesAndNewlines)
+            return state.searchText
+                .isEmpty ? Effect.send(.reset) : Effect.send(.filteredKKList(search: state.searchText))
+        case .resetNavigation:
+            state.destination = nil
+            return .none
+        case let .error(error):
+            state.error = error
+            return .none
+        case .destination(.presented(.confirmation(action: .delegate(.close)))):
+            return Effect.send(.delegate(.close))
+        case .helpButtonTapped:
+            state.destination = .help(.init(insuranceType: state.insuranceType))
+            return .none
+        case .destination,
+             .delegate:
+            return .none // Handled by parent domain
+        }
+    }
+}
+
+extension CardWallExtAuthSelectionDomain {
+    enum Dummies {
+        static let state = State(profileId: UUID())
+
+        static let store = Store(initialState: state) {
+            CardWallExtAuthSelectionDomain()
+        }
+    }
+}

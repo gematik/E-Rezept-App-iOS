@@ -91,8 +91,8 @@ struct HealthCardPasswordPinView: View {
                     HintView(
                         hint: Hint<SettingsDomain.Action>(
                             id: A11y.settings.card.stgTxtCardResetPinHintMessage,
-                            title: L10n.stgTxtCardResetPinHintTitle.text,
-                            message: L10n.stgTxtCardResetPinHintMessage.text,
+                            title: L10n.stgTxtCardResetPinHintTitle,
+                            message: L10n.stgTxtCardResetPinHintMessage,
                             image: .init(asset: Asset.Illustrations.infoLogo),
                             style: .neutral,
                             buttonStyle: .quaternary,

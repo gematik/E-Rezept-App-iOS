@@ -20,9 +20,11 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Dependencies
 import Foundation
 import HTTPClient
+import Settings
 
 struct UpdateChecker {
     var isUpdateAvailable: @Sendable () async -> Bool
@@ -40,14 +42,14 @@ extension DependencyValues {
 }
 
 extension UpdateCheckerFactory: DependencyKey {
-    static var liveValue = UpdateCheckerFactory { httpClient, configuration in
+    static var liveValue = UpdateCheckerFactory { httpClient, appConfiguration in
         UpdateChecker {
             var certListEndpoint: URL {
-                configuration.erp.appendingPathComponent("CertList")
+                appConfiguration.erp.appendingPathComponent("VAUCertificate")
             }
 
             let request = URLRequest(url: certListEndpoint)
-            guard let (_, _, status) = try? await httpClient.sendPublisher(request: request).async() else {
+            guard let (_, _, status) = try? await httpClient.send(request: request) else {
                 return false
             }
 

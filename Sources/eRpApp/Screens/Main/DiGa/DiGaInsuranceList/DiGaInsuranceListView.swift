@@ -39,13 +39,13 @@ struct DiGaInsuranceListView: View {
                 Text(L10n.digaInsuranceListTxtSubtext)
                     .multilineTextAlignment(.leading)
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .accessibility(identifier: A11y.digaInsuranceList.digaInsuranceListTxtSubheader)
             }.padding()
 
             SearchBar(
                 searchText: $store.searchText.sending(\.searchList),
-                prompt: L10n.orderEgkTxtSearchPrompt.key
+                prompt: L10n.orderEgkTxtSearchPrompt.text
             ) {}.padding()
 
             if store.isLoading {
@@ -78,7 +78,7 @@ struct DiGaInsuranceListView: View {
                                 .padding(.bottom, 1)
                             Text(L10n.phaSearchTxtNoResults)
                                 .font(.subheadline)
-                                .foregroundColor(Colors.textSecondary)
+                                .foregroundColor(Colors.systemLabelSecondary)
                                 .multilineTextAlignment(.center)
                                 .fixedSize(horizontal: false, vertical: true)
                         }

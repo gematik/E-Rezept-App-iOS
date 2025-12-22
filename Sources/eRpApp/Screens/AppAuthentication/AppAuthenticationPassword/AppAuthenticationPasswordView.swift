@@ -42,7 +42,7 @@ struct AppAuthenticationPasswordView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(
-                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
+                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.systemLabelSecondary,
                         lineWidth: 0.5
                     )
             )
@@ -56,14 +56,18 @@ struct AppAuthenticationPasswordView: View {
                     .padding(.top, 4)
             }
 
-            PrimaryTextButton(
-                text: L10n.authBtnPasswordContinue,
-                a11y: A11y.auth.authBtnPasswordContinue,
-                isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
-                useFullWidth: false
-            ) {
+            Button {
                 store.send(.loginButtonTapped, animation: .default)
+            } label: {
+                Label(L10n.authBtnPasswordContinue)
             }
+            .buttonStyle(
+                .primary(
+                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
+                    width: .wideHugging
+                )
+            )
+            .accessibilityIdentifier(A18n.auth.authBtnPasswordContinue)
             .padding()
             .frame(maxWidth: .infinity, alignment: .center)
 

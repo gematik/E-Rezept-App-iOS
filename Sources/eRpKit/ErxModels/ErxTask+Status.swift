@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
 extension ErxTask {
@@ -111,19 +112,19 @@ extension ErxTask {
 }
 
 extension ErxTask.Status {
-    // sourcery: CodedError = "201"
+    @CodedError("201")
     public enum Error: Swift.Error, RawRepresentable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case decoding(message: String)
-        // sourcery: errorCode = "02"
+        @ErrorCode("02")
         case unknown(message: String)
-        // sourcery: errorCode = "03"
+        @ErrorCode("03")
         case missingStatus
-        // sourcery: errorCode = "04"
+        @ErrorCode("04")
         case missingPatientReceiptReference
-        // sourcery: errorCode = "05"
+        @ErrorCode("05")
         case missingPatientReceiptIdentifier
-        // sourcery: errorCode = "06"
+        @ErrorCode("06")
         case missingPatientReceiptBundle
 
         public typealias RawValue = String

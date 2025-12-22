@@ -25,11 +25,6 @@ import eRpKit
 import Foundation
 
 class DemoUserDefaultsStore: UserDataStore {
-    /// Indicates if the onboarding should be displayed
-    var hideOnboarding: AnyPublisher<Bool, Never> {
-        hideOnboardingCurrentValue.eraseToAnyPublisher()
-    }
-
     var isOnboardingHidden = true
 
     private var hideOnboardingCurrentValue: CurrentValueSubject<Bool, Never> = CurrentValueSubject(true)
@@ -158,6 +153,21 @@ class DemoUserDefaultsStore: UserDataStore {
 
     func set(hideWelcomeMessage: Bool) {
         hideWelcomeMessageCurrentValue.send(hideWelcomeMessage)
+    }
+
+    var hideEURedeemInstructions: AnyPublisher<Bool, Never> {
+        hideEURedeemInstructionsCurrentValue.eraseToAnyPublisher()
+    }
+
+    private var hideEURedeemInstructionsCurrentValue: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
+
+    func set(hideEURedeemInstructions: Bool) {
+        hideEURedeemInstructionsCurrentValue.send(hideEURedeemInstructions)
+    }
+
+    /// Indicates if the onboarding should be displayed
+    var hideOnboarding: AnyPublisher<Bool, Never> {
+        hideOnboardingCurrentValue.eraseToAnyPublisher()
     }
 
     func wipeAll() {}

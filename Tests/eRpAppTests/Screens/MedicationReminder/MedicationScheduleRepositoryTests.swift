@@ -23,6 +23,7 @@
 import Dependencies
 @testable import eRpFeatures
 import eRpKit
+import ErxTaskRepository
 import Nimble
 import XCTest
 
@@ -92,13 +93,13 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
         expect(self.mockMedicationScheduleStore.fetchAllCalled).to(beTrue())
         expect(self.mockMedicationScheduleStore.fetchAllCallsCount) == 2
 
-        await notificationSchedulerCancelAllPendingRequestsCallsCount.withValue {
+        notificationSchedulerCancelAllPendingRequestsCallsCount.withValue {
             XCTAssertEqual($0, 2)
         }
-        await notificationSchedulerScheduleCallsCount.withValue {
+        notificationSchedulerScheduleCallsCount.withValue {
             XCTAssertEqual($0, 2)
         }
-        await notificationSchedulerScheduleInvocation.withValue {
+        notificationSchedulerScheduleInvocation.withValue {
             XCTAssertEqual($0, [schedule1, schedule2])
         }
     }

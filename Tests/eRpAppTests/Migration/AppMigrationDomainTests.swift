@@ -25,7 +25,10 @@ import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
+import eRpResources
+import FeatureHelpers
 import Nimble
+import Sharing
 import XCTest
 
 @MainActor
@@ -85,19 +88,37 @@ final class AppMigrationDomainTests: XCTestCase {
     }
 
     private func loadFactory() -> CoreDataControllerFactory {
+        let databaseFile = self.databaseFile!
         guard let factory = coreDataFactory else {
-            #if os(macOS)
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
+            let factory: CoreDataControllerFactory = .init(databaseUrl: { databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
 
-            #else
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
+                var fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
             coreDataFactory = factory
             return factory
         }

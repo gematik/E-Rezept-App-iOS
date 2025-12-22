@@ -105,34 +105,22 @@ struct MainScreen: Screen {
     }
 
     func tapRegister(fileID: String = #fileID, file: String = #filePath,
-                     line: UInt = #line) -> MainScreen {
+                     line: UInt = #line) -> InsuranceDrawerScreen {
         button(by: A11y.mainScreen.erxBtnLogin, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapWelcomeDrawerGkvUser(
-        _ screen: (CardWallIntroductionScreen) async -> Void,
+    func tapRegister(
+        _ screen: (InsuranceDrawerScreen) async -> Void,
         fileID: String = #fileID,
         file: String = #filePath,
         line: UInt = #line
     ) async {
-        button(by: A11y.welcomedrawer.wlcdBtnGkvUser, fileID: fileID, file: file, line: line).tap()
+        button(by: A11y.mainScreen.erxBtnLogin, fileID: fileID, file: file, line: line).tap()
 
-        let cardWallIntroductionScreen = CardWallIntroductionScreen(app: app)
-        await screen(cardWallIntroductionScreen)
-    }
-
-    func tapWelcomeDrawerPkvUser(
-        _ screen: (CardWallExtAuthSelectionScreen) async -> Void,
-        fileID: String = #fileID,
-        file: String = #filePath,
-        line: UInt = #line
-    ) async {
-        button(by: A11y.welcomedrawer.wlcdBtnPkvUser, fileID: fileID, file: file, line: line).tap()
-
-        let cardWallExtAuthSelectionScreen = CardWallExtAuthSelectionScreen(app: app)
-        await screen(cardWallExtAuthSelectionScreen)
+        let insuranceDrawerScreen = InsuranceDrawerScreen(app: app)
+        await screen(insuranceDrawerScreen)
     }
 
     func tapArchive(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> ArchiveScreen {

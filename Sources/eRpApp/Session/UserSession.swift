@@ -22,19 +22,22 @@
 
 import AVS
 import BfArM
+import CodedError
 import Combine
 import Dependencies
 import eRpKit
 import eRpLocalStorage
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
 import IDP
 import Pharmacy
 import TrustStore
 import VAUClient
 
-// sourcery: CodedError = "008"
+@CodedError("008")
 enum UserSessionError: Error, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case idpError(error: IDPError)
 }
 
@@ -44,19 +47,12 @@ protocol UserSession {
     /// Last authentication state of the app. This value should not get stale as it should inform on the latest state.
     var isAuthenticated: AnyPublisher<Bool, UserSessionError> { get }
 
-    var erxTaskRepository: ErxTaskRepository { get }
-
-    var entireErxTaskRepository: ErxTaskRepository { get }
-
     var ordersRepository: OrdersRepository { get }
 
     var profileDataStore: ProfileDataStore { get }
 
     /// Access to the store of `ShipmentInfo` objects
     var shipmentInfoDataStore: ShipmentInfoDataStore { get }
-
-    /// Access to the `PharmacyRepository`
-    var pharmacyRepository: PharmacyRepository { get }
 
     /// Check for forced app updates
     var updateChecker: UpdateChecker { get }
@@ -66,12 +62,6 @@ protocol UserSession {
 
     /// The Secure (KeyChain) repository for this session
     var secureUserStore: SecureUserDataStore { get }
-
-    /// Indicates if the user session is a demo session
-    var isDemoMode: Bool { get }
-
-    /// The NFC Session provider
-    var nfcSessionProvider: NFCSignatureProvider { get }
 
     /// The controller for resetting the reset counter of the password MR.PIN home on eGKs
     var nfcHealthCardPasswordController: NFCHealthCardPasswordController { get }
@@ -116,20 +106,13 @@ protocol UserSession {
 
 struct UserSessionDependency: DependencyKey {
     static var initialValue: UserSession = {
-        let coreDataControllerFactory = CoreDataControllerFactoryDependency.liveValue
+        let coreDataControllerFactory = CoreDataControllerFactory.liveValue
         // After sanitising the database there should be a profile available which is set as the selected profile
         let selectedProfileId = UserDefaults.standard.selectedProfileId ?? UUID()
-
-        @Dependency(\.erxTaskCoreDataStoreFactory) var erxTaskCoreDataStoreFactory: ErxTaskCoreDataStoreFactory
-        let erxTaskCoreDataStore = erxTaskCoreDataStoreFactory.construct(selectedProfileId, coreDataControllerFactory)
-        let entireCoreDataStore = erxTaskCoreDataStoreFactory.construct(nil, coreDataControllerFactory)
 
         return StandardSessionContainer(
             for: selectedProfileId,
             schedulers: Schedulers(),
-            erxTaskCoreDataStore: erxTaskCoreDataStore,
-            entireCoreDataStore: entireCoreDataStore,
-            pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: ProfileDataStoreDependency.initialValue,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

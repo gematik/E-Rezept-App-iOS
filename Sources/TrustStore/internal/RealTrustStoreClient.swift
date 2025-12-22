@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
 import HTTPClient
 
@@ -31,16 +30,6 @@ class RealTrustStoreClient {
     init(serverURL: URL, httpClient: HTTPClient) {
         self.serverURL = serverURL
         self.httpClient = httpClient
-    }
-
-    // swiftlint:disable:next line_length
-    // refer to https://github.com/gematik/api-erp/blob/master/docs/authentisieren.adoc#verbindungsaufbau-zum-e-rezept-fachdienst
-    var certListEndpoint: URL {
-        serverURL.appendingPathComponent("CertList")
-    }
-
-    var ocspListEndpoint: URL {
-        serverURL.appendingPathComponent("OCSPList")
     }
 
     var pkiCertEndpoint: URL {
@@ -57,20 +46,6 @@ class RealTrustStoreClient {
 }
 
 extension RealTrustStoreClient: TrustStoreClient {
-    func loadCertListFromServer() -> AnyPublisher<CertList, TrustStoreError> {
-        httpClient
-            .sendPublisher(request: URLRequest(url: certListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
-            .processCertListResponse()
-            .eraseToAnyPublisher()
-    }
-
-    func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError> {
-        httpClient
-            .sendPublisher(request: URLRequest(url: ocspListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
-            .processOCSPListResponse()
-            .eraseToAnyPublisher()
-    }
-
     func loadPKICertificatesFromServer(rootSubjectCn: String) async throws -> PKICertificates {
         let httpResponse: HTTPResponse
 
@@ -81,7 +56,7 @@ extension RealTrustStoreClient: TrustStoreClient {
                 ]
             )
             let urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
-            httpResponse = try await httpClient.sendAsync(request: urlRequest)
+            httpResponse = try await httpClient.send(request: urlRequest)
         } catch let error as HTTPClientError {
             throw TrustStoreError.network(error: error)
         } catch {
@@ -108,7 +83,7 @@ extension RealTrustStoreClient: TrustStoreClient {
         let urlRequest = URLRequest(url: vauCertEndpoint, cachePolicy: .reloadIgnoringLocalCacheData)
 
         do {
-            httpResponse = try await httpClient.sendAsync(request: urlRequest)
+            httpResponse = try await httpClient.send(request: urlRequest)
         } catch let error as HTTPClientError {
             throw TrustStoreError.network(error: error)
         } catch {
@@ -133,7 +108,7 @@ extension RealTrustStoreClient: TrustStoreClient {
                 ]
             )
             let urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
-            httpResponse = try await httpClient.sendAsync(request: urlRequest)
+            httpResponse = try await httpClient.send(request: urlRequest)
         } catch let error as HTTPClientError {
             throw TrustStoreError.network(error: error)
         } catch {
@@ -145,41 +120,5 @@ extension RealTrustStoreClient: TrustStoreClient {
             throw HTTPClientError.httpError(urlError).asTrustStoreError()
         }
         return httpResponse.data
-    }
-}
-
-extension Publisher where Output == HTTPResponse, Failure == HTTPClientError {
-    func processCertListResponse() -> AnyPublisher<CertList, TrustStoreError> {
-        tryMap { httpResponse -> CertList in
-            try RealTrustStoreClient.processCertListResponse(httpResponse: httpResponse)
-        }
-        .mapError { $0.asTrustStoreError() }
-        .eraseToAnyPublisher()
-    }
-
-    func processOCSPListResponse() -> AnyPublisher<OCSPList, TrustStoreError> {
-        tryMap { httpResponse -> OCSPList in
-            try RealTrustStoreClient.processOCSPListResponse(httpResponse: httpResponse)
-        }
-        .mapError { $0.asTrustStoreError() }
-        .eraseToAnyPublisher()
-    }
-}
-
-extension RealTrustStoreClient {
-    static func processCertListResponse(httpResponse: HTTPResponse) throws -> CertList {
-        guard httpResponse.status == .ok else {
-            let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
-            throw HTTPClientError.httpError(urlError)
-        }
-        return try CertList.from(data: httpResponse.data)
-    }
-
-    static func processOCSPListResponse(httpResponse: HTTPResponse) throws -> OCSPList {
-        guard httpResponse.status == .ok else {
-            let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
-            throw HTTPClientError.httpError(urlError)
-        }
-        return try OCSPList.from(data: httpResponse.data)
     }
 }

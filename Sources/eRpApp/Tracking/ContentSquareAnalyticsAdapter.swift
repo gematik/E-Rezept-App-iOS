@@ -24,6 +24,7 @@
 
 import Combine
 import ContentsquareModule
+import eRpResources
 import Foundation
 import UIKit
 

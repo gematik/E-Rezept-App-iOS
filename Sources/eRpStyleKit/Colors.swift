@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 import SwiftUI
+import UIKit
 
 // swiftlint:disable missing_docs
 
@@ -28,11 +29,6 @@ public enum Colors {
     public static let primary: Color = primary700
     public static let secondary = Color(.systemGray6)
     public static let tertiary: Color = primary100
-
-    // colors used for text
-    public static let text = Color(.label)
-    public static let textSecondary = Color(.secondaryLabel)
-    public static let textTertiary = Color(.white)
 
     // colors used for screen backgrounds
     public static let backgroundNeutral = Color(.systemBackground)
@@ -114,13 +110,43 @@ extension Colors {
     public static let systemFillQuarternary = Color(UIColor.quaternarySystemFill)
     // label colors
     public static let systemLabel = Color(UIColor.label)
-    public static let systemLabelSecondary = Color(UIColor.secondaryLabel)
+    public static let systemLabelSecondary = Color(.neutralLight700)
     public static let systemLabelTertiary = Color(UIColor.tertiaryLabel)
     public static let systemLabelQuarternary = Color(UIColor.quaternaryLabel)
     // colors that are not dynamic
     public static let systemColorWhite = Color.white
     public static let systemColorBlack = Color.black
     public static let systemColorClear = Color.clear
+}
+
+extension Color {
+    public func disabled(for colorScheme: ColorScheme) -> Color {
+        // mix(with:,by:) is not working as expected
+        mixWithWhiteOrBlack(by: 0.7, colorScheme: colorScheme)
+    }
+
+    private func mixWithWhiteOrBlack(by ratio: Double, colorScheme: ColorScheme) -> Color {
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+        let target: CGFloat = (colorScheme == .dark) ? 0.0 : 1.0
+
+        let mixedRed = red + (target - red) * ratio
+        let mixedGreen = green + (target - green) * ratio
+        let mixedBlue = blue + (target - blue) * ratio
+
+        return Color(
+            red: mixedRed,
+            green: mixedGreen,
+            blue: mixedBlue,
+            opacity: alpha
+        )
+    }
 }
 
 // swiftlint:enable missing_docs

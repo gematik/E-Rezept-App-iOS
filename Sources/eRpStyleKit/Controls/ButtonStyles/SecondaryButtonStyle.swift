@@ -29,38 +29,38 @@ import SwiftUI
 public struct SecondaryButtonStyle: ButtonStyle {
     private var isDestructive: Bool
     private var isEnabled: Bool
+    private var backgroundColor: Color
 
-    public init(enabled: Bool) {
-        isEnabled = enabled
-        isDestructive = false
-    }
-
-    public init(enabled: Bool = true, destructive: Bool = false) {
+    public init(enabled: Bool = true, destructive: Bool = false, background: Color = Colors.systemBackground) {
         isEnabled = enabled
         isDestructive = destructive
+        backgroundColor = background
     }
+
+    @Environment(\.colorScheme) private var colorScheme
 
     var foregroundColor: Color {
         switch (isDestructive, isEnabled) {
         case (false, true):
             return Colors.primary
         case (false, false):
-            return Color(.systemGray)
+            return Colors.primary.disabled(for: colorScheme)
         case (true, true):
             return Colors.red600
         case (true, false):
-            return Color(.systemGray)
+            return Colors.red600.disabled(for: colorScheme)
         }
     }
 
     public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .font(.body.weight(.semibold))
+            .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .background(Color(.systemGray5))
+            .background(backgroundColor)
             .foregroundColor(foregroundColor)
-            .cornerRadius(16)
+            .border(foregroundColor, width: 1.0, cornerRadius: 16)
             .padding(.horizontal)
     }
 }
@@ -76,8 +76,12 @@ extension ButtonStyle where Self == SecondaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.secondary(isEnabled:,isDestructive: false))`` modifier.
-    public static func secondary(isEnabled: Bool = true, isDestructive: Bool = false) -> SecondaryButtonStyle {
-        SecondaryButtonStyle(enabled: isEnabled, destructive: isDestructive)
+    public static func secondary(
+        isEnabled: Bool = true,
+        isDestructive: Bool = false,
+        background: Color = Colors.systemBackground
+    ) -> SecondaryButtonStyle {
+        SecondaryButtonStyle(enabled: isEnabled, destructive: isDestructive, background: background)
     }
 }
 
@@ -94,16 +98,18 @@ public struct SecondaryAltButtonStyle: ButtonStyle {
         isDestructive = destructive
     }
 
+    @Environment(\.colorScheme) private var colorScheme
+
     var foregroundColor: Color {
         switch (isDestructive, isEnabled) {
         case (false, true):
             return Colors.primary
         case (false, false):
-            return Color(.systemGray)
+            return Colors.primary.disabled(for: colorScheme)
         case (true, true):
             return Colors.red600
         case (true, false):
-            return Color(.systemGray)
+            return Colors.red600.disabled(for: colorScheme)
         }
     }
 

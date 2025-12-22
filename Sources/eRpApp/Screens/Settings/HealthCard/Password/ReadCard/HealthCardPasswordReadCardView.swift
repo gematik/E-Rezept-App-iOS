@@ -23,6 +23,8 @@
 import Combine
 import ComposableArchitecture
 import eRpStyleKit
+import FeatureCardWall
+import FeatureHelpers
 import SwiftUI
 
 struct HealthCardPasswordReadCardView: View {
@@ -41,7 +43,7 @@ struct HealthCardPasswordReadCardView: View {
                 Text(L10n.cdwTxtRcSubheadline)
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .padding(.horizontal)
                     .padding(.bottom, 32)
 
@@ -72,7 +74,7 @@ struct HealthCardPasswordReadCardView: View {
                         Image(systemName: SFSymbolName.questionmarkCircle)
                         Text(L10n.cdwBtnRcHelp)
                     }
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .font(.subheadline.weight(.semibold))
                     .padding(.vertical, 4)
                     .padding(.horizontal, 16)

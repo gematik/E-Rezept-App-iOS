@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpResources
 import Foundation
 
 // [REQ:BSI-eRp-ePA:O.Auth_7#2] Domain handling App Authentication

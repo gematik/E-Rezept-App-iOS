@@ -84,32 +84,16 @@ public class LoggingInterceptor: Interceptor {
         self.level = level
     }
 
-    public func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    public func intercept(chain: Chain) async throws -> HTTPResponse {
         #if DEBUG
         let request = chain.request
         level.log(request: request)
         let logger = self
-        return chain.proceedPublisher(request: request)
-            .map { response in
-                logger.level.log(response: response)
-                return response
-            }
-            .eraseToAnyPublisher()
-        #else
-        return chain.proceed(request: chain.request)
-        #endif
-    }
-
-    public func interceptAsync(chain: Chain) async throws -> HTTPResponse {
-        #if DEBUG
-        let request = chain.request
-        level.log(request: request)
-        let logger = self
-        let response = try await chain.proceedAsync(request: request)
+        let response = try await chain.proceed(request: request)
         logger.level.log(response: response)
         return response
         #else
-        return try await chain.proceedAsync(request: chain.request)
+        return try await chain.proceed(request: chain.request)
         #endif
     }
 }

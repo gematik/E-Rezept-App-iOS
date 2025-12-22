@@ -20,11 +20,15 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
+import Dependencies
 @testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
+import ErxTaskRepository
+import FeatureCardWall
 import FHIRClient
 import Foundation
 import HTTPClient
@@ -72,7 +76,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
     }()
 
     lazy var idpSession: IDPSession = {
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        let schedulers = Schedulers(computeScheduler: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
 
         // IDP Session
         let idpSessionConfiguration = DefaultIDPSession.Configuration(
@@ -105,7 +109,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             urlSessionConfiguration: .ephemeral,
             interceptors: [
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
-                IDPInterceptor(session: idpSession, delegate: nil),
+                IDPInterceptor(session: idpSession),
                 LoggingInterceptor(log: .body),
                 VAUInterceptor(vauSession: vauSession),
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
@@ -185,7 +189,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             urlSessionConfiguration: .ephemeral,
             interceptors: [
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
-                IDPInterceptor(session: idpSession, delegate: nil),
+                IDPInterceptor(session: idpSession),
                 LoggingInterceptor(log: .body),
                 ExceptionInterceptor(order: order),
                 VAUInterceptor(vauSession: vauSession),
@@ -201,16 +205,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             receiveQueue: DispatchQueue.global().eraseToAnyScheduler()
         )
         let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
-
-        let erxTaskRepository = DefaultErxTaskRepository(
-            disk: MockErxLocalDataStore(),
-            cloud: cloud,
-            medicationScheduleRepository: .testValue,
-            profile: Just(Profile(name: "Test User")).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        )
-
         let redeemService = ErxTaskRepositoryRedeemService(
-            erxTaskRepository: erxTaskRepository,
             loginHandler: DefaultLoginHandler(
                 idpSession: idpSession,
                 signatureProvider: DefaultSecureEnclaveSignatureProvider(storage: memStorage)
@@ -220,32 +215,44 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         var receivedOrderResponses: [IdentifiedArrayOf<OrderResponse>] = []
         // Actual redeem call
         var success = false
-        let cancellable = redeemService.redeem([order])
-            .first()
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case let .failure(error):
-                    fail("expected to receive a response ")
-                    success = false
-                    Swift.print(error)
-                default: break
-                }
-                Swift.print(completion)
-            }, receiveValue: { orderResponses in
-                receivedOrderResponses.append(orderResponses)
-                Swift.print("✅ Sent \(orderResponses.count) erxTask orders")
-            })
+        withDependencies {
+            let profile = Profile(name: "Test User")
+            let profileDataStoreMock = MockProfileDataStore()
+            profileDataStoreMock.fetchProfileByReturnValue = Just(profile)
+                .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            $0.profileDataStore = profileDataStoreMock
+            $0.erxRemoteDataStore = cloud
+            $0.erxLocalDataStore = MockErxLocalDataStore()
+            $0.medicationScheduleRepository = .testValue
+        } operation: {
+            let cancellable = redeemService.redeem([order], profileId: UUID())
+                .first()
+                .sink(receiveCompletion: { completion in
+                    switch completion {
+                    case let .failure(error):
+                        fail("expected to receive a response ")
+                        success = false
+                        Swift.print(error)
+                    default: break
+                    }
+                    Swift.print(completion)
+                }, receiveValue: { orderResponses in
+                    receivedOrderResponses.append(orderResponses)
+                    Swift.print("✅ Sent \(orderResponses.count) erxTask orders")
+                })
 
-        expect(receivedOrderResponses.count).toEventually(equal(1))
-        if let orderResponses = receivedOrderResponses.first {
-            expect(orderResponses.count) == 1
-            expect(orderResponses.first) == OrderResponse(requested: order, result: ProgressResponse.success(true))
-            success = true
-        } else {
-            fail("expected to have an orderResponse in the received order Resposes array")
+            expect(receivedOrderResponses.count).toEventually(equal(1))
+            if let orderResponses = receivedOrderResponses.first {
+                expect(orderResponses.count) == 1
+                expect(orderResponses.first) == OrderResponse(requested: order, result: ProgressResponse.success(true))
+                success = true
+            } else {
+                fail("expected to have an orderResponse in the received order Resposes array")
+            }
+
+            cancellable.cancel()
         }
 
-        cancellable.cancel()
         return success
     }
 
@@ -444,8 +451,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             self.order = order
         }
 
-        func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-            if chain.request.url!.absoluteString.contains("Communication"),
+        func intercept(chain: Chain) async throws -> HTTPResponse {
+            if let url = chain.request.url,
+               url.absoluteString.contains("Communication"),
                let body = chain.request.httpBody,
                let bodyString = String(data: body, encoding: .utf8) {
                 expect(bodyString) == """
@@ -456,26 +464,20 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                     .rawValue)\\",\\"version\\":1}"}],"recipient":[{"identifier":{"system":"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id","value":"3-SMC-B-Testkarte-883110000094055"}}],"resourceType":"Communication","status":"unknown"}
                 """
             }
-            return chain.proceedPublisher(request: chain.request)
-                .map { response in
-                    if response.response.url!.absoluteString.contains("Communication"),
-                       response.status.rawValue == 201,
-                       let dataString = String(data: response.data, encoding: .utf8) {
-                        expect(
-                            dataString.contains(
-                                """
-                                "payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"shipment\\",\\"version\\":1}"}]
-                                """
-                            )
-                        ).to(beTrue())
-                    }
-                    return response
-                }
-                .eraseToAnyPublisher()
-        }
-
-        func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
-            throw HTTPClientError.internalError("notImplemented")
+            let response = try await chain.proceed(request: chain.request)
+            if let url = response.response.url,
+               url.absoluteString.contains("Communication"),
+               response.status.rawValue == 201,
+               let dataString = String(data: response.data, encoding: .utf8) {
+                expect(
+                    dataString.contains(
+                        """
+                        "payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"shipment\\",\\"version\\":1}"}]
+                        """
+                    )
+                ).to(beTrue())
+            }
+            return response
         }
     }
 

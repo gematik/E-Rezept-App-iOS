@@ -86,9 +86,12 @@ struct X509ScannerView: View {
                 .background(Color(.systemBackground))
                 .cornerRadius(16)
 
-                PrimaryTextButton(text: "Accept", a11y: "Accept") {
+                Button {
                     show = false
+                } label: {
+                    Text("Accept")
                 }
+                .accessibilityIdentifier("Accept")
             }
             .padding()
         }

@@ -21,7 +21,10 @@
 //
 
 import Combine
+import Dependencies
+import DependenciesMacros
 import eRpKit
+import FHIRClient
 import Foundation
 import OpenSSL
 
@@ -36,7 +39,8 @@ public struct PharmacyRemoteDataStoreFilter: Codable, Equatable {
 }
 
 /// Interface for the remote data store
-public protocol PharmacyRemoteDataStore {
+@DependencyClient
+public struct PharmacyRemoteDataStore {
     /// API for requesting pharmacies with the passed search term
     ///
     /// [REQ:gemSpec_eRp_FdV:A_20183]
@@ -46,45 +50,55 @@ public protocol PharmacyRemoteDataStore {
     ///   - position: Position (latitude and longitude) of pharmacy
     ///   - filter: further filter parameters for pharmacies
     /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
-    func searchPharmacies(
-        by searchTerm: String,
-        position: Position?,
-        filter: [PharmacyRemoteDataStoreFilter]
-    ) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error>
+    public var searchPharmacies: @Sendable (
+        _ searchTerm: String,
+        _ position: Position?,
+        _ filter: [PharmacyRepositoryFilter]
+    ) async throws -> [PharmacyLocation]
 
     /// Convenience function for requesting a certain pharmacy by ID
     ///
     /// - Parameters:
     ///   - telematikId: The Telematik-ID of the pharmacy to be requested
     /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
-    func fetchPharmacy(
-        by telematikId: String
-    ) -> AnyPublisher<PharmacyLocation?, PharmacyFHIRDataSource.Error>
-
-    /// Load certificates for a given `PharmacyLocation` id
-    ///
-    /// - Parameter locationId: id of `PharmacyLocation` from which to load the certificate
-    /// - Returns: Emits an array of certificates on success or fails with a `PharmacyFHIRDataSource.Error`
-    func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error>
-
-    /// Converts pharmacy filter into query parameters
-    ///
-    /// - Parameter filter: `PharmacyRepositoryFilter`s for filtering the pharmacy response
-    /// - Returns: Key / value query parameters to use in url requests
-    func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter]
+    public var fetchPharmacy: @Sendable (_ telematikId: String) async throws -> PharmacyLocation?
 
     /// Load `Insurance` by institution identifier (IK) from a remote (server).
     ///
     /// - Parameters:
     ///   - ikNumber: The institution (IK) identifier of the organization to be requested
     /// - Returns: `AnyPublisher` that emits the `TelematikId` or nil when not found
-    func fetchInsurance(
-        by ikNumber: String
-    ) -> AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error>
+    public var fetchInsurance: @Sendable (_ ikNumber: String) async throws -> Insurance?
 
     /// Loads an array of `Insurance` from a remote (server).
     ///
     /// - Parameters:
     /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
-    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error>
+    public var fetchAllInsurances: @Sendable () async throws -> [Insurance]
+
+    /// Loads an array of `Insurance` from a remote (server).
+    ///
+    /// - Parameters:
+    /// - Returns: `AnyPublisher` that emits array of `Insurance` or empty when nothing is found
+    public var fetchEuCountries: @Sendable () async throws -> [Country]
+}
+
+extension DependencyValues {
+    /// PharmacyRemoteDataStore
+    public var pharmacyRemoteDataStore: PharmacyRemoteDataStore {
+        get { self[PharmacyRemoteDataStore.self] }
+        set { self[PharmacyRemoteDataStore.self] = newValue }
+    }
+}
+
+extension PharmacyRemoteDataStore: TestDependencyKey {
+    public static let testValue: PharmacyRemoteDataStore = Self()
+}
+
+// sourcery: CodedError = "570"
+public enum PharmacyRemoteStoreError: Swift.Error, Equatable {
+    // sourcery: errorCode = "01"
+    case fhirClient(FHIRClient.Error)
+    // sourcery: errorCode = "02"
+    case notFound
 }

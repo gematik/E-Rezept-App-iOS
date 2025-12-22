@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import Foundation
 import OpenSSL
@@ -36,11 +37,12 @@ protocol VAUCertificate {
 extension VAUSession: VAUCertificateProvider {
     // [REQ:gemSpec_Krypt:A_21222#4|7] Vau Certificate provider
     func loadAndVerifyVauCertificate() -> AnyPublisher<VAUCertificate, VAUError> {
-        trustStoreSession.loadVauCertificate()
-            .first()
-            .mapError { $0.asVAUError() }
-            .map { X509VAUCertificate(x509: $0) }
-            .eraseToAnyPublisher()
+        Future {
+            let vauCertificate = try await self.trustStoreSession.vauCertificate()
+            return X509VAUCertificate(x509: vauCertificate)
+        }
+        .mapError { $0.asVAUError() }
+        .eraseToAnyPublisher()
     }
 }
 

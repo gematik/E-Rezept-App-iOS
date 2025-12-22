@@ -67,7 +67,7 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.footnote)
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
                 .buttonStyle(FooterButtonStyle())
                 .padding(.horizontal)
                 .padding(.bottom)

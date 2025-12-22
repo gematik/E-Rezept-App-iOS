@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import CombineSchedulers
 import CoreData
@@ -108,11 +109,11 @@ public class AVSTransactionCoreDataStore: AVSTransactionDataStore, CoreDataCruda
             .eraseToAnyPublisher()
     }
 
-    // sourcery: CodedError = "581"
+    @CodedError("581")
     public enum Error: Swift.Error {
-        // sourcery: errorCode = 01
+        @ErrorCode("01")
         case noMatchingEntity
-        // sourcery: errorCode = 02
+        @ErrorCode("02")
         case internalError
     }
 }

@@ -37,6 +37,7 @@ struct InsuranceDrawerView: View {
     let closeDrawerAction: () -> Void
     let gkvInsuredAction: () -> Void
     let pkvInsuredAction: () -> Void
+    let federalInsuredAction: () -> Void
 
     var body: some View {
         VStack(alignment: .center) {
@@ -55,7 +56,7 @@ struct InsuranceDrawerView: View {
                     .fontWeight(.semibold)
 
                 Text(root == .main ? L10n.mainInsuranceDrawerTxtFooter : L10n.stgInsuranceDrawerTxtFooter)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }.padding(.bottom, 24)
@@ -76,8 +77,22 @@ struct InsuranceDrawerView: View {
                         .foregroundColor(Colors.primary700)
                         .fontWeight(.semibold)
                 })
-                    .buttonStyle(.tertiary)
+                    .buttonStyle(.secondary)
                     .accessibility(identifier: A11y.welcomedrawer.wlcdBtnPkvUser)
+
+                Button(action: {
+                    federalInsuredAction()
+                }, label: {
+                    Label {
+                        Text(L10n.wlcdBtnFederalKv)
+                    } icon: {
+                        Image(systemName: SFSymbolName.chevronForward)
+                    }
+                    .labelStyle(.trailingIcon)
+                })
+                    .buttonStyle(.tertiary)
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
+                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnFederalkvUser)
             }
         }
         .frame(maxWidth: .infinity)
@@ -89,6 +104,6 @@ struct InsuranceDrawerView: View {
 
 #Preview {
     NavigationStack {
-        InsuranceDrawerView(root: .main) {} gkvInsuredAction: {} pkvInsuredAction: {}
+        InsuranceDrawerView(root: .main) {} gkvInsuredAction: {} pkvInsuredAction: {} federalInsuredAction: {}
     }
 }

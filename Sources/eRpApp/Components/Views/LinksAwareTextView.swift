@@ -54,7 +54,7 @@ struct LinksAwareTextView: UIViewRepresentable {
     func makeUIView(context _: Context) -> UITextView {
         let textView = NonSelectableTextView()
         textView.attributedText = attributedString
-        textView.textColor = UIColor(Colors.textSecondary)
+        textView.textColor = UIColor(Colors.systemLabelSecondary)
         textView.backgroundColor = UIColor.systemBackground
 
         return textView

@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import FeatureEURedeem
 import Perception
 import Pharmacy
 import SwiftUI
@@ -57,6 +58,14 @@ struct PharmacySearchView: View {
                             .padding(.horizontal)
                             .transition(.move(edge: .top).combined(with: .opacity))
 
+                        if store.isEURedeemable, !store.hideEURedeemHint {
+                            EURedeemHintView {
+                                store.send(.delegate(.euRedeemTapped))
+                            } closeAction: {
+                                store.send(.hideEuRedeemHint, animation: .easeOut)
+                            }
+                        }
+
                         NoResultsView()
                             .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
                             .padding(.horizontal, 30)
@@ -80,6 +89,13 @@ struct PharmacySearchView: View {
                                 .transition(.move(edge: .top)
                                     .combined(with: .opacity))
                         }, content: {
+                            if store.isEURedeemable, !store.hideEURedeemHint {
+                                EURedeemHintView {
+                                    store.send(.delegate(.euRedeemTapped))
+                                } closeAction: {
+                                    store.send(.hideEuRedeemHint, animation: .easeOut)
+                                }
+                            }
                             ResultsView(store: store)
                         })
 
@@ -352,7 +368,7 @@ extension PharmacySearchView {
                     .padding(.bottom, 1)
                 Text(L10n.phaSearchTxtNoResults)
                     .font(.subheadline)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
 
                 Spacer()
@@ -373,7 +389,7 @@ extension PharmacySearchView {
 
                 Text(L10n.phaSearchTxtErrorNoServerResponseSubheadline)
                     .font(.subheadline)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 1)
 

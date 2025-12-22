@@ -36,7 +36,7 @@ struct OptInCell: View {
                     Text(text, bundle: .module)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .font(.body)
-                        .foregroundColor(Colors.text)
+                        .foregroundColor(Colors.systemLabel)
 
                     Spacer()
 

@@ -172,7 +172,7 @@ extension PrescriptionDetailView {
                     .frame(width: 0, height: 0, alignment: .center)
                     .smallSheet($store
                         .scope(state: \.destination?.errorInfo, action: \.destination.errorInfo)) { _ in
-                            ErrorInfoDrawerView()
+                            ErrorInfoDrawerView(store: store)
                     }
                     .accessibility(hidden: true)
 
@@ -181,7 +181,7 @@ extension PrescriptionDetailView {
                     .smallSheet($store
                         .scope(state: \.destination?.scannedPrescriptionInfo,
                                action: \.destination.scannedPrescriptionInfo)) { _ in
-                            ScannedPrescriptionInfoDrawerView()
+                            ScannedPrescriptionInfoDrawerView(store: store)
                     }
                     .accessibility(hidden: true)
 
@@ -190,7 +190,7 @@ extension PrescriptionDetailView {
                     .smallSheet($store
                         .scope(state: \.destination?.directAssignmentInfo,
                                action: \.destination.directAssignmentInfo)) { _ in
-                            DirectAssignmentDrawerView()
+                            DirectAssignmentDrawerView(store: store)
                     }
                     .accessibility(hidden: true)
             }
@@ -199,8 +199,18 @@ extension PrescriptionDetailView {
         }
 
         struct DirectAssignmentDrawerView: View {
+            let store: StoreOf<PrescriptionDetailDomain>
+
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.setNavigation(tag: .none))
+                        }
+                    }
+
                     Text(L10n.davTxtDirectAssignmentTitle)
                         .font(.headline)
                         .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentTitle)
@@ -221,6 +231,14 @@ extension PrescriptionDetailView {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.delegate(.close))
+                        }
+                    }
+
                     Text(store.title)
                         .font(.headline)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerTitle)
@@ -239,8 +257,18 @@ extension PrescriptionDetailView {
         }
 
         struct ErrorInfoDrawerView: View {
+            let store: StoreOf<PrescriptionDetailDomain>
+
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.setNavigation(tag: .none))
+                        }
+                    }
+
                     Text(L10n.prscDtlDrErrorInfoTitle)
                         .font(.headline)
 
@@ -256,8 +284,18 @@ extension PrescriptionDetailView {
         }
 
         struct ScannedPrescriptionInfoDrawerView: View {
+            let store: StoreOf<PrescriptionDetailDomain>
+
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.setNavigation(tag: .none))
+                        }
+                    }
+
                     Text(L10n.prscDtlDrScannedPrescriptionInfoTitle)
                         .font(.headline)
 
@@ -277,6 +315,14 @@ extension PrescriptionDetailView {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        CloseButton {
+                            store.send(.delegate(.close))
+                        }
+                    }
+
                     Text(L10n.prscDtlDrPrescriptionValidityInfoTitle)
                         .font(.headline)
                         .padding(.vertical, 8)

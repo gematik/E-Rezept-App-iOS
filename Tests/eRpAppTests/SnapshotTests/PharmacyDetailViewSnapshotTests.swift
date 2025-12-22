@@ -78,6 +78,79 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibilityXL())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
+
+    func testPharmacyDetailWithSpecialClosing() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            let sut = PharmacyDetailView(
+                store: store(
+                    for: .init(
+                        prescriptions: Shared(value: []),
+                        selectedPrescriptions: Shared(value: []),
+                        inRedeemProcess: true,
+                        pharmacyViewModel: PharmacyLocationViewModel(
+                            pharmacy: PharmacyLocation.Fixtures.pharmacyF,
+                            referenceDate: TestDate.defaultReferenceDate
+                        )
+                    )
+                )
+            )
+
+            assertSnapshots(of: sut, as: snapshotModiOnDevices())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+        }
+    }
+
+    func testPharmacyDetailWithEmergencyService() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            let sut = PharmacyDetailView(
+                store: store(
+                    for: .init(
+                        prescriptions: Shared(value: []),
+                        selectedPrescriptions: Shared(value: []),
+                        inRedeemProcess: true,
+                        pharmacyViewModel: PharmacyLocationViewModel(
+                            pharmacy: PharmacyLocation.Fixtures.pharmacyK,
+                            referenceDate: TestDate.defaultReferenceDate
+                        )
+                    )
+                )
+            )
+
+            assertSnapshots(of: sut, as: snapshotModiOnDevices())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+        }
+    }
+
+    /// We should only see one special operation entry for each emergency and closing
+    func testPharmacyDetailWithOldSpecialOperationHours() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            let sut = PharmacyDetailView(
+                store: store(
+                    for: .init(
+                        prescriptions: Shared(value: []),
+                        selectedPrescriptions: Shared(value: []),
+                        inRedeemProcess: true,
+                        pharmacyViewModel: PharmacyLocationViewModel(
+                            pharmacy: PharmacyLocation.Fixtures.pharmacyI,
+                            referenceDate: TestDate.defaultReferenceDate
+                        )
+                    )
+                )
+            )
+
+            assertSnapshots(of: sut, as: snapshotModiOnDevices())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+            assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+        }
+    }
 }
 
 extension PharmacyDetailViewSnapshotTests {

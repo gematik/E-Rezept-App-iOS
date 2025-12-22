@@ -21,6 +21,8 @@
 //
 
 import ComposableArchitecture
+import eRpResources
+import FeatureHelpers
 import Foundation
 
 extension ExtAuthPendingDomain {

@@ -64,8 +64,8 @@ extension PrescriptionDetailView {
     enum Hints {
         static let activateInvoice = Hint<PrescriptionDetailDomain.Action>(
             id: A11y.prescriptionDetails.prscDtlHintPkvActivate,
-            title: L10n.prscDtlTxtPkvHintActivateTitle.text,
-            message: L10n.prscDtlTxtPkvHintActivateMsg.text,
+            title: L10n.prscDtlTxtPkvHintActivateTitle,
+            message: L10n.prscDtlTxtPkvHintActivateMsg,
             actionText: L10n.prscDtlBtnPkvHintActivate,
             actionImageName: SFSymbolName.arrowRight,
             image: AccessibilityImage(
@@ -77,8 +77,8 @@ extension PrescriptionDetailView {
 
         static let noInvoiceForTask = Hint<PrescriptionDetailDomain.Action>(
             id: A11y.prescriptionDetails.prscDtlHintPkvNoInvoice,
-            title: L10n.prscDtlTxtPkvHintNoInvoiceTitle.text,
-            message: L10n.prscDtlTxtPkvHintNoInvoiceMsg.text,
+            title: L10n.prscDtlTxtPkvHintNoInvoiceTitle,
+            message: L10n.prscDtlTxtPkvHintNoInvoiceMsg,
             image: AccessibilityImage(
                 asset: Asset.Prescriptions.Details.lampIcon,
                 accessibilityName: A11y.prescriptionDetails.prscDtlImgHintPkvNoInvoice

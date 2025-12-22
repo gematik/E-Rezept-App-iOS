@@ -26,7 +26,17 @@ import ComposableArchitecture
 @Reducer
 public struct InstructionsDomain {
     /// State for instructions screen
-    public struct State: Equatable {}
+    @ObservableState
+    public struct State: Equatable {
+        /// First time redeeming shows instructions with redeem button
+        public var isRedeeming: Bool
+
+        public init(
+            isRedeeming: Bool = false
+        ) {
+            self.isRedeeming = isRedeeming
+        }
+    }
 
     /// Actions for instructions screen
     @CasePathable
@@ -36,6 +46,7 @@ public struct InstructionsDomain {
 
         /// Delegate actions
         public enum Delegate: Equatable {
+            case close
             /// Continue button was tapped
             case continueButtonTapped
         }

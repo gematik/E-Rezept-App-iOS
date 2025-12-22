@@ -22,6 +22,7 @@
 
 import Combine
 import Dependencies
+import eRpResources
 import Foundation
 
 protocol Tracker: AnyObject {

@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Combine
 import CombineSchedulers
 import CoreData
@@ -113,21 +114,21 @@ public class MigrationManager: ModelMigrating {
     }
 }
 
-// sourcery: CodedError = "501"
+@CodedError("501")
 public enum MigrationError: Swift.Error, LocalizedError, Equatable {
-    // sourcery: errorCode = "01"
+    @ErrorCode("01")
     case isLatestVersion
-    // sourcery: errorCode = "02"
+    @ErrorCode("02")
     case missingProfile
-    // sourcery: errorCode = "03"
+    @ErrorCode("03")
     case write(error: Swift.Error)
-    // sourcery: errorCode = "04"
+    @ErrorCode("04")
     case read(error: Swift.Error)
-    // sourcery: errorCode = "05"
+    @ErrorCode("05")
     case delete(error: Swift.Error)
-    // sourcery: errorCode = "06"
+    @ErrorCode("06")
     case unspecified(error: Swift.Error)
-    // sourcery: errorCode = "07"
+    @ErrorCode("07")
     case initialization(error: Swift.Error)
 
     public var errorDescription: String? {
@@ -179,7 +180,7 @@ extension MigrationManager: CoreDataCrudable {
                     return Empty(completeImmediately: true).eraseToAnyPublisher()
                 }
                 var scannedTasks: [ErxTask] = []
-                return self.erxTaskDataStore.listAllTasks()
+                return self.erxTaskDataStore.listAllTasks(of: nil)
                     .first()
                     .map { tasks -> [Profile] in
                         Dictionary(grouping: tasks) { $0.patient?.name }

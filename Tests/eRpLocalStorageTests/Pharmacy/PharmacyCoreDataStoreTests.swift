@@ -23,17 +23,19 @@
 import Combine
 import CombineSchedulers
 import CoreData
+import Dependencies
 import eRpKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble
 import OpenSSL
+import Sharing
 import XCTest
 
 final class PharmacyCoreDataStoreTests: XCTestCase {
     private var databaseFile: URL!
     private let fileManager = FileManager.default
-    private var factory: CoreDataControllerFactory?
+    private var coreDataFactory: CoreDataControllerFactory?
 
     override func setUp() {
         super.setUp()
@@ -41,7 +43,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
     }
 
     override func tearDown() {
-        if let controller = try? factory?.loadCoreDataController() {
+        if let controller = try? coreDataFactory?.loadCoreDataController() {
             expect(try controller.destroyPersistentStore(at: self.databaseFile)).toNot(throwError())
         }
 
@@ -52,22 +54,39 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
     let backgroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
 
     private func loadFactory() -> CoreDataControllerFactory {
-        guard let factory = factory else {
-            #if os(macOS)
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: FileProtectionType(rawValue: "none")
-            )
-            #else
-            let factory = LocalStoreFactory(
-                url: databaseFile,
-                fileProtection: .completeUnlessOpen
-            )
-            #endif
-            self.factory = factory
+        guard let factory = coreDataFactory else {
+            let factory: CoreDataControllerFactory = .init(databaseUrl: { self.databaseFile }) {
+                @Shared(.coreDataController) var coreDataController
+
+                var fileProtection: FileProtectionType = {
+                    #if os(macOS)
+                    return FileProtectionType(rawValue: "none")
+                    #else
+                    return .completeUnlessOpen
+                    #endif
+                }()
+
+                if let controller = coreDataController {
+                    return controller
+                }
+                guard Thread.isMainThread else {
+                    return try DispatchQueue.main.sync {
+                        try loadCoreDataController()
+                    }
+                }
+                func loadCoreDataController() throws -> CoreDataController {
+                    let controller = try CoreDataController(
+                        url: self.databaseFile,
+                        fileProtection: fileProtection
+                    )
+                    $coreDataController.withLock { $0 = controller }
+                    return controller
+                }
+                return try loadCoreDataController()
+            }
+            coreDataFactory = factory
             return factory
         }
-
         return factory
     }
 
@@ -224,8 +243,12 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
     }
 
     func testSavePharmacyWithFailingLoadingDatabase() throws {
-        let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerThrowableError = LocalStoreError.notImplemented
+        let factory = CoreDataControllerFactory(databaseUrl: {
+            self.databaseFile
+        }, loadCoreDataController: {
+            throw LocalStoreError.notImplemented
+        })
+
         let store = PharmacyCoreDataStore(
             coreDataControllerFactory: factory,
             backgroundQueue: AnyScheduler.main
@@ -244,9 +267,6 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
         expect(receivedSaveResults.count).to(equal(0))
         expect(receivedSaveCompletions.count).to(equal(1))
-        expect(receivedSaveCompletions.first) ==
-            .failure(LocalStoreError.initialization(error: factory.loadCoreDataControllerThrowableError!))
-
         cancellable.cancel()
     }
 

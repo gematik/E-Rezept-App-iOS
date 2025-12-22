@@ -21,9 +21,12 @@
 //
 
 import CasePaths
+import CodedError
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
 import IDP
 
@@ -102,9 +105,9 @@ struct RegisteredDevicesDomain {
         }
     }
 
-    // sourcery: CodedError = "017"
+    @CodedError("017")
     enum Error: Swift.Error, Equatable {
-        // sourcery: errorCode = "01"
+        @ErrorCode("01")
         case generic(String)
     }
 
@@ -271,7 +274,7 @@ extension RegisteredDevicesDomain {
         )
         static let cardWallState = State(
             profileId: UUID(),
-            destination: .cardWallCAN(.init(isDemoModus: false, profileId: UUID(), can: ""))
+            destination: .cardWallCAN(.init(profileId: UUID(), can: ""))
         )
 
         static let store = store(for: state)

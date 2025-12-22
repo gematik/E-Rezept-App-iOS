@@ -72,7 +72,7 @@ struct DeviceSecurityRootedDeviceView: View {
                             VStack(alignment: .leading) {
                                 Text(L10n.secTxtSystemRootDetectionFootnote)
                                     .font(.footnote)
-                                    .foregroundColor(Color(.secondaryLabel))
+                                    .foregroundColor(Colors.systemLabelSecondary)
                                     .accessibility(identifier: A11y.security.secTxtSystemRootDetectionFootnote)
                                     .fixedSize(horizontal: false, vertical: true)
 
@@ -103,15 +103,14 @@ struct DeviceSecurityRootedDeviceView: View {
 
             GreyDivider()
 
-            PrimaryTextButton(
-                text: L10n.secBtnSystemRootDetectionDone,
-                a11y: A11y.security.secBtnSystemRootDetectionDone,
-                image: nil,
-                isEnabled: ignoreWarning
-            ) {
+            Button {
                 action()
+            } label: {
+                Label(L10n.secBtnSystemRootDetectionDone)
             }
-            .padding()
+            .buttonStyle(.primary(isEnabled: ignoreWarning))
+            .accessibilityIdentifier(A11y.security.secBtnSystemRootDetectionDone)
+            .padding(.vertical)
         }
     }
 }

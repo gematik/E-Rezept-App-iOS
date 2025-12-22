@@ -20,6 +20,8 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
+import ConsentService
 import Dependencies
 import DependenciesMacros
 import Foundation
@@ -40,7 +42,7 @@ struct DrawerEvaluation {
 extension DrawerEvaluation: DependencyKey {
     static var liveValue: DrawerEvaluation = .init {
         @Dependency(\.userSession) var userSession: UserSession
-        @Dependency(\.chargeItemConsentService) var chargeItemConsentService: ChargeItemConsentService
+        @Dependency(\.consentService) var consentService: ConsentService
 
         do {
             let profile = try await userSession.profile().async(\MainDomain.Error.Cases.localStoreError)
@@ -51,11 +53,11 @@ extension DrawerEvaluation: DependencyKey {
             }
 
             // show consent drawer?
-            if profile.insuranceType == .pKV,
+            if profile.insuranceType.canReceiveChargeItems,
                profile.hidePkvConsentDrawerOnMainView == false,
                // Only if the service responded successfully that the consent has not been granted yet
                // (== .success(false)) we want to show the consent drawer. Otherwise we don't.
-               case .notGranted = try await chargeItemConsentService.checkForConsent(profile.id) {
+               case .notGranted = try await consentService.checkForConsent(.chargcons, profile.id) {
                 return .consentDrawer
             }
         } catch {

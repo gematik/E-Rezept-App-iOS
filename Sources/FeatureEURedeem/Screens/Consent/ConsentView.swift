@@ -39,19 +39,19 @@ public struct ConsentView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     Text(L10n.euredeemConsentTitle)
                         .font(.title.weight(.bold))
-                        .foregroundColor(Colors.text)
+                        .foregroundColor(Colors.systemLabel)
                         .padding(.bottom, 8)
                         .accessibilityIdentifier("eu_consent_title")
 
                     VStack(alignment: .leading, spacing: 24) {
                         Text(L10n.euredeemConsentDescription1)
                             .font(.subheadline)
-                            .foregroundColor(Colors.textSecondary)
+                            .foregroundColor(Colors.systemLabelSecondary)
                             .accessibilityIdentifier("eu_consent_description_1")
 
                         Text(L10n.euredeemConsentDescription2)
                             .font(.subheadline)
-                            .foregroundColor(Colors.textSecondary)
+                            .foregroundColor(Colors.systemLabelSecondary)
                             .accessibilityIdentifier("eu_consent_description_2")
                     }
                 }
@@ -63,7 +63,7 @@ public struct ConsentView: View {
                 // Info text
                 Text(L10n.euredeemConsentInfoText)
                     .font(.subheadline)
-                    .foregroundColor(Colors.textSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
                     .padding(.bottom, 24)

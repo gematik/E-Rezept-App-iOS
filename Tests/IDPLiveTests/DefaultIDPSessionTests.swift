@@ -21,6 +21,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import Combine
 import CombineSchedulers
 import CryptoKit
@@ -34,7 +35,7 @@ import TrustStore
 import XCTest
 
 final class DefaultIDPSessionTests: XCTestCase {
-    var trustStoreSessionMock: MockTrustStoreSession!
+    var trustStoreSessionMock: TrustStoreSessionMock!
 
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -85,7 +86,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }()
 
     var idpClientMock: MockIDPClient!
-    var schedulers: TestSchedulers!
+    var schedulers: Schedulers!
     var storage: MemStorage!
     var sut: DefaultIDPSession!
     var extAuthRequestStorageMock: MockExtAuthRequestStorage!
@@ -117,11 +118,10 @@ final class DefaultIDPSessionTests: XCTestCase {
         storage = MemStorage()
         storage.set(discovery: discoveryDocument)
 
-        schedulers = TestSchedulers()
+        schedulers = Schedulers.immediate
 
-        trustStoreSessionMock = MockTrustStoreSession()
-        trustStoreSessionMock.validateCertificateReturnValue = Just(true).setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+        trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = true
 
         extAuthRequestStorageMock = MockExtAuthRequestStorage()
 
@@ -135,34 +135,34 @@ final class DefaultIDPSessionTests: XCTestCase {
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#10] Testing the implementation
-    func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() {
-        trustStoreSessionMock.validateCertificateReturnValue = Just(false).setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+    @MainActor func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async {
+        let trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = false
         let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         let storage = MemStorage()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         storage.set(discovery: discoveryDocument(createdOn: issuedDate))
 
-        // sut: IDPSession is not stored as we test its internals
-        _ = DefaultIDPSession(
+        let session = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
-        expect(storage.discoveryDocumentState).to(beNil())
-        expect(self.trustStoreSessionMock.validateCertificateCallsCount).to(equal(2))
+        await expect(storage.discoveryDocumentState).toEventually(beNil())
+        expect(trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(1))
+
+        _ = session
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#11] Testing the implementation
     func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreFailsValidation() {
-        trustStoreSessionMock.validateCertificateReturnValue = Just(false).setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+        trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = false
         let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         idpClientMock.discoveryDocument = discoveryDocument(createdOn: issuedDate)
@@ -173,63 +173,65 @@ final class DefaultIDPSessionTests: XCTestCase {
         _ = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
-        expect(self.trustStoreSessionMock.validateCertificateCallsCount).to(equal(2))
+        expect(self.trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(1))
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#12] Testing the implementation
     func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreThrows() {
-        trustStoreSessionMock.validateCertificateReturnValue = Fail(error: TrustStoreError.invalidOCSPResponse)
-            .eraseToAnyPublisher()
+        let trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateEeCertificateX509BoolThrowableError = TrustStoreError.invalidOCSPResponse
         let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         let storage = MemStorage()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         storage.set(discovery: discoveryDocument(createdOn: issuedDate))
 
-        // sut: IDPSession is not stored as we test its internals
-        _ = DefaultIDPSession(
+        let sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
-        expect(storage.discoveryDocumentState).to(beNil())
-        expect(self.trustStoreSessionMock.validateCertificateCallsCount).to(equal(2))
+        expect(storage.discoveryDocumentState).toEventually(beNil())
+        expect(trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(1))
+
+        _ = sut
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#13] Testing the implementation
-    func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() {
-        trustStoreSessionMock.validateCertificateReturnValue = Fail(error: TrustStoreError.invalidOCSPResponse)
-            .eraseToAnyPublisher()
+    @MainActor func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async {
+        let trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateEeCertificateX509BoolThrowableError = TrustStoreError.invalidOCSPResponse
         let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         idpClientMock.discoveryDocument = discoveryDocument(createdOn: issuedDate)
         let storage = MemStorage()
         storage.set(discovery: nil)
 
-        // sut: IDPSession is not stored as we test its internals
-        _ = DefaultIDPSession(
+        let sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
-        expect(self.trustStoreSessionMock.validateCertificateCallsCount).to(equal(2))
+        expect(trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(1))
+
+        _ = sut
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
@@ -247,19 +249,21 @@ final class DefaultIDPSessionTests: XCTestCase {
         _ = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState) == discoveryDocument
-        expect(self.trustStoreSessionMock.validateCertificateCallsCount).to(equal(2))
+        expect(self.trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(2))
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#15] Testing the implementation
-    func testLoadDiscoveryDocumentFromRemoteOnInit() {
+    @MainActor func testLoadDiscoveryDocumentFromRemoteOnInit() async {
+        let trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = true
         let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
@@ -267,17 +271,18 @@ final class DefaultIDPSessionTests: XCTestCase {
         let storage = MemStorage()
         storage.set(discovery: nil)
 
-        // sut: IDPSession is not stored as we test its internals
-        _ = DefaultIDPSession(
+        let sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
-        expect(storage.discoveryDocumentState) == discoveryDocument
-        expect(self.trustStoreSessionMock.validateCertificateCallsCount).to(equal(2))
+        await expect(storage.discoveryDocumentState).toEventually(equal(discoveryDocument))
+        await expect(trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).toEventually(equal(2))
+
+        _ = sut
     }
 
     func testInvalidateLoadDiscoveryDocumentOnInit() {
@@ -289,7 +294,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         _ = DefaultIDPSession( // swiftlint:disable:this trailing_closure
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock,
             time: { Date.distantPast }
@@ -315,7 +320,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let dateProvider = {
             currentDate
         }
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
 
         let sut = DefaultIDPSession(client: idpClientMock,
                                     storage: storage,
@@ -335,7 +340,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         })
     }
 
-    func testInvalidateStoredDocumentWhenExpired() throws {
+    @MainActor func testInvalidateStoredDocumentWhenExpired() async throws {
         let idpClientMock = MockIDPClient()
         // Date provider provides a date that should invalidate the DiscoveryDocument when reading from IDPStorage
         // But provide a date that would validate the (same) document when coming from the IDPClient
@@ -355,7 +360,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             }
         }
 
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
         var receivedDocuments = [DiscoveryDocument?]()
         let storageCancellable = storage.discoveryDocument // swiftlint:disable:this trailing_closure
             .receive(on: DispatchQueue.immediate)
@@ -363,22 +368,24 @@ final class DefaultIDPSessionTests: XCTestCase {
                 receivedDocuments.append(document)
             })
 
-        // sut: IDPSession is not stored as we test its internals
-        _ = DefaultIDPSession(client: idpClientMock,
-                              storage: storage,
-                              schedulers: schedulers,
-                              trustStoreSession: trustStoreSessionMock,
-                              extAuthRequestStorage: extAuthRequestStorageMock,
-                              time: dateProvider)
+        let sut = DefaultIDPSession(client: idpClientMock,
+                                    storage: storage,
+                                    schedulers: schedulers,
+                                    trustStoreSession: trustStoreSessionMock,
+                                    extAuthRequestStorage: extAuthRequestStorageMock,
+                                    time: dateProvider)
 
-        expect(storage.discoveryDocumentState) == discoveryDocument
+        await expect(storage.discoveryDocumentState).toEventually(equal(discoveryDocument))
         expect(receivedDocuments) == [discoveryDocument, nil, discoveryDocument]
         expect(calls) == 3
 
         storageCancellable.cancel()
+        _ = sut
     }
 
-    func testRequestChallenge() {
+    @MainActor func testRequestChallenge() async {
+        let trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = true
         let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         idpClientMock.requestChallenge_Publisher = Just(challengeDocument)
@@ -409,7 +416,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         }
 
         let timerScheduler = DispatchQueue.test
-        let schedulers = TestSchedulers(compute: timerScheduler.eraseToAnyScheduler())
+        let schedulers = Schedulers(computeScheduler: timerScheduler.eraseToAnyScheduler())
         let verifierLength = 13
         let nonceLength = 10
         let stateLength = 17
@@ -438,7 +445,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                 receivedChallenges.append(value)
             })
 
-        expect(randomGeneratorCalls) == 3
+        await expect(randomGeneratorCalls).toEventually(equal(3))
         if randomGeneratorCalls == 3 {
             expect(randomGeneratorParams[0]) == verifierLength
             expect(randomGeneratorParams[1]) == stateLength
@@ -458,7 +465,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         }
 
         let expInterval = challengeExpirationDate.timeIntervalSince(nowDate)
-        timerScheduler.advance(by: .init(floatLiteral: expInterval + 1))
+        await timerScheduler.advance(by: .init(floatLiteral: expInterval + 1))
 
         expect(randomGeneratorCalls) == 6
         if randomGeneratorCalls == 6 {
@@ -480,6 +487,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         }
 
         cancellable.cancel()
+        _ = sut
     }
 
     func testRequestChallengeInvalidSignature() throws {
@@ -495,7 +503,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
-            schedulers: TestSchedulers(),
+            schedulers: Schedulers.immediate,
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock,
             time: { issuedDate }
@@ -516,7 +524,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let dateProvider: TimeProvider = {
             issuedDate
         }
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
         let expectedToken = IDPExchangeToken(
             code: "exchange-token",
             sso: "sso-token",
@@ -590,7 +598,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let dateProvider: TimeProvider = {
             issuedDate
         }
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
         let expirationInterval = 300
 
         // encrypted token payload (send by the client)
@@ -667,7 +675,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             dateProviderDate
         }
 
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
         let expirationInterval = 300
         let tokenPayload = TokenPayload(
             accessToken: encryptedTokenPayload.accessToken,
@@ -762,7 +770,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             dateProviderDate
         }
 
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
 
         let initialToken = IDPToken(
             // swiftlint:disable:next line_length
@@ -845,7 +853,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             dateProviderDate
         }
 
-        let schedulers = TestSchedulers()
+        let schedulers = Schedulers.immediate
 
         let storage = MemStorage()
         storage.set(discovery: discoveryDocument)

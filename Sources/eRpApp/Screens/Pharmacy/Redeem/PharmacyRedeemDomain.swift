@@ -20,10 +20,15 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import AsyncHelpers
 import AVS
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpLocalStorage
+import eRpResources
+import FeatureCardWall
+import FeatureHelpers
 import FHIRClient
 import HTTPClient
 import IdentifiedCollections
@@ -61,6 +66,8 @@ struct PharmacyRedeemDomain {
     struct State: Equatable {
         @Shared var prescriptions: [Prescription]
         @Shared var selectedPrescriptions: [Prescription]
+        @Shared(.selectedProfileId) var profileId
+
         var pharmacy: PharmacyLocation?
         var serviceOption: RedeemServiceOption?
         var redeemInProgress = false
@@ -92,7 +99,8 @@ struct PharmacyRedeemDomain {
             orderResponses: IdentifiedArrayOf<OrderResponse> = [],
             profile: Profile? = nil,
             serviceOptionState: ServiceOptionDomain.State? = nil,
-            destination: Destination.State? = nil
+            destination: Destination.State? = nil,
+            hasCompleteContactData: Bool = false
         ) {
             _prescriptions = prescriptions
             _selectedPrescriptions = selectedPrescriptions
@@ -104,6 +112,7 @@ struct PharmacyRedeemDomain {
             self.profile = profile
             self.serviceOptionState = serviceOptionState ?? .init(prescriptions: prescriptions)
             self.destination = destination
+            self.hasCompleteContactData = hasCompleteContactData
         }
 
         var hasCompleteContactData = false
@@ -270,26 +279,32 @@ struct PharmacyRedeemDomain {
             }
             state.redeemInProgress = true
 
-            return .run { [orderRequests = state.orders, serviceOption = state.serviceOption] send in
-                do {
-                    switch serviceOption {
-                    case .avs:
-                        let orderResponses = try await redeemOrderService.redeemViaAVS(orderRequests)
-                        await send(.redeemReceived(.success(orderResponses)))
-                    case .erxTaskRepository, .erxTaskRepositoryAvailable:
-                        let orderResponses = try await redeemOrderService
-                            .redeemViaErxTaskRepository(orderRequests)
-                        await send(.redeemReceived(.success(orderResponses)))
-                    case .noService, .none:
-                        break
-                    }
-                } catch RedeemServiceError.noTokenAvailable,
-                    RedeemOrderServiceError.redeem(.noTokenAvailable) {
-                    await send(.showCardWall)
-                } catch let RedeemOrderServiceError.redeem(error),
-                            let error as RedeemServiceError {
-                    await send(.redeemReceived(.failure(error)))
+            // swiftlint:disable closure_parameter_position
+            return .run { [
+                orderRequests = state.orders,
+                serviceOption = state.serviceOption,
+                profileId = state.profileId,
+            ] send in
+            // swiftlint:enable closure_parameter_position
+            do {
+                switch serviceOption {
+                case .avs:
+                    let orderResponses = try await redeemOrderService.redeemViaAVS(orderRequests, profileId)
+                    await send(.redeemReceived(.success(orderResponses)))
+                case .erxTaskRepository, .erxTaskRepositoryAvailable:
+                    let orderResponses = try await redeemOrderService
+                        .redeemViaErxTaskRepository(orderRequests, profileId)
+                    await send(.redeemReceived(.success(orderResponses)))
+                case .noService, .none:
+                    break
                 }
+            } catch RedeemServiceError.noTokenAvailable,
+                RedeemOrderServiceError.redeem(.noTokenAvailable) {
+                await send(.showCardWall)
+            } catch let RedeemOrderServiceError.redeem(error),
+                        let error as RedeemServiceError {
+                await send(.redeemReceived(.failure(error)))
+            }
             }
         case let .redeemReceived(.success(orderResponses)):
             guard let redeemOption = state.serviceOptionState.selectedOption,
@@ -304,7 +319,7 @@ struct PharmacyRedeemDomain {
                 state.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: redeemOption))
             }
             return .run { _ in
-                _ = try await save(pharmacy: pharmacy).async()
+                _ = try await save(pharmacy: pharmacy)
             }
         case let .redeemReceived(.failure(error)):
             guard let pharmacy = state.pharmacy
@@ -341,7 +356,7 @@ struct PharmacyRedeemDomain {
             }
 
             return .run { _ in
-                for try await _ in save(pharmacy: pharmacy).values {}
+                _ = try await save(pharmacy: pharmacy)
             }
         case .destination(.presented(.redeemSuccess(.delegate(.close)))),
              .destination(.presented(.alert(.closeRedeem))):
@@ -447,14 +462,11 @@ extension PharmacyRedeemDomain {
 }
 
 extension PharmacyRedeemDomain {
-    func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+    func save(pharmacy: PharmacyLocation) async throws -> Bool {
         var pharmacy = pharmacy
         pharmacy.lastUsed = Date()
         pharmacy.countUsage += 1
-        return pharmacyRepository.save(pharmacy: pharmacy)
-            .first()
-            .receive(on: schedulers.main)
-            .eraseToAnyPublisher()
+        return try await pharmacyRepository.save(pharmacy: pharmacy)
     }
 
     func validateContactData(
@@ -553,20 +565,6 @@ extension RedeemInputValidator {
 
 extension PharmacyRedeemDomain {
     enum Dummies {
-        static let address1 = PharmacyLocation.Address(
-            street: "Hinter der Bahn",
-            houseNumber: "6",
-            zip: "12345",
-            city: "Buxtehude"
-        )
-
-        static let telecom = PharmacyLocation.Telecom(
-            phone: "555-Schuh",
-            fax: "555-123456",
-            email: "info@gematik.de",
-            web: "http://www.gematik.de"
-        )
-
         static let pharmacy = PharmacyLocation.Dummies.pharmacy
         static let prescriptions = [Prescription.Dummies.prescriptionReady]
 
