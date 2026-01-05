@@ -1,0 +1,3223 @@
+{
+  "summary": {
+    "total_files": 71,
+    "total_enums": 84,
+    "total_cases": 351,
+    "generated_at": "2025-12-22T13:40:23+01:00"
+  },
+  "errors": [
+    {
+      "code": "540",
+      "name": "AVSError",
+      "qualified_name": "AVSError",
+      "documentation": "",
+      "file": "AVS/AVSError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "54001",
+          "name": "network",
+          "qualified_name": "AVSError.network",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "54002",
+          "name": "invalidAVSMessageInput",
+          "qualified_name": "AVSError.invalidAVSMessageInput",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "54003",
+          "name": "invalidX509Input",
+          "qualified_name": "AVSError.invalidX509Input",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "54004",
+          "name": "unspecified",
+          "qualified_name": "AVSError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "54005",
+          "name": "`internal`",
+          "qualified_name": "AVSError.`internal`",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "541",
+      "name": "InternalError",
+      "qualified_name": "AVSError.InternalError",
+      "documentation": "",
+      "file": "AVS/AVSError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "54101",
+          "name": "cmsContentCreation",
+          "qualified_name": "AVSError.InternalError.cmsContentCreation",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "301",
+      "name": "BfArMError",
+      "qualified_name": "BfArMError",
+      "documentation": "",
+      "file": "BfArM/BfArMError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "30101",
+          "name": "network",
+          "qualified_name": "BfArMError.network",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "30102",
+          "name": "decoding",
+          "qualified_name": "BfArMError.decoding",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "30103",
+          "name": "invalidAssetLink",
+          "qualified_name": "BfArMError.invalidAssetLink",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "30104",
+          "name": "unspecified",
+          "qualified_name": "BfArMError.unspecified",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "041",
+      "name": "Error",
+      "qualified_name": "ConsentService.Error",
+      "documentation": "",
+      "file": "ConsentService/ConsentService+Error.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04101",
+          "name": "localStore",
+          "qualified_name": "ConsentService.Error.localStore",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "04102",
+          "name": "loginHandler",
+          "qualified_name": "ConsentService.Error.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "04103",
+          "name": "erxRepository",
+          "qualified_name": "ConsentService.Error.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "04104",
+          "name": "unexpectedGrantConsentResponse",
+          "qualified_name": "ConsentService.Error.unexpectedGrantConsentResponse",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "04105",
+          "name": "unexpected",
+          "qualified_name": "ConsentService.Error.unexpected",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "04106",
+          "name": "unexpectedRevokeConsentResponse",
+          "qualified_name": "ConsentService.Error.unexpectedRevokeConsentResponse",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "520",
+      "name": "Error",
+      "qualified_name": "FHIRClient.Error",
+      "documentation": "Error cases when using the `FHIRClient`",
+      "file": "FHIRClient/FHIRClient.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "52001",
+          "name": "internalError",
+          "qualified_name": "FHIRClient.Error.internalError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "52004",
+          "name": "inconsistentResponse",
+          "qualified_name": "FHIRClient.Error.inconsistentResponse",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "52005",
+          "name": "decoding",
+          "qualified_name": "FHIRClient.Error.decoding",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "52006",
+          "name": "unknown",
+          "qualified_name": "FHIRClient.Error.unknown",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "52007",
+          "name": "http",
+          "qualified_name": "FHIRClient.Error.http",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "300",
+      "name": "FHIRVZDError",
+      "qualified_name": "FHIRVZDError",
+      "documentation": "",
+      "file": "FHIRVZD/Models/FHIRVZDError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "30001",
+          "name": "network",
+          "qualified_name": "FHIRVZDError.network",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "30002",
+          "name": "tokenUnavailable",
+          "qualified_name": "FHIRVZDError.tokenUnavailable",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "30003",
+          "name": "decoding",
+          "qualified_name": "FHIRVZDError.decoding",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "30004",
+          "name": "unspecified",
+          "qualified_name": "FHIRVZDError.unspecified",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "610",
+      "name": "HealthcareServiceBundleParsingError",
+      "qualified_name": "HealthcareServiceBundleParsingError",
+      "documentation": "",
+      "file": "FHIRVZD/ModelsR4.Bundle+HealthcareService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "61001",
+          "name": "parseError",
+          "qualified_name": "HealthcareServiceBundleParsingError.parseError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "012",
+      "name": "Error",
+      "qualified_name": "CardWallExtAuthConfirmationDomain.Error",
+      "documentation": "",
+      "file": "FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01201",
+          "name": "idpError",
+          "qualified_name": "CardWallExtAuthConfirmationDomain.Error.idpError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01202",
+          "name": "universalLinkFailed",
+          "qualified_name": "CardWallExtAuthConfirmationDomain.Error.universalLinkFailed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "029",
+      "name": "Error",
+      "qualified_name": "CardWallIntroductionDomain.Error",
+      "documentation": "",
+      "file": "FeatureCardWall/Introduction/CardWallIntroductionDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02901",
+          "name": "idpError",
+          "qualified_name": "CardWallIntroductionDomain.Error.idpError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02902",
+          "name": "universalLinkFailed",
+          "qualified_name": "CardWallIntroductionDomain.Error.universalLinkFailed",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02903",
+          "name": "kkNotFound",
+          "qualified_name": "CardWallIntroductionDomain.Error.kkNotFound",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "010",
+      "name": "Error",
+      "qualified_name": "CardWallReadCardDomain.State.Error",
+      "documentation": "",
+      "file": "FeatureCardWall/ReadCard/CardWallReadCardDomain.State+Helper.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01001",
+          "name": "idpError",
+          "qualified_name": "CardWallReadCardDomain.State.Error.idpError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01002",
+          "name": "inputError",
+          "qualified_name": "CardWallReadCardDomain.State.Error.inputError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "01003",
+          "name": "signChallengeError",
+          "qualified_name": "CardWallReadCardDomain.State.Error.signChallengeError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "01004",
+          "name": "biometrieError",
+          "qualified_name": "CardWallReadCardDomain.State.Error.biometrieError",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "01005",
+          "name": "profileValidation",
+          "qualified_name": "CardWallReadCardDomain.State.Error.profileValidation",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "011",
+      "name": "InputError",
+      "qualified_name": "Error.InputError",
+      "documentation": "User input error",
+      "file": "FeatureCardWall/ReadCard/CardWallReadCardDomain.State+Helper.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01101",
+          "name": "missingPIN",
+          "qualified_name": "Error.InputError.missingPIN",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01102",
+          "name": "missingCAN",
+          "qualified_name": "Error.InputError.missingCAN",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "013",
+      "name": "LoginHandlerError",
+      "qualified_name": "LoginHandlerError",
+      "documentation": "",
+      "file": "FeatureCardWall/ReadCard/LoginHandler.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01301",
+          "name": "biometrieFailed",
+          "qualified_name": "LoginHandlerError.biometrieFailed",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01302",
+          "name": "biometrieFatal",
+          "qualified_name": "LoginHandlerError.biometrieFatal",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "01303",
+          "name": "ssoFailed",
+          "qualified_name": "LoginHandlerError.ssoFailed",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "01304",
+          "name": "ssoExpired",
+          "qualified_name": "LoginHandlerError.ssoExpired",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "01305",
+          "name": "idpError",
+          "qualified_name": "LoginHandlerError.idpError",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "01306",
+          "name": "network",
+          "qualified_name": "LoginHandlerError.network",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "004",
+      "name": "NFCSignatureProviderError",
+      "qualified_name": "NFCSignatureProviderError",
+      "documentation": "",
+      "file": "FeatureCardWall/ReadCard/NFCSignatureProvider.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00401",
+          "name": "cardError",
+          "qualified_name": "NFCSignatureProviderError.cardError",
+          "documentation": "Error while establishing a connection to the card"
+        },
+        {
+          "code": "03",
+          "full_id": "00403",
+          "name": "wrongCAN",
+          "qualified_name": "NFCSignatureProviderError.wrongCAN",
+          "documentation": "Error while verifying the CAN"
+        },
+        {
+          "code": "04",
+          "full_id": "00404",
+          "name": "cardConnectionError",
+          "qualified_name": "NFCSignatureProviderError.cardConnectionError",
+          "documentation": "Error while establishing Secure channel or card connection"
+        },
+        {
+          "code": "05",
+          "full_id": "00405",
+          "name": "verifyCardError",
+          "qualified_name": "NFCSignatureProviderError.verifyCardError",
+          "documentation": "Any error related to PIN verification"
+        },
+        {
+          "code": "06",
+          "full_id": "00406",
+          "name": "signingFailure",
+          "qualified_name": "NFCSignatureProviderError.signingFailure",
+          "documentation": "ESIGN Failed"
+        },
+        {
+          "code": "07",
+          "full_id": "00407",
+          "name": "wrongPin",
+          "qualified_name": "NFCSignatureProviderError.wrongPin",
+          "documentation": "Wrong pin while opening secure channel"
+        },
+        {
+          "code": "08",
+          "full_id": "00408",
+          "name": "genericError",
+          "qualified_name": "NFCSignatureProviderError.genericError",
+          "documentation": "Generic error while trying to sign the challenge"
+        },
+        {
+          "code": "09",
+          "full_id": "00409",
+          "name": "cardReadingError",
+          "qualified_name": "NFCSignatureProviderError.cardReadingError",
+          "documentation": "Generic error while reading something from the card"
+        },
+        {
+          "code": "10",
+          "full_id": "00410",
+          "name": "secureEnclaveError",
+          "qualified_name": "NFCSignatureProviderError.secureEnclaveError",
+          "documentation": "Generic error while reading something from the card"
+        },
+        {
+          "code": "11",
+          "full_id": "00411",
+          "name": "nfcHealthCardSession",
+          "qualified_name": "NFCSignatureProviderError.nfcHealthCardSession",
+          "documentation": "Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)"
+        }
+      ]
+    },
+    {
+      "code": "005",
+      "name": "SigningError",
+      "qualified_name": "NFCSignatureProviderError.SigningError",
+      "documentation": "",
+      "file": "FeatureCardWall/ReadCard/NFCSignatureProvider.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00501",
+          "name": "unsupportedAlgorithm",
+          "qualified_name": "NFCSignatureProviderError.SigningError.unsupportedAlgorithm",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "00502",
+          "name": "responseStatus",
+          "qualified_name": "NFCSignatureProviderError.SigningError.responseStatus",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "00503",
+          "name": "certificate",
+          "qualified_name": "NFCSignatureProviderError.SigningError.certificate",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "00504",
+          "name": "missingCertificate",
+          "qualified_name": "NFCSignatureProviderError.SigningError.missingCertificate",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "006",
+      "name": "VerifyPINError",
+      "qualified_name": "NFCSignatureProviderError.VerifyPINError",
+      "documentation": "",
+      "file": "FeatureCardWall/ReadCard/NFCSignatureProvider.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00601",
+          "name": "wrongSecretWarning",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.wrongSecretWarning",
+          "documentation": "Pin verification failed, retry count is the number of retries left for the given `EgkFileSystem.Pin` type"
+        },
+        {
+          "code": "02",
+          "full_id": "00602",
+          "name": "securityStatusNotSatisfied",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.securityStatusNotSatisfied",
+          "documentation": "Access rule evaluation failure"
+        },
+        {
+          "code": "03",
+          "full_id": "00603",
+          "name": "memoryFailure",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.memoryFailure",
+          "documentation": "Write action unsuccessful"
+        },
+        {
+          "code": "04",
+          "full_id": "00604",
+          "name": "passwordBlocked",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.passwordBlocked",
+          "documentation": "Exhausted retry counter"
+        },
+        {
+          "code": "05",
+          "full_id": "00605",
+          "name": "passwordNotUsable",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.passwordNotUsable",
+          "documentation": "Password is transport protected"
+        },
+        {
+          "code": "06",
+          "full_id": "00606",
+          "name": "passwordNotFound",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.passwordNotFound",
+          "documentation": "Referenced password could not be found"
+        },
+        {
+          "code": "07",
+          "full_id": "00607",
+          "name": "unknownFailure",
+          "qualified_name": "NFCSignatureProviderError.VerifyPINError.unknownFailure",
+          "documentation": "Any (unexpected) error not specified in gemSpec_COS 14.6.6.2"
+        }
+      ]
+    },
+    {
+      "code": "530",
+      "name": "HTTPClientError",
+      "qualified_name": "HTTPClientError",
+      "documentation": "",
+      "file": "HTTPClient/HTTPClient.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "53001",
+          "name": "internalError",
+          "qualified_name": "HTTPClientError.internalError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "53002",
+          "name": "httpError",
+          "qualified_name": "HTTPClientError.httpError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "53003",
+          "name": "networkError",
+          "qualified_name": "HTTPClientError.networkError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "53004",
+          "name": "authentication",
+          "qualified_name": "HTTPClientError.authentication",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "53005",
+          "name": "vauError",
+          "qualified_name": "HTTPClientError.vauError",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "53006",
+          "name": "unknown",
+          "qualified_name": "HTTPClientError.unknown",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "100",
+      "name": "IDPError",
+      "qualified_name": "IDPError",
+      "documentation": "",
+      "file": "IDP/Models/IDPError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10001",
+          "name": "network",
+          "qualified_name": "IDPError.network",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10002",
+          "name": "validation",
+          "qualified_name": "IDPError.validation",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "10003",
+          "name": "tokenUnavailable",
+          "qualified_name": "IDPError.tokenUnavailable",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "10004",
+          "name": "unspecified",
+          "qualified_name": "IDPError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "10005",
+          "name": "decoding",
+          "qualified_name": "IDPError.decoding",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "10006",
+          "name": "noCertificateFound",
+          "qualified_name": "IDPError.noCertificateFound",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "10007",
+          "name": "invalidDiscoveryDocument",
+          "qualified_name": "IDPError.invalidDiscoveryDocument",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "10008",
+          "name": "invalidStateParameter",
+          "qualified_name": "IDPError.invalidStateParameter",
+          "documentation": ""
+        },
+        {
+          "code": "09",
+          "full_id": "10009",
+          "name": "invalidNonce",
+          "qualified_name": "IDPError.invalidNonce",
+          "documentation": ""
+        },
+        {
+          "code": "10",
+          "full_id": "10010",
+          "name": "unsupported",
+          "qualified_name": "IDPError.unsupported",
+          "documentation": ""
+        },
+        {
+          "code": "11",
+          "full_id": "10011",
+          "name": "encryption",
+          "qualified_name": "IDPError.encryption",
+          "documentation": ""
+        },
+        {
+          "code": "12",
+          "full_id": "10012",
+          "name": "decryption",
+          "qualified_name": "IDPError.decryption",
+          "documentation": ""
+        },
+        {
+          "code": "13",
+          "full_id": "10013",
+          "name": "`internal`",
+          "qualified_name": "IDPError.`internal`",
+          "documentation": ""
+        },
+        {
+          "code": "14",
+          "full_id": "10014",
+          "name": "trustStore",
+          "qualified_name": "IDPError.trustStore",
+          "documentation": ""
+        },
+        {
+          "code": "15",
+          "full_id": "10015",
+          "name": "pairing",
+          "qualified_name": "IDPError.pairing",
+          "documentation": ""
+        },
+        {
+          "code": "16",
+          "full_id": "10016",
+          "name": "invalidSignature",
+          "qualified_name": "IDPError.invalidSignature",
+          "documentation": ""
+        },
+        {
+          "code": "17",
+          "full_id": "10017",
+          "name": "serverError",
+          "qualified_name": "IDPError.serverError",
+          "documentation": ""
+        },
+        {
+          "code": "18",
+          "full_id": "10018",
+          "name": "biometrics",
+          "qualified_name": "IDPError.biometrics",
+          "documentation": ""
+        },
+        {
+          "code": "19",
+          "full_id": "10019",
+          "name": "extAuthOriginalRequestMissing",
+          "qualified_name": "IDPError.extAuthOriginalRequestMissing",
+          "documentation": ""
+        },
+        {
+          "code": "20",
+          "full_id": "10020",
+          "name": "notAvailableInDemoMode",
+          "qualified_name": "IDPError.notAvailableInDemoMode",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "101",
+      "name": "InternalError",
+      "qualified_name": "IDPError.InternalError",
+      "documentation": "",
+      "file": "IDP/Models/IDPError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10101",
+          "name": "loadDiscoveryDocumentUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.loadDiscoveryDocumentUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10102",
+          "name": "requestChallengeUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.requestChallengeUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "10103",
+          "name": "constructingChallengeRequestUrl",
+          "qualified_name": "IDPError.InternalError.constructingChallengeRequestUrl",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "10104",
+          "name": "getAndValidateUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.getAndValidateUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "10105",
+          "name": "constructingRefreshWithSSOTokenRequest",
+          "qualified_name": "IDPError.InternalError.constructingRefreshWithSSOTokenRequest",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "10106",
+          "name": "refreshResponseMissingHeaderValue",
+          "qualified_name": "IDPError.InternalError.refreshResponseMissingHeaderValue",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "10107",
+          "name": "challengeExpired",
+          "qualified_name": "IDPError.InternalError.challengeExpired",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "10108",
+          "name": "verifyUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.verifyUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "09",
+          "full_id": "10109",
+          "name": "verifyResponseMissingHeaderValue",
+          "qualified_name": "IDPError.InternalError.verifyResponseMissingHeaderValue",
+          "documentation": ""
+        },
+        {
+          "code": "10",
+          "full_id": "10110",
+          "name": "verifierCodeCreation",
+          "qualified_name": "IDPError.InternalError.verifierCodeCreation",
+          "documentation": ""
+        },
+        {
+          "code": "11",
+          "full_id": "10111",
+          "name": "stateNonceCreation",
+          "qualified_name": "IDPError.InternalError.stateNonceCreation",
+          "documentation": ""
+        },
+        {
+          "code": "12",
+          "full_id": "10112",
+          "name": "signedChallengeEncoded",
+          "qualified_name": "IDPError.InternalError.signedChallengeEncoded",
+          "documentation": ""
+        },
+        {
+          "code": "13",
+          "full_id": "10113",
+          "name": "signedChallengeEncryption",
+          "qualified_name": "IDPError.InternalError.signedChallengeEncryption",
+          "documentation": ""
+        },
+        {
+          "code": "14",
+          "full_id": "10114",
+          "name": "altVerifyResponseMissingHeaderValue",
+          "qualified_name": "IDPError.InternalError.altVerifyResponseMissingHeaderValue",
+          "documentation": ""
+        },
+        {
+          "code": "15",
+          "full_id": "10115",
+          "name": "encryptedSignedChallengeEncoding",
+          "qualified_name": "IDPError.InternalError.encryptedSignedChallengeEncoding",
+          "documentation": ""
+        },
+        {
+          "code": "16",
+          "full_id": "10116",
+          "name": "exchangeUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.exchangeUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "17",
+          "full_id": "10117",
+          "name": "exchangeTokenUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.exchangeTokenUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "18",
+          "full_id": "10118",
+          "name": "ssoLoginAndExchangeUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.ssoLoginAndExchangeUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "19",
+          "full_id": "10119",
+          "name": "registrationDataEncryption",
+          "qualified_name": "IDPError.InternalError.registrationDataEncryption",
+          "documentation": ""
+        },
+        {
+          "code": "20",
+          "full_id": "10120",
+          "name": "keyVerifierEncoding",
+          "qualified_name": "IDPError.InternalError.keyVerifierEncoding",
+          "documentation": ""
+        },
+        {
+          "code": "21",
+          "full_id": "10121",
+          "name": "encryptedKeyVerifierEncoding",
+          "qualified_name": "IDPError.InternalError.encryptedKeyVerifierEncoding",
+          "documentation": ""
+        },
+        {
+          "code": "22",
+          "full_id": "10122",
+          "name": "keyVerifierJweHeaderEncryption",
+          "qualified_name": "IDPError.InternalError.keyVerifierJweHeaderEncryption",
+          "documentation": ""
+        },
+        {
+          "code": "23",
+          "full_id": "10123",
+          "name": "keyVerifierJwePayloadEncryption",
+          "qualified_name": "IDPError.InternalError.keyVerifierJwePayloadEncryption",
+          "documentation": ""
+        },
+        {
+          "code": "24",
+          "full_id": "10124",
+          "name": "nestJwtInJwePayloadEncryption",
+          "qualified_name": "IDPError.InternalError.nestJwtInJwePayloadEncryption",
+          "documentation": ""
+        },
+        {
+          "code": "25",
+          "full_id": "10125",
+          "name": "invalidByteBuffer",
+          "qualified_name": "IDPError.InternalError.invalidByteBuffer",
+          "documentation": ""
+        },
+        {
+          "code": "26",
+          "full_id": "10126",
+          "name": "generatingSecureRandom",
+          "qualified_name": "IDPError.InternalError.generatingSecureRandom",
+          "documentation": ""
+        },
+        {
+          "code": "27",
+          "full_id": "10127",
+          "name": "registeredDeviceEncoding",
+          "qualified_name": "IDPError.InternalError.registeredDeviceEncoding",
+          "documentation": ""
+        },
+        {
+          "code": "28",
+          "full_id": "10128",
+          "name": "signedAuthenticationDataEncryption",
+          "qualified_name": "IDPError.InternalError.signedAuthenticationDataEncryption",
+          "documentation": ""
+        },
+        {
+          "code": "29",
+          "full_id": "10129",
+          "name": "constructingExtAuthRequestUrl",
+          "qualified_name": "IDPError.InternalError.constructingExtAuthRequestUrl",
+          "documentation": ""
+        },
+        {
+          "code": "30",
+          "full_id": "10130",
+          "name": "refreshTokenUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.refreshTokenUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "31",
+          "full_id": "10131",
+          "name": "loadDirectoryKKAppsUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.loadDirectoryKKAppsUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "32",
+          "full_id": "10132",
+          "name": "extAuthVerifyResponseMissingHeaderValue",
+          "qualified_name": "IDPError.InternalError.extAuthVerifyResponseMissingHeaderValue",
+          "documentation": ""
+        },
+        {
+          "code": "33",
+          "full_id": "10133",
+          "name": "extAuthVerifierCodeCreation",
+          "qualified_name": "IDPError.InternalError.extAuthVerifierCodeCreation",
+          "documentation": ""
+        },
+        {
+          "code": "34",
+          "full_id": "10134",
+          "name": "extAuthStateNonceCreation",
+          "qualified_name": "IDPError.InternalError.extAuthStateNonceCreation",
+          "documentation": ""
+        },
+        {
+          "code": "35",
+          "full_id": "10135",
+          "name": "extAuthVerifyAndExchangeUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.extAuthVerifyAndExchangeUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "36",
+          "full_id": "10136",
+          "name": "extAuthVerifyAndExchangeMissingQueryItem",
+          "qualified_name": "IDPError.InternalError.extAuthVerifyAndExchangeMissingQueryItem",
+          "documentation": ""
+        },
+        {
+          "code": "37",
+          "full_id": "10137",
+          "name": "extAuthConstructingRedirectUri",
+          "qualified_name": "IDPError.InternalError.extAuthConstructingRedirectUri",
+          "documentation": ""
+        },
+        {
+          "code": "38",
+          "full_id": "10138",
+          "name": "startExtAuthUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.startExtAuthUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "39",
+          "full_id": "10139",
+          "name": "extAuthVerifyUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.extAuthVerifyUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "40",
+          "full_id": "10140",
+          "name": "pairDeviceUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.pairDeviceUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "41",
+          "full_id": "10141",
+          "name": "unregisterDeviceUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.unregisterDeviceUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "42",
+          "full_id": "10142",
+          "name": "listDevicesUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.listDevicesUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "43",
+          "full_id": "10143",
+          "name": "altVerifyUnexpectedNil",
+          "qualified_name": "IDPError.InternalError.altVerifyUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "44",
+          "full_id": "10144",
+          "name": "notImplemented",
+          "qualified_name": "IDPError.InternalError.notImplemented",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "108",
+      "name": "Error",
+      "qualified_name": "PrivateKeyContainer.Error",
+      "documentation": "",
+      "file": "IDP/PrivateKeyContainer.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10801",
+          "name": "keyNotFound",
+          "qualified_name": "PrivateKeyContainer.Error.keyNotFound",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10802",
+          "name": "unknownError",
+          "qualified_name": "PrivateKeyContainer.Error.unknownError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "10803",
+          "name": "retrievingPublicKeyFailed",
+          "qualified_name": "PrivateKeyContainer.Error.retrievingPublicKeyFailed",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "10804",
+          "name": "creationFromBiometrie",
+          "qualified_name": "PrivateKeyContainer.Error.creationFromBiometrie",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "10805",
+          "name": "creationWithoutBiometrie",
+          "qualified_name": "PrivateKeyContainer.Error.creationWithoutBiometrie",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "10806",
+          "name": "convertingKey",
+          "qualified_name": "PrivateKeyContainer.Error.convertingKey",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "10807",
+          "name": "signing",
+          "qualified_name": "PrivateKeyContainer.Error.signing",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "10808",
+          "name": "canceledByUser",
+          "qualified_name": "PrivateKeyContainer.Error.canceledByUser",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "109",
+      "name": "SecureEnclaveSignatureProviderError",
+      "qualified_name": "SecureEnclaveSignatureProviderError",
+      "documentation": "",
+      "file": "IDP/SecureEnclaveSignatureProvider.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10901",
+          "name": "fetchingPrivateKey",
+          "qualified_name": "SecureEnclaveSignatureProviderError.fetchingPrivateKey",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10902",
+          "name": "signing",
+          "qualified_name": "SecureEnclaveSignatureProviderError.signing",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "10903",
+          "name": "packagingAuthCertificate",
+          "qualified_name": "SecureEnclaveSignatureProviderError.packagingAuthCertificate",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "10904",
+          "name": "packagingSeCertificate",
+          "qualified_name": "SecureEnclaveSignatureProviderError.packagingSeCertificate",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "10905",
+          "name": "gatheringPairingData",
+          "qualified_name": "SecureEnclaveSignatureProviderError.gatheringPairingData",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "10906",
+          "name": "`internal`",
+          "qualified_name": "SecureEnclaveSignatureProviderError.`internal`",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "103",
+      "name": "Error",
+      "qualified_name": "JWE.Error",
+      "documentation": "",
+      "file": "IDP/internal/JWT/JWE.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10301",
+          "name": "invalidJWE",
+          "qualified_name": "JWE.Error.invalidJWE",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10302",
+          "name": "encodingError",
+          "qualified_name": "JWE.Error.encodingError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "104",
+      "name": "Error",
+      "qualified_name": "JWT.Error",
+      "documentation": "",
+      "file": "IDP/internal/JWT/JWT.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10401",
+          "name": "malformedJWT",
+          "qualified_name": "JWT.Error.malformedJWT",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10402",
+          "name": "noSignature",
+          "qualified_name": "JWT.Error.noSignature",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "10403",
+          "name": "encodingError",
+          "qualified_name": "JWT.Error.encodingError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "10404",
+          "name": "invalidSignature",
+          "qualified_name": "JWT.Error.invalidSignature",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "10405",
+          "name": "invalidExpirationDate",
+          "qualified_name": "JWT.Error.invalidExpirationDate",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "106",
+      "name": "Error",
+      "qualified_name": "TokenPayload.Error",
+      "documentation": "",
+      "file": "IDP/internal/TokenPayload.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10601",
+          "name": "dataEncoding",
+          "qualified_name": "TokenPayload.Error.dataEncoding",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10602",
+          "name": "stringConversion",
+          "qualified_name": "TokenPayload.Error.stringConversion",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "10603",
+          "name": "decryption",
+          "qualified_name": "TokenPayload.Error.decryption",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "105",
+      "name": "Error",
+      "qualified_name": "KeyVerifier.Error",
+      "documentation": "",
+      "file": "IDP/internal/TokenPayload.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10501",
+          "name": "stringConversion",
+          "qualified_name": "KeyVerifier.Error.stringConversion",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "102",
+      "name": "Error",
+      "qualified_name": "BiometricsSHA256Signer.Error",
+      "documentation": "",
+      "file": "IDPLive/BiometricsSHA256Signer.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10201",
+          "name": "sessionClosed",
+          "qualified_name": "BiometricsSHA256Signer.Error.sessionClosed",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "10202",
+          "name": "signatureFailed",
+          "qualified_name": "BiometricsSHA256Signer.Error.signatureFailed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "107",
+      "name": "ConversionError",
+      "qualified_name": "ConversionError",
+      "documentation": "",
+      "file": "IDPLive/BiometricsSHA256Signer.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10701",
+          "name": "generic",
+          "qualified_name": "ConversionError.generic",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "571",
+      "name": "PharmacyRepositoryError",
+      "qualified_name": "PharmacyRepositoryError",
+      "documentation": "",
+      "file": "Pharmacy/PharmacyRepositoryError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "57101",
+          "name": "local",
+          "qualified_name": "PharmacyRepositoryError.local",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "57102",
+          "name": "remote",
+          "qualified_name": "PharmacyRepositoryError.remote",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "021",
+      "name": "IDTokenValidatorError",
+      "qualified_name": "IDTokenValidatorError",
+      "documentation": "",
+      "file": "Profiles/IDTokenValidator.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02101",
+          "name": "profileNotFound",
+          "qualified_name": "IDTokenValidatorError.profileNotFound",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02102",
+          "name": "profileNotMatchingInsuranceId",
+          "qualified_name": "IDTokenValidatorError.profileNotMatchingInsuranceId",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02103",
+          "name": "profileWithInsuranceIdExists",
+          "qualified_name": "IDTokenValidatorError.profileWithInsuranceIdExists",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "02104",
+          "name": "other",
+          "qualified_name": "IDTokenValidatorError.other",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "020",
+      "name": "KeychainAccessHelperError",
+      "qualified_name": "KeychainAccessHelperError",
+      "documentation": "",
+      "file": "Profiles/SystemKeychainAccessHelper.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02001",
+          "name": "illegalArgument",
+          "qualified_name": "KeychainAccessHelperError.illegalArgument",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02002",
+          "name": "keyChainError",
+          "qualified_name": "KeychainAccessHelperError.keyChainError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02003",
+          "name": "decodingError",
+          "qualified_name": "KeychainAccessHelperError.decodingError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "562",
+      "name": "Error",
+      "qualified_name": "TrustAnchor.Error",
+      "documentation": "",
+      "file": "TrustStore/TrustAnchor.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "56201",
+          "name": "invalidPEM",
+          "qualified_name": "TrustAnchor.Error.invalidPEM",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "560",
+      "name": "TrustStoreError",
+      "qualified_name": "TrustStoreError",
+      "documentation": "",
+      "file": "TrustStore/TrustStoreError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "56001",
+          "name": "network",
+          "qualified_name": "TrustStoreError.network",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "56002",
+          "name": "noCertificateFound",
+          "qualified_name": "TrustStoreError.noCertificateFound",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "56003",
+          "name": "invalidOCSPResponse",
+          "qualified_name": "TrustStoreError.invalidOCSPResponse",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "56004",
+          "name": "eeCertificateOCSPStatusVerification",
+          "qualified_name": "TrustStoreError.eeCertificateOCSPStatusVerification",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "56005",
+          "name": "unspecified",
+          "qualified_name": "TrustStoreError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "56006",
+          "name": "`internal`",
+          "qualified_name": "TrustStoreError.`internal`",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "56007",
+          "name": "noValidVauCertificateAvailable",
+          "qualified_name": "TrustStoreError.noValidVauCertificateAvailable",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "56008",
+          "name": "malformedCertificate",
+          "qualified_name": "TrustStoreError.malformedCertificate",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "561",
+      "name": "InternalError",
+      "qualified_name": "TrustStoreError.InternalError",
+      "documentation": "",
+      "file": "TrustStore/TrustStoreError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "56101",
+          "name": "loadOCSPCheckedTrustStoreUnexpectedNil",
+          "qualified_name": "TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "56102",
+          "name": "loadCertListFromServerUnexpectedNil",
+          "qualified_name": "TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "56103",
+          "name": "loadOCSPListFromServerUnexpectedNil",
+          "qualified_name": "TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "56104",
+          "name": "trustStoreCertListUnexpectedNil",
+          "qualified_name": "TrustStoreError.InternalError.trustStoreCertListUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "56105",
+          "name": "loadOCSPResponsesUnexpectedNil",
+          "qualified_name": "TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "56106",
+          "name": "missingSignerForEECertificate",
+          "qualified_name": "TrustStoreError.InternalError.missingSignerForEECertificate",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "56107",
+          "name": "notImplemented",
+          "qualified_name": "TrustStoreError.InternalError.notImplemented",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "56108",
+          "name": "trustAnchorUnexpectedFormat",
+          "qualified_name": "TrustStoreError.InternalError.trustAnchorUnexpectedFormat",
+          "documentation": ""
+        },
+        {
+          "code": "09",
+          "full_id": "56109",
+          "name": "vauCertificateUnexpectedFormat",
+          "qualified_name": "TrustStoreError.InternalError.vauCertificateUnexpectedFormat",
+          "documentation": ""
+        },
+        {
+          "code": "10",
+          "full_id": "56110",
+          "name": "trustStoreCreationFailed",
+          "qualified_name": "TrustStoreError.InternalError.trustStoreCreationFailed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "550",
+      "name": "VAUError",
+      "qualified_name": "VAUError",
+      "documentation": "",
+      "file": "VAUClient/VAUError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "55001",
+          "name": "network",
+          "qualified_name": "VAUError.network",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "55002",
+          "name": "certificateDecoding",
+          "qualified_name": "VAUError.certificateDecoding",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "55003",
+          "name": "internalCryptoError",
+          "qualified_name": "VAUError.internalCryptoError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "55004",
+          "name": "responseValidation",
+          "qualified_name": "VAUError.responseValidation",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "55005",
+          "name": "unspecified",
+          "qualified_name": "VAUError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "55006",
+          "name": "internalError",
+          "qualified_name": "VAUError.internalError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "009",
+      "name": "Error",
+      "qualified_name": "ZXingMatrixCodeGenerator.Error",
+      "documentation": "",
+      "file": "eRpApp/Common/DataMatrixCodeGenerator/ZXingMatrixCodeGenerator.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00901",
+          "name": "cgImageConversion",
+          "qualified_name": "ZXingMatrixCodeGenerator.Error.cgImageConversion",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "027",
+      "name": "PrescriptionRepositoryError",
+      "qualified_name": "PrescriptionRepositoryError",
+      "documentation": "",
+      "file": "eRpApp/Data/PrescriptionRepository.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02701",
+          "name": "loginHandler",
+          "qualified_name": "PrescriptionRepositoryError.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02702",
+          "name": "erxRepository",
+          "qualified_name": "PrescriptionRepositoryError.erxRepository",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "003",
+      "name": "AuthenticationChallengeProviderError",
+      "qualified_name": "AuthenticationChallengeProviderError",
+      "documentation": "",
+      "file": "eRpApp/Screens/AppAuthentication/AppAuthenticationBiometry/BiometricsAuthenticationChallengeProvider.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00301",
+          "name": "cannotEvaluatePolicy",
+          "qualified_name": "AuthenticationChallengeProviderError.cannotEvaluatePolicy",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "00302",
+          "name": "failedEvaluatingPolicy",
+          "qualified_name": "AuthenticationChallengeProviderError.failedEvaluatingPolicy",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "002",
+      "name": "Error",
+      "qualified_name": "AVScannerViewController.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/CameraView/AVScannerView.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00201",
+          "name": "initalizationError",
+          "qualified_name": "AVScannerViewController.Error.initalizationError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "00202",
+          "name": "other",
+          "qualified_name": "AVScannerViewController.Error.other",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "001",
+      "name": "Error",
+      "qualified_name": "ScannerDomain.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/CameraView/ScannerDomain+Helper.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00101",
+          "name": "duplicate",
+          "qualified_name": "ScannerDomain.Error.duplicate",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "00102",
+          "name": "empty",
+          "qualified_name": "ScannerDomain.Error.empty",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "00103",
+          "name": "invalid",
+          "qualified_name": "ScannerDomain.Error.invalid",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "00104",
+          "name": "storeDuplicate",
+          "qualified_name": "ScannerDomain.Error.storeDuplicate",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "00105",
+          "name": "scannedErxTask",
+          "qualified_name": "ScannerDomain.Error.scannedErxTask",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "00106",
+          "name": "unknown",
+          "qualified_name": "ScannerDomain.Error.unknown",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "014",
+      "name": "Error",
+      "qualified_name": "ExtAuthPendingDomain.Error",
+      "documentation": "`ExtAuthPendingDomain` error types",
+      "file": "eRpApp/Screens/Main/ExtAuth/ExtAuthPendingDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01401",
+          "name": "idpError",
+          "qualified_name": "ExtAuthPendingDomain.Error.idpError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01402",
+          "name": "profileValidation",
+          "qualified_name": "ExtAuthPendingDomain.Error.profileValidation",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "015",
+      "name": "Error",
+      "qualified_name": "MainDomain.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Main/MainDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01501",
+          "name": "localStoreError",
+          "qualified_name": "MainDomain.Error.localStoreError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01502",
+          "name": "userSessionError",
+          "qualified_name": "MainDomain.Error.userSessionError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "01503",
+          "name": "importDuplicate",
+          "qualified_name": "MainDomain.Error.importDuplicate",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "01504",
+          "name": "repositoryError",
+          "qualified_name": "MainDomain.Error.repositoryError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "016",
+      "name": "LoadingImageError",
+      "qualified_name": "PrescriptionDetailDomain.LoadingImageError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01601",
+          "name": "matrixCodeGenerationFailed",
+          "qualified_name": "PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "023",
+      "name": "LoadingImageError",
+      "qualified_name": "MatrixCodeDomain.LoadingImageError",
+      "documentation": "",
+      "file": "eRpApp/Screens/MatrixCode/MatrixCodeDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02301",
+          "name": "matrixCodeGenerationFailed",
+          "qualified_name": "MatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "042",
+      "name": "Error",
+      "qualified_name": "MedicationReminderListDomain.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/MedicationReminder/MedicationReminderListDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04201",
+          "name": "generic",
+          "qualified_name": "MedicationReminderListDomain.Error.generic",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "036",
+      "name": "Error",
+      "qualified_name": "MedicationReminderSetupDomain.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/MedicationReminder/MedicationReminderSetupDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03601",
+          "name": "generic",
+          "qualified_name": "MedicationReminderSetupDomain.Error.generic",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "038",
+      "name": "InternalCommunicationError",
+      "qualified_name": "InternalCommunicationError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Orders/InternalCommunicationProtocol.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03801",
+          "name": "decodingError",
+          "qualified_name": "InternalCommunicationError.decodingError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03802",
+          "name": "invalidURL",
+          "qualified_name": "InternalCommunicationError.invalidURL",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03803",
+          "name": "emptyOnboardingDate",
+          "qualified_name": "InternalCommunicationError.emptyOnboardingDate",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03804",
+          "name": "unknownError",
+          "qualified_name": "InternalCommunicationError.unknownError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "037",
+      "name": "Error",
+      "qualified_name": "DefaultOrdersRepository.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Orders/OrdersRepository.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03701",
+          "name": "erxRepository",
+          "qualified_name": "DefaultOrdersRepository.Error.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03702",
+          "name": "pharmacyRepository",
+          "qualified_name": "DefaultOrdersRepository.Error.pharmacyRepository",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03703",
+          "name": "unspecified",
+          "qualified_name": "DefaultOrdersRepository.Error.unspecified",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "045",
+      "name": "RedeemOrderServiceError",
+      "qualified_name": "RedeemOrderServiceError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Pharmacy/RedeemService/RedeemOrderService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04501",
+          "name": "localStore",
+          "qualified_name": "RedeemOrderServiceError.localStore",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "04502",
+          "name": "pharmacy",
+          "qualified_name": "RedeemOrderServiceError.pharmacy",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "04503",
+          "name": "redeem",
+          "qualified_name": "RedeemOrderServiceError.redeem",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "024",
+      "name": "RedeemServiceError",
+      "qualified_name": "RedeemServiceError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02401",
+          "name": "eRxRepository",
+          "qualified_name": "RedeemServiceError.eRxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02402",
+          "name": "avs",
+          "qualified_name": "RedeemServiceError.avs",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02403",
+          "name": "internalError",
+          "qualified_name": "RedeemServiceError.internalError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "02404",
+          "name": "unspecified",
+          "qualified_name": "RedeemServiceError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "02405",
+          "name": "noTokenAvailable",
+          "qualified_name": "RedeemServiceError.noTokenAvailable",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "02406",
+          "name": "loginHandler",
+          "qualified_name": "RedeemServiceError.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "02407",
+          "name": "prescriptionAlreadyRedeemed",
+          "qualified_name": "RedeemServiceError.prescriptionAlreadyRedeemed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "025",
+      "name": "InternalError",
+      "qualified_name": "RedeemServiceError.InternalError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02501",
+          "name": "missingAVSEndpoint",
+          "qualified_name": "RedeemServiceError.InternalError.missingAVSEndpoint",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02502",
+          "name": "missingAVSCertificate",
+          "qualified_name": "RedeemServiceError.InternalError.missingAVSCertificate",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02503",
+          "name": "missingTelematikId",
+          "qualified_name": "RedeemServiceError.InternalError.missingTelematikId",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "02504",
+          "name": "conversionVersionNumber",
+          "qualified_name": "RedeemServiceError.InternalError.conversionVersionNumber",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "02505",
+          "name": "idMissmatch",
+          "qualified_name": "RedeemServiceError.InternalError.idMissmatch",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "02506",
+          "name": "noService",
+          "qualified_name": "RedeemServiceError.InternalError.noService",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "02507",
+          "name": "unexpectedHTTPStatusCode",
+          "qualified_name": "RedeemServiceError.InternalError.unexpectedHTTPStatusCode",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "02508",
+          "name": "localStoreError",
+          "qualified_name": "RedeemServiceError.InternalError.localStoreError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "026",
+      "name": "NFCHealthCardPasswordControllerError",
+      "qualified_name": "NFCHealthCardPasswordControllerError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/HealthCard/Password/ReadCard/NFCHealthCardPasswordController.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02601",
+          "name": "cardError",
+          "qualified_name": "NFCHealthCardPasswordControllerError.cardError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02602",
+          "name": "openSecureSession",
+          "qualified_name": "NFCHealthCardPasswordControllerError.openSecureSession",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02603",
+          "name": "resetRetryCounter",
+          "qualified_name": "NFCHealthCardPasswordControllerError.resetRetryCounter",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "02604",
+          "name": "wrongCan",
+          "qualified_name": "NFCHealthCardPasswordControllerError.wrongCan",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "02605",
+          "name": "changeReferenceData",
+          "qualified_name": "NFCHealthCardPasswordControllerError.changeReferenceData",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "02606",
+          "name": "couldNotInitializeSession",
+          "qualified_name": "NFCHealthCardPasswordControllerError.couldNotInitializeSession",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "02607",
+          "name": "nfcHealthCardSession",
+          "qualified_name": "NFCHealthCardPasswordControllerError.nfcHealthCardSession",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "040",
+      "name": "OrganDonorJumpServiceError",
+      "qualified_name": "OrganDonorJumpServiceError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/OrganDonorJumpService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04001",
+          "name": "fetchingProfile",
+          "qualified_name": "OrganDonorJumpServiceError.fetchingProfile",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "04002",
+          "name": "generatingGenericUrl",
+          "qualified_name": "OrganDonorJumpServiceError.generatingGenericUrl",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "04003",
+          "name": "openingSpecificUrl",
+          "qualified_name": "OrganDonorJumpServiceError.openingSpecificUrl",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "030",
+      "name": "Error",
+      "qualified_name": "ChargeItemDomainServiceFetchResult.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03001",
+          "name": "localStore",
+          "qualified_name": "ChargeItemDomainServiceFetchResult.Error.localStore",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03002",
+          "name": "loginHandler",
+          "qualified_name": "ChargeItemDomainServiceFetchResult.Error.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03003",
+          "name": "erxRepository",
+          "qualified_name": "ChargeItemDomainServiceFetchResult.Error.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03004",
+          "name": "unexpected",
+          "qualified_name": "ChargeItemDomainServiceFetchResult.Error.unexpected",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "03005",
+          "name": "consentService",
+          "qualified_name": "ChargeItemDomainServiceFetchResult.Error.consentService",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "031",
+      "name": "Error",
+      "qualified_name": "ChargeItemDomainServiceAuthenticateResult.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03101",
+          "name": "loginHandler",
+          "qualified_name": "ChargeItemDomainServiceAuthenticateResult.Error.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03102",
+          "name": "unexpected",
+          "qualified_name": "ChargeItemDomainServiceAuthenticateResult.Error.unexpected",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "032",
+      "name": "Error",
+      "qualified_name": "ChargeItemListDomainServiceGrantResult.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03201",
+          "name": "localStore",
+          "qualified_name": "ChargeItemListDomainServiceGrantResult.Error.localStore",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03202",
+          "name": "loginHandler",
+          "qualified_name": "ChargeItemListDomainServiceGrantResult.Error.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03203",
+          "name": "erxRepository",
+          "qualified_name": "ChargeItemListDomainServiceGrantResult.Error.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03204",
+          "name": "unexpectedGrantConsentResponse",
+          "qualified_name": "ChargeItemListDomainServiceGrantResult.Error.unexpectedGrantConsentResponse",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "03205",
+          "name": "unexpected",
+          "qualified_name": "ChargeItemListDomainServiceGrantResult.Error.unexpected",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "03206",
+          "name": "consentService",
+          "qualified_name": "ChargeItemListDomainServiceGrantResult.Error.consentService",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "033",
+      "name": "Error",
+      "qualified_name": "ChargeItemListDomainServiceRevokeResult.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03301",
+          "name": "localStore",
+          "qualified_name": "ChargeItemListDomainServiceRevokeResult.Error.localStore",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03302",
+          "name": "loginHandler",
+          "qualified_name": "ChargeItemListDomainServiceRevokeResult.Error.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03303",
+          "name": "erxRepository",
+          "qualified_name": "ChargeItemListDomainServiceRevokeResult.Error.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03304",
+          "name": "unexpected",
+          "qualified_name": "ChargeItemListDomainServiceRevokeResult.Error.unexpected",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "03305",
+          "name": "consentService",
+          "qualified_name": "ChargeItemListDomainServiceRevokeResult.Error.consentService",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "034",
+      "name": "Error",
+      "qualified_name": "ChargeItemDomainServiceDeleteResult.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03401",
+          "name": "localStore",
+          "qualified_name": "ChargeItemDomainServiceDeleteResult.Error.localStore",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03402",
+          "name": "loginHandler",
+          "qualified_name": "ChargeItemDomainServiceDeleteResult.Error.loginHandler",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03403",
+          "name": "erxRepository",
+          "qualified_name": "ChargeItemDomainServiceDeleteResult.Error.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03404",
+          "name": "unexpected",
+          "qualified_name": "ChargeItemDomainServiceDeleteResult.Error.unexpected",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "035",
+      "name": "ChargeItemPDFServiceError",
+      "qualified_name": "ChargeItemPDFServiceError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/ChargeItemList/Helper/ChargeItemPDFService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03501",
+          "name": "couldNotCreateDestinationURL",
+          "qualified_name": "ChargeItemPDFServiceError.couldNotCreateDestinationURL",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03502",
+          "name": "couldNotCreatePDFStringForParsing",
+          "qualified_name": "ChargeItemPDFServiceError.couldNotCreatePDFStringForParsing",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03503",
+          "name": "parsingError",
+          "qualified_name": "ChargeItemPDFServiceError.parsingError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03504",
+          "name": "failedToCreateAttachment",
+          "qualified_name": "ChargeItemPDFServiceError.failedToCreateAttachment",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "03505",
+          "name": "dataMissingPatient",
+          "qualified_name": "ChargeItemPDFServiceError.dataMissingPatient",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "03506",
+          "name": "dataMissingDoctor",
+          "qualified_name": "ChargeItemPDFServiceError.dataMissingDoctor",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "03507",
+          "name": "dataMissingPharmacy",
+          "qualified_name": "ChargeItemPDFServiceError.dataMissingPharmacy",
+          "documentation": ""
+        },
+        {
+          "code": "08",
+          "full_id": "03508",
+          "name": "dataMissingInvoice",
+          "qualified_name": "ChargeItemPDFServiceError.dataMissingInvoice",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "028",
+      "name": "AuditEventsServiceError",
+      "qualified_name": "AuditEventsServiceError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02801",
+          "name": "missingAuthentication",
+          "qualified_name": "AuditEventsServiceError.missingAuthentication",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "02802",
+          "name": "loginHandlerError",
+          "qualified_name": "AuditEventsServiceError.loginHandlerError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "02803",
+          "name": "erxRepositoryError",
+          "qualified_name": "AuditEventsServiceError.erxRepositoryError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "017",
+      "name": "Error",
+      "qualified_name": "RegisteredDevicesDomain.Error",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/RegisteredDevices/RegisteredDevicesDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01701",
+          "name": "generic",
+          "qualified_name": "RegisteredDevicesDomain.Error.generic",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "018",
+      "name": "RegisteredDevicesServiceError",
+      "qualified_name": "RegisteredDevicesServiceError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/RegisteredDevices/RegisteredDevicesService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01801",
+          "name": "missingAuthentication",
+          "qualified_name": "RegisteredDevicesServiceError.missingAuthentication",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "01802",
+          "name": "missingToken",
+          "qualified_name": "RegisteredDevicesServiceError.missingToken",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "01803",
+          "name": "loginHandlerError",
+          "qualified_name": "RegisteredDevicesServiceError.loginHandlerError",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "01804",
+          "name": "idpError",
+          "qualified_name": "RegisteredDevicesServiceError.idpError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "039",
+      "name": "SettingsDomainError",
+      "qualified_name": "SettingsDomainError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/SettingsDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03901",
+          "name": "organDonorJumpError",
+          "qualified_name": "SettingsDomainError.organDonorJumpError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03902",
+          "name": "organDonorUnknownError",
+          "qualified_name": "SettingsDomainError.organDonorUnknownError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "019",
+      "name": "DemoError",
+      "qualified_name": "DemoError",
+      "documentation": "",
+      "file": "eRpApp/Session/Demo/DemoError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "01901",
+          "name": "demo",
+          "qualified_name": "DemoError.demo",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "044",
+      "name": "AppSecurityManagerError",
+      "qualified_name": "AppSecurityManagerError",
+      "documentation": "",
+      "file": "eRpApp/Session/Helper/AppSecurityManager.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04401",
+          "name": "savePasswordFailed",
+          "qualified_name": "AppSecurityManagerError.savePasswordFailed",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "04402",
+          "name": "retrievePasswordFailed",
+          "qualified_name": "AppSecurityManagerError.retrievePasswordFailed",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "04403",
+          "name": "localAuthenticationContext",
+          "qualified_name": "AppSecurityManagerError.localAuthenticationContext",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "04404",
+          "name": "migrationFailed",
+          "qualified_name": "AppSecurityManagerError.migrationFailed",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "04405",
+          "name": "passwordDelayInfoIOFailed",
+          "qualified_name": "AppSecurityManagerError.passwordDelayInfoIOFailed",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "022",
+      "name": "UserProfileServiceError",
+      "qualified_name": "UserProfileServiceError",
+      "documentation": "",
+      "file": "eRpApp/Session/UserProfileService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "02201",
+          "name": "localStoreError",
+          "qualified_name": "UserProfileServiceError.localStoreError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "008",
+      "name": "UserSessionError",
+      "qualified_name": "UserSessionError",
+      "documentation": "",
+      "file": "eRpApp/Session/UserSession.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00801",
+          "name": "idpError",
+          "qualified_name": "UserSessionError.idpError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "007",
+      "name": "UserSessionProviderError",
+      "qualified_name": "UserSessionProviderError",
+      "documentation": "",
+      "file": "eRpApp/Session/UserSessionProvider.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "00701",
+          "name": "unavailable",
+          "qualified_name": "UserSessionProviderError.unavailable",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "043",
+      "name": "Error",
+      "qualified_name": "ShareSheetDomain.Error",
+      "documentation": "",
+      "file": "eRpApp/State/ShareSheetDomain.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04301",
+          "name": "shareFailure",
+          "qualified_name": "ShareSheetDomain.Error.shareFailure",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "202",
+      "name": "DefaultDataMatrixStringEncoderError",
+      "qualified_name": "DefaultDataMatrixStringEncoderError",
+      "documentation": "",
+      "file": "eRpKit/ErxMatrixCode/DataMatrixStringEncoder.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20201",
+          "name": "stringEncoding",
+          "qualified_name": "DefaultDataMatrixStringEncoderError.stringEncoding",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20202",
+          "name": "missingAccessCode",
+          "qualified_name": "DefaultDataMatrixStringEncoderError.missingAccessCode",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "206",
+      "name": "Error",
+      "qualified_name": "ErxConsent.Error",
+      "documentation": "",
+      "file": "eRpKit/ErxModels/ErxConsent.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20601",
+          "name": "unableToConstructConsentRequest",
+          "qualified_name": "ErxConsent.Error.unableToConstructConsentRequest",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20602",
+          "name": "invalidErxConsentInput",
+          "qualified_name": "ErxConsent.Error.invalidErxConsentInput",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "201",
+      "name": "Error",
+      "qualified_name": "ErxTask.Status.Error",
+      "documentation": "",
+      "file": "eRpKit/ErxModels/ErxTask+Status.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20101",
+          "name": "decoding",
+          "qualified_name": "ErxTask.Status.Error.decoding",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20102",
+          "name": "unknown",
+          "qualified_name": "ErxTask.Status.Error.unknown",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "20103",
+          "name": "missingStatus",
+          "qualified_name": "ErxTask.Status.Error.missingStatus",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "20104",
+          "name": "missingPatientReceiptReference",
+          "qualified_name": "ErxTask.Status.Error.missingPatientReceiptReference",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "20105",
+          "name": "missingPatientReceiptIdentifier",
+          "qualified_name": "ErxTask.Status.Error.missingPatientReceiptIdentifier",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "20106",
+          "name": "missingPatientReceiptBundle",
+          "qualified_name": "ErxTask.Status.Error.missingPatientReceiptBundle",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "208",
+      "name": "Error",
+      "qualified_name": "ErxTaskOrder.Error",
+      "documentation": "",
+      "file": "eRpKit/ErxModels/ErxTaskOrder.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20801",
+          "name": "unableToConstructCommunicationRequest",
+          "qualified_name": "ErxTaskOrder.Error.unableToConstructCommunicationRequest",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20802",
+          "name": "invalidErxTaskOrderInput",
+          "qualified_name": "ErxTaskOrder.Error.invalidErxTaskOrderInput",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "200",
+      "name": "ErxRepositoryError",
+      "qualified_name": "ErxRepositoryError",
+      "documentation": "",
+      "file": "eRpKit/ErxRepositoryError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20001",
+          "name": "local",
+          "qualified_name": "ErxRepositoryError.local",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20002",
+          "name": "remote",
+          "qualified_name": "ErxRepositoryError.remote",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "203",
+      "name": "LocalStoreError",
+      "qualified_name": "LocalStoreError",
+      "documentation": "",
+      "file": "eRpKit/LocalStoreError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20301",
+          "name": "notImplemented",
+          "qualified_name": "LocalStoreError.notImplemented",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20302",
+          "name": "initialization",
+          "qualified_name": "LocalStoreError.initialization",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "20303",
+          "name": "write",
+          "qualified_name": "LocalStoreError.write",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "20304",
+          "name": "delete",
+          "qualified_name": "LocalStoreError.delete",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "20305",
+          "name": "read",
+          "qualified_name": "LocalStoreError.read",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "204",
+      "name": "RemoteStoreError",
+      "qualified_name": "RemoteStoreError",
+      "documentation": "",
+      "file": "eRpKit/RemoteStoreError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20401",
+          "name": "fhirClient",
+          "qualified_name": "RemoteStoreError.fhirClient",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20402",
+          "name": "notImplemented",
+          "qualified_name": "RemoteStoreError.notImplemented",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "205",
+      "name": "Error",
+      "qualified_name": "ScannedErxTask.Error",
+      "documentation": "Error cases for the ScannedErxTask",
+      "file": "eRpKit/ScannedErxTask.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20501",
+          "name": "format",
+          "qualified_name": "ScannedErxTask.Error.format",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20502",
+          "name": "invalidID",
+          "qualified_name": "ScannedErxTask.Error.invalidID",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "20503",
+          "name": "invalidAccessCode",
+          "qualified_name": "ScannedErxTask.Error.invalidAccessCode",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "20504",
+          "name": "invalidJSON",
+          "qualified_name": "ScannedErxTask.Error.invalidJSON",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "207",
+      "name": "Error",
+      "qualified_name": "SharedTask.Error",
+      "documentation": "",
+      "file": "eRpKit/SharedTask.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20701",
+          "name": "missingSeparator",
+          "qualified_name": "SharedTask.Error.missingSeparator",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "20702",
+          "name": "failedDecodingEmptyString",
+          "qualified_name": "SharedTask.Error.failedDecodingEmptyString",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "20703",
+          "name": "tooManyComponents",
+          "qualified_name": "SharedTask.Error.tooManyComponents",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "581",
+      "name": "Error",
+      "qualified_name": "AVSTransactionCoreDataStore.Error",
+      "documentation": "",
+      "file": "eRpLocalStorage/AVSTransaction/AVSTransactionCoreDataStore.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "58101",
+          "name": "noMatchingEntity",
+          "qualified_name": "AVSTransactionCoreDataStore.Error.noMatchingEntity",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "58102",
+          "name": "internalError",
+          "qualified_name": "AVSTransactionCoreDataStore.Error.internalError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "500",
+      "name": "Error",
+      "qualified_name": "CoreDataController.Error",
+      "documentation": "",
+      "file": "eRpLocalStorage/CoreDataController.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "50001",
+          "name": "initialization",
+          "qualified_name": "CoreDataController.Error.initialization",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "503",
+      "name": "ExcludeFileError",
+      "qualified_name": "FileManager.ExcludeFileError",
+      "documentation": "",
+      "file": "eRpLocalStorage/FileManager+Backup.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "50301",
+          "name": "fileDoesNotExist",
+          "qualified_name": "FileManager.ExcludeFileError.fileDoesNotExist",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "50302",
+          "name": "error",
+          "qualified_name": "FileManager.ExcludeFileError.error",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "501",
+      "name": "MigrationError",
+      "qualified_name": "MigrationError",
+      "documentation": "",
+      "file": "eRpLocalStorage/MigrationManager.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "50101",
+          "name": "isLatestVersion",
+          "qualified_name": "MigrationError.isLatestVersion",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "50102",
+          "name": "missingProfile",
+          "qualified_name": "MigrationError.missingProfile",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "50103",
+          "name": "write",
+          "qualified_name": "MigrationError.write",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "50104",
+          "name": "read",
+          "qualified_name": "MigrationError.read",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "50105",
+          "name": "delete",
+          "qualified_name": "MigrationError.delete",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "50106",
+          "name": "unspecified",
+          "qualified_name": "MigrationError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "07",
+          "full_id": "50107",
+          "name": "initialization",
+          "qualified_name": "MigrationError.initialization",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "505",
+      "name": "Error",
+      "qualified_name": "PharmacyCoreDataStore.Error",
+      "documentation": "",
+      "file": "eRpLocalStorage/Pharmacy/PharmacyCoreDataStore.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "50501",
+          "name": "noMatchingEntity",
+          "qualified_name": "PharmacyCoreDataStore.Error.noMatchingEntity",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "502",
+      "name": "Error",
+      "qualified_name": "ProfileCoreDataStore.Error",
+      "documentation": "",
+      "file": "eRpLocalStorage/Profiles/ProfileCoreDataStore.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "50201",
+          "name": "noMatchingEntity",
+          "qualified_name": "ProfileCoreDataStore.Error.noMatchingEntity",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "50202",
+          "name": "initialization",
+          "qualified_name": "ProfileCoreDataStore.Error.initialization",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "504",
+      "name": "Error",
+      "qualified_name": "ShipmentInfoCoreDataStore.Error",
+      "documentation": "",
+      "file": "eRpLocalStorage/ShipmentInfo/ShipmentInfoCoreDataStore.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "50401",
+          "name": "noMatchingEntity",
+          "qualified_name": "ShipmentInfoCoreDataStore.Error.noMatchingEntity",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "50402",
+          "name": "internalError",
+          "qualified_name": "ShipmentInfoCoreDataStore.Error.internalError",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "580",
+      "name": "RemoteStorageBundleParsingError",
+      "qualified_name": "RemoteStorageBundleParsingError",
+      "documentation": "",
+      "file": "eRpRemoteStorage/ModelsR4.Bundle+ErxTask.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "58001",
+          "name": "parseError",
+          "qualified_name": "RemoteStorageBundleParsingError.parseError",
+          "documentation": ""
+        }
+      ]
+    }
+  ]
+}
