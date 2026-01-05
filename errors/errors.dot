@@ -1,0 +1,2657 @@
+digraph G {
+  rankdir=LR;
+  ranksep="0.2 equally";
+  node [shape=plaintext];
+  stylesheet="error_graph.css";
+
+    "AVSError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="AVSError" width="200" COLSPAN="2" ID="AVSError"><FONT POINT-SIZE="16.0">AVSError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-54001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-54002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidAVSMessageInput" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidAVSMessageInput</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-54003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidX509Input" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidX509Input</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-54004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-54005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internal" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">`internal`</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="AVSError"
+        fontsize="10pt"
+        href="errors.html#avserror"
+    ];
+
+    "InternalError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InternalError" width="200" COLSPAN="2" ID="InternalError"><FONT POINT-SIZE="16.0">InternalError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-54101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cmsContentCreation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cmsContentCreation</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InternalError"
+        fontsize="10pt"
+        href="errors.html#internalerror"
+    ];
+
+    "BfArMError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="BfArMError" width="200" COLSPAN="2" ID="BfArMError"><FONT POINT-SIZE="16.0">BfArMError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidAssetLink" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidAssetLink</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="BfArMError"
+        fontsize="10pt"
+        href="errors.html#bfarmerror"
+    ];
+
+    "ConsentServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ConsentServiceError" width="200" COLSPAN="2" ID="ConsentServiceError"><FONT POINT-SIZE="16.0">ConsentServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpectedGrantConsentResponse" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpectedGrantConsentResponse</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04105</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpected" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpected</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04106</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpectedRevokeConsentResponse" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpectedRevokeConsentResponse</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ConsentServiceError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "FHIRClientError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="FHIRClientError" width="200" COLSPAN="2" ID="FHIRClientError"><FONT POINT-SIZE="16.0">FHIRClientError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-52001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-52004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="inconsistentResponse" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">inconsistentResponse</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-52005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-52006</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknown" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknown</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-52007</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="http" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">http</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="FHIRClientError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "FHIRVZDError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="FHIRVZDError" width="200" COLSPAN="2" ID="FHIRVZDError"><FONT POINT-SIZE="16.0">FHIRVZDError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="tokenUnavailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">tokenUnavailable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-30004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="FHIRVZDError"
+        fontsize="10pt"
+        href="errors.html#fhirvzderror"
+    ];
+
+    "HealthcareServiceBundleParsingError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="HealthcareServiceBundleParsingError" width="200" COLSPAN="2" ID="HealthcareServiceBundleParsingError"><FONT POINT-SIZE="16.0">HealthcareServiceBundleParsingError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-61001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="parseError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">parseError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="HealthcareServiceBundleParsingError"
+        fontsize="10pt"
+        href="errors.html#healthcareservicebundleparsingerror"
+    ];
+
+    "CardWallExtAuthConfirmationDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="CardWallExtAuthConfirmationDomainError" width="200" COLSPAN="2" ID="CardWallExtAuthConfirmationDomainError"><FONT POINT-SIZE="16.0">CardWallExtAuthConfirmationDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="universalLinkFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">universalLinkFailed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="CardWallExtAuthConfirmationDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "CardWallIntroductionDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="CardWallIntroductionDomainError" width="200" COLSPAN="2" ID="CardWallIntroductionDomainError"><FONT POINT-SIZE="16.0">CardWallIntroductionDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02902</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="universalLinkFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">universalLinkFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02903</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="kkNotFound" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">kkNotFound</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="CardWallIntroductionDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "StateError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="StateError" width="200" COLSPAN="2" ID="StateError"><FONT POINT-SIZE="16.0">StateError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="inputError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">inputError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signChallengeError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signChallengeError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="biometrieError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">biometrieError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="profileValidation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">profileValidation</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="StateError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "InputError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InputError" width="200" COLSPAN="2" ID="InputError"><FONT POINT-SIZE="16.0">InputError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingPIN" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingPIN</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingCAN" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingCAN</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InputError"
+        fontsize="10pt"
+        href="errors.html#inputerror"
+    ];
+
+    "LoginHandlerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="LoginHandlerError" width="200" COLSPAN="2" ID="LoginHandlerError"><FONT POINT-SIZE="16.0">LoginHandlerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="biometrieFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">biometrieFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01302</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="biometrieFatal" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">biometrieFatal</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01303</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="ssoFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">ssoFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01304</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="ssoExpired" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">ssoExpired</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01305</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01306</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="LoginHandlerError"
+        fontsize="10pt"
+        href="errors.html#loginhandlererror"
+    ];
+
+    "NFCSignatureProviderError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="NFCSignatureProviderError" width="200" COLSPAN="2" ID="NFCSignatureProviderError"><FONT POINT-SIZE="16.0">NFCSignatureProviderError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cardError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cardError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00403</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="wrongCAN" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">wrongCAN</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00404</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cardConnectionError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cardConnectionError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00405</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="verifyCardError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">verifyCardError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00406</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signingFailure" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signingFailure</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00407</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="wrongPin" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">wrongPin</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00408</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="genericError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">genericError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00409</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cardReadingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cardReadingError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00410</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="secureEnclaveError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">secureEnclaveError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00411</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="nfcHealthCardSession" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">nfcHealthCardSession</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="NFCSignatureProviderError"
+        fontsize="10pt"
+        href="errors.html#nfcsignatureprovidererror"
+    ];
+
+    "SigningError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="SigningError" width="200" COLSPAN="2" ID="SigningError"><FONT POINT-SIZE="16.0">SigningError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unsupportedAlgorithm" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unsupportedAlgorithm</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00502</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="responseStatus" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">responseStatus</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00503</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="certificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">certificate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00504</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingCertificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingCertificate</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="SigningError"
+        fontsize="10pt"
+        href="errors.html#signingerror"
+    ];
+
+    "VerifyPINError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="VerifyPINError" width="200" COLSPAN="2" ID="VerifyPINError"><FONT POINT-SIZE="16.0">VerifyPINError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="wrongSecretWarning" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">wrongSecretWarning</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00602</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="securityStatusNotSatisfied" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">securityStatusNotSatisfied</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00603</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="memoryFailure" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">memoryFailure</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00604</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="passwordBlocked" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">passwordBlocked</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00605</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="passwordNotUsable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">passwordNotUsable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00606</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="passwordNotFound" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">passwordNotFound</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00607</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknownFailure" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknownFailure</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="VerifyPINError"
+        fontsize="10pt"
+        href="errors.html#verifypinerror"
+    ];
+
+    "HTTPClientError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="HTTPClientError" width="200" COLSPAN="2" ID="HTTPClientError"><FONT POINT-SIZE="16.0">HTTPClientError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-53001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-53002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="httpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">httpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-53003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="networkError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">networkError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-53004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="authentication" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">authentication</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-53005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="vauError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">vauError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-53006</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknown" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknown</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="HTTPClientError"
+        fontsize="10pt"
+        href="errors.html#httpclienterror"
+    ];
+
+    "IDPError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="IDPError" width="200" COLSPAN="2" ID="IDPError"><FONT POINT-SIZE="16.0">IDPError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="validation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">validation</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="tokenUnavailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">tokenUnavailable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10006</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noCertificateFound" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noCertificateFound</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10007</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidDiscoveryDocument" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidDiscoveryDocument</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10008</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidStateParameter" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidStateParameter</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10009</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidNonce" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidNonce</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10010</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unsupported" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unsupported</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10011</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="encryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">encryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10012</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10013</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internal" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">`internal`</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10014</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="trustStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">trustStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10015</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="pairing" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">pairing</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10016</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidSignature" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidSignature</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10017</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="serverError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">serverError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10018</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="biometrics" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">biometrics</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10019</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthOriginalRequestMissing" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthOriginalRequestMissing</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10020</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="notAvailableInDemoMode" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">notAvailableInDemoMode</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="IDPError"
+        fontsize="10pt"
+        href="errors.html#idperror"
+    ];
+
+    "InternalError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InternalError" width="200" COLSPAN="2" ID="InternalError"><FONT POINT-SIZE="16.0">InternalError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loadDiscoveryDocumentUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loadDiscoveryDocumentUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="requestChallengeUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">requestChallengeUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="constructingChallengeRequestUrl" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">constructingChallengeRequestUrl</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="getAndValidateUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">getAndValidateUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10105</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="constructingRefreshWithSSOTokenRequest" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">constructingRefreshWithSSOTokenRequest</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10106</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="refreshResponseMissingHeaderValue" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">refreshResponseMissingHeaderValue</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10107</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="challengeExpired" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">challengeExpired</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10108</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="verifyUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">verifyUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10109</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="verifyResponseMissingHeaderValue" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">verifyResponseMissingHeaderValue</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10110</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="verifierCodeCreation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">verifierCodeCreation</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10111</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="stateNonceCreation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">stateNonceCreation</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10112</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signedChallengeEncoded" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signedChallengeEncoded</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10113</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signedChallengeEncryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signedChallengeEncryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10114</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="altVerifyResponseMissingHeaderValue" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">altVerifyResponseMissingHeaderValue</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10115</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="encryptedSignedChallengeEncoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">encryptedSignedChallengeEncoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10116</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="exchangeUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">exchangeUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10117</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="exchangeTokenUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">exchangeTokenUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10118</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="ssoLoginAndExchangeUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">ssoLoginAndExchangeUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10119</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="registrationDataEncryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">registrationDataEncryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10120</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="keyVerifierEncoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">keyVerifierEncoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10121</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="encryptedKeyVerifierEncoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">encryptedKeyVerifierEncoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10122</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="keyVerifierJweHeaderEncryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">keyVerifierJweHeaderEncryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10123</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="keyVerifierJwePayloadEncryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">keyVerifierJwePayloadEncryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10124</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="nestJwtInJwePayloadEncryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">nestJwtInJwePayloadEncryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10125</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidByteBuffer" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidByteBuffer</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10126</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="generatingSecureRandom" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">generatingSecureRandom</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10127</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="registeredDeviceEncoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">registeredDeviceEncoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10128</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signedAuthenticationDataEncryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signedAuthenticationDataEncryption</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10129</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="constructingExtAuthRequestUrl" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">constructingExtAuthRequestUrl</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10130</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="refreshTokenUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">refreshTokenUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10131</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loadDirectoryKKAppsUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loadDirectoryKKAppsUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10132</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthVerifyResponseMissingHeaderValue" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthVerifyResponseMissingHeaderValue</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10133</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthVerifierCodeCreation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthVerifierCodeCreation</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10134</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthStateNonceCreation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthStateNonceCreation</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10135</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthVerifyAndExchangeUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthVerifyAndExchangeUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10136</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthVerifyAndExchangeMissingQueryItem" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthVerifyAndExchangeMissingQueryItem</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10137</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthConstructingRedirectUri" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthConstructingRedirectUri</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10138</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="startExtAuthUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">startExtAuthUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10139</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="extAuthVerifyUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">extAuthVerifyUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10140</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="pairDeviceUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">pairDeviceUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10141</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unregisterDeviceUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unregisterDeviceUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10142</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="listDevicesUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">listDevicesUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10143</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="altVerifyUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">altVerifyUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10144</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="notImplemented" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">notImplemented</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InternalError"
+        fontsize="10pt"
+        href="errors.html#internalerror"
+    ];
+
+    "PrivateKeyContainerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="PrivateKeyContainerError" width="200" COLSPAN="2" ID="PrivateKeyContainerError"><FONT POINT-SIZE="16.0">PrivateKeyContainerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="keyNotFound" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">keyNotFound</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10802</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknownError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknownError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10803</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="retrievingPublicKeyFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">retrievingPublicKeyFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10804</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="creationFromBiometrie" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">creationFromBiometrie</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10805</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="creationWithoutBiometrie" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">creationWithoutBiometrie</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10806</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="convertingKey" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">convertingKey</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10807</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signing" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signing</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10808</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="canceledByUser" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">canceledByUser</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="PrivateKeyContainerError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "SecureEnclaveSignatureProviderError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="SecureEnclaveSignatureProviderError" width="200" COLSPAN="2" ID="SecureEnclaveSignatureProviderError"><FONT POINT-SIZE="16.0">SecureEnclaveSignatureProviderError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="fetchingPrivateKey" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">fetchingPrivateKey</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10902</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signing" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signing</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10903</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="packagingAuthCertificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">packagingAuthCertificate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10904</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="packagingSeCertificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">packagingSeCertificate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10905</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="gatheringPairingData" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">gatheringPairingData</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10906</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internal" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">`internal`</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="SecureEnclaveSignatureProviderError"
+        fontsize="10pt"
+        href="errors.html#secureenclavesignatureprovidererror"
+    ];
+
+    "JWEError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="JWEError" width="200" COLSPAN="2" ID="JWEError"><FONT POINT-SIZE="16.0">JWEError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidJWE" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidJWE</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10302</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="encodingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">encodingError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="JWEError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "JWTError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="JWTError" width="200" COLSPAN="2" ID="JWTError"><FONT POINT-SIZE="16.0">JWTError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="malformedJWT" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">malformedJWT</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noSignature" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noSignature</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10403</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="encodingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">encodingError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10404</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidSignature" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidSignature</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10405</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidExpirationDate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidExpirationDate</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="JWTError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "TokenPayloadError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="TokenPayloadError" width="200" COLSPAN="2" ID="TokenPayloadError"><FONT POINT-SIZE="16.0">TokenPayloadError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="dataEncoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">dataEncoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10602</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="stringConversion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">stringConversion</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10603</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decryption" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decryption</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="TokenPayloadError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "KeyVerifierError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="KeyVerifierError" width="200" COLSPAN="2" ID="KeyVerifierError"><FONT POINT-SIZE="16.0">KeyVerifierError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="stringConversion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">stringConversion</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="KeyVerifierError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "BiometricsSHA256SignerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="BiometricsSHA256SignerError" width="200" COLSPAN="2" ID="BiometricsSHA256SignerError"><FONT POINT-SIZE="16.0">BiometricsSHA256SignerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="sessionClosed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">sessionClosed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="signatureFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">signatureFailed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="BiometricsSHA256SignerError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ConversionError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ConversionError" width="200" COLSPAN="2" ID="ConversionError"><FONT POINT-SIZE="16.0">ConversionError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="generic" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">generic</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ConversionError"
+        fontsize="10pt"
+        href="errors.html#conversionerror"
+    ];
+
+    "PharmacyRepositoryError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="PharmacyRepositoryError" width="200" COLSPAN="2" ID="PharmacyRepositoryError"><FONT POINT-SIZE="16.0">PharmacyRepositoryError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-57101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="local" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">local</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-57102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="remote" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">remote</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="PharmacyRepositoryError"
+        fontsize="10pt"
+        href="errors.html#pharmacyrepositoryerror"
+    ];
+
+    "IDTokenValidatorError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="IDTokenValidatorError" width="200" COLSPAN="2" ID="IDTokenValidatorError"><FONT POINT-SIZE="16.0">IDTokenValidatorError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="profileNotFound" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">profileNotFound</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="profileNotMatchingInsuranceId" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">profileNotMatchingInsuranceId</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="profileWithInsuranceIdExists" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">profileWithInsuranceIdExists</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="other" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">other</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="IDTokenValidatorError"
+        fontsize="10pt"
+        href="errors.html#idtokenvalidatorerror"
+    ];
+
+    "KeychainAccessHelperError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="KeychainAccessHelperError" width="200" COLSPAN="2" ID="KeychainAccessHelperError"><FONT POINT-SIZE="16.0">KeychainAccessHelperError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="illegalArgument" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">illegalArgument</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="keyChainError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">keyChainError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decodingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decodingError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="KeychainAccessHelperError"
+        fontsize="10pt"
+        href="errors.html#keychainaccesshelpererror"
+    ];
+
+    "TrustAnchorError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="TrustAnchorError" width="200" COLSPAN="2" ID="TrustAnchorError"><FONT POINT-SIZE="16.0">TrustAnchorError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidPEM" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidPEM</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="TrustAnchorError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "TrustStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="TrustStoreError" width="200" COLSPAN="2" ID="TrustStoreError"><FONT POINT-SIZE="16.0">TrustStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noCertificateFound" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noCertificateFound</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidOCSPResponse" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidOCSPResponse</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="eeCertificateOCSPStatusVerification" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">eeCertificateOCSPStatusVerification</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56006</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internal" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">`internal`</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56007</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noValidVauCertificateAvailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noValidVauCertificateAvailable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56008</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="malformedCertificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">malformedCertificate</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="TrustStoreError"
+        fontsize="10pt"
+        href="errors.html#truststoreerror"
+    ];
+
+    "InternalError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InternalError" width="200" COLSPAN="2" ID="InternalError"><FONT POINT-SIZE="16.0">InternalError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loadOCSPCheckedTrustStoreUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loadOCSPCheckedTrustStoreUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loadCertListFromServerUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loadCertListFromServerUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loadOCSPListFromServerUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loadOCSPListFromServerUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="trustStoreCertListUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">trustStoreCertListUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56105</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loadOCSPResponsesUnexpectedNil" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loadOCSPResponsesUnexpectedNil</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56106</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingSignerForEECertificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingSignerForEECertificate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56107</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="notImplemented" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">notImplemented</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56108</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="trustAnchorUnexpectedFormat" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">trustAnchorUnexpectedFormat</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56109</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="vauCertificateUnexpectedFormat" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">vauCertificateUnexpectedFormat</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-56110</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="trustStoreCreationFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">trustStoreCreationFailed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InternalError"
+        fontsize="10pt"
+        href="errors.html#internalerror"
+    ];
+
+    "VAUError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="VAUError" width="200" COLSPAN="2" ID="VAUError"><FONT POINT-SIZE="16.0">VAUError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-55001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="network" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">network</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-55002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="certificateDecoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">certificateDecoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-55003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalCryptoError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalCryptoError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-55004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="responseValidation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">responseValidation</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-55005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-55006</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="VAUError"
+        fontsize="10pt"
+        href="errors.html#vauerror"
+    ];
+
+    "ZXingMatrixCodeGeneratorError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ZXingMatrixCodeGeneratorError" width="200" COLSPAN="2" ID="ZXingMatrixCodeGeneratorError"><FONT POINT-SIZE="16.0">ZXingMatrixCodeGeneratorError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cgImageConversion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cgImageConversion</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ZXingMatrixCodeGeneratorError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "PrescriptionRepositoryError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="PrescriptionRepositoryError" width="200" COLSPAN="2" ID="PrescriptionRepositoryError"><FONT POINT-SIZE="16.0">PrescriptionRepositoryError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02702</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="PrescriptionRepositoryError"
+        fontsize="10pt"
+        href="errors.html#prescriptionrepositoryerror"
+    ];
+
+    "AuthenticationChallengeProviderError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="AuthenticationChallengeProviderError" width="200" COLSPAN="2" ID="AuthenticationChallengeProviderError"><FONT POINT-SIZE="16.0">AuthenticationChallengeProviderError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cannotEvaluatePolicy" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cannotEvaluatePolicy</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00302</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="failedEvaluatingPolicy" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">failedEvaluatingPolicy</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="AuthenticationChallengeProviderError"
+        fontsize="10pt"
+        href="errors.html#authenticationchallengeprovidererror"
+    ];
+
+    "AVScannerViewControllerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="AVScannerViewControllerError" width="200" COLSPAN="2" ID="AVScannerViewControllerError"><FONT POINT-SIZE="16.0">AVScannerViewControllerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="initalizationError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">initalizationError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="other" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">other</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="AVScannerViewControllerError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ScannerDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ScannerDomainError" width="200" COLSPAN="2" ID="ScannerDomainError"><FONT POINT-SIZE="16.0">ScannerDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="duplicate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">duplicate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="empty" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">empty</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalid" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalid</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="storeDuplicate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">storeDuplicate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00105</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="scannedErxTask" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">scannedErxTask</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00106</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknown" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknown</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ScannerDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ExtAuthPendingDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ExtAuthPendingDomainError" width="200" COLSPAN="2" ID="ExtAuthPendingDomainError"><FONT POINT-SIZE="16.0">ExtAuthPendingDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="profileValidation" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">profileValidation</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ExtAuthPendingDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "MainDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="MainDomainError" width="200" COLSPAN="2" ID="MainDomainError"><FONT POINT-SIZE="16.0">MainDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStoreError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStoreError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01502</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="userSessionError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">userSessionError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01503</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="importDuplicate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">importDuplicate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01504</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="repositoryError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">repositoryError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="MainDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "LoadingImageError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="LoadingImageError" width="200" COLSPAN="2" ID="LoadingImageError"><FONT POINT-SIZE="16.0">LoadingImageError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="matrixCodeGenerationFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">matrixCodeGenerationFailed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="LoadingImageError"
+        fontsize="10pt"
+        href="errors.html#loadingimageerror"
+    ];
+
+    "LoadingImageError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="LoadingImageError" width="200" COLSPAN="2" ID="LoadingImageError"><FONT POINT-SIZE="16.0">LoadingImageError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="matrixCodeGenerationFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">matrixCodeGenerationFailed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="LoadingImageError"
+        fontsize="10pt"
+        href="errors.html#loadingimageerror"
+    ];
+
+    "MedicationReminderListDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="MedicationReminderListDomainError" width="200" COLSPAN="2" ID="MedicationReminderListDomainError"><FONT POINT-SIZE="16.0">MedicationReminderListDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="generic" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">generic</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="MedicationReminderListDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "MedicationReminderSetupDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="MedicationReminderSetupDomainError" width="200" COLSPAN="2" ID="MedicationReminderSetupDomainError"><FONT POINT-SIZE="16.0">MedicationReminderSetupDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="generic" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">generic</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="MedicationReminderSetupDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "InternalCommunicationError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InternalCommunicationError" width="200" COLSPAN="2" ID="InternalCommunicationError"><FONT POINT-SIZE="16.0">InternalCommunicationError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decodingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decodingError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03802</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidURL" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidURL</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03803</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="emptyOnboardingDate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">emptyOnboardingDate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03804</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknownError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknownError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InternalCommunicationError"
+        fontsize="10pt"
+        href="errors.html#internalcommunicationerror"
+    ];
+
+    "DefaultOrdersRepositoryError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="DefaultOrdersRepositoryError" width="200" COLSPAN="2" ID="DefaultOrdersRepositoryError"><FONT POINT-SIZE="16.0">DefaultOrdersRepositoryError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03702</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="pharmacyRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">pharmacyRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03703</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="DefaultOrdersRepositoryError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "RedeemOrderServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="RedeemOrderServiceError" width="200" COLSPAN="2" ID="RedeemOrderServiceError"><FONT POINT-SIZE="16.0">RedeemOrderServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04502</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="pharmacy" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">pharmacy</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04503</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="redeem" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">redeem</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="RedeemOrderServiceError"
+        fontsize="10pt"
+        href="errors.html#redeemorderserviceerror"
+    ];
+
+    "RedeemServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="RedeemServiceError" width="200" COLSPAN="2" ID="RedeemServiceError"><FONT POINT-SIZE="16.0">RedeemServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="eRxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">eRxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="avs" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">avs</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02403</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02404</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02405</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noTokenAvailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noTokenAvailable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02406</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02407</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="prescriptionAlreadyRedeemed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">prescriptionAlreadyRedeemed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="RedeemServiceError"
+        fontsize="10pt"
+        href="errors.html#redeemserviceerror"
+    ];
+
+    "InternalError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InternalError" width="200" COLSPAN="2" ID="InternalError"><FONT POINT-SIZE="16.0">InternalError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingAVSEndpoint" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingAVSEndpoint</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02502</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingAVSCertificate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingAVSCertificate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02503</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingTelematikId" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingTelematikId</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02504</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="conversionVersionNumber" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">conversionVersionNumber</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02505</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idMissmatch" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idMissmatch</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02506</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noService" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noService</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02507</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpectedHTTPStatusCode" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpectedHTTPStatusCode</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02508</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStoreError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStoreError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InternalError"
+        fontsize="10pt"
+        href="errors.html#internalerror"
+    ];
+
+    "NFCHealthCardPasswordControllerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="NFCHealthCardPasswordControllerError" width="200" COLSPAN="2" ID="NFCHealthCardPasswordControllerError"><FONT POINT-SIZE="16.0">NFCHealthCardPasswordControllerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="cardError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">cardError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02602</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="openSecureSession" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">openSecureSession</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02603</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="resetRetryCounter" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">resetRetryCounter</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02604</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="wrongCan" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">wrongCan</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02605</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="changeReferenceData" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">changeReferenceData</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02606</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="couldNotInitializeSession" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">couldNotInitializeSession</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02607</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="nfcHealthCardSession" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">nfcHealthCardSession</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="NFCHealthCardPasswordControllerError"
+        fontsize="10pt"
+        href="errors.html#nfchealthcardpasswordcontrollererror"
+    ];
+
+    "OrganDonorJumpServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="OrganDonorJumpServiceError" width="200" COLSPAN="2" ID="OrganDonorJumpServiceError"><FONT POINT-SIZE="16.0">OrganDonorJumpServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="fetchingProfile" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">fetchingProfile</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="generatingGenericUrl" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">generatingGenericUrl</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="openingSpecificUrl" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">openingSpecificUrl</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="OrganDonorJumpServiceError"
+        fontsize="10pt"
+        href="errors.html#organdonorjumpserviceerror"
+    ];
+
+    "ChargeItemDomainServiceFetchResultError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ChargeItemDomainServiceFetchResultError" width="200" COLSPAN="2" ID="ChargeItemDomainServiceFetchResultError"><FONT POINT-SIZE="16.0">ChargeItemDomainServiceFetchResultError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpected" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpected</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="consentService" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">consentService</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ChargeItemDomainServiceFetchResultError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ChargeItemDomainServiceAuthenticateResultError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ChargeItemDomainServiceAuthenticateResultError" width="200" COLSPAN="2" ID="ChargeItemDomainServiceAuthenticateResultError"><FONT POINT-SIZE="16.0">ChargeItemDomainServiceAuthenticateResultError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpected" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpected</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ChargeItemDomainServiceAuthenticateResultError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ChargeItemListDomainServiceGrantResultError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ChargeItemListDomainServiceGrantResultError" width="200" COLSPAN="2" ID="ChargeItemListDomainServiceGrantResultError"><FONT POINT-SIZE="16.0">ChargeItemListDomainServiceGrantResultError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03203</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03204</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpectedGrantConsentResponse" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpectedGrantConsentResponse</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03205</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpected" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpected</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03206</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="consentService" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">consentService</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ChargeItemListDomainServiceGrantResultError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ChargeItemListDomainServiceRevokeResultError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ChargeItemListDomainServiceRevokeResultError" width="200" COLSPAN="2" ID="ChargeItemListDomainServiceRevokeResultError"><FONT POINT-SIZE="16.0">ChargeItemListDomainServiceRevokeResultError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03302</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03303</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03304</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpected" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpected</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03305</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="consentService" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">consentService</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ChargeItemListDomainServiceRevokeResultError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ChargeItemDomainServiceDeleteResultError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ChargeItemDomainServiceDeleteResultError" width="200" COLSPAN="2" ID="ChargeItemDomainServiceDeleteResultError"><FONT POINT-SIZE="16.0">ChargeItemDomainServiceDeleteResultError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStore" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStore</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03403</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03404</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unexpected" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unexpected</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ChargeItemDomainServiceDeleteResultError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ChargeItemPDFServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ChargeItemPDFServiceError" width="200" COLSPAN="2" ID="ChargeItemPDFServiceError"><FONT POINT-SIZE="16.0">ChargeItemPDFServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="couldNotCreateDestinationURL" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">couldNotCreateDestinationURL</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03502</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="couldNotCreatePDFStringForParsing" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">couldNotCreatePDFStringForParsing</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03503</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="parsingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">parsingError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03504</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="failedToCreateAttachment" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">failedToCreateAttachment</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03505</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="dataMissingPatient" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">dataMissingPatient</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03506</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="dataMissingDoctor" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">dataMissingDoctor</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03507</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="dataMissingPharmacy" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">dataMissingPharmacy</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03508</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="dataMissingInvoice" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">dataMissingInvoice</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ChargeItemPDFServiceError"
+        fontsize="10pt"
+        href="errors.html#chargeitempdfserviceerror"
+    ];
+
+    "AuditEventsServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="AuditEventsServiceError" width="200" COLSPAN="2" ID="AuditEventsServiceError"><FONT POINT-SIZE="16.0">AuditEventsServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingAuthentication" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingAuthentication</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02802</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandlerError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandlerError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02803</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepositoryError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepositoryError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="AuditEventsServiceError"
+        fontsize="10pt"
+        href="errors.html#auditeventsserviceerror"
+    ];
+
+    "RegisteredDevicesDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="RegisteredDevicesDomainError" width="200" COLSPAN="2" ID="RegisteredDevicesDomainError"><FONT POINT-SIZE="16.0">RegisteredDevicesDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="generic" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">generic</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="RegisteredDevicesDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "RegisteredDevicesServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="RegisteredDevicesServiceError" width="200" COLSPAN="2" ID="RegisteredDevicesServiceError"><FONT POINT-SIZE="16.0">RegisteredDevicesServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingAuthentication" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingAuthentication</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01802</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingToken" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingToken</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01803</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandlerError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandlerError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01804</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="RegisteredDevicesServiceError"
+        fontsize="10pt"
+        href="errors.html#registereddevicesserviceerror"
+    ];
+
+    "SettingsDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="SettingsDomainError" width="200" COLSPAN="2" ID="SettingsDomainError"><FONT POINT-SIZE="16.0">SettingsDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="organDonorJumpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">organDonorJumpError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03902</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="organDonorUnknownError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">organDonorUnknownError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="SettingsDomainError"
+        fontsize="10pt"
+        href="errors.html#settingsdomainerror"
+    ];
+
+    "DemoError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="DemoError" width="200" COLSPAN="2" ID="DemoError"><FONT POINT-SIZE="16.0">DemoError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="demo" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">demo</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="DemoError"
+        fontsize="10pt"
+        href="errors.html#demoerror"
+    ];
+
+    "AppSecurityManagerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="AppSecurityManagerError" width="200" COLSPAN="2" ID="AppSecurityManagerError"><FONT POINT-SIZE="16.0">AppSecurityManagerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="savePasswordFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">savePasswordFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="retrievePasswordFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">retrievePasswordFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04403</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localAuthenticationContext" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localAuthenticationContext</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04404</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="migrationFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">migrationFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04405</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="passwordDelayInfoIOFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">passwordDelayInfoIOFailed</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="AppSecurityManagerError"
+        fontsize="10pt"
+        href="errors.html#appsecuritymanagererror"
+    ];
+
+    "UserProfileServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="UserProfileServiceError" width="200" COLSPAN="2" ID="UserProfileServiceError"><FONT POINT-SIZE="16.0">UserProfileServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStoreError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStoreError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="UserProfileServiceError"
+        fontsize="10pt"
+        href="errors.html#userprofileserviceerror"
+    ];
+
+    "UserSessionError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="UserSessionError" width="200" COLSPAN="2" ID="UserSessionError"><FONT POINT-SIZE="16.0">UserSessionError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="idpError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">idpError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="UserSessionError"
+        fontsize="10pt"
+        href="errors.html#usersessionerror"
+    ];
+
+    "UserSessionProviderError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="UserSessionProviderError" width="200" COLSPAN="2" ID="UserSessionProviderError"><FONT POINT-SIZE="16.0">UserSessionProviderError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-00701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unavailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unavailable</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="UserSessionProviderError"
+        fontsize="10pt"
+        href="errors.html#usersessionprovidererror"
+    ];
+
+    "ShareSheetDomainError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ShareSheetDomainError" width="200" COLSPAN="2" ID="ShareSheetDomainError"><FONT POINT-SIZE="16.0">ShareSheetDomainError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="shareFailure" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">shareFailure</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ShareSheetDomainError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "DefaultDataMatrixStringEncoderError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="DefaultDataMatrixStringEncoderError" width="200" COLSPAN="2" ID="DefaultDataMatrixStringEncoderError"><FONT POINT-SIZE="16.0">DefaultDataMatrixStringEncoderError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="stringEncoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">stringEncoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingAccessCode" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingAccessCode</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="DefaultDataMatrixStringEncoderError"
+        fontsize="10pt"
+        href="errors.html#defaultdatamatrixstringencodererror"
+    ];
+
+    "ErxConsentError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ErxConsentError" width="200" COLSPAN="2" ID="ErxConsentError"><FONT POINT-SIZE="16.0">ErxConsentError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unableToConstructConsentRequest" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unableToConstructConsentRequest</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20602</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidErxConsentInput" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidErxConsentInput</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ErxConsentError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "StatusError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="StatusError" width="200" COLSPAN="2" ID="StatusError"><FONT POINT-SIZE="16.0">StatusError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decoding" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decoding</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknown" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknown</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingStatus" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingStatus</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingPatientReceiptReference" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingPatientReceiptReference</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20105</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingPatientReceiptIdentifier" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingPatientReceiptIdentifier</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20106</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingPatientReceiptBundle" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingPatientReceiptBundle</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="StatusError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ErxTaskOrderError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ErxTaskOrderError" width="200" COLSPAN="2" ID="ErxTaskOrderError"><FONT POINT-SIZE="16.0">ErxTaskOrderError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unableToConstructCommunicationRequest" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unableToConstructCommunicationRequest</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20802</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidErxTaskOrderInput" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidErxTaskOrderInput</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ErxTaskOrderError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ErxRepositoryError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ErxRepositoryError" width="200" COLSPAN="2" ID="ErxRepositoryError"><FONT POINT-SIZE="16.0">ErxRepositoryError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="local" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">local</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="remote" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">remote</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ErxRepositoryError"
+        fontsize="10pt"
+        href="errors.html#erxrepositoryerror"
+    ];
+
+    "LocalStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="LocalStoreError" width="200" COLSPAN="2" ID="LocalStoreError"><FONT POINT-SIZE="16.0">LocalStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="notImplemented" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">notImplemented</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20302</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="initialization" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">initialization</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20303</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="write" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">write</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20304</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="delete" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">delete</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20305</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="read" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">read</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="LocalStoreError"
+        fontsize="10pt"
+        href="errors.html#localstoreerror"
+    ];
+
+    "RemoteStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="RemoteStoreError" width="200" COLSPAN="2" ID="RemoteStoreError"><FONT POINT-SIZE="16.0">RemoteStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="fhirClient" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">fhirClient</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="notImplemented" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">notImplemented</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="RemoteStoreError"
+        fontsize="10pt"
+        href="errors.html#remotestoreerror"
+    ];
+
+    "ScannedErxTaskError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ScannedErxTaskError" width="200" COLSPAN="2" ID="ScannedErxTaskError"><FONT POINT-SIZE="16.0">ScannedErxTaskError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="format" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">format</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20502</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidID" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidID</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20503</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidAccessCode" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidAccessCode</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20504</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidJSON" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidJSON</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ScannedErxTaskError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "SharedTaskError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="SharedTaskError" width="200" COLSPAN="2" ID="SharedTaskError"><FONT POINT-SIZE="16.0">SharedTaskError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingSeparator" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingSeparator</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20702</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="failedDecodingEmptyString" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">failedDecodingEmptyString</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20703</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="tooManyComponents" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">tooManyComponents</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="SharedTaskError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "AVSTransactionCoreDataStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="AVSTransactionCoreDataStoreError" width="200" COLSPAN="2" ID="AVSTransactionCoreDataStoreError"><FONT POINT-SIZE="16.0">AVSTransactionCoreDataStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-58101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noMatchingEntity" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noMatchingEntity</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-58102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="AVSTransactionCoreDataStoreError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "CoreDataControllerError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="CoreDataControllerError" width="200" COLSPAN="2" ID="CoreDataControllerError"><FONT POINT-SIZE="16.0">CoreDataControllerError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="initialization" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">initialization</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="CoreDataControllerError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ExcludeFileError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ExcludeFileError" width="200" COLSPAN="2" ID="ExcludeFileError"><FONT POINT-SIZE="16.0">ExcludeFileError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50301</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="fileDoesNotExist" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">fileDoesNotExist</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50302</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="error" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">error</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ExcludeFileError"
+        fontsize="10pt"
+        href="errors.html#excludefileerror"
+    ];
+
+    "MigrationError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="MigrationError" width="200" COLSPAN="2" ID="MigrationError"><FONT POINT-SIZE="16.0">MigrationError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="isLatestVersion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">isLatestVersion</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingProfile" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingProfile</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="write" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">write</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50104</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="read" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">read</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50105</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="delete" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">delete</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50106</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50107</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="initialization" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">initialization</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="MigrationError"
+        fontsize="10pt"
+        href="errors.html#migrationerror"
+    ];
+
+    "PharmacyCoreDataStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="PharmacyCoreDataStoreError" width="200" COLSPAN="2" ID="PharmacyCoreDataStoreError"><FONT POINT-SIZE="16.0">PharmacyCoreDataStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noMatchingEntity" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noMatchingEntity</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="PharmacyCoreDataStoreError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ProfileCoreDataStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ProfileCoreDataStoreError" width="200" COLSPAN="2" ID="ProfileCoreDataStoreError"><FONT POINT-SIZE="16.0">ProfileCoreDataStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noMatchingEntity" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noMatchingEntity</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="initialization" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">initialization</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ProfileCoreDataStoreError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "ShipmentInfoCoreDataStoreError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ShipmentInfoCoreDataStoreError" width="200" COLSPAN="2" ID="ShipmentInfoCoreDataStoreError"><FONT POINT-SIZE="16.0">ShipmentInfoCoreDataStoreError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50401</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noMatchingEntity" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noMatchingEntity</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-50402</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="internalError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">internalError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ShipmentInfoCoreDataStoreError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
+    "RemoteStorageBundleParsingError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="RemoteStorageBundleParsingError" width="200" COLSPAN="2" ID="RemoteStorageBundleParsingError"><FONT POINT-SIZE="16.0">RemoteStorageBundleParsingError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-58001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="parseError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">parseError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="RemoteStorageBundleParsingError"
+        fontsize="10pt"
+        href="errors.html#remotestoragebundleparsingerror"
+    ];
+
+  "AVSError":network -> "HTTPClientError";
+  "AVSError":internal -> "InternalError";
+  "BfArMError":network -> "HTTPClientError";
+  "ConsentServiceError":localStore -> "LocalStoreError";
+  "ConsentServiceError":loginHandler -> "LoginHandlerError";
+  "ConsentServiceError":erxRepository -> "ErxRepositoryError";
+  "FHIRVZDError":network -> "HTTPClientError";
+  "CardWallExtAuthConfirmationDomainError":idpError -> "IDPError";
+  "CardWallIntroductionDomainError":idpError -> "IDPError";
+  "StateError":idpError -> "IDPError";
+  "StateError":inputError -> "InputError";
+  "StateError":signChallengeError -> "NFCSignatureProviderError";
+  "StateError":profileValidation -> "IDTokenValidatorError";
+  "LoginHandlerError":idpError -> "IDPError";
+  "NFCSignatureProviderError":verifyCardError -> "VerifyPINError";
+  "NFCSignatureProviderError":signingFailure -> "SigningError";
+  "NFCSignatureProviderError":secureEnclaveError -> "SecureEnclaveSignatureProviderError";
+  "IDPError":internal -> "InternalError";
+  "IDPError":biometrics -> "SecureEnclaveSignatureProviderError";
+  "PharmacyRepositoryError":local -> "LocalStoreError";
+  "TrustStoreError":network -> "HTTPClientError";
+  "TrustStoreError":internal -> "InternalError";
+  "VAUError":network -> "HTTPClientError";
+  "PrescriptionRepositoryError":loginHandler -> "LoginHandlerError";
+  "PrescriptionRepositoryError":erxRepository -> "ErxRepositoryError";
+  "ScannerDomainError":scannedErxTask -> "ScannedErxTaskError";
+  "ExtAuthPendingDomainError":idpError -> "IDPError";
+  "ExtAuthPendingDomainError":profileValidation -> "IDTokenValidatorError";
+  "MainDomainError":localStoreError -> "LocalStoreError";
+  "MainDomainError":userSessionError -> "UserSessionError";
+  "MainDomainError":repositoryError -> "ErxRepositoryError";
+  "InternalCommunicationError":decodingError -> "ConsentServiceError";
+  "DefaultOrdersRepositoryError":erxRepository -> "ErxRepositoryError";
+  "DefaultOrdersRepositoryError":pharmacyRepository -> "PharmacyRepositoryError";
+  "RedeemOrderServiceError":localStore -> "LocalStoreError";
+  "RedeemOrderServiceError":pharmacy -> "PharmacyRepositoryError";
+  "RedeemOrderServiceError":redeem -> "RedeemServiceError";
+  "RedeemServiceError":eRxRepository -> "ErxRepositoryError";
+  "RedeemServiceError":avs -> "AVSError";
+  "RedeemServiceError":internalError -> "InternalError";
+  "RedeemServiceError":loginHandler -> "LoginHandlerError";
+  "InternalError":localStoreError -> "LocalStoreError";
+  "ChargeItemDomainServiceFetchResultError":localStore -> "LocalStoreError";
+  "ChargeItemDomainServiceFetchResultError":loginHandler -> "LoginHandlerError";
+  "ChargeItemDomainServiceFetchResultError":erxRepository -> "ErxRepositoryError";
+  "ChargeItemDomainServiceFetchResultError":consentService -> "ConsentServiceError";
+  "ChargeItemDomainServiceAuthenticateResultError":loginHandler -> "LoginHandlerError";
+  "ChargeItemListDomainServiceGrantResultError":localStore -> "LocalStoreError";
+  "ChargeItemListDomainServiceGrantResultError":loginHandler -> "LoginHandlerError";
+  "ChargeItemListDomainServiceGrantResultError":erxRepository -> "ErxRepositoryError";
+  "ChargeItemListDomainServiceGrantResultError":consentService -> "ConsentServiceError";
+  "ChargeItemListDomainServiceRevokeResultError":localStore -> "LocalStoreError";
+  "ChargeItemListDomainServiceRevokeResultError":loginHandler -> "LoginHandlerError";
+  "ChargeItemListDomainServiceRevokeResultError":erxRepository -> "ErxRepositoryError";
+  "ChargeItemListDomainServiceRevokeResultError":consentService -> "ConsentServiceError";
+  "ChargeItemDomainServiceDeleteResultError":localStore -> "LocalStoreError";
+  "ChargeItemDomainServiceDeleteResultError":loginHandler -> "LoginHandlerError";
+  "ChargeItemDomainServiceDeleteResultError":erxRepository -> "ErxRepositoryError";
+  "ChargeItemPDFServiceError":parsingError -> "ConsentServiceError";
+  "ChargeItemPDFServiceError":failedToCreateAttachment -> "ConsentServiceError";
+  "AuditEventsServiceError":loginHandlerError -> "LoginHandlerError";
+  "AuditEventsServiceError":erxRepositoryError -> "ErxRepositoryError";
+  "RegisteredDevicesServiceError":loginHandlerError -> "LoginHandlerError";
+  "RegisteredDevicesServiceError":idpError -> "IDPError";
+  "SettingsDomainError":organDonorJumpError -> "OrganDonorJumpServiceError";
+  "UserProfileServiceError":localStoreError -> "LocalStoreError";
+  "UserSessionError":idpError -> "IDPError";
+  "ErxRepositoryError":local -> "LocalStoreError";
+  "ErxRepositoryError":remote -> "RemoteStoreError";
+  "RemoteStoreError":fhirClient -> "FHIRClientError";
+}
