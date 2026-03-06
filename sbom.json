@@ -1,8 +1,8 @@
 
  ERROR   Unspecified Error (SNYK-CLI-0000)
          The encountered error only provides basic information, please take a look at   
-         the given details.If they do not help to resolve the issue, consider debugging 
-         or consulting support.                                                         
+         the given details. If they do not help to resolve the issue, consider          
+         debugging or consulting support.                                               
                                                                                         
            Snyk failed to infer an organization ID. Please make sure to authenticate    
            using `snyk auth`. Should the issue persist, explicitly set an organization  
@@ -10,4 +10,4 @@
 
 Docs:    https://docs.snyk.io/scan-with-snyk/error-catalog#snyk-cli-0000 
                                                                          
-ID:      urn:snyk:interaction:0380048f-3b57-42b1-8076-61d699c3f5b9 
+ID:      urn:snyk:interaction:4d73b313-946e-4dd9-8685-6797ffc1c510 
