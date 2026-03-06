@@ -74,12 +74,12 @@ struct DebugEGKScannerView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Image(systemName: validPrkFound ? SFSymbolName.checkmark : SFSymbolName.crossIcon)
-                            .foregroundColor(validPrkFound ? Colors.secondary600 : Colors.red600)
+                            .foregroundColor(validPrkFound ? Colors.secondary600 : Colors.red700)
                         Text("PrkCHAut")
                     }
                     HStack {
                         Image(systemName: validPukFound ? SFSymbolName.checkmark : SFSymbolName.crossIcon)
-                            .foregroundColor(validPukFound ? Colors.secondary600 : Colors.red600)
+                            .foregroundColor(validPukFound ? Colors.secondary600 : Colors.red700)
                         Text("CCHAut")
                     }
                 }

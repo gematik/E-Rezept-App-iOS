@@ -33,7 +33,7 @@ final class URLRequestExtSerializeTests: XCTestCase {
         var sut = URLRequest(url: url)
         sut.httpMethod = "POST"
         sut.addValue("application/fhir+json", forHTTPHeaderField: "Accept")
-        let body = "body".data(using: .utf8)!
+        let body = Data("body".utf8)
         sut.httpBody = body
 
         // when

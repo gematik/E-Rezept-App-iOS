@@ -41,7 +41,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         guard let chargeItem = try decode(resource: "GEM_ERPCHRG_PR_ChargeItem.json")
             .parseErxChargeItem(
                 id: "200.000.001.206.112.29",
-                with: "fhirData".data(using: .utf8)!
+                with: Data("fhirData".utf8)
             )
         else {
             fail("Could not parse ModelsR4.Bundle into ChargeItemBundle.")

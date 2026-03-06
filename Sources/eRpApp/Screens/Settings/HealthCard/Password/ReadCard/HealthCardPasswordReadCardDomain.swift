@@ -69,7 +69,7 @@ struct HealthCardPasswordReadCardDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = errorAlert
@@ -267,3 +267,6 @@ extension HealthCardPasswordReadCardDomain {
         }
     }
 }
+
+extension HealthCardPasswordReadCardDomain.Destination.State: Equatable {}
+extension HealthCardPasswordReadCardDomain.Destination.Action: Equatable {}

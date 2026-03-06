@@ -38,6 +38,7 @@ struct HealthCardPasswordOldPinView: View {
                         .font(.headline.bold())
                         .accessibility(identifier: A11y.settings.card.stgTxtCardResetOldpinHeadline)
                         .padding(.bottom)
+                        .accessibilityAddTraits(.isHeader)
 
                     OldPinFieldView(store: store)
 
@@ -47,8 +48,8 @@ struct HealthCardPasswordOldPinView: View {
                         .accessibility(identifier: A11y.settings.card.stgTxtCardResetOldpinHint)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .padding()
             }
-            .padding()
 
             Spacer(minLength: 0)
 
@@ -92,16 +93,11 @@ struct HealthCardPasswordOldPinView: View {
                     titleKey: L10n.stgEdtCardResetOldpinInput,
                     text: $store.oldPin.sending(\.updateOldPin),
                     //                    text: binding.animation(),
-                    textContentType: .password,
-                    backgroundColor: Colors.systemGray5
+                    textContentType: .password
                 ) {}
                     .textContentType(.oneTimeCode)
                     .multilineTextAlignment(.leading)
                     .keyboardType(.numberPad)
-                    .padding()
-                    .font(Font.title3)
-                    .background(Colors.systemGray5)
-                    .cornerRadius(8)
                     .focused($focused)
                     .accessibility(identifier: A11y.settings.card.stgEdtCardResetOldpinInput)
             }

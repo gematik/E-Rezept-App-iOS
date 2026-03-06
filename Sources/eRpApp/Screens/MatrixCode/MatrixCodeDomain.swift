@@ -57,14 +57,44 @@ struct MatrixCodeDomain {
         let type: MatrixCodeType
         var erxTasks: [ErxTask] = []
         var erxChargeItem: ErxChargeItem?
-        var loadingState: ImageLoadingState = .idle
+        var groupedLoadingState: ImageLoadingState = .idle
+        var singleLoadingState: ImageLoadingState = .idle
+        var displayMode: DisplayMode = .grouped
         var isMatrixCodeZoomed = false
-        var page = 0
+        var groupedPage = 0
+        var singlePage = 0
         @Presents var destination: Destination.State?
 
         var isEURedeemable: Bool {
             @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
             return euRedeemPrescriptionsFeature && erxTasks.contains(where: \.isEURedeemable)
+        }
+
+        var loadingState: ImageLoadingState {
+            switch displayMode {
+            case .grouped: groupedLoadingState
+            case .single: singleLoadingState
+            }
+        }
+
+        var page: Int {
+            get {
+                switch displayMode {
+                case .grouped: groupedPage
+                case .single: singlePage
+                }
+            }
+            set {
+                switch displayMode {
+                case .grouped: groupedPage = newValue
+                case .single: singlePage = newValue
+                }
+            }
+        }
+
+        /// Returns true if there are multiple erxTasks, enabling the display mode picker
+        var showsDisplayModePicker: Bool {
+            type == .erxTask && erxTasks.count > 1
         }
 
         struct IdentifiedImage: Equatable, Identifiable {
@@ -85,6 +115,7 @@ struct MatrixCodeDomain {
 
     enum Action: Equatable {
         case pageChanged(Int)
+        case displayModeChanged(DisplayMode)
         case shareButtonTapped
         case zoomButtonTapped
         case loadMatrixCodeImage(screenSize: CGSize)
@@ -95,7 +126,8 @@ struct MatrixCodeDomain {
         case destination(PresentationAction<Destination.Action>)
 
         enum Response: Equatable {
-            case matrixCodeImageReceived(ImageLoadingState)
+            case groupedMatrixCodeImageReceived(ImageLoadingState)
+            case singleMatrixCodeImageReceived(ImageLoadingState)
             case redeemedOnSavedReceived(Bool)
         }
 
@@ -104,7 +136,7 @@ struct MatrixCodeDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = matrixCode_sharePrescription
         case sharePrescription(ShareSheetDomain)
@@ -136,6 +168,9 @@ struct MatrixCodeDomain {
         case let .pageChanged(index):
             state.page = index
             return .none
+        case let .displayModeChanged(mode):
+            state.displayMode = mode
+            return .none
         case .shareButtonTapped:
             guard state.type == .erxTask,
                   let matrixCodes = state.loadingState.value,
@@ -165,29 +200,55 @@ struct MatrixCodeDomain {
         case let .loadMatrixCodeImage(screenSize):
             switch state.type {
             case .erxTask:
+                // Generate grouped images (up to 3 tasks per code)
                 let chunkedTasks = stride(from: 0, to: state.erxTasks.count, by: 3).map { index in
                     state.erxTasks[index ..< min(index + 3, state.erxTasks.count)]
                 }
+                // Generate single images (1 task per code)
+                let singleTasks = state.erxTasks.map { [$0] }
 
-                return .run { send in
-                    var images: IdentifiedArrayOf<State.IdentifiedImage> = []
-                    do {
-                        for chunk in chunkedTasks {
-                            images
-                                .append(try await erxMatrixCodeGenerator.publishedMatrixCode(
-                                    for: Array(chunk),
-                                    with: calcMatrixCodeSize(screenSize: screenSize)
-                                )
-                                .map {
-                                    State.IdentifiedImage(identifier: uuid(), image: $0, chunk: Array(chunk))
-                                }
-                                .async())
+                return .merge(
+                    .run { send in
+                        var images: IdentifiedArrayOf<State.IdentifiedImage> = []
+                        do {
+                            for chunk in chunkedTasks {
+                                images
+                                    .append(try await erxMatrixCodeGenerator.publishedMatrixCode(
+                                        for: Array(chunk),
+                                        with: calcMatrixCodeSize(screenSize: screenSize)
+                                    )
+                                    .map {
+                                        State.IdentifiedImage(identifier: uuid(), image: $0, chunk: Array(chunk))
+                                    }
+                                    .async())
+                            }
+                        } catch {
+                            await send(.response(.groupedMatrixCodeImageReceived(.error(.matrixCodeGenerationFailed))))
+                            return
                         }
-                    } catch {
-                        await send(.response(.matrixCodeImageReceived(.error(.matrixCodeGenerationFailed))))
+                        await send(.response(.groupedMatrixCodeImageReceived(.value(images))))
+                    },
+                    .run { send in
+                        var images: IdentifiedArrayOf<State.IdentifiedImage> = []
+                        do {
+                            for single in singleTasks {
+                                images
+                                    .append(try await erxMatrixCodeGenerator.publishedMatrixCode(
+                                        for: single,
+                                        with: calcMatrixCodeSize(screenSize: screenSize)
+                                    )
+                                    .map {
+                                        State.IdentifiedImage(identifier: uuid(), image: $0, chunk: single)
+                                    }
+                                    .async())
+                            }
+                        } catch {
+                            await send(.response(.singleMatrixCodeImageReceived(.error(.matrixCodeGenerationFailed))))
+                            return
+                        }
+                        await send(.response(.singleMatrixCodeImageReceived(.value(images))))
                     }
-                    await send(.response(.matrixCodeImageReceived(.value(images))))
-                }
+                )
             case .erxChargeItem:
                 guard let chargeItem = state.erxChargeItem
                 else { return .none }
@@ -202,16 +263,16 @@ struct MatrixCodeDomain {
                     }
                     .map { [State.IdentifiedImage(identifier: uuid(), image: $0, chunk: nil)] }
                     .catchToLoadingStateEffect()
-                    .map { .response(.matrixCodeImageReceived($0)) }
+                    .map { .response(.groupedMatrixCodeImageReceived($0)) }
                     .receive(on: schedulers.main)
                     .eraseToAnyPublisher
                 )
             }
-        case let .response(.matrixCodeImageReceived(loadingState)):
+        case let .response(.groupedMatrixCodeImageReceived(loadingState)):
             if let images = loadingState.value, !images.isEmpty {
                 UIScreen.main.brightness = CGFloat(1.0)
             }
-            state.loadingState = loadingState
+            state.groupedLoadingState = loadingState
             switch state.type {
             case .erxTask:
                 // User story defines that scanned erxTasks should be automatically
@@ -220,6 +281,9 @@ struct MatrixCodeDomain {
             case .erxChargeItem:
                 return .none
             }
+        case let .response(.singleMatrixCodeImageReceived(loadingState)):
+            state.singleLoadingState = loadingState
+            return .none
         case .response(.redeemedOnSavedReceived):
             return .none
         case let .destination(.presented(.sharePrescription(.delegate(.close(error))))):
@@ -236,13 +300,12 @@ struct MatrixCodeDomain {
             state.destination = .alert(
                 ErpAlertState(
                     for: error,
-                    title: L10n.dmcAlertTitle,
-                    actions: {
-                        ButtonState(role: .cancel) {
-                            .init(L10n.alertBtnOk)
-                        }
+                    title: L10n.dmcAlertTitle
+                ) {
+                    ButtonState(role: .cancel) {
+                        .init(L10n.alertBtnOk)
                     }
-                )
+                }
             )
             return .none
         case .resetNavigation:
@@ -294,8 +357,7 @@ extension MatrixCodeDomain {
 
         static let erxChargeItemState = State(
             type: .erxChargeItem,
-            // swiftlint:disable:next force_unwrapping
-            erxChargeItem: ErxChargeItem(identifier: "123", fhirData: "123".data(using: .utf8)!, accessCode: "321")
+            erxChargeItem: ErxChargeItem(identifier: "123", fhirData: Data("123".utf8), accessCode: "321")
         )
 
         static let store = Store(
@@ -313,3 +375,27 @@ extension MatrixCodeDomain {
         }
     }
 }
+
+extension MatrixCodeDomain {
+    enum DisplayMode: String, CaseIterable, Equatable {
+        case grouped
+        case single
+
+        var text: String {
+            switch self {
+            case .grouped: L10n.dmcTxtDisplayModeGrouped.text
+            case .single: L10n.dmcTxtDisplayModeSingle.text
+            }
+        }
+
+        var accessibilityIdentifier: String {
+            switch self {
+            case .grouped: A11y.matrixCode.dmcBtnSegmentedControlGrouped
+            case .single: A11y.matrixCode.dmcBtnSegmentedControlSingle
+            }
+        }
+    }
+}
+
+extension MatrixCodeDomain.Destination.State: Equatable {}
+extension MatrixCodeDomain.Destination.Action: Equatable {}

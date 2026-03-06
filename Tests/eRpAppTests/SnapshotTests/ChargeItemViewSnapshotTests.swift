@@ -64,7 +64,7 @@ final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
                 initialState: .init(
                     type: .erxChargeItem,
                     erxChargeItem: ErxChargeItem.Dummies.dummy,
-                    loadingState: .value(.init(uniqueElements: [
+                    groupedLoadingState: .value(.init(uniqueElements: [
                         MatrixCodeDomain.State.IdentifiedImage(
                             identifier: UUID(),
                             image: Asset.qrcode.image,

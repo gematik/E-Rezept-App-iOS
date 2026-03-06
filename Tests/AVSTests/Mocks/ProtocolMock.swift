@@ -23,8 +23,6 @@
 
 @testable import AVS
 
-// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
-
 // sourcery:begin: AutoMockable
 extension AVSClient {}
 extension AVSCmsEncrypter {}

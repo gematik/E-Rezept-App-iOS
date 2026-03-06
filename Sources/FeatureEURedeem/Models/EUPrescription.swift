@@ -20,30 +20,51 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import eRpKit
+import eRpStyleKit
 import Foundation
 
-/// This will be replaced by as soon as the real dependencies can be used
+/// `EUPrescription` acts as a view model for an `ErxTask` to better fit the presentation logic
+@dynamicMemberLookup
 public struct EUPrescription: Equatable, Identifiable {
-    public let id: String
-    public let name: String
-    public let expiresOn: Date?
-    public var isRedeemableInEU: Bool
-    public var isSelected: Bool
-    public var notRedeemableReason: String?
+    public var erxTask: ErxTask
+
+    public var id: String {
+        erxTask.id
+    }
+
+    public subscript<A>(dynamicMember keyPath: KeyPath<ErxTask, A>) -> A {
+        erxTask[keyPath: keyPath]
+    }
 
     public init(
-        id: String,
-        name: String,
-        expiresOn: Date? = nil,
-        isRedeemableInEU: Bool = true,
-        isSelected: Bool = false,
-        notRedeemableReason: String? = nil
+        erxTask: ErxTask
     ) {
-        self.id = id
-        self.name = name
-        self.expiresOn = expiresOn
-        self.isRedeemableInEU = isRedeemableInEU
-        self.isSelected = isSelected
-        self.notRedeemableReason = notRedeemableReason
+        self.erxTask = erxTask
+    }
+
+    public var name: String {
+        guard let name = erxTask.medication?.displayName
+        else { return L10n.prscFdTxtNa.text }
+        return name
+    }
+
+    public var irredeemableReason: String? {
+        guard erxTask.source != .scanner else {
+            return L10n.euredeemPrscIrredeemableReasonScanned.text
+        }
+        guard erxTask.flowType != .narcotic, erxTask.flowType != .narcoticForPKV else {
+            return L10n.euredeemPrscIrredeemableReasonNarcotic.text
+        }
+        guard erxTask.medication?.profile != .freeText else {
+            return L10n.euredeemPrscIrredeemableReasonFreeText.text
+        }
+        guard erxTask.medication?.profile != .ingredient else {
+            return L10n.euredeemPrscIrredeemableReasonIngredient.text
+        }
+        guard erxTask.isEURedeemable != false else {
+            return L10n.euredeemPrscIrredeemableReasonFlag.text
+        }
+        return nil
     }
 }

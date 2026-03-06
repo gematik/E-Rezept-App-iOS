@@ -33,9 +33,9 @@ import XCTest
 @MainActor
 class PharmacyRedeemDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
-    var mockShipmentInfoDataStore: MockShipmentInfoDataStore!
+    var mockShipmentInfoDataStore: ShipmentInfoDataStoreMock!
     var mockUserSession: MockUserSession!
-    var mockRedeemService: MockRedeemService!
+    var mockRedeemService: RedeemServiceMock!
     var mockRedeemValidator: MockRedeemInputValidator!
 
     typealias TestStore = TestStoreOf<PharmacyRedeemDomain>
@@ -44,8 +44,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockUserSession = MockUserSession()
-        mockShipmentInfoDataStore = MockShipmentInfoDataStore()
-        mockRedeemService = MockRedeemService()
+        mockShipmentInfoDataStore = ShipmentInfoDataStoreMock()
+        mockRedeemService = RedeemServiceMock()
         mockRedeemValidator = MockRedeemInputValidator()
     }
 
@@ -117,8 +117,10 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = false
-        mockRedeemService.redeemProfileIdReturnValue = Fail(error: RedeemServiceError.noTokenAvailable)
-            .eraseToAnyPublisher()
+        mockRedeemService
+            .redeemOrdersOrderRequestProfileIdUUIDAnyPublisherIdentifiedArrayOfOrderResponseRedeemServiceErrorReturnValue =
+            Fail(error: RedeemServiceError.noTokenAvailable)
+                .eraseToAnyPublisher()
 
         await sut.send(.registerSelectedShipmentInfoListener)
         await sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
@@ -179,15 +181,17 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
 
             var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
-            mockRedeemService.redeemProfileIdClosure = { orders, _ in
-                let orderResponses = orders.map { order in
-                    OrderResponse(requested: order, result: .success(true))
+            mockRedeemService
+                .redeemOrdersOrderRequestProfileIdUUIDAnyPublisherIdentifiedArrayOfOrderResponseRedeemServiceErrorClosure =
+                { orders, _ in
+                    let orderResponses = orders.map { order in
+                        OrderResponse(requested: order, result: .success(true))
+                    }
+                    expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
+                    return Just(expectedOrderResponses)
+                        .setFailureType(to: RedeemServiceError.self)
+                        .eraseToAnyPublisher()
                 }
-                expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
-                return Just(expectedOrderResponses)
-                    .setFailureType(to: RedeemServiceError.self)
-                    .eraseToAnyPublisher()
-            }
 
             await sut.send(.task)
             await sut.receive(.registerSelectedShipmentInfoListener)
@@ -262,18 +266,20 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
             let expectedError = RedeemServiceError.eRxRepository(.remote(.notImplemented))
             var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
-            mockRedeemService.redeemProfileIdClosure = { orders, _ in
-                var orderResponses = orders.map { order in
-                    OrderResponse(requested: order, result: .success(true))
+            mockRedeemService
+                .redeemOrdersOrderRequestProfileIdUUIDAnyPublisherIdentifiedArrayOfOrderResponseRedeemServiceErrorClosure =
+                { orders, _ in
+                    var orderResponses = orders.map { order in
+                        OrderResponse(requested: order, result: .success(true))
+                    }
+                    // let one of the response be failing
+                    orderResponses[0] = OrderResponse(requested: orderResponses[0].requested,
+                                                      result: .failure(expectedError))
+                    expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
+                    return Just(expectedOrderResponses)
+                        .setFailureType(to: RedeemServiceError.self)
+                        .eraseToAnyPublisher()
                 }
-                // let one of the response be failing
-                orderResponses[0] = OrderResponse(requested: orderResponses[0].requested,
-                                                  result: .failure(expectedError))
-                expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
-                return Just(expectedOrderResponses)
-                    .setFailureType(to: RedeemServiceError.self)
-                    .eraseToAnyPublisher()
-            }
 
             // when redeeming
             await sut.send(.redeem) { $0.redeemInProgress = true }
@@ -312,7 +318,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             mockUserSession.isLoggedIn = true
             let expectedError = RedeemServiceError.internalError(.missingTelematikId)
-            mockRedeemService.redeemProfileIdReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
+            mockRedeemService
+                .redeemOrdersOrderRequestProfileIdUUIDAnyPublisherIdentifiedArrayOfOrderResponseRedeemServiceErrorReturnValue =
+                Fail(error: expectedError).eraseToAnyPublisher()
 
             // when redeeming
             await sut.send(.redeem) { $0.redeemInProgress = true }

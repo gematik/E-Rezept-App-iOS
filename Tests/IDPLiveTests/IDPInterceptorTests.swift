@@ -39,7 +39,7 @@ final class IDPInterceptorTests: XCTestCase {
         return mock
     }()
 
-    let extAuthRequestStorageMock = MockExtAuthRequestStorage()
+    let extAuthRequestStorageMock = ExtAuthRequestStorageMock()
 
     func testInterceptAddsAuthorizationHeader() async {
         let idpClientMock = MockIDPClient()

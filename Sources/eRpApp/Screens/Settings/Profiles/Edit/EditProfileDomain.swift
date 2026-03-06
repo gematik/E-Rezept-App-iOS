@@ -23,9 +23,11 @@
 import AsyncHelpers
 import Combine
 import ComposableArchitecture
+import ConsentService
 import eRpKit
 import eRpLocalStorage
 import eRpResources
+import FeatureCardWall
 import FeatureHelpers
 import Foundation
 import IDP
@@ -69,6 +71,13 @@ struct EditProfileDomain {
                 }
             }
         }
+
+        var isEURedeemable: Bool {
+            @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+            return euRedeemPrescriptionsFeature
+        }
+
+        var euRedeemConsentCheck: ConsentService.CheckResult = .notGranted
 
         init(name: String,
              acronym: String,
@@ -121,7 +130,7 @@ struct EditProfileDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = alert
         @ReducerCaseEphemeral
@@ -132,11 +141,16 @@ struct EditProfileDomain {
         case registeredDevices(RegisteredDevicesDomain)
         // sourcery: AnalyticsScreen = chargeItemList
         case chargeItemList(ChargeItemListDomain)
+        // sourcery: AnalyticsScreen = cardWall
+        case cardWall(CardWallIntroductionDomain)
         // sourcery: AnalyticsScreen = profile_insuranceDrawer
         case insuranceDrawer
+        case euRedeemConsentDrawer
         case editProfilePicture(EditProfilePictureDomain)
 
         enum Alert: Equatable {
+            case dismiss
+            case cardWall
             case confirmDeleteProfile
             case confirmDeleteBiometricPairing
         }
@@ -156,6 +170,10 @@ struct EditProfileDomain {
         case login
         case relogin
         case showDeleteBiometricPairingAlert
+        case showCardWall
+        case changeEURedeemConsent
+        case grantEURedeemConsent
+        case revokeEURedeemConsent
 
         case destination(PresentationAction<Destination.Action>)
         case resetNavigation
@@ -173,6 +191,8 @@ struct EditProfileDomain {
             case tokenReceived(IDPToken?)
             case biometricKeyIDReceived(Bool)
             case profileReceived(Result<Profile?, LocalStoreError>)
+            case grantConsentReceived(ConsentService.GrantResult)
+            case revokeConsentReceived(ConsentService.RevokeResult)
         }
 
         enum Delegate {
@@ -196,6 +216,7 @@ struct EditProfileDomain {
     @Dependency(\.router) var router: Routing
     @Dependency(\.pasteboardService) var pasteboardService: PasteboardService
     @Dependency(\.hapticFeedbackGenerator) var hapticFeedback
+    @Dependency(\.consentService) var consentService: ConsentService
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -297,6 +318,55 @@ struct EditProfileDomain {
         case .changeInsurance:
             state.destination = .insuranceDrawer
             return .none
+        case .showCardWall:
+            state.destination = .cardWall(.init(isNFCReady: true, profileId: state.profileId))
+            return .none
+        case .changeEURedeemConsent:
+            state.destination = .euRedeemConsentDrawer
+            return .none
+        case .grantEURedeemConsent:
+            state.destination = nil
+            return .run { [profileID = state.profileId] send in
+                let result = try await consentService.grantConsent(category: .euDispense, profileID: profileID)
+                await send(.response(.grantConsentReceived(result)))
+            }
+        case .revokeEURedeemConsent:
+            state.destination = nil
+            return .run { [profileID = state.profileId] send in
+                let result = try await consentService.revokeConsent(category: .euDispense, profileID: profileID)
+                await send(.response(.revokeConsentReceived(result)))
+            }
+        case let .response(.grantConsentReceived(result)):
+            switch result {
+            case .success, .conflict:
+                state.euRedeemConsentCheck = .granted
+            case .notAuthenticated:
+                state.euRedeemConsentCheck = .notAuthenticated
+                state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
+            case let .error(error):
+                state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
+                return .none
+            }
+            return .none
+        case let .response(.revokeConsentReceived(result)):
+            switch result {
+            case .success, .conflict:
+                state.euRedeemConsentCheck = .notGranted
+            case .notAuthenticated:
+                state.euRedeemConsentCheck = .notAuthenticated
+                state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
+            case let .error(error):
+                state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
+                return .none
+            }
+            return .none
+        case .destination(.presented(.alert(.cardWall))):
+            return .run { send in
+                await send(.showCardWall)
+            }
+        case .destination(.presented(.cardWall(action: .delegate(.close)))):
+            state.destination = nil
+            return .none
         case .setUserToGKVInsured:
             state.insuranceType = .gKV
             return changeInsurance(for: .gKV, with: state.profileId)
@@ -334,17 +404,14 @@ struct EditProfileDomain {
                 try await profileSecureDataWiper.wipeSecureData(of: profileId).async()
             }
         case .login:
-            userDataStore.set(selectedProfileId: state.profileId)
-            return .run { _ in
-                await router.routeTo(.mainScreen(.login))
+            return .run { send in
+                await send(.showCardWall)
             }
         case .relogin:
             state.token = nil
-            return .run { [profileId = state.profileId] _ in
+            return .run { [profileId = state.profileId] send in
                 try await profileSecureDataWiper.wipeSecureData(of: profileId).async()
-
-                userDataStore.set(selectedProfileId: profileId)
-                await router.routeTo(.mainScreen(.login))
+                await send(.showCardWall)
             }
         case .resetNavigation:
             state.destination = nil
@@ -633,6 +700,19 @@ extension EditProfileDomain {
                 }
             }
         }
+
+        static let grantConsentServiceNotAuthenticated = ErpAlertState<Action>(
+            title: L10n.euredeemSelectionTxtConsentNotLoggedInTitle,
+            actions: {
+                ButtonState(role: .cancel, action: .dismiss) {
+                    .init(L10n.errBtnCancel)
+                }
+                ButtonState(action: .cardWall) {
+                    .init(L10n.erxBtnAlertLogin)
+                }
+            },
+            message: L10n.euredeemSelectionTxtConsentNotLoggedInMessage
+        )
     }
 }
 
@@ -652,4 +732,6 @@ extension EditProfileDomain {
     }
 }
 
+extension EditProfileDomain.Destination.State: Equatable {}
+extension EditProfileDomain.Destination.Action: Equatable {}
 // swiftlint:enable type_body_length

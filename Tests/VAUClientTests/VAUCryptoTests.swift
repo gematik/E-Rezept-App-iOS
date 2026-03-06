@@ -53,7 +53,7 @@ final class VAUCryptoTests: XCTestCase {
 
     func testEciesEncrypt() throws {
         // given
-        let payload = "Hallo Test".data(using: .utf8)!
+        let payload = Data("Hallo Test".utf8)
         let pubKeyRaw =
             try Data(
                 hex: "048634212830DAD457CA05305E6687134166B9C21A65FFEBF555F4E75DFB04888866E4B6843624CBDA43C97EA89968BC41FD53576F82C03EFA7D601B9FACAC2B29" // swiftlint:disable:this line_length

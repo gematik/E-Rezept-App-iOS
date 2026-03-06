@@ -211,7 +211,7 @@ struct URLTester: View {
             } else {
                 Text("Ungültige URL, bitte URLEncoden sie alle Sonderzeichen abseits der vorgegebenen Platzhalter.")
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundColor(Colors.red600)
+                    .foregroundColor(Colors.red700)
                     .font(.footnote)
             }
 

@@ -444,6 +444,14 @@ extension DebugView {
                         Text("EU Redeem prescriptions")
                     }
                     Section {
+                        Toggle(
+                            "Use Workflow 1.6 instead of 1.5 for sending communications and consents",
+                            isOn: $store.useWorkflow16
+                        )
+                    } header: {
+                        Text("FHIR Workflow 1.6")
+                    }
+                    Section {
                         TextField(
                             "Overwrite DIGA IK (e.g. 101570104)",
                             text: $store.overwriteDIGAIK

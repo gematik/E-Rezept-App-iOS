@@ -39,7 +39,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
     var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
     lazy var testProfile = { Profile(name: "TestProfile") }()
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
-    var mockProfileDataStore: MockProfileDataStore!
+    var mockProfileDataStore: ProfileDataStoreMock!
     let uiScheduler = DispatchQueue.test
     var mockUserSession: MockUserSession!
     lazy var schedulers: Schedulers = {
@@ -56,7 +56,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         mockUserSession = MockUserSession()
         idpSessionMock = IDPSessionMock()
         extAuthRequestStorageMock = ExtAuthRequestStorageMock()
-        mockProfileDataStore = MockProfileDataStore()
+        mockProfileDataStore = ProfileDataStoreMock()
     }
 
     func testStore(for state: ExtAuthPendingDomain.State) -> TestStore {
@@ -67,7 +67,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         mockProfileValidator = Just(
             ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
         ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
-        mockProfileDataStore.listAllProfilesReturnValue = Just([testProfile])
+        mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = Just([testProfile])
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         return TestStore(initialState: state) {
@@ -118,7 +118,8 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
                                               for: healthInsurance)
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
@@ -155,7 +156,8 @@ final class ExtAuthPendingDomainTests: XCTestCase {
                                               nonce: "nonce",
                                               for: healthInsurance)
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -329,7 +331,8 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
                                               for: healthInsurance)
-        mockProfileDataStore.updateProfileIdMutatingReturnValue =
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue =
             Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
@@ -386,10 +389,12 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        mockProfileDataStore.updateProfileIdMutatingClosure = { _, mutating in
-            mutating(&profile)
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorClosure =
+            { _, mutating in
+                mutating(&profile)
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         await sut.send(.response(.externalLoginReceived(.success(idpToken)))) {
             $0.extAuthState = .extAuthSuccessful(
@@ -416,10 +421,12 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        mockProfileDataStore.updateProfileIdMutatingClosure = { _, mutating in
-            mutating(&profile)
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorClosure =
+            { _, mutating in
+                mutating(&profile)
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         await sut.send(.response(.externalLoginReceived(.success(idpToken)))) {
             $0.extAuthState = .extAuthSuccessful(

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="24G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="AuthEntry" representedClassName="AuthEntry" syncable="YES" codeGenerationType="class">
         <attribute name="gID" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="insuranceID" optional="YES" attributeType="String"/>
@@ -250,6 +250,31 @@
         <relationship name="medication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationEntity" inverseName="amountRatio" inverseEntity="ErxTaskMedicationEntity"/>
         <relationship name="numerator" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="numeratorRatio" inverseEntity="ErxTaskQuantityEntity"/>
     </entity>
+    <entity name="EuAccessCodeEntity" representedClassName="EuAccessCodeEntity" syncable="YES">
+        <attribute name="accessCode" optional="YES" attributeType="String"/>
+        <attribute name="countryCode" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="identifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="profileId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="validUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="euCommunication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="EuCommunicationEntity" inverseName="euAccessCode" inverseEntity="EuCommunicationEntity"/>
+    </entity>
+    <entity name="EuCommunicationEntity" representedClassName="EuCommunicationEntity" syncable="YES">
+        <attribute name="countryCode" optional="YES" attributeType="String"/>
+        <attribute name="eventType" optional="YES" attributeType="Binary"/>
+        <attribute name="identifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isRead" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="orderId" optional="YES" attributeType="String"/>
+        <attribute name="taskId" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="euAccessCode" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="EuAccessCodeEntity" inverseName="euCommunication" inverseEntity="EuAccessCodeEntity"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="euCommunication" inverseEntity="ProfileEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="MedicationScheduleEntity" representedClassName="MedicationScheduleEntity" syncable="YES">
         <attribute name="body" optional="YES" attributeType="String"/>
         <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -331,6 +356,7 @@
         <attribute name="userImageData" optional="YES" attributeType="Binary"/>
         <relationship name="chargeItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxChargeItemEntity" inverseName="profile" inverseEntity="ErxChargeItemEntity"/>
         <relationship name="erxTasks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskEntity" inverseName="profile" inverseEntity="ErxTaskEntity"/>
+        <relationship name="euCommunication" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EuCommunicationEntity" inverseName="profile" inverseEntity="EuCommunicationEntity"/>
         <fetchIndex name="byObjectIdIndex">
             <fetchIndexElement property="identifier" type="Binary" order="ascending"/>
         </fetchIndex>

@@ -59,6 +59,10 @@ struct AppAuthenticationPasswordDomain {
                 return ""
             }
         }
+
+        var isPasswordLoginButtonEnabled: Bool {
+            !password.isEmpty && !passwordDelayIsActive
+        }
     }
 
     enum Action: Equatable {

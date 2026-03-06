@@ -35,8 +35,8 @@ import XCTest
 class PharmacyDetailDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
     var mockUserSession: MockUserSession!
-    var mockRedeemService: MockRedeemService!
-    var mockPrescriptionRepository: MockPrescriptionRepository!
+    var mockRedeemService: RedeemServiceMock!
+    var mockPrescriptionRepository: PrescriptionRepositoryMock!
 
     typealias TestStore = TestStoreOf<PharmacyDetailDomain>
 
@@ -51,8 +51,8 @@ class PharmacyDetailDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockUserSession = MockUserSession()
-        mockRedeemService = MockRedeemService()
-        mockPrescriptionRepository = MockPrescriptionRepository()
+        mockRedeemService = RedeemServiceMock()
+        mockPrescriptionRepository = PrescriptionRepositoryMock()
     }
 
     func testStore(
@@ -152,9 +152,11 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         let selectedOption = RedeemOption.delivery
 
@@ -209,9 +211,11 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
 
         let selectedOption = RedeemOption.shipment
@@ -264,9 +268,11 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         let selectedOption = RedeemOption.onPremise
 
@@ -318,9 +324,11 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         let selectedOption = RedeemOption.onPremise
         // When loading the profile
@@ -371,9 +379,11 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
@@ -435,9 +445,11 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let prescriptions = Prescription.Fixtures.prescriptions.filter(\.isRedeemable)
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
@@ -597,7 +609,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPrescriptionRepository.loadLocalForReturnValue = Just([])
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue = Just([])
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success([])
@@ -659,9 +672,11 @@ class PharmacyDetailDomainTests: XCTestCase {
 
             let prescriptions = nonReadyPrescriptions + [expectedPrescription]
 
-            mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-                .setFailureType(to: PrescriptionRepositoryError.self)
-                .eraseToAnyPublisher()
+            mockPrescriptionRepository
+                .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+                Just(prescriptions)
+                    .setFailureType(to: PrescriptionRepositoryError.self)
+                    .eraseToAnyPublisher()
             await sut.send(.task) {
                 // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`
                 // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
@@ -704,9 +719,11 @@ class PharmacyDetailDomainTests: XCTestCase {
 
         let prescriptions = [Prescription.Dummies.prescriptionReady, Prescription.Dummies.scanned]
 
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`

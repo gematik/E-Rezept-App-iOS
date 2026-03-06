@@ -21,8 +21,14 @@
 //
 
 import ComposableArchitecture
+import ConsentService
 import eRpKit
+import eRpStyleKit
+import ErxTaskRepository
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
+import Profiles
 
 // MARK: - EURedeemSelectionDomain
 
@@ -33,35 +39,41 @@ public struct EURedeemSelectionDomain {
     @ObservableState
     public struct State: Equatable {
         /// Available prescriptions for redemption
-        public var prescriptions: [EUPrescription] = []
+        @Shared public var prescriptions: [EUPrescription]
         /// Currently selected prescriptions
-        public var selectedPrescriptions: [EUPrescription] = []
+        @Shared public var selectedPrescriptions: [EUPrescription]
         /// Currently selected country
         public var selectedCountry: Country?
+        /// Boolean for disable redeem button
+        public var isDisabled: Bool {
+            selectedPrescriptions.isEmpty || selectedCountry == nil
+        }
+
         /// Destination for navigation and modals
-        @Presents public var destination: Destination.State? = .consent(.init())
-        /// Consent status - true = accepted, false = declined, nil = not decided
-        public var consentGiven: Bool?
+        @Presents public var destination: Destination.State?
+
+        /// Selected user profile ID
+        @Shared(.selectedProfileId) var profileID
 
         public init(
-            prescriptions: [EUPrescription] = EURedeemSelectionDomain.Dummies.prescriptions,
-            selectedPrescriptions: [EUPrescription] = [],
+            prescriptions: Shared<[EUPrescription]> = Shared(value: []),
             selectedCountry: Country? = nil,
-            consentGiven: Bool? = nil
         ) {
-            self.prescriptions = prescriptions
-            self.selectedPrescriptions = selectedPrescriptions
+            _prescriptions = prescriptions
+            _selectedPrescriptions = Shared(value: prescriptions.wrappedValue.filter(\.isSetEURedeemableByPatient))
             self.selectedCountry = selectedCountry
-            self.consentGiven = consentGiven
         }
     }
 
     /// Actions for EU redemption selection
     public enum Action: Equatable {
+        /// Checks state of the users consent
+        case task
         /// Destination actions
         case destination(PresentationAction<Destination.Action>)
         /// Delegate actions
         case delegate(Delegate)
+        case response(Response)
     }
 
     public enum Delegate: Equatable {
@@ -75,17 +87,41 @@ public struct EURedeemSelectionDomain {
         case redeemButtonTapped
         /// Close button was tapped
         case close
+        /// Unlock card from settings
+        case unlockCardClose
+    }
+
+    public enum Response: Equatable {
+        case consentCheckReceived(ConsentService.CheckResult)
+        case prescriptionReceived(Result<[EUPrescription], ErxRepositoryError>)
     }
 
     /// Navigation and modal destinations
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         /// Consent screen
         case consent(ConsentDomain)
+        // sourcery: AnalyticsScreen = cardWall
+        /// CardWall screen
+        case cardWall(CardWallIntroductionDomain)
+        // sourcery: AnalyticsScreen = alert
+        /// Alert screen
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
+
+        public enum Alert: Equatable {
+            case dismiss
+            case cardWall
+            case selectCountry
+        }
     }
 
     /// Initialize the domain
     public init() {}
+
+    @Dependency(\.consentService) var consentService: ConsentService
+    @Dependency(\.profilesStore) var profileStore: ProfilesStore
+    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
 
     /// Reducer body
     public var body: some Reducer<State, Action> {
@@ -93,25 +129,116 @@ public struct EURedeemSelectionDomain {
             .ifLet(\.$destination, action: \.destination)
     }
 
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
+        case .task:
+            return .run { [profileID = state.profileID] send in
+                let result = try await consentService.checkForConsent(category: .euDispense, profileID: profileID)
+                await send(.response(.consentCheckReceived(result)))
+
+                do {
+                    let prescriptions = try await erxTaskRepository.loadLocalAllTasks(profileId: profileID).async()
+                    await send(.response(.prescriptionReceived(.success(
+                        prescriptions.map { EUPrescription(erxTask: $0) }
+                    ))))
+                } catch let error as ErxRepositoryError {
+                    await send(.response(.prescriptionReceived(.failure(error))))
+                }
+            }
+        case let .response(.consentCheckReceived(result)):
+            switch result {
+            case .granted:
+                state.destination = nil
+            case .notGranted:
+                state.destination = .consent(.init(profileID: state.profileID))
+            case .notAuthenticated:
+                state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
+            case let .error(error):
+                state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
+            }
+            return .none
+        case let .response(.prescriptionReceived(.success(euPrescriptions))):
+            state.$prescriptions.withLock { $0 = euPrescriptions }
+            state.$selectedPrescriptions.withLock { $0 = euPrescriptions.filter(\.isSetEURedeemableByPatient) }
+            return .none
+        case let .response(.prescriptionReceived(.failure(error))):
+            return .none
         case let .destination(.presented(.consent(.delegate(action)))):
             switch action {
             case .consentAccepted:
-                state.consentGiven = true
+                state.destination = nil
+                return .none
             case .consentDeclined:
-                state.consentGiven = false
-            case .consentCancelled,
-                 .backTapped:
-                break
+                state.destination = nil
+                return .send(.delegate(.close))
+            case .showCardWall:
+                state.destination = .cardWall(.init(isNFCReady: true, profileId: state.profileID))
+                return .none
             }
-            state.destination = nil
+        case .destination(.presented(.alert(.cardWall))):
+            state.destination = .cardWall(.init(isNFCReady: true, profileId: state.profileID))
             return .none
-
+        case .destination(.presented(.alert(.dismiss))):
+            return .run { send in
+                await send(.delegate(.close))
+            }
+        case .destination(.dismiss):
+            if case .consent = state.destination {
+                return .run { send in
+                    await send(.delegate(.close))
+                }
+            }
+            return .none
+        case let .destination(.presented(.cardWall(action: .delegate(delegate)))):
+            switch delegate {
+            case .close:
+                state.destination = nil
+                return .run { [profileID = state.profileID] send in
+                    let result = try await consentService.checkForConsent(category: .euDispense, profileID: profileID)
+                    await send(.response(.consentCheckReceived(result)))
+                }
+            case .unlockCardClose:
+                return .send(.delegate(.unlockCardClose))
+            }
+        case .destination(.presented(.alert(.selectCountry))):
+            return .send(.delegate(.selectCountryButtonTapped))
         case .destination,
              .delegate:
             return .none
         }
+    }
+
+    /// states of possible alerts
+    public enum AlertStates {
+        /// not logged in alert
+        public static let grantConsentServiceNotAuthenticated = ErpAlertState<Destination.Alert>(
+            title: L10n.euredeemSelectionTxtConsentNotLoggedInTitle,
+            actions: {
+                ButtonState(role: .cancel, action: .dismiss) {
+                    .init(L10n.errBtnCancel)
+                }
+                ButtonState(action: .cardWall) {
+                    .init(L10n.erxBtnAlertLogin)
+                }
+            },
+            message: L10n.euredeemSelectionTxtConsentNotLoggedInMessage
+        )
+        /// this alert shouldnt normally show, its only when the server didnt return a countryCode for selected country
+        public static let noCountryCode = ErpAlertState<Destination.Alert>(
+            title: { TextState(L10n.euredeemSelectionAlertNoCountryTitle) },
+            actions: {
+                ButtonState(role: .cancel) {
+                    TextState(L10n.alertBtnOk)
+                }
+                ButtonState(action: .selectCountry) {
+                    TextState(L10n.euredeemSelectionAlertNoCountrySelectCountry)
+                }
+            },
+            message: {
+                TextState(L10n.euredeemSelectionAlertNoCountryMessage)
+            }
+        )
     }
 }
 
@@ -122,24 +249,30 @@ extension EURedeemSelectionDomain {
     public enum Dummies {
         /// Sample prescriptions for testing
         public static let prescriptions: [EUPrescription] = [
-            EUPrescription(
-                id: "1",
-                name: "Ibuprofen 600",
-                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180),
-                isRedeemableInEU: true
-            ),
-            EUPrescription(
-                id: "2",
-                name: "Acnatac Lösung 3mg/g",
-                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180),
-                isRedeemableInEU: true
-            ),
-            EUPrescription(
-                id: "3",
-                name: "Ibuprofen 10mg/g",
-                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180),
-                isRedeemableInEU: true
-            ),
+            EUPrescription(erxTask: ErxTask(
+                identifier: "1",
+                status: .ready,
+                flowType: .tPrescription,
+                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180).ISO8601Format(.iso8601),
+                medication: ErxMedication(name: "Ibuprofen 600"),
+                isEURedeemable: true
+            )),
+            EUPrescription(erxTask: ErxTask(
+                identifier: "2",
+                status: .ready,
+                flowType: .tPrescription,
+                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180).ISO8601Format(.iso8601),
+                medication: ErxMedication(name: "Acnatac Lösung 3mg/g"),
+                isEURedeemable: true
+            )),
+            EUPrescription(erxTask: ErxTask(
+                identifier: "3",
+                status: .ready,
+                flowType: .tPrescription,
+                expiresOn: Date(timeIntervalSinceNow: 60 * 60 * 24 * 180).ISO8601Format(.iso8601),
+                medication: ErxMedication(name: "Ibuprofen 10mg/g"),
+                isEURedeemable: true
+            )),
         ]
 
         /// Sample selected prescriptions for testing
@@ -156,8 +289,7 @@ extension EURedeemSelectionDomain {
 
         /// Sample state for testing
         public static let state = EURedeemSelectionDomain.State(
-            prescriptions: prescriptions,
-            selectedPrescriptions: selectedPrescriptions,
+            prescriptions: Shared(value: prescriptions),
             selectedCountry: countries[1]
         )
 
@@ -167,3 +299,6 @@ extension EURedeemSelectionDomain {
         }
     }
 }
+
+extension EURedeemSelectionDomain.Destination.State: Equatable {}
+extension EURedeemSelectionDomain.Destination.Action: Equatable {}

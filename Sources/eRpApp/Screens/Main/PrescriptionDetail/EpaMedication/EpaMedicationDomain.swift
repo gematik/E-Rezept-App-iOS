@@ -29,7 +29,7 @@ import SwiftUI
 
 @Reducer
 struct EpaMedicationDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = prescriptionDetail_epa_medication_codable_ingredient
         case codableIngredient(EpaMedicationCodableIngredientDomain)
@@ -426,3 +426,6 @@ extension ErxEpaMedication {
         )
     }
 }
+
+extension EpaMedicationDomain.Destination.State: Equatable {}
+extension EpaMedicationDomain.Destination.Action: Equatable {}

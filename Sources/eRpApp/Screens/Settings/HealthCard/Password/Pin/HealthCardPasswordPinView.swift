@@ -31,7 +31,7 @@ struct HealthCardPasswordPinView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PINView(store: store).padding()
+            PINView(store: store)
 
             Spacer(minLength: 0)
 
@@ -69,6 +69,7 @@ struct HealthCardPasswordPinView: View {
                         .font(.headline.bold())
                         .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHeadline)
                         .padding(.bottom)
+                        .accessibilityAddTraits(.isHeader)
 
                     PINField1View(store: store)
 
@@ -105,6 +106,7 @@ struct HealthCardPasswordPinView: View {
                     .listRowInsets(EdgeInsets())
                     .padding()
                 }
+                .padding()
             }
             .navigationDestination(
                 item: $store.scope(
@@ -126,16 +128,11 @@ struct HealthCardPasswordPinView: View {
                 SecureFieldWithReveal(
                     titleKey: L10n.stgEdtCardResetPinInputPin1,
                     text: $store.pin1.sending(\.updatePin1),
-                    textContentType: .password,
-                    backgroundColor: Colors.systemGray5
+                    textContentType: .password
                 ) {}
                     .textContentType(.oneTimeCode)
                     .multilineTextAlignment(.leading)
                     .keyboardType(.numberPad)
-                    .padding()
-                    .font(Font.title3)
-                    .background(Colors.systemGray5)
-                    .cornerRadius(8)
                     .focused($focused)
                     .accessibility(identifier: A11y.settings.card.stgEdtCardResetPinInputPin1)
             }
@@ -154,16 +151,11 @@ struct HealthCardPasswordPinView: View {
                 SecureFieldWithReveal(
                     titleKey: L10n.stgEdtCardResetPinInputPin2,
                     text: $store.pin2.sending(\.updatePin2),
-                    textContentType: .password,
-                    backgroundColor: Colors.systemGray5
+                    textContentType: .password
                 ) {}
                     .textContentType(.oneTimeCode)
                     .multilineTextAlignment(.leading)
                     .keyboardType(.numberPad)
-                    .padding()
-                    .font(Font.title3)
-                    .background(Colors.systemGray5)
-                    .cornerRadius(8)
                     .accessibility(identifier: A11y.settings.card.stgEdtCardResetPinInputPin2)
             }
         }

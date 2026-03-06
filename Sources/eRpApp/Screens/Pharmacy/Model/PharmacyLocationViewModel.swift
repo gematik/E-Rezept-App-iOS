@@ -30,7 +30,7 @@ import SwiftUI
 // swiftlint:disable type_body_length
 /// Adds additional properties to the PharmacyLocation entity that are used in the view.
 @dynamicMemberLookup
-struct PharmacyLocationViewModel: Equatable, Identifiable {
+struct PharmacyLocationViewModel: Hashable, Equatable, Identifiable {
     init(
         pharmacy: PharmacyLocation,
         referenceLocation: Location? = nil,
@@ -210,7 +210,8 @@ struct PharmacyLocationViewModel: Equatable, Identifiable {
             self.entries = entries
 
             if let date = Self.date(from: dayOfWeek) {
-                dayOfWeekLocalizedDisplayName = Self.localizesDisplayNameFormatter(from: date)
+                dayOfWeekLocalizedDisplayName = Self
+                    .localizesDisplayNameFormatter(from: date)
                 // .weekday starts with 1 being sunday, +5 % 7 to let monday be 0 and the first day
                 dayOfWeekNumber = (Calendar.current.component(.weekday, from: date) + 5) % 7
             } else {
@@ -343,6 +344,16 @@ struct PharmacyLocationViewModel: Equatable, Identifiable {
             }
 
         return copy
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(pharmacyLocation.id)
+        hasher.combine(openingHours)
+        hasher.combine(specialClosingHours)
+        hasher.combine(emergencyServiceHours)
+        hasher.combine(distanceInM)
+        hasher.combine(formattedDistance)
+        hasher.combine(todayOpeningState)
     }
 }
 

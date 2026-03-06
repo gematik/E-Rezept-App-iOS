@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import CodedError
 import Foundation
 
 /// Represents all information needed by the Erx App to handle profiled Erx Tasks (e.g. Prescriptions).
@@ -279,6 +280,15 @@ extension ErxTask {
     public enum Source: String, Codable, Sendable {
         case scanner
         case server
+    }
+}
+
+extension ErxTask {
+    @CodedError("209")
+    public enum Error: Swift.Error {
+        @ErrorCode("01")
+        /// Unable to construct task input patch request
+        case unableToConstructInputPatch
     }
 }
 

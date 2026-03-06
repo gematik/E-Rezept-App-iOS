@@ -30,28 +30,32 @@ struct IngredientView: View {
     var body: some View {
         ScrollView(.vertical) {
             SectionContainer {
-                SubTitle(
-                    title: store.text ?? L10n.prscFdTxtNa.text,
-                    description: L10n.prscDtlMedIngredientName
-                )
+                LabeledContent {
+                    Text(store.text ?? L10n.prscFdTxtNa.text)
+                } label: {
+                    Text(L10n.prscDtlMedIngredientName)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientName)
 
-                SubTitle(
-                    title: store.strength ?? L10n.prscFdTxtNa.text,
-                    description: L10n.prscDtlMedTxtAmount
-                )
+                LabeledContent {
+                    Text(store.strength ?? L10n.prscFdTxtNa.text)
+                } label: {
+                    Text(L10n.prscDtlMedTxtAmount)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientStrength)
 
-                SubTitle(
-                    title: store.form ?? L10n.prscFdTxtNa.text,
-                    description: L10n.prscFdTxtDetailsDosageForm
-                )
+                LabeledContent {
+                    Text(store.form ?? L10n.prscFdTxtNa.text)
+                } label: {
+                    Text(L10n.prscFdTxtDetailsDosageForm)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientForm)
 
-                SubTitle(
-                    title: store.number ?? L10n.prscFdTxtNa.text,
-                    description: L10n.prscDtlMedTxtIngredinetNumber
-                )
+                LabeledContent {
+                    Text(store.number ?? L10n.prscFdTxtNa.text)
+                } label: {
+                    Text(L10n.prscDtlMedTxtIngredinetNumber)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientNumber)
             }.sectionContainerStyle(.inline)
         }

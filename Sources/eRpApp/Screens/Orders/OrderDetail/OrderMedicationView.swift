@@ -39,7 +39,7 @@ struct OrderMedicationView: View {
                         Spacer()
                         Image(systemName: SFSymbolName.chevronRight)
                             .font(Font.body.weight(.semibold))
-                            .foregroundColor(Colors.systemLabelTertiary)
+                            .foregroundColor(Colors.systemLabelSecondary)
                     }
                     .padding(.vertical, 20)
                     .padding(.horizontal)

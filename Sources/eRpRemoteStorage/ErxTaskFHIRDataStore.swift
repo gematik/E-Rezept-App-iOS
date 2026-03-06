@@ -133,6 +133,16 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
+    public func markEURedeemable(
+        for id: ErxTask.ID,
+        byPatientAuthorization: Bool
+    ) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        fhirClient.markEURedeemable(for: id, byPatientAuthorization: byPatientAuthorization)
+            .first()
+            .mapError { RemoteStoreError.fhirClient($0) }
+            .eraseToAnyPublisher()
+    }
+
     public func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
         fhirClient.redeem(order: order)
             .first()
@@ -285,6 +295,32 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         _ category: ErxConsent.Category
     ) -> AnyPublisher<Bool, RemoteStoreError> {
         fhirClient.revokeConsent(category)
+            .mapError { RemoteStoreError.fhirClient($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    // MARK: - EuRedeem
+
+    public func grantEuAccessPermission(
+        accessCode: EuAccessCode
+    ) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        fhirClient.grantEuAccessPermission(accessCode: accessCode)
+            .mapError { RemoteStoreError.fhirClient($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func loadRemoteEuAccessCode()
+        -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        fhirClient.loadRemoteEuAccessCode()
+            .mapError { RemoteStoreError.fhirClient($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError> {
+        fhirClient.deleteEuAccessCode()
             .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()

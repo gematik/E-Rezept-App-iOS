@@ -36,7 +36,7 @@ struct MedicationOverview: View {
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvSubscribedHeader)
                 }, content: {
                     Button(action: { store.send(.showSubscribedMedication) }, label: {
-                        SubTitle(title: store.subscribed.displayName)
+                        SubTitle(title: store.subscribed.displayName ?? L10n.prscFdTxtNa.text)
                     })
                         .buttonStyle(.navigation)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnSubscribedMedication)

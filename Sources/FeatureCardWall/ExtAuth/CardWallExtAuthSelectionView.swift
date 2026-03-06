@@ -46,19 +46,20 @@ struct CardWallExtAuthSelectionView: View {
                     .listStyle(PlainListStyle())
                 } else if let kkList = store.kkList,
                           !kkList.apps.isEmpty {
-                    Header {
-                        store.send(.helpButtonTapped)
-                    }
-                    .padding(.horizontal)
+                    ScrollView {
+                        SingleElementSectionContainer(header: {
+                            VStack(spacing: 16) {
+                                Header {
+                                    store.send(.helpButtonTapped)
+                                }
 
-                    SearchBar(
-                        searchText: $store.searchText.sending(\.updateSearchText),
-                        prompt: L10n.cdwTxtExtauthSearchprompt.text
-                    ) {}
-                        .padding(.horizontal)
-
-                    List {
-                        Section {
+                                SearchBar(
+                                    searchText: $store.searchText.sending(\.updateSearchText),
+                                    prompt: L10n.cdwTxtExtauthSearchprompt.text
+                                ) {}
+                                    .font(.body)
+                            }
+                        }, content: {
                             // [REQ:gemSpec_IDP_Frontend:A_23082#5] Display of KK apps
                             if !store.filteredKKList.apps.isEmpty {
                                 ForEach(store.filteredKKList.apps) { app in
@@ -66,7 +67,10 @@ struct CardWallExtAuthSelectionView: View {
                                     Button(action: {
                                         store.send(.selectKK(app))
                                     }, label: {
-                                        HStack {
+                                        Label {
+                                            Text(app.name)
+                                                .foregroundColor(Colors.systemLabel)
+                                        } icon: {
                                             let imageUrl = URL(string: app.logo ?? "")
                                             AsyncCachedImage(url: imageUrl) { image in
                                                 image
@@ -76,17 +80,12 @@ struct CardWallExtAuthSelectionView: View {
                                                 Image(
                                                     asset: Asset.CardWall.insuranceLogoPlaceholder
                                                 )
-                                            }.frame(width: 42, height: 42)
-
-                                            Text(app.name)
-                                                .foregroundColor(Colors.systemLabel)
-
-                                            Spacer()
-
-                                            Image(systemName: SFSymbolName.chevronForward)
-                                                .tint(Colors.systemLabelSecondary)
+                                            }
+                                            .frame(width: 42, height: 42)
                                         }
                                     })
+                                        .buttonStyle(.navigation)
+                                        .modifier(SectionContainerCellModifier())
                                 }
                             } else {
                                 VStack {
@@ -101,21 +100,12 @@ struct CardWallExtAuthSelectionView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                             }
-                        }
-                        .listSectionSeparator(.hidden)
-                        .textCase(.none)
+                        })
                     }
-                    .scrollContentBackground(.hidden)
-                    .listStyle(GroupedListStyle())
-                    // replace .introspect with .contentMargins after dropping iOS 16 support
-                    //                        .contentMargins(0, .top, .scrollContent)
-                    .introspect(.list, on: .iOS(.v16, .v17, .v18, .v26)) { collectionView in
-                        collectionView.contentInset.top = -35
-                    }
-                    .listStyle(PlainListStyle())
                     .onAppear {
                         store.send(.reset)
                     }
+                    .scrollContentBackground(.hidden)
 
                 } else {
                     VStack(spacing: 8) {
@@ -170,6 +160,7 @@ struct CardWallExtAuthSelectionView: View {
                     .font(Font.title3.bold())
                     .foregroundColor(Colors.systemLabel)
                     .padding(.vertical, 8)
+                    .accessibilityAddTraits(.isHeader)
 
                 Text(L10n.cdwTxtExtauthSelectionDescription)
                     .font(Font.subheadline)
@@ -187,7 +178,6 @@ struct CardWallExtAuthSelectionView: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .accessibilityIdentifier(A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionHelp)
             }
-            .padding(.bottom, 16)
         }
     }
 }

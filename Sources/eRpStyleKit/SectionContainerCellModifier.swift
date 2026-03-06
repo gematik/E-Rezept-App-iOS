@@ -22,23 +22,83 @@
 
 import SwiftUI
 
-private struct SectionContainerCellLastElementKey: EnvironmentKey {
-    static let defaultValue = false
+struct SectionContainerElementInformation {
+    var isRootElement = false
+    var isLastElement = false
+    var isSectionContainerElement = false
+    var isNavigationLinkElement = false
+
+    static func defaultElement(isLastElement: Bool = false) -> Self {
+        SectionContainerElementInformation(
+            isRootElement: true,
+            isLastElement: isLastElement,
+            isSectionContainerElement: true,
+            isNavigationLinkElement: false
+        )
+    }
+
+    func disableRoot() -> Self {
+        var copy = self
+        copy.isRootElement = false
+        return copy
+    }
+
+    func disableNavigationLink() -> Self {
+        var copy = self
+        copy.isNavigationLinkElement = false
+        return copy
+    }
+
+    func enableNavigationLink() -> Self {
+        guard isSectionContainerElement else { return self }
+
+        var copy = self
+        copy.isNavigationLinkElement = true
+        return copy
+    }
+
+    func enableLastElement() -> Self {
+        guard isSectionContainerElement else { return self }
+
+        var copy = self
+        copy.isLastElement = true
+        return copy
+    }
+
+    func disableLastElement() -> Self {
+        var copy = self
+        copy.isLastElement = false
+        return copy
+    }
+}
+
+private struct SectionContainerElementInformationKey: EnvironmentKey {
+    static let defaultValue = SectionContainerElementInformation()
 }
 
 extension EnvironmentValues {
-    /// Use this key to indicate if the current element in a `SectionContainer` is the last element.
-    public var sectionContainerIsLastElement: Bool {
-        get { self[SectionContainerCellLastElementKey.self] }
-        set { self[SectionContainerCellLastElementKey.self] = newValue }
+    var sectionContainerElementInformation: SectionContainerElementInformation {
+        get { self[SectionContainerElementInformationKey.self] }
+        set { self[SectionContainerElementInformationKey.self] = newValue }
     }
 }
 
 extension View {
+    func sectionContainerElementInformation(_ info: SectionContainerElementInformation) -> some View {
+        environment(\.sectionContainerElementInformation, info)
+    }
+
     /// Use on the content of a `SectionContainer` and pass `true` if the element is the last Element in list
     /// This will remove the separator from the last element in the section.
     public func sectionContainerIsLastElement(_ sectionContainerIsLastElement: Bool) -> some View {
-        environment(\.sectionContainerIsLastElement, sectionContainerIsLastElement)
+        environment(\.sectionContainerElementInformation.isLastElement, sectionContainerIsLastElement)
+    }
+
+    /// Use on the content of a `SectionContainer` and pass `true` if the element is the root most Element in the view
+    /// hierachy. Styles of elements will call this method using `false` if they "consume" the root information by
+    /// applying the appropriate styling.
+    public func rootSectionContainerElement(_ isRootSectionContainerElement: Bool) -> some View {
+        environment(\.sectionContainerElementInformation.isRootElement, isRootSectionContainerElement)
     }
 }
 
@@ -51,14 +111,14 @@ public struct SectionContainerCellModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .labelStyle(SectionContainerLabelStyle(showSeparator: !last))
-            .buttonStyle(SectionContainerButtonStyle(showSeparator: !last))
-            .toggleStyle(FormToggleStyle(showSeparator: !last))
-            .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: !last))
-            .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: !last))
+            .labelStyle(SectionContainerLabelStyle())
+            .buttonStyle(SectionContainerButtonStyle())
+            .toggleStyle(FormToggleStyle())
+            .subTitleStyle(SectionContainerSubTitleStyle())
+            .keyValuePairStyle(SeparatedKeyValuePairStyle())
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            .labeledContentStyle(SectionContainerLabeledContentStyle(showSeparator: !last))
-            .sectionContainerIsLastElement(last)
+            .labeledContentStyle(.vertical)
+            .sectionContainerElementInformation(.defaultElement(isLastElement: last))
     }
 }
 
@@ -98,7 +158,7 @@ struct ListsAtoms_Preview: PreviewProvider {
                                 Image(systemName: SFSymbolName.info)
                             }
                         }
-                        .buttonStyle(.navigation(showSeparator: false))
+                        .buttonStyle(.navigation)
                     }
 
                     SectionContainer {

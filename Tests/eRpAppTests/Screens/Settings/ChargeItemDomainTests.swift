@@ -34,19 +34,19 @@ final class ChargeItemDomainTests: XCTestCase {
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
-    var mockChargeItemListDomainService: MockChargeItemListDomainService!
+    var mockChargeItemListDomainService: ChargeItemListDomainServiceMock!
     var mockUserSession: MockUserSession!
-    var mockUserSessionProvider: MockUserSessionProvider!
+    var mockUserSessionProvider: UserSessionProviderMock!
     var isDismissInvoked: LockIsolated<Bool>!
 
     override func setUp() {
         super.setUp()
 
         schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        mockChargeItemListDomainService = MockChargeItemListDomainService()
+        mockChargeItemListDomainService = ChargeItemListDomainServiceMock()
         mockUserSession = MockUserSession()
-        mockUserSessionProvider = MockUserSessionProvider()
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
+        mockUserSessionProvider = UserSessionProviderMock()
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
         isDismissInvoked = LockIsolated(false)
     }
 
@@ -78,7 +78,9 @@ final class ChargeItemDomainTests: XCTestCase {
             profileId: testProfileId,
             chargeItem: ErxChargeItem.Fixtures.chargeItem
         ))
-        mockChargeItemListDomainService.deleteChargeItemForReturnValue = Just(.notAuthenticated).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .deleteChargeItemErxChargeItemForProfileIdUUIDAnyPublisherChargeItemDomainServiceDeleteResultNeverReturnValue =
+            Just(.notAuthenticated).eraseToAnyPublisher()
         await store.send(.deleteButtonTapped) {
             $0.destination = .alert(ChargeItemDomain.AlertStates.deleteConfirm)
         }
@@ -96,7 +98,9 @@ final class ChargeItemDomainTests: XCTestCase {
             profileId: testProfileId,
             chargeItem: ErxChargeItem.Fixtures.chargeItem
         ))
-        mockChargeItemListDomainService.deleteChargeItemForReturnValue = Just(.success).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .deleteChargeItemErxChargeItemForProfileIdUUIDAnyPublisherChargeItemDomainServiceDeleteResultNeverReturnValue =
+            Just(.success).eraseToAnyPublisher()
         await store.send(.deleteButtonTapped) {
             $0.destination = .alert(ChargeItemDomain.AlertStates.deleteConfirm)
         }
@@ -116,7 +120,9 @@ final class ChargeItemDomainTests: XCTestCase {
             chargeItem: ErxChargeItem.Fixtures.chargeItem
         ))
         let error = ChargeItemDomainServiceDeleteResult.Error.unexpected
-        mockChargeItemListDomainService.deleteChargeItemForReturnValue = Just(.error(error)).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .deleteChargeItemErxChargeItemForProfileIdUUIDAnyPublisherChargeItemDomainServiceDeleteResultNeverReturnValue =
+            Just(.error(error)).eraseToAnyPublisher()
         await store.send(.response(.deleteChargeItem(.notAuthenticated))) {
             $0.destination = .alert(ChargeItemDomain.AlertStates.deleteNotAuthenticated)
         }
@@ -149,8 +155,10 @@ final class ChargeItemDomainTests: XCTestCase {
             profileId: testProfileId,
             chargeItem: ErxChargeItem.Fixtures.chargeItem
         ))
-        mockChargeItemListDomainService.authenticateForReturnValue = Just(.success)
-            .eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .authenticateForProfileIdUUIDAnyPublisherChargeItemDomainServiceAuthenticateResultNeverReturnValue =
+            Just(.success)
+                .eraseToAnyPublisher()
 
         let error = ChargeItemDomainServiceDeleteResult.Error.unexpected
         await store.send(.response(.deleteChargeItem(.error(error)))) {

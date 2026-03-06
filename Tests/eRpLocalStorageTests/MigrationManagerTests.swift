@@ -53,7 +53,7 @@ final class MigrationManagerTests: XCTestCase {
             let factory: CoreDataControllerFactory = .init(databaseUrl: { self.databaseFile }) {
                 @Shared(.coreDataController) var coreDataController
 
-                var fileProtection: FileProtectionType = {
+                let fileProtection: FileProtectionType = {
                     #if os(macOS)
                     return FileProtectionType(rawValue: "none")
                     #else
@@ -135,7 +135,7 @@ final class MigrationManagerTests: XCTestCase {
     let backgroundQueue: AnySchedulerOf<DispatchQueue> = .global()
 
     func testModel4MigrationWithTwoDifferentPatientTasksAndScannedTasks() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
@@ -229,7 +229,7 @@ final class MigrationManagerTests: XCTestCase {
     }
 
     func testModel4MigrationWithoutExistingTasks() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
@@ -290,7 +290,7 @@ final class MigrationManagerTests: XCTestCase {
     }
 
     func testModel4MigrationWithOnlyScannedTasks() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
@@ -354,7 +354,7 @@ final class MigrationManagerTests: XCTestCase {
     }
 
     func testMigrationFromVersion4ToVersion5WithoutAuditEvents() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let sut = MigrationManager(
             factory: factory,
@@ -384,7 +384,7 @@ final class MigrationManagerTests: XCTestCase {
     }
 
     func testMigrationFromVersion4ToVersion5WithAuditEvents() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                        foregroundQueue: foregroundQueue,
@@ -416,7 +416,7 @@ final class MigrationManagerTests: XCTestCase {
     }
 
     func testMigrationFromVersion5ToVersion6WithPKVProfiles() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                        foregroundQueue: foregroundQueue,
@@ -500,7 +500,7 @@ final class MigrationManagerTests: XCTestCase {
     }
 
     func testMigrationFromVersion6ToVersion7OnboardingDate() throws {
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
                                                        foregroundQueue: foregroundQueue,
@@ -534,8 +534,8 @@ final class MigrationManagerTests: XCTestCase {
             expect(receivedResults.count).toEventually(equal(1))
             expect(receivedResults.first) == .onboardingDate
 
-            expect(userDataStore.setOnboardingDateCallsCount).toEventually(equal(1))
-            expect(userDataStore.setOnboardingDateCalled).to(beTrue())
+            expect(userDataStore.setOnboardingDateDateVoidCallsCount).toEventually(equal(1))
+            expect(userDataStore.setOnboardingDateDateVoidCalled).to(beTrue())
 
             cancellable.cancel()
         }

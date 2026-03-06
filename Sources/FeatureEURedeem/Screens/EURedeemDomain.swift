@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import Foundation
 
 /// Domain handling the EU prescription redemption flow
 @Reducer
@@ -38,7 +39,7 @@ public struct EURedeemDomain {
         public init(path: StackState<Path.State> = StackState(),
                     selection: EURedeemSelectionDomain.State? = nil) {
             self.path = path
-            self.selection = selection ?? .init(prescriptions: EURedeemSelectionDomain.Dummies.prescriptions)
+            self.selection = selection ?? EURedeemSelectionDomain.State()
         }
     }
 
@@ -52,7 +53,7 @@ public struct EURedeemDomain {
     }
 
     /// Navigation path cases for the redemption flow
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Path {
         /// Country selection screen
         case countrySelection(CountrySelectionDomain)
@@ -76,6 +77,7 @@ public struct EURedeemDomain {
             .forEach(\.path, action: \.path)
     }
 
+    // swiftlint:disable:next cyclomatic_complexity
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .selection(.delegate(delegate)):
@@ -92,12 +94,13 @@ public struct EURedeemDomain {
             case .selectPrescriptionsButtonTapped:
                 state.path.append(.prescriptionSelection(
                     SelectEUPrescriptionsDomain.State(
-                        prescriptions: state.selection.prescriptions,
-                        patientName: "Ada Muster"
+                        prescriptions: state.selection.$prescriptions
                     )
                 ))
                 return .none
             case .close:
+                return .none
+            case .unlockCardClose:
                 return .none
             }
         case let .path(.element(id: _, action: .countrySelection(.selectCountry(country)))):
@@ -106,13 +109,16 @@ public struct EURedeemDomain {
             return .none
         case let .path(.element(id: _,
                                 action: .prescriptionSelection(.delegate(.didSelectPrescriptions(prescriptions))))):
-            state.selection.prescriptions = prescriptions
+            state.selection.$prescriptions.withLock { $0 = prescriptions }
             return .none
         case .path(.element(id: _, action: .instructions(.delegate(.continueButtonTapped)))):
-            state.path.append(.code(.init()))
+            state.path.append(.code(.init(countryCode: "De")))
             return .none
         case .path, .selection:
             return .none
         }
     }
 }
+
+extension EURedeemDomain.Path.State: Equatable {}
+extension EURedeemDomain.Path.Action: Equatable {}

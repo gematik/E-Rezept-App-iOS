@@ -45,9 +45,9 @@ public struct TertiaryFilledButtonStyle: ButtonStyle {
         case (false, false):
             return Colors.primary.disabled(for: colorScheme)
         case (true, true):
-            return Colors.red600
+            return Colors.red700
         case (true, false):
-            return Colors.red600.disabled(for: colorScheme)
+            return Colors.red700.disabled(for: colorScheme)
         }
     }
 

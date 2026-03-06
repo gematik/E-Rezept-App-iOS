@@ -37,13 +37,8 @@ import Profiles
 import TrustStore
 import VAUClient
 
-// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
-
 // sourcery:begin: AutoMockable
 extension SearchHistory {}
-// sourcery:end
-
-// sourcery:begin: ProtocolMock
 extension ActivityIndicating {}
 extension AuthenticationChallengeProvider {}
 extension AVSSession {}
@@ -51,7 +46,6 @@ extension AVSTransactionDataStore {}
 extension ChargeItemListDomainService {}
 extension DeviceSecurityManagerSessionStorage {}
 extension ERPDateFormatter {}
-extension IDPSession {}
 extension LoginHandler {}
 extension MatrixCodeGenerator {}
 extension MedicationScheduleStore {}
@@ -69,7 +63,6 @@ extension Routing {}
 extension SecureEnclaveSignatureProvider {}
 extension SecureUserDataStore {}
 extension ShipmentInfoDataStore {}
-extension Tracker {}
 extension UserDataStore {}
 extension UserProfileService {}
 extension UsersSessionContainer {}

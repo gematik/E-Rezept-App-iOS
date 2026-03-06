@@ -38,6 +38,7 @@ struct HealthCardPasswordPukView: View {
                         .font(.headline.bold())
                         .accessibility(identifier: A11y.settings.card.stgTxtCardResetPukHeadline)
                         .padding(.bottom)
+                        .accessibilityAddTraits(.isHeader)
 
                     PUKFieldView(store: store)
 
@@ -47,8 +48,8 @@ struct HealthCardPasswordPukView: View {
                         .accessibility(identifier: A11y.settings.card.stgTxtCardResetPukHint)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .padding()
             }
-            .padding()
 
             Spacer(minLength: 0)
 
@@ -104,16 +105,11 @@ struct HealthCardPasswordPukView: View {
                     titleKey: L10n.stgEdtCardResetPukInput,
                     accessibilityLabelKey: L10n.stgEdtCardResetPukInputLabel,
                     text: $store.puk.sending(\.updatePuk),
-                    textContentType: .password,
-                    backgroundColor: Colors.systemGray5
+                    textContentType: .password
                 ) {}
                     .textContentType(.oneTimeCode)
                     .multilineTextAlignment(.leading)
                     .keyboardType(.numberPad)
-                    .padding()
-                    .font(Font.title3)
-                    .background(Colors.systemGray5)
-                    .cornerRadius(8)
                     .focused($focused)
                     .accessibility(identifier: A11y.settings.card.stgEdtCardResetPukInput)
             }

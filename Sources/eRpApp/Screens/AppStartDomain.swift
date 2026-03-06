@@ -31,7 +31,7 @@ import SwiftUI
 struct AppStartDomain {
     typealias Store = StoreOf<Self>
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         case loading
         case onboarding(OnboardingDomain)
@@ -76,7 +76,7 @@ struct AppStartDomain {
                                 inRedeemProcess: false
                             )
                         ),
-                        orders: OrdersDomain.State(),
+                        orders: OrdersDomain.State(communicationMessage: Shared(value: [])),
                         settings: .init(),
                         unreadOrderMessageCount: 0,
                         unreadInternalCommunicationCount: 0
@@ -109,7 +109,7 @@ struct AppStartDomain {
                                 inRedeemProcess: false
                             )
                         ),
-                        orders: OrdersDomain.State(),
+                        orders: OrdersDomain.State(communicationMessage: Shared(value: [])),
                         settings: .init(),
                         unreadOrderMessageCount: 0,
                         unreadInternalCommunicationCount: 0
@@ -290,3 +290,6 @@ struct AppStartDomain {
         }
     }
 }
+
+extension AppStartDomain.Destination.State: Equatable {}
+extension AppStartDomain.Destination.Action: Equatable {}

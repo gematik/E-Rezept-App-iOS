@@ -28,27 +28,38 @@ import SwiftUI
 ///
 /// - Warning: Attention: This style only works within **`SectionContainer`s**
 public struct DetailNavigationButtonStyle: ButtonStyle {
-    let showSeparator: Bool
     let minChevronSpacing: CGFloat
 
-    init(showSeparator: Bool, minChevronSpacing: CGFloat? = nil) {
-        self.showSeparator = showSeparator
+    init(minChevronSpacing: CGFloat? = nil) {
         self.minChevronSpacing = minChevronSpacing ?? 16
     }
 
+    public func makeBody(configuration: Configuration) -> some View {
+        DetailNavigationButtonBody(
+            minChevronSpacing: minChevronSpacing,
+            configuration: configuration
+        )
+    }
+}
+
+private struct DetailNavigationButtonBody: View {
+    let minChevronSpacing: CGFloat
+    let configuration: ButtonStyleConfiguration
+
     @Environment(\.sectionContainerStyle) var style
     @Environment(\.isEnabled) var isEnabled: Bool
+    @Environment(\.sectionContainerElementInformation) var sectionContainerElementInformation
 
-    public func makeBody(configuration: Configuration) -> some View {
+    var body: some View {
         HStack {
             configuration.label
                 .opacity(isEnabled ? 1.0 : 0.3)
-                .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: showSeparator))
-                .subTitleStyle(.navigation(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing))
+                .keyValuePairStyle(SeparatedKeyValuePairStyle())
+                .subTitleStyle(.navigation(minChevronSpacing: minChevronSpacing))
                 .labelStyle(DetailNavigationLabelStyle(
-                    showSeparator: showSeparator,
                     minChevronSpacing: minChevronSpacing
                 ))
+                .sectionContainerElementInformation(sectionContainerElementInformation.enableNavigationLink())
         }
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .foregroundColor(Colors.systemLabel)
@@ -59,13 +70,7 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
 }
 
 struct DetailNavigationLabelStyle: LabelStyle {
-    let showSeparator: Bool
     let minChevronSpacing: CGFloat
-
-    init(showSeparator: Bool, minChevronSpacing: CGFloat) {
-        self.showSeparator = showSeparator
-        self.minChevronSpacing = minChevronSpacing
-    }
 
     func makeBody(configuration: Configuration) -> some View {
         Label(title: {
@@ -75,20 +80,20 @@ struct DetailNavigationLabelStyle: LabelStyle {
                 Spacer(minLength: minChevronSpacing)
 
                 Image(systemName: SFSymbolName.chevronForward)
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .font(.body.weight(.semibold))
             }
         }, icon: {
             configuration.icon
         })
-            .labelStyle(SectionContainerLabelStyle(showSeparator: showSeparator))
-            .subTitleStyle(.navigation(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing))
+            .labelStyle(SectionContainerLabelStyle())
+            .subTitleStyle(.navigation(minChevronSpacing: minChevronSpacing))
             .keyValuePairStyle(PlainKeyValuePairStyle())
     }
 }
 
 public struct BottomDividerStyle: ViewModifier {
-    @Environment(\.sectionContainerIsLastElement) var isLastElement: Bool
+    @Environment(\.sectionContainerElementInformation.isLastElement) var isLastElement
     let showSeparator: Bool
 
     public init(showSeparator: Bool) {
@@ -108,9 +113,34 @@ public struct BottomDividerStyle: ViewModifier {
     }
 }
 
+public struct SectionContainerBottomDividerStyle: ViewModifier {
+    @Environment(\.sectionContainerElementInformation.isLastElement) var isLastElement
+    @Environment(\.sectionContainerElementInformation.isRootElement) var isRootElement
+
+    public func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            content
+                .padding([.bottom, .trailing, .top], isRootElement ? 16 : 0)
+
+            if isRootElement, !isLastElement {
+                Divider()
+            }
+        }
+        .frame(
+            maxWidth: .infinity,
+            minHeight: isRootElement ? 44 : 0,
+            alignment: .leading
+        )
+    }
+}
+
 extension View {
     func bottomDivider(showSeparator: Bool = true) -> some View {
         modifier(BottomDividerStyle(showSeparator: showSeparator))
+    }
+
+    func bottomDividerIfNeeded() -> some View {
+        modifier(SectionContainerBottomDividerStyle())
     }
 }
 
@@ -146,7 +176,7 @@ extension ButtonStyle where Self == DetailNavigationButtonStyle {
     /// the ``View/buttonStyle(_:)`` modifier.
     ///
     /// - Warning: Attention: This style only works within **`SectionContainer`s**
-    public static var navigation: DetailNavigationButtonStyle { DetailNavigationButtonStyle(showSeparator: true) }
+    public static var navigation: DetailNavigationButtonStyle { DetailNavigationButtonStyle() }
 
     /// A button style that applies a navigation chevron and optionally skips the divider.
     ///
@@ -154,9 +184,8 @@ extension ButtonStyle where Self == DetailNavigationButtonStyle {
     /// the ``View/buttonStyle(.navigation(showSeparator:))`` modifier.
     ///
     /// - Warning: Attention: This style only works within **`SectionContainer`s**
-    public static func navigation(showSeparator: Bool = true,
-                                  minChevronSpacing: CGFloat? = nil) -> DetailNavigationButtonStyle {
-        DetailNavigationButtonStyle(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing)
+    public static func navigation(minChevronSpacing: CGFloat? = nil) -> DetailNavigationButtonStyle {
+        DetailNavigationButtonStyle(minChevronSpacing: minChevronSpacing)
     }
 }
 

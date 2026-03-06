@@ -44,7 +44,7 @@ public enum HealthcareServiceFHIROperation<Value, Handler: FHIRResponseHandler> 
     case fetchInsurance(ikNumber: String, accessToken: String?, handler: Handler)
     /// Get all organizations related to DiGa
     case fetchAllInsurances(accessToken: String?, handler: Handler)
-    ///
+    /// Get all available EU countires
     case fetchEuCountries(accessToken: String?, handler: Handler)
 }
 
@@ -67,10 +67,9 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         case let .searchPharmacies(searchTerm, position, filter, _, _):
             queryItems.append(URLQueryItem(name: "_count", value: "100"))
 
-            // Sanitize search term for special search characters (double quote, dot)
+            // Sanitize search term for special search characters (double quote)
             let sanatizedSearchTerm = searchTerm.isEmpty ? nil : searchTerm
                 .replacingOccurrences(of: "\"", with: "", options: .literal)
-                .replacingOccurrences(of: ".", with: "", options: .literal)
 
             if let position = position {
                 // Use nearPharmacy operation for radius search sorted by distance

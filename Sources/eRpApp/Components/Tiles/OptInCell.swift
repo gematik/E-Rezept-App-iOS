@@ -43,7 +43,7 @@ struct OptInCell: View {
                     Image(systemName: isOn ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
                         .font(.title2)
                         .foregroundColor(isOn ? Colors.primary500 : Colors.systemLabelTertiary)
-                        .foregroundColor(Color(.tertiaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                 }
                 .padding()
             }

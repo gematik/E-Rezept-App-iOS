@@ -39,7 +39,7 @@ struct OnboardingDomain {
         var path = StackState<Path.State>()
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Path {
         case legalInfo
         case registerAuth(RegisterAuthenticationDomain)
@@ -185,3 +185,6 @@ extension OnboardingDomain {
         }
     }
 }
+
+extension OnboardingDomain.Path.State: Equatable {}
+extension OnboardingDomain.Path.Action: Equatable {}

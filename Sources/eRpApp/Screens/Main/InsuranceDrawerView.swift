@@ -54,6 +54,7 @@ struct InsuranceDrawerView: View {
             VStack(alignment: .center, spacing: 8) {
                 Text(root == .main ? L10n.mainInsuranceDrawerTxtHeader : L10n.stgInsuranceDrawerTxtHeader)
                     .fontWeight(.semibold)
+                    .accessibilityAddTraits(.isHeader)
 
                 Text(root == .main ? L10n.mainInsuranceDrawerTxtFooter : L10n.stgInsuranceDrawerTxtFooter)
                     .foregroundColor(Colors.systemLabelSecondary)

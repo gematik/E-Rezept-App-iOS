@@ -33,12 +33,16 @@ import IdentifiedCollections
 import Pharmacy
 
 protocol OrdersRepository {
-    func loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error>
+    func
+        loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error>
+    // we load all local EuOrders but when fetching from remote we only fetch for current selected profile
+    func loadEuOrders(profileId: UUID) -> AsyncThrowingStream<IdentifiedArray<String, EuOrder>, Swift.Error>
 }
 
 final class DefaultOrdersRepository: OrdersRepository {
     @Dependency(\.erxTaskRepository) var erxTaskRepository
     @Dependency(\.pharmacyRepository) var pharmacyRepository
+    @Dependency(\.userDataStore) var userDataStore
 
     func loadAllOrders() -> AsyncThrowingStream<IdentifiedCollections.IdentifiedArray<String, Order>, Swift.Error> {
         AsyncThrowingStream { continuation in
@@ -105,6 +109,48 @@ final class DefaultOrdersRepository: OrdersRepository {
         }
 
         return foundChargeItems
+    }
+
+    func loadEuOrders(profileId: UUID) -> AsyncThrowingStream<IdentifiedArray<String, EuOrder>, Swift.Error> {
+        AsyncThrowingStream { continuation in
+            Task { [erxTaskRepository] in
+                do {
+                    var orders: IdentifiedArray<String, EuOrder> = IdentifiedArray()
+
+                    let communications = try await erxTaskRepository.loadEuCommunications(nil, nil)
+                    let groupedCommunications = Dictionary(grouping: communications) { $0.orderId }
+                    let euErxTasks = try await loadAllEuTasks(profileId: profileId)
+
+                    for (orderId, communications) in groupedCommunications {
+                        orders.append(
+                            EuOrder(
+                                orderId: orderId ?? EuOrder.unknownOrderId,
+                                communications: IdentifiedArray(uniqueElements: communications),
+                                countryCode: communications.first?.countryCode ?? EuOrder.unknownCountryCode,
+                                erxTasks: euErxTasks
+                            )
+                        )
+                    }
+
+                    continuation
+                        .yield(IdentifiedArray(
+                            uniqueElements: orders.sorted {
+                                $0.lastUpdated > $1.lastUpdated
+                            }
+                        ))
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func loadAllEuTasks(profileId: UUID?) async throws -> [ErxTask] {
+        let tasks = try await erxTaskRepository.loadLocalAllTasks(profileId).async()
+        return tasks.filter { task in
+            task.isSetEURedeemableByPatient == true
+        }
     }
 
     @CodedError("037")

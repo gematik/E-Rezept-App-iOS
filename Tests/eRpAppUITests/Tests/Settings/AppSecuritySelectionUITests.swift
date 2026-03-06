@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 @MainActor
-final class AppSecuritySelectionUITests: XCTestCase, Sendable {
+final class AppSecuritySelectionUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func tearDown() async throws {

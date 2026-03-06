@@ -41,7 +41,7 @@ struct SelectionCell: View {
                         Image(systemName: systemImage)
                             .frame(width: iconSize)
                             .font(.body.weight(.semibold))
-                            .foregroundColor(Colors.primary500)
+                            .foregroundColor(Colors.primary700)
                             .padding(.trailing)
                     }
 
@@ -57,7 +57,7 @@ struct SelectionCell: View {
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .font(.subheadline)
-                                .foregroundColor(Colors.systemLabelTertiary)
+                                .foregroundColor(Colors.systemLabelSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -67,8 +67,7 @@ struct SelectionCell: View {
                     Image(systemName: isOn ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
                         .frame(width: iconSize)
                         .font(.body.weight(.semibold))
-                        .foregroundColor(isOn ? Colors.primary500 : Colors.systemLabelTertiary)
-                        .foregroundColor(Color(.tertiaryLabel))
+                        .foregroundColor(isOn ? Colors.primary700 : Colors.systemLabelSecondary)
                 }
                 .padding(.vertical)
             }
@@ -80,61 +79,42 @@ struct SelectionCell: View {
 
 struct SelectionCell_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            VStack {
-                Spacer()
-                SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
-                              description: nil,
-                              a11y: "dummy_a11y_1",
-                              systemImage: SFSymbolName.cardIcon,
-                              isOn: .constant(true))
-                Spacer()
-            }
-            .background(Color.orange)
+        VStack {
+            SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
+                          description: nil,
+                          a11y: "dummy_a11y_1",
+                          systemImage: SFSymbolName.cardIcon,
+                          isOn: .constant(true))
 
-            VStack {
-                Spacer()
-                SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
-                              description: StringAsset("""
-                              Sed ut perspiciatis unde omnis\
-                              iste natus error sit voluptatem\
-                              accusantium doloremque laudantium.
-                              """, bundle: .main),
-                              a11y: "dummy_a11y_2",
-                              systemImage: SFSymbolName.bell,
-                              isOn: .constant(false))
-                Spacer()
-            }
-            .preferredColorScheme(.dark)
-            .background(Color.orange)
+            SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
+                          description: StringAsset("""
+                          Sed ut perspiciatis unde omnis\
+                          iste natus error sit voluptatem\
+                          accusantium doloremque laudantium.
+                          """, bundle: .main),
+                          a11y: "dummy_a11y_2",
+                          systemImage: SFSymbolName.bell,
+                          isOn: .constant(false))
 
-            VStack {
-                Spacer()
-                SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
-                              description: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
-                              a11y: "dummy_a11y_3",
-                              systemImage: SFSymbolName.exclamationMark,
-                              isOn: .constant(true))
-                Spacer()
-            }
-            .preferredColorScheme(.dark)
-            .background(Color.orange)
+                .preferredColorScheme(.dark)
 
-            VStack {
-                Spacer()
-                SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
-                              description: StringAsset("""
-                              Sed ut perspiciatis unde omnis\
-                              iste natus error sit voluptatem\
-                              accusantium doloremque laudantium.
-                              """, bundle: .main),
-                              a11y: "dummy_a11y_4",
-                              isOn: .constant(false))
-                Spacer()
-            }
-            .background(Color.orange)
+            SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
+                          description: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
+                          a11y: "dummy_a11y_3",
+                          systemImage: SFSymbolName.exclamationMark,
+                          isOn: .constant(true))
+                .preferredColorScheme(.dark)
+
+            SelectionCell(text: StringAsset("Lorem ipsum dolor sit amet", bundle: .main),
+                          description: StringAsset("""
+                          Sed ut perspiciatis unde omnis\
+                          iste natus error sit voluptatem\
+                          accusantium doloremque laudantium.
+                          """, bundle: .main),
+                          a11y: "dummy_a11y_4",
+                          isOn: .constant(false))
+
+            Spacer()
         }
-        .previewLayout(.fixed(width: 400.0,
-                              height: 200.0))
     }
 }

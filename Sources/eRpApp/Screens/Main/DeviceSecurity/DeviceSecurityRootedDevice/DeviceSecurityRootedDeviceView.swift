@@ -38,6 +38,7 @@ struct DeviceSecurityRootedDeviceView: View {
                         .padding(.vertical)
                         .accessibility(identifier: A11y.security.secTxtSystemRootDetectionHeadline)
                         .frame(maxWidth: .infinity)
+                        .accessibilityAddTraits(.isHeader)
 
                     HStack {
                         Spacer(minLength: 0)

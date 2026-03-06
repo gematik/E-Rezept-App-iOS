@@ -48,6 +48,7 @@ extension DependencyValues {
 
 // MARK: - ErxTask
 
+import AsyncAlgorithms
 import ErxTaskRepository
 import IDP
 import IDPLive
@@ -111,12 +112,12 @@ extension ErxTaskRepository: DependencyKey {
                 return try await Self.demoMode.deleteTask(erxTasks: erxTasks, profileId: profileId)
             }
             return try await Self.defaultImplementation.deleteTask(erxTasks: erxTasks, profileId: profileId)
-        } markTaskEURedeemable: { taskId, byPatientAuthorization in
+        } markTaskEURedeemable: { taskId, profileId, byPatientAuthorization in
             @Shared(.isDemoMode) var isDemoMode
             if isDemoMode {
-                return try await Self.demoMode.markTaskEURedeemable(taskId, byPatientAuthorization)
+                return try await Self.demoMode.markTaskEURedeemable(taskId, profileId, byPatientAuthorization)
             }
-            return try await Self.defaultImplementation.markTaskEURedeemable(taskId, byPatientAuthorization)
+            return try await Self.defaultImplementation.markTaskEURedeemable(taskId, profileId, byPatientAuthorization)
         } redeem: { order in
             @Shared(.isDemoMode) var isDemoMode
             if isDemoMode {
@@ -150,9 +151,9 @@ extension ErxTaskRepository: DependencyKey {
         } countAllUnreadCommunicationsAndChargeItems: { profileId, commProfile in
             @Shared(.isDemoMode) var isDemoMode
             if isDemoMode {
-                return try await Self.demoMode.countAllUnreadCommunicationsAndChargeItems(profileId, commProfile)
+                return Self.demoMode.countAllUnreadCommunicationsAndChargeItems(profileId, commProfile)
             }
-            return try await Self.defaultImplementation.countAllUnreadCommunicationsAndChargeItems(
+            return Self.defaultImplementation.countAllUnreadCommunicationsAndChargeItems(
                 profileId,
                 commProfile
             )
@@ -222,6 +223,63 @@ extension ErxTaskRepository: DependencyKey {
                 return try await Self.demoMode.revokeConsent(category)
             }
             return try await Self.defaultImplementation.revokeConsent(category)
+        } loadRemoteEuAccessCode: {
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.loadRemoteEuAccessCode()
+            }
+            return try await Self.defaultImplementation.loadRemoteEuAccessCode()
+        } grantEuAccessPermission: { euAccessCode in
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.grantEuAccessPermission(euAccessCode)
+            }
+            return try await Self.defaultImplementation.grantEuAccessPermission(euAccessCode)
+        } deleteEuAccessCode: { profileId in
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.deleteEuAccessCode(profileId: profileId)
+            }
+            return try await Self.defaultImplementation.deleteEuAccessCode(profileId: profileId)
+        } saveEuCommunication: { euCommunications, profileId in
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.saveEuCommunication(
+                    euCommunications: euCommunications,
+                    profileId: profileId
+                )
+            }
+            return try await Self.defaultImplementation.saveEuCommunication(
+                euCommunications: euCommunications,
+                profileId: profileId
+            )
+        } deleteEuCommunications: { euCommunications, profileId in
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.deleteEuCommunications(
+                    euCommunications: euCommunications,
+                    profileId: profileId
+                )
+            }
+            return try await Self.defaultImplementation.deleteEuCommunications(
+                euCommunications: euCommunications,
+                profileId: profileId
+            )
+        } loadEuCommunications: { countryCode, profileId in
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.loadEuCommunications(countryCode: countryCode, profileId: profileId)
+            }
+            return try await Self.defaultImplementation.loadEuCommunications(
+                countryCode: countryCode,
+                profileId: profileId
+            )
+        } loadLatestActiveEuCommunication: { profileId in
+            @Shared(.isDemoMode) var isDemoMode
+            if isDemoMode {
+                return try await Self.demoMode.loadLatestActiveEuCommunication(profileId: profileId)
+            }
+            return try await Self.defaultImplementation.loadLatestActiveEuCommunication(profileId: profileId)
         }
     }()
 
@@ -314,8 +372,18 @@ extension ErxTaskRepository {
                     throw ErxRepositoryError.remote(error)
                 }
             }
-        } markTaskEURedeemable: { _, _ in
-            nil
+        } markTaskEURedeemable: { taskId, profileId, authorization in
+            do {
+                _ = try await cloud.markEURedeemable(for: taskId, byPatientAuthorization: authorization).async()
+                var task = try await disk.fetchTask(by: taskId, accessCode: nil).async()
+                task?.isSetEURedeemableByPatient = authorization
+                if let task {
+                    _ = try await disk.save(tasks: [task], in: profileId, updateProfileLastAuthenticated: false).async()
+                }
+                return
+            } catch let error as RemoteStoreError {
+                throw ErxRepositoryError.remote(error)
+            }
         } redeem: { order in
             do {
                 return try await cloud.redeem(order: order).async()
@@ -341,25 +409,52 @@ extension ErxTaskRepository {
                 throw ErxRepositoryError.local(error)
             }
         } countAllUnreadCommunicationsAndChargeItems: { profileId, commProfile in
-            do {
-                let communications = try await disk.listAllCommunications(for: commProfile).async()
-                let chargeItems = try await disk.listAllChargeItems(of: profileId).async()
-                // filter for unique communications
-                let uniqueCommunications = communications.filterUnique()
-                // make sure there is a communication to an existing charge item
-                // since there can be chargeItems without orders
-                let taskIds = uniqueCommunications.map(\.taskIds)
-                let relevantChargeItems = chargeItems.filter { chargeItem in
-                    taskIds.contains { task in
-                        task.contains(chargeItem.identifier)
+            AsyncThrowingStream { continuation in
+                Task {
+                    do {
+                        let communicationValues = disk.listAllCommunications(for: commProfile)
+                            .buffer(
+                                size: 1,
+                                prefetch: .byRequest,
+                                whenFull: .dropOldest
+                            ).values
+                        let euCommunicationValues = disk.listAllEuCommunication(countryCode: nil, profileId: nil)
+                            .buffer(
+                                size: 1,
+                                prefetch: .byRequest,
+                                whenFull: .dropOldest
+                            ).values
+                        let chargeItemValues = disk.listAllChargeItems(of: profileId)
+                            .buffer(
+                                size: 1,
+                                prefetch: .byRequest,
+                                whenFull: .dropOldest
+                            ).values
+
+                        for try await (communications, euCommunications, chargeItems) in AsyncAlgorithms
+                            .combineLatest(communicationValues, euCommunicationValues, chargeItemValues) {
+                            // filter for unique communications
+                            let uniqueCommunications = communications.filterUnique()
+                            // make sure there is a communication to an existing charge item
+                            // since there can be chargeItems without orders
+                            let taskIds = uniqueCommunications.map(\.taskIds)
+                            let relevantChargeItems = chargeItems.filter { chargeItem in
+                                taskIds.contains { task in
+                                    task.contains(chargeItem.identifier)
+                                }
+                            }
+                            var count = 0
+                            count += uniqueCommunications.filter { $0.isRead == false }.count
+                            count += euCommunications.filter { $0.isRead == false }.count
+                            count += relevantChargeItems.filter { $0.isRead == false }.count
+                            continuation.yield(count)
+                        }
+
+                        continuation.finish()
+                    } catch let error as LocalStoreError {
+                        continuation.finish(throwing: ErxRepositoryError.local(error))
                     }
                 }
-                var count = 0
-                count += uniqueCommunications.filter { $0.isRead == false }.count
-                count += relevantChargeItems.filter { $0.isRead == false }.count
-                return count
-            } catch let error as LocalStoreError {
-                throw ErxRepositoryError.local(error)
             }
         } loadRemoteLatestAuditEvents: { locale in
             do {
@@ -430,6 +525,48 @@ extension ErxTaskRepository {
         } revokeConsent: { category in
             do {
                 _ = try await cloud.revokeConsent(category).async()
+            } catch let error as RemoteStoreError {
+                throw ErxRepositoryError.remote(error)
+            }
+        } loadRemoteEuAccessCode: {
+            do {
+                return try await cloud.loadRemoteEuAccessCode().async()
+            } catch let error as RemoteStoreError {
+                throw ErxRepositoryError.remote(error)
+            }
+        } grantEuAccessPermission: { euAccessCode in
+            do {
+                return try await cloud.grantEuAccessPermission(accessCode: euAccessCode).async()
+            } catch let error as RemoteStoreError {
+                throw ErxRepositoryError.remote(error)
+            }
+        } deleteEuAccessCode: { _ in
+            do {
+                _ = try await cloud.deleteEuAccessCode().async()
+            } catch let error as RemoteStoreError {
+                throw ErxRepositoryError.remote(error)
+            }
+        } saveEuCommunication: { euCommunications, profileId in
+            do {
+                _ = try await disk.save(euCommunications: euCommunications, profileId: profileId).async()
+            } catch let error as LocalStoreError {
+                throw ErxRepositoryError.local(error)
+            }
+        } deleteEuCommunications: { euCommunications, profileId in
+            do {
+                _ = try await disk.delete(euCommunications: euCommunications, profileId: profileId).async()
+            } catch let error as LocalStoreError {
+                throw ErxRepositoryError.local(error)
+            }
+        } loadEuCommunications: { countryCode, profileId in
+            do {
+                return try await disk.listAllEuCommunication(countryCode: countryCode, profileId: profileId).async()
+            } catch let error as RemoteStoreError {
+                throw ErxRepositoryError.remote(error)
+            }
+        } loadLatestActiveEuCommunication: { profileId in
+            do {
+                return try await disk.loadLatestActiveEuCommunication(profileId: profileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
@@ -544,6 +681,140 @@ extension ErxTaskRepository {
         let timestamp = try await disk.fetchLatestTimestampForChargeItems(of: profileId).async()
         let chargeItems = try await cloud.listAllChargeItems(after: timestamp).async()
         _ = try await disk.save(chargeItems: chargeItems.map(\.sparseChargeItem), of: profileId).async()
+    }
+}
+
+import FeatureEURedeem
+
+extension EuRedeemService: DependencyKey {
+    /// Live implementation of EuRedeemService
+    public static let liveValue = EuRedeemService { countryCode, profileId in
+        @Dependency(\.userSessionProvider) var userSessionProvider
+        @Dependency(\.euAccessCodeGenerator) var euAccessCodeGenerator
+        @Dependency(\.erxTaskRepository) var erxTaskRepository
+        @Dependency(\.calendar) var calendar
+        @Dependency(\.dateProvider) var dateProvider
+
+        let userSession = userSessionProvider.userSession(for: profileId)
+        let loginHandler = userSession.idpSessionLoginHandler
+        let isAuthenticatedResult = try await loginHandler.isAuthenticatedOrAuthenticate().async()
+
+        switch isAuthenticatedResult {
+        case .success(true):
+            do {
+                let generatedCode = try await euAccessCodeGenerator.generatAccessCode()
+                let euAccessCode = EuAccessCode(
+                    accessCode: generatedCode,
+                    countryCode: countryCode
+                )
+
+                let grantedEuAccessCode = try await erxTaskRepository.grantEuAccessPermission(euAccessCode)
+
+                // Check if we already got an EuAccessCode from this country in the last 7 days
+                let localEuCommunications = try await erxTaskRepository.loadEuCommunications(
+                    countryCode: countryCode,
+                    profileId: profileId
+                )
+
+                let todayStart = calendar.startOfDay(for: dateProvider())
+
+                let hasRecentCode: Bool = {
+                    guard let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: todayStart)
+                    else { return false }
+
+                    let latestCreatedAt = localEuCommunications
+                        .compactMap(\.euAccessCode)
+                        .filter { $0.countryCode == countryCode }
+                        .compactMap(\.createdAt)
+                        .max()
+
+                    return latestCreatedAt.map { date in
+                        date >= sevenDaysAgo
+                    } ?? false
+                }()
+
+                var updatedEuCommunications: [EuCommunication] = []
+                if hasRecentCode {
+                    updatedEuCommunications.append(
+                        EuCommunication(
+                            eventType: .refreshedAccessCode,
+                            orderId: localEuCommunications.first?.orderId ?? UUID().uuidString,
+                            euAccessCode: grantedEuAccessCode,
+                            countryCode: countryCode
+                        )
+                    )
+                } else {
+                    updatedEuCommunications.append(
+                        EuCommunication(
+                            eventType: .createdAccessCode,
+                            orderId: UUID().uuidString,
+                            euAccessCode: grantedEuAccessCode,
+                            countryCode: countryCode
+                        )
+                    )
+                }
+
+                // we can only have one active euAccessCode and invalidate this one
+                if var latest = try await erxTaskRepository.loadLatestActiveEuCommunication(profileId: profileId) {
+                    latest.euAccessCode = nil
+                    updatedEuCommunications.append(latest)
+                }
+
+                try await erxTaskRepository.saveEuCommunication(
+                    euCommunications: updatedEuCommunications,
+                    profileId: profileId
+                )
+
+                return grantedEuAccessCode
+            } catch {
+                throw EuRedeemServiceError.from(error)
+            }
+        case .success(false):
+            throw EuRedeemServiceError.noTokenAvailable
+        case let .failure(error):
+            throw EuRedeemServiceError.loginHandler(error: error)
+        }
+    } markTaskEURedeemable: { taskId, byPatientAuthorization, profileId in
+        do {
+            @Dependency(\.erxTaskRepository) var erxTaskRepository
+            _ = try await erxTaskRepository.markTaskEURedeemable(
+                taskId: taskId,
+                profileId: profileId,
+                byPatientAuthorization: byPatientAuthorization
+            )
+            // Only add EuCommunication when we already have an active EuAccessCode
+            if var latest = try await erxTaskRepository.loadLatestActiveEuCommunication(profileId: profileId) {
+                @Dependency(\.date.now) var now
+                let newCommunication = EuCommunication(
+                    eventType: byPatientAuthorization ? .addedTask : .removedTask,
+                    taskId: taskId,
+                    orderId: latest.orderId,
+                    timestamp: now,
+                    countryCode: latest.countryCode
+                )
+                try await erxTaskRepository.saveEuCommunication(euCommunications: [newCommunication],
+                                                                profileId: profileId)
+            }
+            return
+        } catch {
+            throw EuRedeemServiceError.from(error)
+        }
+    } deleteEuAccessCode: { profileId in
+        do {
+            @Dependency(\.erxTaskRepository) var erxTaskRepository
+            try await erxTaskRepository.deleteEuAccessCode(profileId: profileId)
+            if var latest = try await erxTaskRepository.loadLatestActiveEuCommunication(profileId: profileId) {
+                latest.eventType = .deletedAccessCode(
+                    origin: latest.eventType == .createdAccessCode ? .created : .refreshed
+                )
+                latest.euAccessCode?.accessCode = nil
+                latest.euAccessCode?.validUntil = nil
+
+                try await erxTaskRepository.saveEuCommunication(euCommunications: [latest], profileId: profileId)
+            }
+        } catch {
+            throw EuRedeemServiceError.from(error)
+        }
     }
 }
 
@@ -900,7 +1171,15 @@ extension PharmacyRepository: DependencyKey {
             do {
                 @Dependency(\.coreDataControllerFactory) var coreDataControllerFactory
                 let disk = PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory)
-                return try await disk.listPharmacies(count: count).async()
+                return try await disk.listPharmacies(count: count)
+                    // For now this method is called by PharmacySearchDomain only for populating the overview
+                    // Here we only want to show pharmacies that
+                    //  - have been "used" at least once before and/or
+                    //  - are currently marked as favourite
+                    .map { (pharmacyLocations: [PharmacyLocation]) -> [PharmacyLocation] in
+                        pharmacyLocations.filter { $0.isFavorite || $0.lastUsed != nil }
+                    }
+                    .async()
             } catch let error as LocalStoreError {
                 throw PharmacyRepositoryError.local(error)
             }

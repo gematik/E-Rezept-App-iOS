@@ -29,8 +29,8 @@ import XCTest
 
 @MainActor
 final class SettingsDomainTests: XCTestCase {
-    var mockTracker = MockTracker()
-    let mockUserSessionContainer = MockUsersSessionContainer()
+    var mockTracker = DummyTracker()
+    let mockUserSessionContainer = UsersSessionContainerMock()
     let scheduler = DispatchQueue.immediate.eraseToAnyScheduler()
     typealias TestStore = TestStoreOf<SettingsDomain>
 
@@ -43,7 +43,7 @@ final class SettingsDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = mockUserSessionContainer
             dependencies.tracker = mockTracker
-            dependencies.router = MockRouting()
+            dependencies.router = RoutingMock()
 
             prepareDependencies(&dependencies)
         }

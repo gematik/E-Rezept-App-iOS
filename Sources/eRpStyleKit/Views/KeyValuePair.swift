@@ -134,12 +134,6 @@ struct PaddedKeyValuePairStyle: KeyValuePairStyle {
 }
 
 public struct SeparatedKeyValuePairStyle: KeyValuePairStyle {
-    let showSeparator: Bool
-
-    init(showSeparator: Bool) {
-        self.showSeparator = showSeparator
-    }
-
     public func makeBody(configuration: KeyValuePairConfiguration) -> some View {
         HStack {
             configuration.key
@@ -150,11 +144,12 @@ public struct SeparatedKeyValuePairStyle: KeyValuePairStyle {
                 .font(.body)
                 .foregroundColor(Colors.systemLabelSecondary)
         }
-        .bottomDivider(showSeparator: showSeparator)
+        .bottomDividerIfNeeded()
         .padding(.leading)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(configuration.key)
         .accessibilityValue(configuration.value)
+        .rootSectionContainerElement(false)
     }
 }
 

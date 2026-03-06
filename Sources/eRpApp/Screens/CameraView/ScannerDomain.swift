@@ -88,7 +88,7 @@ struct ScannerDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = scanner_imageGallery
         case imageGallery(ImageGallery)
@@ -346,3 +346,6 @@ extension ScannerDomain {
         static let state = State()
     }
 }
+
+extension ScannerDomain.Destination.State: Equatable {}
+extension ScannerDomain.Destination.Action: Equatable {}

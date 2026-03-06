@@ -65,12 +65,13 @@ struct EnterProfileNameSubView: View {
                 Text(L10n.addTxtTitle)
                     .font(.system(size: 16, weight: .bold))) {
                     TextField(
-                        L10n.addTxtProfile1,
+                        "",
                         text: displayName
                     )
                     .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textField in
                         textField.clearButtonMode = .whileEditing
                     }
+                    .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
                     .foregroundColor(Colors.systemLabel)
                     .padding()
                     .border(Colors.primary700, width: 2, cornerRadius: 8)
@@ -83,18 +84,11 @@ struct EnterProfileNameSubView: View {
                             didTapButtonAction()
                         },
                         label: {
-                            HStack {
-                                Text(L10n.addBtnSave)
-                                    .foregroundColor(isValidEntry ? Color(.white) : Color(.systemGray))
-                                    .font(.system(size: 16, weight: .bold))
-                                    .padding()
-                                    .padding(.horizontal)
-                            }
+                            Text(L10n.addBtnSave)
                         }
                     )
-                    .disabled(!isValidEntry)
-                    .background(isValidEntry ? Colors.primary : Color(.systemGray4))
-                    .cornerRadius(16)
+                    .accessibilityIdentifier(A11y.settings.newProfile.stgBtnNewProfileSave)
+                    .buttonStyle(.primary(isEnabled: isValidEntry, isDestructive: false, width: .wideHugging))
             }
         }
         .padding()

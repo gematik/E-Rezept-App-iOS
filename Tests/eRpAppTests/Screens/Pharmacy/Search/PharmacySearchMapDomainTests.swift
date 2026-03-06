@@ -38,16 +38,16 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
     var searchHistoryMock: SearchHistoryMock!
     var mockUserSession: MockUserSession!
-    var mockRedeemService: MockRedeemService!
-    var mockPrescriptionRepository: MockPrescriptionRepository!
+    var mockRedeemService: RedeemServiceMock!
+    var mockPrescriptionRepository: PrescriptionRepositoryMock!
 
     override func setUp() {
         super.setUp()
 
         searchHistoryMock = SearchHistoryMock()
         mockUserSession = MockUserSession()
-        mockRedeemService = MockRedeemService()
-        mockPrescriptionRepository = MockPrescriptionRepository()
+        mockRedeemService = RedeemServiceMock()
+        mockPrescriptionRepository = PrescriptionRepositoryMock()
     }
 
     override func tearDownWithError() throws {
@@ -410,9 +410,11 @@ class PharmacySearchMapDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(inputTask)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(inputTask)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(inputTask)
         await withDependencies {
             $0.pharmacyRepository.updateFromRemote = { _ in newPharmacy.pharmacyLocation }

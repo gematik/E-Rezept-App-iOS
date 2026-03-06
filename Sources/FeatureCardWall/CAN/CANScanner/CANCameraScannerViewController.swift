@@ -269,10 +269,10 @@ class CANCameraScannerViewController: UIViewController {
             return
         }
 
-        // Set zoom and autofocus to help focus on very small text.
+        // Dont set zoom and but autofocus to help focus on very small text.
         do {
             try captureDevice.lockForConfiguration()
-            captureDevice.videoZoomFactor = 2
+            captureDevice.videoZoomFactor = 1.0
             captureDevice.autoFocusRangeRestriction = .near
             captureDevice.unlockForConfiguration()
         } catch {

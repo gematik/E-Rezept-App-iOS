@@ -120,7 +120,15 @@ extension PharmacyRepository {
             },
             loadLocalCount: { count in
                 do {
-                    return try await disk.listPharmacies(count: count).async()
+                    return try await disk.listPharmacies(count: count)
+                        // For now this method is called by PharmacySearchDomain only for populating the overview
+                        // Here we only want to show pharmacies that
+                        //  - have been "used" at least once before and/or
+                        //  - are currently marked as favourite
+                        .map { (pharmacyLocations: [PharmacyLocation]) -> [PharmacyLocation] in
+                            pharmacyLocations.filter { $0.isFavorite || $0.lastUsed != nil }
+                        }
+                        .async()
                 } catch let error as LocalStoreError {
                     throw PharmacyRepositoryError.local(error)
                 }

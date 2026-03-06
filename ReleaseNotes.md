@@ -1,4 +1,24 @@
-# 1.35.0
+# Release 1.36.0
+
+### Features (2 changes)
+
+- [Add EuRedeemService and EuAccessCodeGenerator Dependency]
+- [Add EU Redeem consent for redeeming flow and settings]
+
+### Bug fixes (5 changes)
+
+- [Fix various accessibilty issues]
+- [Fix various accessibility issues]
+- [Fix various accessibility issues]
+- [Fix pharmacies remain on SearchOverview even when not a favourite anymore]
+- [Fix Messages button badge counter not incremented]
+
+### Internal changes (2 changes)
+
+- [Add request to mark task EU redeemable]
+- [Fix Demo Mode to use DemoErxTaskRepository]
+
+# Release 1.35.0
 
 ### Features (7 changes)
 
@@ -60,7 +80,7 @@
 
 - Update UpdateChecker endpoint
 
-# 1.34.0
+# Release 1.34.0
 
 ### Features (6 changes)
 

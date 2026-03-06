@@ -37,9 +37,9 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
     var mockUserSession: MockUserSession!
-    var mockUserSessionProvider: MockUserSessionProvider!
-    var mockSecureEnclaveSignatureProvider: MockSecureEnclaveSignatureProvider!
-    var mockRegisteredDevicesService: MockRegisteredDevicesService!
+    var mockUserSessionProvider: UserSessionProviderMock!
+    var mockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProviderMock!
+    var mockRegisteredDevicesService: RegisteredDevicesServiceMock!
     let uidateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
 
     override func setUp() {
@@ -47,9 +47,9 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         mockUserSession = MockUserSession()
-        mockUserSessionProvider = MockUserSessionProvider()
-        mockSecureEnclaveSignatureProvider = MockSecureEnclaveSignatureProvider()
-        mockRegisteredDevicesService = MockRegisteredDevicesService()
+        mockUserSessionProvider = UserSessionProviderMock()
+        mockSecureEnclaveSignatureProvider = SecureEnclaveSignatureProviderMock()
+        mockRegisteredDevicesService = RegisteredDevicesServiceMock()
     }
 
     private func testStore(for state: RegisteredDevicesDomain.State) -> TestStore {
@@ -73,14 +73,16 @@ final class RegisteredDevicesDomainTests: XCTestCase {
             can: ""
         )
 
-        mockRegisteredDevicesService.registeredDevicesForReturnValue =
+        mockRegisteredDevicesService
+            .registeredDevicesForProfileIdUUIDAnyPublisherPairingEntriesRegisteredDevicesServiceErrorReturnValue =
             Fail(error: RegisteredDevicesServiceError.missingAuthentication)
                 .eraseToAnyPublisher()
 
-        mockRegisteredDevicesService.deviceIdForReturnValue = Just(nil)
+        mockRegisteredDevicesService.deviceIdForProfileIdUUIDAnyPublisherStringNeverReturnValue = Just(nil)
             .eraseToAnyPublisher()
 
-        mockRegisteredDevicesService.cardWallForReturnValue = Just(cardWallState)
+        mockRegisteredDevicesService
+            .cardWallForProfileIdUUIDAnyPublisherCardWallCANDomainStateNeverReturnValue = Just(cardWallState)
             .eraseToAnyPublisher()
 
         await store.send(.loadDevices) { state in
@@ -106,14 +108,17 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         )
 
         let expectedDevices = Fixtures.pairingEntriesSetB
-        mockRegisteredDevicesService.registeredDevicesForReturnValue = Just(expectedDevices)
-            .setFailureType(to: RegisteredDevicesServiceError.self)
+        mockRegisteredDevicesService
+            .registeredDevicesForProfileIdUUIDAnyPublisherPairingEntriesRegisteredDevicesServiceErrorReturnValue =
+            Just(expectedDevices)
+                .setFailureType(to: RegisteredDevicesServiceError.self)
+                .eraseToAnyPublisher()
+
+        mockRegisteredDevicesService.deviceIdForProfileIdUUIDAnyPublisherStringNeverReturnValue = Just(nil)
             .eraseToAnyPublisher()
 
-        mockRegisteredDevicesService.deviceIdForReturnValue = Just(nil)
-            .eraseToAnyPublisher()
-
-        mockRegisteredDevicesService.cardWallForReturnValue = Just(cardWallState)
+        mockRegisteredDevicesService
+            .cardWallForProfileIdUUIDAnyPublisherCardWallCANDomainStateNeverReturnValue = Just(cardWallState)
             .eraseToAnyPublisher()
 
         await store.send(.showCardWall(cardWallState)) { state in
@@ -147,11 +152,12 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     func testLoadDevicesAuthenticationErrorShows() async {
         let store = testStore(for: .init(profileId: testProfileId))
 
-        mockRegisteredDevicesService.registeredDevicesForReturnValue =
+        mockRegisteredDevicesService
+            .registeredDevicesForProfileIdUUIDAnyPublisherPairingEntriesRegisteredDevicesServiceErrorReturnValue =
             Fail(error: RegisteredDevicesServiceError.missingToken)
                 .eraseToAnyPublisher()
 
-        mockRegisteredDevicesService.deviceIdForReturnValue = Just(nil)
+        mockRegisteredDevicesService.deviceIdForProfileIdUUIDAnyPublisherStringNeverReturnValue = Just(nil)
             .eraseToAnyPublisher()
 
         await store.send(.loadDevices) { state in
@@ -178,12 +184,14 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         let deviceId = "KEY234567890"
 
-        mockRegisteredDevicesService.deleteDeviceOfReturnValue =
+        mockRegisteredDevicesService
+            .deleteDeviceDeviceStringOfProfileIdUUIDAnyPublisherBoolRegisteredDevicesServiceErrorReturnValue =
             Just(true)
                 .setFailureType(to: RegisteredDevicesServiceError.self)
                 .eraseToAnyPublisher()
 
-        mockRegisteredDevicesService.registeredDevicesForReturnValue =
+        mockRegisteredDevicesService
+            .registeredDevicesForProfileIdUUIDAnyPublisherPairingEntriesRegisteredDevicesServiceErrorReturnValue =
             Just(Fixtures.pairingEntriesSetB)
                 .setFailureType(to: RegisteredDevicesServiceError.self)
                 .eraseToAnyPublisher()
@@ -192,7 +200,8 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         await testScheduler.run()
 
-        expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
+        expect(self.mockRegisteredDevicesService
+            .deleteDeviceDeviceStringOfProfileIdUUIDAnyPublisherBoolRegisteredDevicesServiceErrorCalled).to(beTrue())
 
         await store.receive(.response(.deleteDeviceReceived(.success(true))))
 
@@ -213,7 +222,8 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         let deviceId = "KEY234567890"
 
-        mockRegisteredDevicesService.deleteDeviceOfReturnValue =
+        mockRegisteredDevicesService
+            .deleteDeviceDeviceStringOfProfileIdUUIDAnyPublisherBoolRegisteredDevicesServiceErrorReturnValue =
             Fail(error: RegisteredDevicesServiceError.missingToken)
                 .eraseToAnyPublisher()
 
@@ -221,7 +231,8 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         await testScheduler.run()
 
-        expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
+        expect(self.mockRegisteredDevicesService
+            .deleteDeviceDeviceStringOfProfileIdUUIDAnyPublisherBoolRegisteredDevicesServiceErrorCalled).to(beTrue())
 
         await store
             .receive(.response(.deleteDeviceReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in

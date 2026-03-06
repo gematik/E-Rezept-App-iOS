@@ -140,10 +140,11 @@ extension VAUInterceptor {
 
 extension Publisher where Output == HTTPResponse, Failure == HTTPClientError {
     func handleUserPseudonym(vauEndpointHandler: VAUEndpointHandler) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        handleEvents( // swiftlint:disable:this trailing_closure
+        handleEvents(
             receiveOutput: { httpResponse in
                 vauEndpointHandler.didReceiveUserPseudonym(in: httpResponse)
-            }
+            },
+            receiveRequest: nil
         )
         .eraseToAnyPublisher()
     }

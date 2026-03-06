@@ -60,11 +60,11 @@ public struct RadioLabelStyle: LabelStyle {
 
                 Image(systemName: isOn ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
                     .font(.title3)
-                    .foregroundColor(isOn ? Colors.primary : Color(.tertiaryLabel))
+                    .foregroundColor(isOn ? Colors.primary : Colors.systemLabelSecondary)
 
                 if showNavigationIndicator {
                     Image(systemName: SFSymbolName.chevronForward)
-                        .foregroundColor(Color(.tertiaryLabel))
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .font(.body.weight(.semibold))
                 }
             }

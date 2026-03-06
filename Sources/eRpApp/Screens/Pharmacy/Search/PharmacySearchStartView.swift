@@ -161,7 +161,7 @@ struct PharmacySearchStartView: View {
                         .disabled(isLoading)
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibility(identifier: A11y.pharmacySearchStart.phaSearchTxtLocalPharmEntry)
-                        .buttonStyle(.navigation(showSeparator: true))
+                        .buttonStyle(.navigation)
                         .modifier(SectionContainerCellModifier())
                     }
                     .redacted(reason: isLoading ? .placeholder : .init())

@@ -104,9 +104,7 @@ class EciesVAUCrypto: VAUCrypto {
         // Build payload message
         let symKeyHex = symmetricKey.withUnsafeBytes { Data(Array($0)) }.hexStringLowerCase
         // [REQ:gemSpec_Krypt:A_20161-01#15] 5:
-        guard let payload = "1 \(bearerToken) \(requestId) \(symKeyHex) \(message)".data(using: .utf8) else {
-            throw VAUError.internalCryptoError
-        }
+        let payload = Data("1 \(bearerToken) \(requestId) \(symKeyHex) \(message)".utf8)
         // [REQ:gemSpec_Krypt:A_4389:1] IVs must not be reused, IVs bit length must be larger or equal to 96
         let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
         // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
@@ -198,7 +196,7 @@ enum Ecies {
         static let v1 = Spec( // swiftlint:disable:this identifier_name
             version: 0x1,
             ivSize: 12,
-            info: "ecies-vau-transport".data(using: .utf8)!, // swiftlint:disable:this force_unwrapping
+            info: Data("ecies-vau-transport".utf8),
             hkdfOutputCount: 16
         )
     }

@@ -52,5 +52,11 @@
         "text": "**🏛️ Daha Fazla Kişi İçin Kayıt** \nFederal Polis ve diğerleri gibi federal kurumların sigortalıları için de artık kayıt mümkün. \n \n **🕒 Eczane Açılış Saatleri İyileştirildi** \nAcil servis ve eczanelerin özel kapanış saatleri, mevcutsa artık görüntüleniyor. \n \n **💊 Tüm Reçetelerin Seçimi** \nReçeteleri kullanırken artık tüm reçeteler aynı anda seçilebilir. \n \n **♿ Erişilebilirlik** \nDaha yüksek kontrast elde etmek için yazı tipleri ve simgelerin renkleri ayarlandı. Ayrıca, profil resmini düzenlemek ve oturum açma durumunu tanımak için VoiceOver konuşma çıkışı iyileştirildi.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Reçete kodlarını göster** \nToplu ve tekli kodlar için ekran, daha sezgisel kullanım için yeniden tasarlandı. \n \n **❤️ Eczane Favorileri** \nEczane favorileri artık daha güvenilir çalışıyor ve VoiceOver ile uyumlu. \n \n **♿ Erişilebilirlik** \nVoiceOver ve klavye navigasyonu iyileştirildi, düğmeler, metin ve giriş alanları daha kolay tanımlanabilir hale getirildi ve liste öğeleri daha mantıklı bir şekilde yapılandırıldı. Büyütülmüş yazı tipi artık tüm uygulama ekranlarında çalışıyor. Bilişsel bozukluğu olan kullanıcıları desteklemek için animasyonlu videolar yalnızca bir kez oynatılıyor.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

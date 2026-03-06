@@ -106,10 +106,10 @@ extension XCTestCase {
                     precision: defaultPrecision,
                     perceptualPrecision: defaultPerceptualPrecision,
                     layout: .device(config: ViewImageConfig.iPhone13.noInsets()),
-                    traits: UITraitCollection(traitsFrom: [
-                        UITraitCollection(userInterfaceStyle: .dark),
-                        UITraitCollection(preferredContentSizeCategory: .medium),
-                    ])
+                    traits: UITraitCollection { mutableTraits in
+                        mutableTraits.userInterfaceStyle = .dark
+                        mutableTraits.preferredContentSizeCategory = .medium
+                    }
                 ),
         ]
     }
@@ -182,10 +182,10 @@ extension XCTestCase {
                     precision: defaultPrecision,
                     perceptualPrecision: defaultPerceptualPrecision,
                     layout: .device(config: ViewImageConfig.iPhoneX.noInsets()),
-                    traits: UITraitCollection(traitsFrom: [
-                        UITraitCollection(userInterfaceStyle: mode),
-                        UITraitCollection(preferredContentSizeCategory: .medium),
-                    ])
+                    traits: UITraitCollection { mutableTraits in
+                        mutableTraits.userInterfaceStyle = mode
+                        mutableTraits.preferredContentSizeCategory = .medium
+                    }
                 ),
         ]
     }
@@ -302,24 +302,19 @@ extension ViewImageConfig {
 
 extension UITraitCollection {
     static func iPhone14(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
-        let base: [UITraitCollection] = [
-            .init(forceTouchCapability: .available),
-            .init(layoutDirection: .leftToRight),
-            .init(preferredContentSizeCategory: .medium),
-            .init(userInterfaceIdiom: .phone),
-        ]
-
         switch orientation {
         case .landscape:
-            return .init(traitsFrom: base + [
-                .init(horizontalSizeClass: .regular),
-                .init(verticalSizeClass: .compact),
-            ])
+            return UITraitCollection { mutableTraits in
+                mutableTraits.userInterfaceIdiom = .phone
+                mutableTraits.horizontalSizeClass = .regular
+                mutableTraits.verticalSizeClass = .compact
+            }
         case .portrait:
-            return .init(traitsFrom: base + [
-                .init(horizontalSizeClass: .compact),
-                .init(verticalSizeClass: .regular),
-            ])
+            return UITraitCollection { mutableTraits in
+                mutableTraits.userInterfaceIdiom = .phone
+                mutableTraits.horizontalSizeClass = .compact
+                mutableTraits.verticalSizeClass = .regular
+            }
         }
     }
 }

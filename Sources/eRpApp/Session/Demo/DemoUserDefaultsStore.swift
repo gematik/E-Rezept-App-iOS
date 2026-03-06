@@ -170,5 +170,19 @@ class DemoUserDefaultsStore: UserDataStore {
         hideOnboardingCurrentValue.eraseToAnyPublisher()
     }
 
+    var readEuAccessCodeMessages: AnyPublisher<[String], Never> {
+        readEuAccessCodeMessagesCurrentValue.eraseToAnyPublisher()
+    }
+
+    var allReadEuAccessCodeMessages: [String] = []
+
+    private var readEuAccessCodeMessagesCurrentValue: CurrentValueSubject<[String], Never> = CurrentValueSubject([])
+
+    func markEuAccessCodeAsRead(identifier: String) {
+        var newReadEuAccessCode = allReadEuAccessCodeMessages
+        newReadEuAccessCode.append(identifier)
+        readEuAccessCodeMessagesCurrentValue.send(newReadEuAccessCode)
+    }
+
     func wipeAll() {}
 }

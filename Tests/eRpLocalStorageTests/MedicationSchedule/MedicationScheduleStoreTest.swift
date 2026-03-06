@@ -58,7 +58,7 @@ final class MedicationScheduleStoreTest: XCTestCase {
             return .init(databaseUrl: { self.databaseFile }) {
                 @Shared(.coreDataController) var coreDataController
 
-                var fileProtection: FileProtectionType = {
+                let fileProtection: FileProtectionType = {
                     #if os(macOS)
                     return FileProtectionType(rawValue: "none")
                     #else

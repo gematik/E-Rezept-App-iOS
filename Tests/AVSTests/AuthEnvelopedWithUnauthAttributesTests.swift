@@ -28,7 +28,7 @@ import XCTest
 
 // swiftlint:disable line_length
 final class AuthEnvelopedWithUnauthAttributesTests: XCTestCase {
-    let x509rsa = try! X509(pem: x509rsaPem.data(using: .utf8)!)
+    let x509rsa = try! X509(pem: Data(x509rsaPem.utf8))
 
     func testConvertMessage() throws {
         // given

@@ -21,7 +21,12 @@
 //
 
 import ComposableArchitecture
+import eRpKit
+import eRpStyleKit
+import FeatureCardWall
+import FeatureHelpers
 import Foundation
+import Profiles
 import SwiftUI
 
 /// Domain for displaying prescription redemption codes
@@ -31,11 +36,26 @@ public struct CodeDomain {
     @ObservableState
     public struct State: Equatable {
         var displayMode = DisplayMode.manual
-        var insuranceNumber: String
-        var exchangeCode: String
+        var insuranceId: String?
+        var euAccessCode: EuAccessCode?
+        var countryCode: String
         var qrCodeImage: UIImage?
-        var isExpired = false
-        var expirationDate: Date?
+
+        var minutesRemaining: Int {
+            @Dependency(\.date) var date
+            return CodeDomain.minutes(from: date.now, to: euAccessCode?.validUntil)
+        }
+
+        /// Boolean if the accessCode is expired
+        public var isExpired: Bool {
+            @Dependency(\.date) var date
+            guard let validUntil = euAccessCode?.validUntil else { return true }
+            return validUntil < date.now
+        }
+
+        @Shared(.selectedProfileId) var profileId
+        /// Destination for navigation and modals
+        @Presents public var destination: Destination.State?
 
         public enum DisplayMode: Equatable {
             case manual
@@ -44,34 +64,31 @@ public struct CodeDomain {
 
         public init(
             displayMode: DisplayMode = DisplayMode.manual,
-            insuranceNumber: String = "M123456789",
-            exchangeCode: String = "A1b2C3",
-            qrCodeImage: UIImage? = nil,
-            isExpired: Bool = false,
-            expirationDate: Date? = nil
+            insuranceId: String? = nil,
+            euAccessCode: EuAccessCode? = nil,
+            countryCode: String,
         ) {
             self.displayMode = displayMode
-            self.insuranceNumber = insuranceNumber
-            self.exchangeCode = exchangeCode
-            self.qrCodeImage = qrCodeImage
-            self.isExpired = isExpired
-            self.expirationDate = expirationDate
+            self.insuranceId = insuranceId
+            self.euAccessCode = euAccessCode
+            self.countryCode = countryCode
         }
     }
 
     /// Actions for code display
     public enum Action: Equatable {
+        case task
         case toggleDisplayMode
         case refreshCode
         case generateQRCode(screenSize: CGSize)
-        case checkExpiration
         case response(Response)
         case delegate(Delegate)
+        case destination(PresentationAction<Destination.Action>)
 
         public enum Response: Equatable {
-            case qrCodeImageReceived(UIImage?)
-            case codeRefreshed(insuranceNumber: String, exchangeCode: String)
-            case codeExpired
+            case profileReceived(Result<Profile?, LocalStoreError>)
+            case qrCodeImageReceived(Result<UIImage?, EuCodeGenerationError>)
+            case codeRefreshed(Result<EuAccessCode?, EuRedeemServiceError>)
         }
 
         public enum Delegate: Equatable {
@@ -80,166 +97,168 @@ public struct CodeDomain {
         }
     }
 
+    /// Navigation and modal destinations
+    @Reducer
+    public enum Destination {
+        // sourcery: AnalyticsScreen = alert
+        /// alert destination
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
+
+        /// all alert screens
+        public enum Alert: Equatable {
+            case refreshCode
+        }
+    }
+
     /// Initialize the domain
     public init() {}
+
+    @Dependency(\.profilesStore) var profileStore: ProfilesStore
+    @Dependency(\.euRedeemService) var euRedeemService: EuRedeemService
+    @Dependency(\.euAccessCodeGenerator) var euAccessCodeGenerator: EuAccessCodeGenerator
+    @Dependency(\.date) var date
 
     /// Reducer body
     public var body: some Reducer<State, Action> {
         Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
     }
 
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
+        case .task:
+            return .merge(
+                .run { [euAccessCode = state.euAccessCode] send in
+                    if euAccessCode == nil {
+                        await send(.refreshCode)
+                    }
+                },
+                .run { [insuranceId = state.insuranceId, profileId = state.profileId] send in
+                    if insuranceId == nil {
+                        do {
+                            let profile = try await profileStore.fetchProfile(profileId).async()
+                            await send(.response(.profileReceived(.success(profile))))
+                        } catch let error as LocalStoreError {
+                            await send(.response(.profileReceived(.failure(error))))
+                        }
+                    }
+                }
+            )
+        case let .response(.profileReceived(result)):
+            switch result {
+            case let .success(profile):
+                state.insuranceId = profile?.insuranceId
+            case let .failure(error):
+                state.destination = .alert(ErpAlertState(for: error))
+            }
+            return .none
         case .toggleDisplayMode:
-            return handleToggleDisplayMode(state: &state)
-        case .refreshCode:
-            return handleRefreshCode()
+            switch state.displayMode {
+            case .manual:
+                state.displayMode = .qrCode
+                if state.qrCodeImage == nil {
+                    return .send(.generateQRCode(screenSize: CGSize(width: 200, height: 200)))
+                }
+            case .qrCode:
+                state.displayMode = .manual
+            }
+            return .none
+        case .refreshCode,
+             .destination(.presented(.alert(.refreshCode))):
+            return .run { [countryCode = state.countryCode, profileId = state.profileId] send in
+                do {
+                    let newCode = try await euRedeemService.grantEuAccessCode(
+                        countryCode: countryCode,
+                        profileId: profileId
+                    )
+                    await send(.response(.codeRefreshed(.success(newCode))))
+                } catch let error as EuRedeemServiceError {
+                    await send(.response(.codeRefreshed(.failure(error))))
+                }
+            }
         case let .generateQRCode(screenSize):
-            return handleGenerateQRCode(state: state, screenSize: screenSize)
-        case .checkExpiration:
-            return handleCheckExpiration(state: state)
-        case let .response(.qrCodeImageReceived(image)):
-            state.qrCodeImage = image
-            return .none
-        case let .response(.codeRefreshed(insuranceNumber, exchangeCode)):
-            return handleCodeRefreshed(state: &state, insuranceNumber: insuranceNumber, exchangeCode: exchangeCode)
-        case .response(.codeExpired):
-            state.isExpired = true
-            return .none
-        case .delegate:
-            return .none
-        }
-    }
-
-    private func handleToggleDisplayMode(state: inout State) -> Effect<Action> {
-        switch state.displayMode {
-        case .manual:
-            state.displayMode = .qrCode
-            if state.qrCodeImage == nil {
-                return .send(.generateQRCode(screenSize: CGSize(width: 300, height: 300)))
+            guard let accessCode = state.euAccessCode?.accessCode,
+                  let insuranceId = state.insuranceId else {
+                state.displayMode = .manual
+                return .send(.refreshCode)
             }
-        case .qrCode:
-            state.displayMode = .manual
-        }
-        return .none
-    }
-
-    private func handleRefreshCode() -> Effect<Action> {
-        let newInsuranceNumber = generateRandomInsuranceNumber()
-        let newExchangeCode = generateRandomExchangeCode()
-
-        return .send(.response(.codeRefreshed(
-            insuranceNumber: newInsuranceNumber,
-            exchangeCode: newExchangeCode
-        )))
-    }
-
-    private func handleGenerateQRCode(state: State, screenSize: CGSize) -> Effect<Action> {
-        let qrData = "\(state.insuranceNumber)|\(state.exchangeCode)"
-
-        return .run { send in
-            try? await Task.sleep(for: .seconds(1))
-            let qrImage = await generateQRCodeImage(from: qrData, size: screenSize)
-            await send(.response(.qrCodeImageReceived(qrImage)))
-        }
-    }
-
-    private func handleCheckExpiration(state: State) -> Effect<Action> {
-        if let expirationDate = state.expirationDate, Date() > expirationDate {
-            return .send(.response(.codeExpired))
-        }
-        return .none
-    }
-
-    private func handleCodeRefreshed(
-        state: inout State,
-        insuranceNumber: String,
-        exchangeCode: String
-    ) -> Effect<Action> {
-        state.insuranceNumber = insuranceNumber
-        state.exchangeCode = exchangeCode
-        state.isExpired = false
-        state.expirationDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())
-        state.qrCodeImage = nil
-
-        if state.displayMode == .qrCode {
-            return .send(.generateQRCode(screenSize: CGSize(width: 300, height: 300)))
-        }
-        return .none
-    }
-
-    /// Will be replaced later by an implementation using a a real service
-    private func generateRandomInsuranceNumber() -> String {
-        let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let numbers = "0123456789"
-        guard let randomLetter = letters.randomElement() else {
-            return "M123456789" // Fallback
-        }
-        let numbersString = (0 ..< 9).compactMap { _ in numbers.randomElement() }.map(String.init).joined()
-        return "\(randomLetter)\(numbersString)"
-    }
-
-    /// Will be replaced later by an implementation using a a real service
-    private func generateRandomExchangeCode() -> String {
-        (0 ..< 6)
-            .compactMap { index in
-                if index % 2 == 0 {
-                    // Even positions: letters
-                    return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".randomElement().map(String.init)
-                } else {
-                    // Odd positions: numbers
-                    return "0123456789".randomElement().map(String.init)
+            let qrData = "\(insuranceId)|\(accessCode)"
+            return .run { [qrData = qrData] send in
+                do {
+                    let result = try await euAccessCodeGenerator.generateQRCodeImage(qrData, screenSize)
+                    await send(.response(.qrCodeImageReceived(.success(result))))
+                } catch let error as EuCodeGenerationError {
+                    await send(.response(.qrCodeImageReceived(.failure(error))))
                 }
             }
-            .joined()
+        case let .response(.qrCodeImageReceived(result)):
+            switch result {
+            case let .success(image):
+                state.qrCodeImage = image
+            case let .failure(error):
+                state.destination = .alert(ErpAlertState(for: error))
+            }
+            return .none
+        case let .response(.codeRefreshed(.success(euAccessCode))):
+            state.euAccessCode = euAccessCode
+            state.qrCodeImage = nil
+
+            if state.displayMode == .qrCode {
+                return .send(.generateQRCode(screenSize: CGSize(width: 200, height: 200)))
+            }
+            return .none
+        case let .response(.codeRefreshed(.failure(error))):
+            switch error {
+            case .euCodeGeneration:
+                state.destination = .alert(Self.accessCodeError())
+            default:
+                state.destination = .alert(ErpAlertState(for: error))
+            }
+            return .none
+        case .delegate, .destination:
+            return .none
+        }
     }
 
-    /// Will be replaced later by an implementation using a a real service
-    private func generateQRCodeImage(from data: String, size: CGSize) async -> UIImage? {
-        await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-                guard let filter = CIFilter(name: "CIQRCodeGenerator") else {
-                    continuation.resume(returning: nil)
-                    return
-                }
-
-                let data = Data(data.utf8)
-                filter.setValue(data, forKey: "inputMessage")
-
-                guard let outputImage = filter.outputImage else {
-                    continuation.resume(returning: nil)
-                    return
-                }
-
-                let scaleX = size.width / outputImage.extent.size.width
-                let scaleY = size.height / outputImage.extent.size.height
-                let transform = CGAffineTransform(scaleX: scaleX, y: scaleY)
-                let transformedImage = outputImage.transformed(by: transform)
-
-                let context = CIContext()
-                guard let cgImage = context.createCGImage(transformedImage, from: transformedImage.extent) else {
-                    continuation.resume(returning: nil)
-                    return
-                }
-
-                let uiImage = UIImage(cgImage: cgImage)
-                continuation.resume(returning: uiImage)
-            }
+    static func minutes(
+        from start: Date?,
+        to end: Date?,
+        calendar: Calendar = Calendar.current
+    ) -> Int {
+        guard let start = start, let end = end else {
+            return 0
         }
+        let minutes = calendar.dateComponents([.minute], from: start, to: end).minute
+        return minutes ?? 0
+    }
+
+    static func accessCodeError() -> ErpAlertState<Destination.Alert> {
+        ErpAlertState(
+            title: { TextState(L10n.euredeemCodeAlertGenerateTitle) },
+            actions: {
+                ButtonState(role: .cancel) {
+                    .init(L10n.alertBtnOk)
+                }
+                ButtonState(action: .refreshCode) {
+                    .init(L10n.euredeemCodeAlertGenerateAgain)
+                }
+            },
+            message: { TextState(L10n.euredeemCodeAlertGenerateMessage) }
+        )
     }
 }
 
 extension CodeDomain {
     enum Dummies {
-        static let state = State()
+        static let state = State(countryCode: "De")
 
         static let expiredState = State(
             displayMode: .manual,
-            insuranceNumber: "M123456789",
-            exchangeCode: "A1b2C3",
-            qrCodeImage: nil,
-            isExpired: true,
-            expirationDate: Calendar.current.date(byAdding: .minute, value: -1, to: Date())
+            insuranceId: "M123456789",
+            euAccessCode: EuAccessCode(),
+            countryCode: "De"
         )
 
         static let store = StoreOf<CodeDomain>(
@@ -263,3 +282,6 @@ extension CodeDomain {
         }
     }
 }
+
+extension CodeDomain.Destination.State: Equatable {}
+extension CodeDomain.Destination.Action: Equatable {}

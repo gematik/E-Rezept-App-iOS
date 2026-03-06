@@ -21,7 +21,6 @@
 //
 
 import ComposableArchitecture
-import ContentsquareModule
 import eRpKit
 import eRpLocalStorage
 import eRpResources
@@ -156,12 +155,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             mainWindow?.makeKeyAndVisible()
             setupNotifications(scene: scene)
         }
-
-        #if ENABLE_DEBUG_VIEW
-        if let url = connectionOptions.urlContexts.first?.url {
-            Contentsquare.handle(url: url)
-        }
-        #endif
     }
 
     func routeTo(_ endpoint: Endpoint) {
@@ -285,11 +278,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     }
 
     #if ENABLE_DEBUG_VIEW
-    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        if let url = URLContexts.first?.url {
-            Contentsquare.handle(url: url)
-        }
-    }
+    func scene(_: UIScene, openURLContexts _: Set<UIOpenURLContext>) {}
     #endif
 
     private func addBlurOverlayToWindow() {

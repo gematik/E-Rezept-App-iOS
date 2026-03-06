@@ -66,6 +66,7 @@ struct CardWallExtAuthConfirmationView: View {
                         Text(L10n.cdwTxtExtauthConfirmHeadline)
                             .font(.headline)
                             .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityAddTraits(.isHeader)
 
                         Text(L10n.cdwTxtExtauthConfirmDescription)
                             .font(.body)

@@ -244,9 +244,9 @@ class StandardSessionContainer: UserSession {
 
     lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
         #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
-        // swiftlint:disable:next trailing_closure
         DefaultSecureEnclaveSignatureProvider(
             storage: secureUserStore,
+            keyIdentifierGenerator: { try generateSecureRandom(length: 32) },
             privateKeyContainerProvider: { try PrivateKeyContainer.createFromKeyChain(with: $0) }
         )
         #else

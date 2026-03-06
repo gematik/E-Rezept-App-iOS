@@ -32,7 +32,7 @@ import SwiftUI
 struct EditProfilePictureDomain {
     typealias Store = StoreOf<Self>
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         case alert(ErpAlertState<Alert>)
@@ -228,3 +228,6 @@ extension EditProfilePictureDomain {
         }
     }
 }
+
+extension EditProfilePictureDomain.Destination.State: Equatable {}
+extension EditProfilePictureDomain.Destination.Action: Equatable {}

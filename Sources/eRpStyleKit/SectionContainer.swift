@@ -888,7 +888,7 @@ struct SectionContainer_Preview: PreviewProvider {
                         Button(action: {}, label: {
                             Label("Used for navigation", systemImage: "qrcode")
                         })
-                            .buttonStyle(DetailNavigationButtonStyle(showSeparator: true))
+                            .buttonStyle(DetailNavigationButtonStyle())
 
                         Toggle(isOn: .constant(true)) {
                             Label("Simple Toggle", systemImage: "qrcode")

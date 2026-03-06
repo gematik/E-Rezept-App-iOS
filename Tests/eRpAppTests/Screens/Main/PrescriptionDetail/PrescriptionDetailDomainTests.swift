@@ -46,7 +46,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let userSessionContainer = MockUsersSessionContainer()
+        let userSessionContainer = UsersSessionContainerMock()
         userSessionContainer.userSession = MockUserSession()
 
         return TestStore(initialState: state ?? Self.Fixtures.prescriptionDetailDomainInitialState) {
@@ -648,7 +648,6 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     }
 
     func testUpdateMedicationName() async {
-        let dateFormatter = UIDateFormatter.previewValue
         let authoredOn = TestDate.createFormattedDate(.today)
         let expiresOn = TestDate.createFormattedDate(.ninetyTwoDaysAhead)
         let acceptedUntil = TestDate.createFormattedDate(.tomorrow)

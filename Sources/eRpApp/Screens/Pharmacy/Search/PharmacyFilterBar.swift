@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import eRpResources
 import eRpStyleKit
 import SwiftUI
 import SwiftUIIntrospect
@@ -60,8 +61,7 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
                     Spacer()
                 } else {
                     ForEach(elements) { element in
-                        FilterElement(key: element.key,
-                                      pressedAction: openFiltersAction) {
+                        FilterElement(key: element.key) {
                             removeFilter(element)
                         }
                         .accessibility(identifier: element.accessibilityIdentifier)
@@ -83,19 +83,18 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
     struct FilterElement: View {
         let key: LocalizedStringKey
         let pressedAction: () -> Void
-        let closeButtonAction: () -> Void
 
         var body: some View {
-            HStack {
-                Button(action: pressedAction) {
+            Button(action: pressedAction) {
+                HStack {
                     Text(key, bundle: .module)
                 }
 
-                Button(action: closeButtonAction) {
-                    Image(systemName: SFSymbolName.crossIconFill)
-                }
-                .foregroundColor(Colors.systemLabelSecondary)
+                Image(systemName: SFSymbolName.crossIconFill)
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
+            .accessibilityValue(Text(L10n.phaSearchBtnFilterValueActive))
+            .accessibilityHint(Text(L10n.phaSearchBtnFilterActionDescription))
             .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 8))
             .background(Color(.systemGray6))
             .cornerRadius(8)

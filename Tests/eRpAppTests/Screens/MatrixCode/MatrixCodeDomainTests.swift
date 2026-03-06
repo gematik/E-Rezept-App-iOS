@@ -97,13 +97,18 @@ final class MatrixCodeDomainTests: XCTestCase {
     func testGenerateErxTaskDataMatrixCodeAndRedeemedOnSaveReceived() async {
         let store = testStore(with: .erxTask)
 
-        let expected: MatrixCodeDomain.ImageLoadingState =
+        let expectedA: MatrixCodeDomain.ImageLoadingState =
             .value(IdentifiedArray(uniqueElements: [generateMockDMCImage(uuid: UUID(0))]))
+        let expectedB: MatrixCodeDomain.ImageLoadingState =
+            .value(IdentifiedArray(uniqueElements: [generateMockDMCImage(uuid: UUID(1))]))
 
         // when
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
-        await store.receive(.response(.matrixCodeImageReceived(expected))) { sut in
-            sut.loadingState = expected
+        await store.receive(.response(.groupedMatrixCodeImageReceived(expectedA))) { sut in
+            sut.groupedLoadingState = expectedA
+        }
+        await store.receive(.response(.singleMatrixCodeImageReceived(expectedB))) { sut in
+            sut.singleLoadingState = expectedB
         }
         await store.receive(.response(.redeemedOnSavedReceived(false)))
     }
@@ -116,8 +121,8 @@ final class MatrixCodeDomainTests: XCTestCase {
 
         // when
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
-        await store.receive(.response(.matrixCodeImageReceived(expected))) { sut in
-            sut.loadingState = expected
+        await store.receive(.response(.groupedMatrixCodeImageReceived(expected))) { sut in
+            sut.groupedLoadingState = expected
         }
     }
 
@@ -139,7 +144,14 @@ final class MatrixCodeDomainTests: XCTestCase {
         let testState = MatrixCodeDomain.State(
             type: .erxTask,
             erxTasks: [task],
-            loadingState: .value(
+            groupedLoadingState: .value(
+                [MatrixCodeDomain.State.IdentifiedImage(
+                    identifier: UUID(),
+                    image: dmcImage,
+                    chunk: [task]
+                )]
+            ),
+            singleLoadingState: .value(
                 [MatrixCodeDomain.State.IdentifiedImage(
                     identifier: UUID(),
                     image: dmcImage,
@@ -156,7 +168,7 @@ final class MatrixCodeDomainTests: XCTestCase {
             $0
                 .destination = .sharePrescription(
                     .init(
-                        string: L10n.dmcTxtShareMessage(task.medication!.displayName).text,
+                        string: L10n.dmcTxtShareMessage(task.medication!.displayName!).text,
                         url: URL( // swiftlint:disable:next line_length
                             string: "https://erezept.gematik.de/prescription#%5B%227350f983-1e67-11b2-8555-63bf44e44fb8%7Ce46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24%7CSaflorbl%C3%BCten-Extrakt%20Pulver%20Peroral%22%5D"
                         )!,
@@ -172,7 +184,14 @@ final class MatrixCodeDomainTests: XCTestCase {
         let testState = MatrixCodeDomain.State(
             type: .erxTask,
             erxTasks: [task],
-            loadingState: .value(
+            groupedLoadingState: .value(
+                [MatrixCodeDomain.State.IdentifiedImage(
+                    identifier: UUID(),
+                    image: dmcImage,
+                    chunk: [task]
+                )]
+            ),
+            singleLoadingState: .value(
                 [MatrixCodeDomain.State.IdentifiedImage(
                     identifier: UUID(),
                     image: dmcImage,
@@ -191,7 +210,7 @@ final class MatrixCodeDomainTests: XCTestCase {
             $0
                 .destination = .sharePrescription(
                     .init(
-                        string: L10n.dmcTxtShareMessage(task.medication!.displayName).text,
+                        string: L10n.dmcTxtShareMessage(task.medication!.displayName!).text,
                         url: URL( // swiftlint:disable:next line_length
                             string: "https://erezept.gematik.de/prescription#%5B%227350f983-1e67-11b2-8555-63bf44e44fb8%7Ce46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24%7CSaflorbl%C3%BCten-Extrakt%20Pulver%20Peroral%22%5D"
                         )!,
@@ -225,7 +244,6 @@ final class MatrixCodeDomainTests: XCTestCase {
                 type: .erxTask,
                 erxTasks: tasks,
                 erxChargeItem: nil,
-                loadingState: .idle,
                 isMatrixCodeZoomed: false
             )
         ) {
@@ -240,7 +258,7 @@ final class MatrixCodeDomainTests: XCTestCase {
 
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100, height: 100)))
 
-        let expectedElements: [MatrixCodeDomain.State.IdentifiedImage] = [
+        let expectedGroupedElements: [MatrixCodeDomain.State.IdentifiedImage] = [
             .init(
                 identifier: UUID(0),
                 image: mockDMCGenerator.uiImage,
@@ -251,7 +269,7 @@ final class MatrixCodeDomainTests: XCTestCase {
                 ]
             ),
             .init(
-                identifier: UUID(1),
+                identifier: UUID(2),
                 image: mockDMCGenerator.uiImage,
                 chunk: [
                     ErxTask.Fixtures.erxTask4,
@@ -259,13 +277,38 @@ final class MatrixCodeDomainTests: XCTestCase {
                 ]
             ),
         ]
-        let expected: MatrixCodeDomain.ImageLoadingState = .value(.init(uniqueElements: expectedElements))
-        await store.receive(.response(.matrixCodeImageReceived(expected))) { state in
-            state.loadingState = expected
+        let expectedGrouped: MatrixCodeDomain.ImageLoadingState = .value(.init(uniqueElements: expectedGroupedElements))
+
+        let expectedSingleElements: [MatrixCodeDomain.State.IdentifiedImage] = [
+            .init(identifier: UUID(1), image: mockDMCGenerator.uiImage, chunk: [ErxTask.Fixtures.erxTask1]),
+            .init(identifier: UUID(3), image: mockDMCGenerator.uiImage, chunk: [ErxTask.Fixtures.erxTask2]),
+            .init(identifier: UUID(4), image: mockDMCGenerator.uiImage, chunk: [ErxTask.Fixtures.erxTask3]),
+            .init(identifier: UUID(5), image: mockDMCGenerator.uiImage, chunk: [ErxTask.Fixtures.erxTask4]),
+            .init(identifier: UUID(6), image: mockDMCGenerator.uiImage, chunk: [ErxTask.Fixtures.erxTask5]),
+        ]
+        let expectedSingle: MatrixCodeDomain.ImageLoadingState = .value(.init(uniqueElements: expectedSingleElements))
+
+        await store.receive(.response(.groupedMatrixCodeImageReceived(expectedGrouped))) { state in
+            state.groupedLoadingState = expectedGrouped
+        }
+        await store.receive(.response(.singleMatrixCodeImageReceived(expectedSingle))) { state in
+            state.singleLoadingState = expectedSingle
         }
 
         await store.receive(.response(.redeemedOnSavedReceived(true)))
 
         await store.finish()
+    }
+
+    func testDisplayModeChange() async {
+        let store = testStore(with: .erxTask)
+
+        await store.send(.displayModeChanged(.single)) {
+            $0.displayMode = .single
+        }
+
+        await store.send(.displayModeChanged(.grouped)) {
+            $0.displayMode = .grouped
+        }
     }
 }

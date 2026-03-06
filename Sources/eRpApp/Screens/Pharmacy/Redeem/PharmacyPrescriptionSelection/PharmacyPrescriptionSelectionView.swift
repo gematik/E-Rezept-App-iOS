@@ -34,7 +34,7 @@ struct PharmacyPrescriptionSelectionView: View {
     var body: some View {
         VStack {
             ScrollView {
-                SectionContainer(header: {
+                SingleElementSectionContainer(header: {
                     if let profile = store.profile {
                         HStack(spacing: 16) {
                             ProfilePictureView(profile: profile)
@@ -64,6 +64,7 @@ struct PharmacyPrescriptionSelectionView: View {
                         store.allPrescriptionsSelected ? L10n
                             .sectionTxtIsActiveValue.text : L10n.sectionTxtIsInactiveValue.text
                     )
+                    .modifier(SectionContainerCellModifier(last: store.prescriptions.isEmpty))
 
                     ForEach(Array(store.prescriptions.enumerated()), id: \.element) { index, prescription in
                         Button(
@@ -82,7 +83,8 @@ struct PharmacyPrescriptionSelectionView: View {
                             store.selectedPrescriptionsCopy.contains(prescription) ? L10n
                                 .sectionTxtIsActiveValue.text : L10n.sectionTxtIsInactiveValue.text
                         )
-                        .buttonStyle(.simple(showSeparator: index != store.prescriptions.count - 1))
+                        .modifier(SectionContainerCellModifier(last: index == store.prescriptions.count - 1))
+                        .buttonStyle(.simple)
                     }
                 })
             }

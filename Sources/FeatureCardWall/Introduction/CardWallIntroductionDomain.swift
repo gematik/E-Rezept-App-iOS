@@ -36,7 +36,7 @@ public struct CardWallIntroductionDomain { // swiftlint:disable:this type_body_l
     public init() {}
 
     /// Destination states for navigation from introduction screen
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = cardWall_CAN
         /// Navigate to CAN input
@@ -409,3 +409,6 @@ extension CardWallIntroductionDomain {
         }
     }
 }
+
+extension CardWallIntroductionDomain.Destination.State: Equatable {}
+extension CardWallIntroductionDomain.Destination.Action: Equatable {}

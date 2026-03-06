@@ -46,7 +46,7 @@ struct AppSecurityDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         case appPassword(CreatePasswordDomain)
     }
@@ -182,3 +182,6 @@ extension AppSecurityDomain {
         }
     }
 }
+
+extension AppSecurityDomain.Destination.State: Equatable {}
+extension AppSecurityDomain.Destination.Action: Equatable {}

@@ -47,7 +47,9 @@ public struct SearchBar: View {
         HStack {
             TextField(text: $searchText) {
                 Text(prompt)
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
+            .foregroundColor(Colors.systemLabel)
             .onSubmit(onSubmit)
             .submitLabel(.go)
             .padding(7)

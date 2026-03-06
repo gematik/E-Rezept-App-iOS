@@ -34,9 +34,9 @@ import XCTest
 final class ChargeItemListDomainServiceTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
-    var mockUserSessionProvider: MockUserSessionProvider!
+    var mockUserSessionProvider: UserSessionProviderMock!
     var mockUserSession: MockUserSession!
-    var mockLoginHandler: MockLoginHandler!
+    var mockLoginHandler: LoginHandlerMock!
 
     let testProfileId = UUID()
 
@@ -44,12 +44,12 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
         super.setUp()
 
         schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        mockUserSessionProvider = MockUserSessionProvider()
+        mockUserSessionProvider = UserSessionProviderMock()
         mockUserSession = MockUserSession()
-        mockLoginHandler = MockLoginHandler()
+        mockLoginHandler = LoginHandlerMock()
 
         mockUserSession.idpSessionLoginHandler = mockLoginHandler
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
     }
 
     func testFetchLocalChargeItems_withSuccess() {
@@ -167,7 +167,9 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
         runSuccess = false
         mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
+        mockLoginHandler
+            .isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(LoginResult
+                .success(true)).eraseToAnyPublisher()
 
         withDependencies {
             $0.erxTaskRepository.deleteChargeItems = { _, _ in }
@@ -198,7 +200,9 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // when
         runSuccess = false
-        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(false)).eraseToAnyPublisher()
+        mockLoginHandler
+            .isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(LoginResult.success(false))
+            .eraseToAnyPublisher()
 
         // then
         sut.delete(
@@ -225,7 +229,9 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // when authentication is possible via LoginHandler (e.g. using biometrics)
         runSuccess = false
-        mockLoginHandler.isAuthenticatedOrAuthenticateReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
 
         // then
         sut.authenticate(for: testProfileId)
@@ -239,7 +245,9 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // when authentication is not possible via LoginHandler (e.g. cardWall, or other service necessary)
         runSuccess = false
-        mockLoginHandler.isAuthenticatedOrAuthenticateReturnValue = Just(.success(false)).eraseToAnyPublisher()
+        mockLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue =
+            Just(.success(false)).eraseToAnyPublisher()
 
         // then
         sut.authenticate(for: testProfileId)
@@ -253,7 +261,9 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // when already authenticated
         runSuccess = false
-        mockLoginHandler.isAuthenticatedOrAuthenticateReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
 
         // then
         sut.authenticate(for: testProfileId)
@@ -364,7 +374,9 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // when authenticated
         runSuccess = false
-        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
+        mockLoginHandler
+            .isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(LoginResult.success(true))
+            .eraseToAnyPublisher()
 
         withDependencies {
             $0.erxTaskRepository.loadRemoteChargeItems = { _ in [] }
@@ -466,7 +478,7 @@ extension ChargeItemListDomainServiceTests {
         static let chargeItem = ErxSparseChargeItem(
             identifier: UUID().uuidString,
             taskId: "task id",
-            fhirData: "testdata".data(using: .utf8)!,
+            fhirData: Data("testdata".utf8),
             enteredDate: "2022-09-14"
         )
     }

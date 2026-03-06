@@ -32,14 +32,14 @@ import XCTest
 @MainActor
 final class EditProfilePictureDomainTest: XCTestCase {
     let testScheduler = DispatchQueue.test
-    var mockUserProfileService: MockUserProfileService!
+    var mockUserProfileService: UserProfileServiceMock!
 
     typealias TestStore = TestStoreOf<EditProfilePictureDomain>
 
     override func setUp() {
         super.setUp()
 
-        mockUserProfileService = MockUserProfileService()
+        mockUserProfileService = UserProfileServiceMock()
     }
 
     func testStore() -> TestStore {
@@ -62,15 +62,21 @@ final class EditProfilePictureDomainTest: XCTestCase {
             )
         )
 
-        mockUserProfileService.updateProfileIdMutatingReturnValue = Just(true)
-            .setFailureType(to: UserProfileServiceError.self)
-            .eraseToAnyPublisher()
+        mockUserProfileService
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorReturnValue =
+            Just(true)
+                .setFailureType(to: UserProfileServiceError.self)
+                .eraseToAnyPublisher()
 
-        expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beFalse())
+        expect(self.mockUserProfileService
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
+                    .to(beFalse())
         await sut.send(.editColor(.blue)) { state in
             state.color = .blue
         }
-        expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beTrue())
+        expect(self.mockUserProfileService
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
+                    .to(beTrue())
 
         await testScheduler.run()
         await sut.receive(.updateProfileReceived(.success(true)))
@@ -83,15 +89,21 @@ final class EditProfilePictureDomainTest: XCTestCase {
             )
         )
 
-        mockUserProfileService.updateProfileIdMutatingReturnValue = Just(true)
-            .setFailureType(to: UserProfileServiceError.self)
-            .eraseToAnyPublisher()
+        mockUserProfileService
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorReturnValue =
+            Just(true)
+                .setFailureType(to: UserProfileServiceError.self)
+                .eraseToAnyPublisher()
 
-        expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beFalse())
+        expect(self.mockUserProfileService
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
+                    .to(beFalse())
         await sut.send(.editPicture(.boyWithCard)) { state in
             state.picture = .boyWithCard
         }
-        expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beTrue())
+        expect(self.mockUserProfileService
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
+                    .to(beTrue())
 
         await testScheduler.run()
         await sut.receive(.updateProfileReceived(.success(true)))

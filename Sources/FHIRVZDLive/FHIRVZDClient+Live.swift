@@ -27,37 +27,34 @@ import HTTPClient
 import HTTPClientLive
 
 extension FHIRVZDClient: DependencyKey {
-    // swiftlint:disable:next trailing_closure
-    public static let liveValue = Self(
-        refresh: { configuration in
-            let httpClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
-            let decoder = JSONDecoder()
+    public static let liveValue = Self { configuration in
+        let httpClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        let decoder = JSONDecoder()
 
-            let url = configuration.eRezeptAPIServer.appendingPathComponent("vzd/token")
-            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            for (key, value) in configuration.eRezeptAdditionalHeader {
-                request.addValue(value, forHTTPHeaderField: key)
-            }
-
-            do {
-                let result = try await httpClient.send(request: request)
-                if result.status.isSuccessful {
-                    let token = try decoder.decode(FHIRVZDToken.self, from: result.data)
-                    return token
-                } else {
-                    throw FHIRVZDError.tokenUnavailable
-                }
-            } catch let error as FHIRVZDError {
-                throw error
-            } catch let error as HTTPClientError {
-                throw FHIRVZDError.network(error: error)
-            } catch let error as DecodingError {
-                throw FHIRVZDError.decoding(error: error)
-            } catch {
-                throw FHIRVZDError.unspecified(error: error)
-            }
+        let url = configuration.eRezeptAPIServer.appendingPathComponent("vzd/token")
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        for (key, value) in configuration.eRezeptAdditionalHeader {
+            request.addValue(value, forHTTPHeaderField: key)
         }
-    )
+
+        do {
+            let result = try await httpClient.send(request: request)
+            if result.status.isSuccessful {
+                let token = try decoder.decode(FHIRVZDToken.self, from: result.data)
+                return token
+            } else {
+                throw FHIRVZDError.tokenUnavailable
+            }
+        } catch let error as FHIRVZDError {
+            throw error
+        } catch let error as HTTPClientError {
+            throw FHIRVZDError.network(error: error)
+        } catch let error as DecodingError {
+            throw FHIRVZDError.decoding(error: error)
+        } catch {
+            throw FHIRVZDError.unspecified(error: error)
+        }
+    }
 }

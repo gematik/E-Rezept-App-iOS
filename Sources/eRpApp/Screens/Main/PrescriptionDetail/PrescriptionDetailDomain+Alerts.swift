@@ -134,12 +134,14 @@ extension PrescriptionDetailDomain {
         }
 
         static func changeNameReceivedAlertState(error: CodedError) -> ErpAlertState<Destination.Alert> {
-            // swiftlint:disable:next trailing_closure
-            .init(for: error, actions: {
+            .init(
+                for: error,
+                title: nil
+            ) {
                 ButtonState(role: .cancel, action: .dismiss) {
                     .init(L10n.alertBtnOk)
                 }
-            })
+            }
         }
 
         static let grantConsentRequest: ErpAlertState<Destination.Alert> = {

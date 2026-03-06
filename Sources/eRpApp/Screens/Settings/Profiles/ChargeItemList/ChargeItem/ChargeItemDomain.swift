@@ -72,7 +72,7 @@ struct ChargeItemDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         case shareSheet(ShareSheetDomain)
         case idpCardWall(IDPCardWallDomain)
@@ -160,13 +160,12 @@ struct ChargeItemDomain {
             state.destination = .alert(
                 ErpAlertState(
                     for: error,
-                    title: L10n.dmcAlertTitle,
-                    actions: {
-                        ButtonState(role: .cancel) {
-                            .init(L10n.alertBtnOk)
-                        }
+                    title: L10n.dmcAlertTitle
+                ) {
+                    ButtonState(role: .cancel) {
+                        .init(L10n.alertBtnOk)
                     }
-                )
+                }
             )
             return .none
         case let .response(.deleteChargeItem(result)):
@@ -304,3 +303,6 @@ extension ErxChargeItem {
         return price
     }
 }
+
+extension ChargeItemDomain.Destination.State: Equatable {}
+extension ChargeItemDomain.Destination.Action: Equatable {}

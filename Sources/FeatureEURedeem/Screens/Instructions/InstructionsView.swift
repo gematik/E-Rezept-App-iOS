@@ -84,8 +84,15 @@ public struct InstructionsView: View {
 
                 if store.isRedeeming {
                     // Bottom section with button and disclaimer
-                    VStack(spacing: 8) {
+                    VStack(spacing: 10) {
                         GreyDivider()
+
+                        Text(L10n.euredeemInstructionsDisclaimer)
+                            .font(.caption)
+                            .foregroundColor(Colors.systemGray2)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 16)
 
                         Button(L10n.euredeemInstructionsGenerateCodeButton) {
                             // Handle generate code action
@@ -93,14 +100,7 @@ public struct InstructionsView: View {
                         }
                         .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
                         .padding(.horizontal, 16)
-                        .padding(.top, 16)
-
-                        Text(L10n.euredeemInstructionsDisclaimer)
-                            .font(.caption)
-                            .foregroundColor(Colors.systemGray2)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 16)
+                        .padding(.bottom, 16)
                     }
                 }
             }
@@ -143,7 +143,7 @@ struct InstructionStepView: View {
     NavigationStack {
         InstructionsView(
             store: StoreOf<InstructionsDomain>(
-                initialState: InstructionsDomain.State()
+                initialState: InstructionsDomain.State(isRedeeming: true)
             ) {
                 InstructionsDomain()
             }

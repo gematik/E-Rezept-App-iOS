@@ -25,7 +25,7 @@ import SwiftUI
 /// `LabelStyle` applying font and color for full width action buttons within `SectionContainer`s. This style is applied
 /// automatically within `SectionContainer`.
 public struct TrailingIconCellLabelStyle: LabelStyle {
-    @Environment(\.sectionContainerIsLastElement) var isLastElement: Bool
+    @Environment(\.sectionContainerElementInformation.isLastElement) var isLastElement
 
     public func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -35,7 +35,7 @@ public struct TrailingIconCellLabelStyle: LabelStyle {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 configuration.icon
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .frame(width: 22, height: 22, alignment: .center)
                     .font(.body.weight(.semibold))
             }
@@ -45,14 +45,13 @@ public struct TrailingIconCellLabelStyle: LabelStyle {
                 Divider()
             }
         }
-
         .subTitleStyle(PlainSectionContainerSubTitleStyle())
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .padding([.leading])
     }
 }
 
-extension LabelStyle where Self == SectionContainerLabelStyle {
+extension LabelStyle where Self == TrailingIconCellLabelStyle {
     /// A label style that applies standard border artwork based on the
     /// button's context.
     ///

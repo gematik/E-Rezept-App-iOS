@@ -38,11 +38,11 @@ extension ModelsR4.Medication {
     }
 
     var version: ErpPrescription.Version? {
-        guard let kbvVersion = meta?.profile?.first?.value?.version else {
+        guard let medicationCanonical = meta?.profile?.first?.value?.version else {
             return nil
         }
 
-        return ErpPrescription.Version(rawValue: kbvVersion)
+        return ErpPrescription.Version(medicationCanonical: medicationCanonical)
     }
 
     // TODO: Consider grouping medicationText and pzn in `Code` and also fill code //swiftlint:disable:this todo
@@ -290,7 +290,7 @@ private func createRatio(for amount: Ratio?, for version: ErpPrescription.Versio
             numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),
             denominator: denominator
         )
-    case .v1_1_0, .v1_2_0, .v1_3_2:
+    case .v1_1_0, .v1_2_0, .v1_3_2, .v1_4_1:
         if let value = numeratorValue {
             return ErxMedication.Ratio(
                 numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),

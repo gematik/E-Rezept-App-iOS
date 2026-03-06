@@ -34,6 +34,7 @@ struct SettingsContactInfoView: View {
     var body: some View {
         SectionContainer(header: {
             Label(title: { Text(L10n.stgTxtHeaderContactInfo) }, icon: {})
+                .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier(A11y.settings.contact.stgConHeaderContact)
         }, footer: {
             Label(title: {
@@ -51,6 +52,7 @@ struct SettingsContactInfoView: View {
             }, label: {
                 Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.chartBarAxis)
             })
+                .accessibilityLabel(L10n.stgConLblSurvey)
                 .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
                 .buttonStyle(.navigation)
 
@@ -74,6 +76,7 @@ struct SettingsContactInfoView: View {
                     }
 
                 })
+                    .accessibilityLabel(L10n.stgConLblDigaSurvey)
                     .accessibility(identifier: A11y.settings.contact.stgConTxtDigaSurvey)
                     .buttonStyle(.navigation)
             }
@@ -87,6 +90,7 @@ struct SettingsContactInfoView: View {
             }, label: {
                 Label(L10n.stgConTextMail, systemImage: SFSymbolName.textBubble)
             })
+                .accessibilityLabel(L10n.stgConLblMail)
                 .accessibility(identifier: A11y.settings.contact.stgConTxtMail)
                 .buttonStyle(.navigation)
 

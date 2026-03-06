@@ -31,18 +31,18 @@ import XCTest
 
 @MainActor
 final class RegisterPasswordDomainTests: XCTestCase {
-    var mockAppSecurityManager: MockAppSecurityManager!
-    var mockPasswordStrengthTester: MockPasswordStrengthTester!
-    var mockAuthenticationChallengeProvider: MockAuthenticationChallengeProvider!
+    var mockAppSecurityManager: AppSecurityManagerMock!
+    var mockPasswordStrengthTester: PasswordStrengthTesterMock!
+    var mockAuthenticationChallengeProvider: AuthenticationChallengeProviderMock!
 
     typealias TestStore = TestStoreOf<RegisterPasswordDomain>
 
     override func setUp() {
         super.setUp()
 
-        mockAppSecurityManager = MockAppSecurityManager()
-        mockPasswordStrengthTester = MockPasswordStrengthTester()
-        mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAppSecurityManager = AppSecurityManagerMock()
+        mockPasswordStrengthTester = PasswordStrengthTesterMock()
+        mockAuthenticationChallengeProvider = AuthenticationChallengeProviderMock()
     }
 
     func testStore(
@@ -53,7 +53,7 @@ final class RegisterPasswordDomainTests: XCTestCase {
             RegisterPasswordDomain()
         } withDependencies: { dependencies in
             dependencies.appSecurityManager = mockAppSecurityManager
-            dependencies.userDataStore = MockUserDataStore()
+            dependencies.userDataStore = UserDataStoreMock()
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
             dependencies.passwordStrengthTester = passwordStrengthTester
@@ -150,7 +150,7 @@ final class RegisterPasswordDomainTests: XCTestCase {
     }
 
     func testSaveSelectionPasswordEqual() async {
-        mockAppSecurityManager.savePasswordReturnValue = true
+        mockAppSecurityManager.savePasswordStringBoolReturnValue = true
         let store = testStore(
             with: RegisterPasswordDomain.State(
                 passwordA: "abc",
@@ -173,7 +173,7 @@ final class RegisterPasswordDomainTests: XCTestCase {
             passwordStrengthTester: mockPasswordStrengthTester
         )
 
-        mockPasswordStrengthTester.passwordStrengthForReturnValue = .veryWeak
+        mockPasswordStrengthTester.passwordStrengthForPasswordStringPasswordStrengthReturnValue = .veryWeak
 
         await store.send(\.binding.passwordA, "ABC") { state in
             state.passwordA = "ABC"
@@ -182,7 +182,7 @@ final class RegisterPasswordDomainTests: XCTestCase {
             state.showPasswordErrorMessage = false
         }
 
-        mockPasswordStrengthTester.passwordStrengthForReturnValue = .medium
+        mockPasswordStrengthTester.passwordStrengthForPasswordStringPasswordStrengthReturnValue = .medium
 
         await store.send(\.binding.passwordA, "ABCD") { state in
             state.passwordA = "ABCD"
@@ -210,7 +210,7 @@ final class RegisterPasswordDomainTests: XCTestCase {
             passwordStrengthTester: mockPasswordStrengthTester
         )
 
-        mockPasswordStrengthTester.passwordStrengthForReturnValue = .weak
+        mockPasswordStrengthTester.passwordStrengthForPasswordStringPasswordStrengthReturnValue = .weak
 
         await store.send(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
@@ -218,6 +218,6 @@ final class RegisterPasswordDomainTests: XCTestCase {
             expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text
         }
 
-        expect(self.mockAppSecurityManager.savePasswordCallsCount).to(equal(0))
+        expect(self.mockAppSecurityManager.savePasswordStringBoolCallsCount).to(equal(0))
     }
 }

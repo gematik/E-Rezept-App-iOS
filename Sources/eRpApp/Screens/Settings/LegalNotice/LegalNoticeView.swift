@@ -69,6 +69,8 @@ extension LegalNoticeView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
                     .padding(.top, 20)
+                    .accessibilityHeading(.h2)
+                    .accessibilityAddTraits(.isHeader)
             }
             Text(text, bundle: .module)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -91,12 +93,15 @@ extension LegalNoticeView {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
                     .padding(.top, 20)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(.h2)
             }
             if let webLink = webLink {
                 HStack {
                     Image(systemName: SFSymbolName.network)
                         .frame(width: iconSize)
                         .foregroundColor(Colors.primary700)
+                        .accessibilityHidden(true)
                     Link(L10n.stgLnoLinkTextContact, destination: webLink)
                         .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoLinkContact)
@@ -108,6 +113,7 @@ extension LegalNoticeView {
                     Image(systemName: SFSymbolName.mail)
                         .frame(width: iconSize)
                         .foregroundColor(Colors.primary700)
+                        .accessibilityHidden(true)
                     Link(L10n.stgLnoMailTextContact, destination: emailLink)
                         .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoMailContact)
@@ -119,6 +125,7 @@ extension LegalNoticeView {
                     Image(systemName: SFSymbolName.phone)
                         .frame(width: iconSize)
                         .foregroundColor(Colors.primary700)
+                        .accessibilityHidden(true)
                     Link(L10n.stgLnoPhoneTextContact, destination: phoneLink)
                         .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoPhoneContact)

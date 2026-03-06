@@ -65,7 +65,7 @@ struct Tile: View {
 
             Image(systemName: discloseIcon)
                 .frame(minWidth: 24, minHeight: 24)
-                .foregroundColor(Color(.tertiaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
                 .font(Font.title3)
         }
         .padding()

@@ -151,4 +151,24 @@ public protocol ErxLocalDataStore {
     /// - Parameter diGaInfo: diGaInfo that should be saved
     /// - Returns: `true` if save operation was successful
     func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError>
+
+    /// Creates or updates the sequence passed of `EuCommunication`
+    /// - Parameter euCommunication: EuCommunication that should be saved
+    /// - Returns: `true` if save operation was successful
+    func save(euCommunications: [EuCommunication], profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError>
+
+    /// Creates or updates the sequence passed of `EuCommunication`
+    /// - Returns: array of `EuCommunication` or error
+    func listAllEuCommunication(countryCode: String?, profileId: UUID?)
+        -> AnyPublisher<[EuCommunication], LocalStoreError>
+
+    /// Delete local `EuCommunication`
+    /// - Parameter EuCommunication: Array of `EuCommunication` that should be deleted
+    /// - Returns: `true` if save operation was successful
+    func delete(euCommunications: [EuCommunication], profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError>
+
+    /// Delete local `EuCommunication`
+    /// - Parameter EuCommunication: Array of `EuCommunication` that should be deleted
+    /// - Returns: `true` if save operation was successful
+    func loadLatestActiveEuCommunication(profileId: UUID?) -> AnyPublisher<EuCommunication?, LocalStoreError>
 }

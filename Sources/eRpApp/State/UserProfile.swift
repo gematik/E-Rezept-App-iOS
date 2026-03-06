@@ -124,7 +124,7 @@ extension UserProfile {
                 insuranceId: "X112233445",
                 insuranceIK: "AB123CD",
                 color: .blue,
-                lastAuthenticated: Date().addingTimeInterval(-60 * 8),
+                lastAuthenticated: Date().addingTimeInterval(-60 * 8.2),
                 erxTasks: []
             ),
             isAuthenticated: true
@@ -172,7 +172,7 @@ extension UserProfile {
                 name: "Private Paul",
                 identifier: UUID(),
                 created: Date(),
-                insuranceId: nil,
+                insuranceId: "A123456789",
                 insuranceType: .pKV,
                 color: .red,
                 lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 1.5),

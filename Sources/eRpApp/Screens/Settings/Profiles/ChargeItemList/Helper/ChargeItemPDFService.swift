@@ -314,10 +314,10 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
         switch profile {
         case .freeText:
             return
-                "Freitextverordnung: \(request.quantity.map { "\($0.value)x" } ?? "") \(medication.displayName)"
+                "Freitextverordnung: \(request.quantity.map { "\($0.value)x" } ?? "") \(medication.displayName ?? "")"
         case .pzn:
             let v26 = request.quantity.map { "\($0.value)x " } ?? ""
-            let v25 = "\(medication.displayName)/ "
+            let v25 = "\(medication.displayName ?? "")/ "
             let v27 = medication.amount?.numerator.value.appending(" ") ?? ""
             let v28 = medication.amount?.numerator.unit?.appending(" ") ?? ""
             let v29 = medication.normSizeCode?.appending(" ") ?? ""

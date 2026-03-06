@@ -23,19 +23,19 @@ A list of Apple's supported cipher suites can be found here: [Apple's Supported 
 [REQ:gemSpec_Krypt:GS−A_5035,A_19215,A_20607] We use https only, see `DefaultHTTPClient.swift`. ATS forbids other connections.
 [REQ:gemSpec_Krypt:GS−A_5322] There is no API to control the session length, developer forums suggest it is 10 minutes for iOS.
 [REQ:gemSpec_Krypt:GS−A_5526,GS−A_5542] We use the recommended NSURLSession for best network security [Preventing insecure network connections](https://developer.apple.com/documentation/security/preventing_insecure_network_connections)
-[REQ:gemSpec_eRp_FdV:A_19983] All used services except our analytics framework are permitted and attested by the Gematik and under the TI monitoring. The usage of our analytics framework is not under our control, but we exclusively send data to it and receive none.
-[REQ:gemSpec_eRp_FdV:A_19982#1] The agreement to the use of the analytics framework can be revoked. But other agreements cannot be revoked, since the app would not operate properly.
+[REQ:gemSpec_eRp_FdV:A_19983] All used services are permitted and attested by the Gematik and under the TI monitoring.
+[REQ:gemSpec_eRp_FdV:A_19982#1] We do not use any Tracking or Analytics.
 [REQ:gemSpec_eRp_FdV:A_19981] The user is informed and required to accept this information via the data protection statement. Related data and services are listed in sections 5.
 [REQ:gemSpec_eRp_FdV:A_19980#1] The user is informed and required to accept this information via the data protection statement. Related data and services are listed in sections 5.
-[REQ:gemSpec_eRp_FdV:A_19979] We use external services: The Apothekenverzeichnis and our analytics framework. During the communication with the pharmacy, there will be data shared via a prescription code. The requirement to this feature is described in gemSpec_eRp_FdV sectin 5.2.3.10 and 5.2.3.11.
-Our analytics framework does not use medical personal data, see DSFA section 5.6 Verarbeitungsvorgang 4: Rezepte einlösen
+[REQ:gemSpec_eRp_FdV:A_19979] We use external services: The FHIRVZD. During the communication with the pharmacy, there will be data shared via a prescription code. The requirement to this feature is described in gemSpec_eRp_FdV sectin 5.2.3.10 and 5.2.3.11.
+See DSFA section 5.6 Verarbeitungsvorgang 4: Rezepte einlösen
 [REQ:gemSpec_eRp_FdV:A_19176#1] Authenticity is provided by the appstore and app signing. We choose secure options where possible as the default value. Where the user can choose options, we inform by presenting additional information (e.g. "storing" the login).
-[REQ:gemSpec_eRp_FdV:A_19089-01#1,A_19090-01#1,A_19091-01#1,A_19092-01#1] We do not link user session of multiple app starts, we forcefully regenerate a new user-id. Nevertheless the following still applies: Opt-In for Analytics will be asked while the app onboarding runs. After the onboarding ran, the user may change the analytics settings in the settings menu.
-[REQ:gemSpec_eRp_FdV:A_19096-01#1,A_19097-01#1] We do not link user session of multiple app starts, we forcefully regenerate a new user-id. Nevertheless the following still applies.
+[REQ:gemSpec_eRp_FdV:A_19089-01#1,A_19090-01#1,A_19091-01#1,A_19092-01#1] We do not use any Tracking or Analytics.
+[REQ:gemSpec_eRp_FdV:A_19096-01#1,A_19097-01#1] We do not use any Tracking or Analytics.
 [REQ:gemSpec_eRp_FdV:A_19178] Is covered by our MSTG.
 [REQ:gemSpec_eRp_FdV:A_19179#1] Annotation in code
 [REQ:gemSpec_eRp_FdV:A_19181-01] There is an opt-in option for analytics. Full app functionality is available also without opting in. The user's choice is requested during onboarding and the user can opt-in and opt-out of analytics at any time. There are no further configuration choices. After successful authentication via health card the corresponding prescriptions, protocol data and messages are displayed.
-[REQ:gemSpec_eRp_FdV:A_24525#1] Whether analytics are enabled or not is persisted using `UserDefaults`. As these usere Defaults are empty upon installation, any call to `bool(for:)` will return to false. Opt-In for Analytics will be asked while the app onboarding runs.
+[REQ:gemSpec_eRp_FdV:A_24525#1] We currently do not use any analytics. Whether analytics are enabled or not is persisted using `UserDefaults`. As these usere Defaults are empty upon installation, any call to `bool(for:)` will return to false. Opt-In for Analytics will be asked while the app onboarding runs.
 [REQ:gemSpec_eRp_FdV:A_19182] In order to minimize the risk of unknown vulnerabilities in dependencies, we use different measures: We develop according to Security by Design Principles (see E-Rezept-App - SSDLC.pdf - Section Richtlinien, Vorgaben und Best Practices). We train our engineers focussing on secure design and coding best practices (see Sicherheitsschulungen.pdf). We publish our Code on Github and use a bug bounty program (https://www.gematik.de/datensicherheit -> Coordinated Vulnerability Disclosure Program) 
 [REQ:gemSpec_eRp_FdV:A_19185] Communication with the Fachdienst is protocoled via Audit Events. The user can revise them in the Settings menu (Profile Settings).
 [REQ:gemSpec_IDP_Frontend:A_21324#1] Token-key and code-verifier are encoded into an JSON object.
@@ -55,8 +55,8 @@ Our analytics framework does not use medical personal data, see DSFA section 5.6
 [REQ:gemSpec_IDP_Frontend:A_21590] References of `SecureEnclaveSignatureProvider` is limited to registration and altVerify usage.
 [REQ:gemSpec_IDP_Frontend:A_20608-01,A_20609,A_20618,A_20068-01]: Implemented by not deactivating ATS within `Info.plist`, path: `NSAppTransportSecurity`.
 [REQ:gemSpec_eRp_FdV:A_20033,A_19739] For TLS certificates, this is implemented by not deactivating ATS within `Info.plist`, path: `NSAppTransportSecurity`. For TI Certificates, this is implemented within the TrustStore module.
-[REQ:gemSpec_eRp_FdV:A_19086,A_19087#1] Tracking is only implemented for the purpose of Usability-Tracking. Sessions are not persisted, session ids are recreated each app startup.
-[REQ:gemSpec_eRp_FdV:A_19093-01#1,A_19094-01#1] Usage Tracking is called very sparse and boils down to one place where all visited screens are recorded. See usage of `@Dependency(\.tracker)` for all cases where the actual analytics framework is used.
+[REQ:gemSpec_eRp_FdV:A_19086,A_19087#1] We do not use any Tracking or Analytics.
+[REQ:gemSpec_eRp_FdV:A_19093-01#1,A_19094-01#1] We do not use any Tracking or Analytics.
 [REQ:gemSpec_eRp_FdV:A_20193,A_20194,A_20202] Camera is only used for scanning recipes and avatar setup. CoreLocation is used for pharmacy search. Usage is requested before actual first usage, the user is asked for permission. This is also enforced by the OS.
 [REQ:gemSpec_eRp_FdV:A_22778-01#1] Encryption of message to the Pharmacy is done with/for all provided certificates/recipients.
 [REQ:gemSpec_eRp_FdV:A_22779-01#1] Encrypted message is of form of a PKCS#7 container (CMS)

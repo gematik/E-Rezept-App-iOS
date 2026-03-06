@@ -72,6 +72,7 @@ struct PharmacySearchFilterView: View {
                     .background(isEnabled ? Colors.primary : Colors.systemBackgroundSecondary)
                     .cornerRadius(8)
             })
+                .accessibilityAddTraits(isEnabled ? [.isSelected, .isButton, .isToggle] : [.isButton, .isToggle])
         }
     }
 

@@ -66,7 +66,7 @@ struct HealthCardPasswordPinDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = healthCardPassword_readCard
         case readCard(HealthCardPasswordReadCardDomain)
@@ -170,3 +170,6 @@ extension HealthCardPasswordPinDomain {
         }
     }
 }
+
+extension HealthCardPasswordPinDomain.Destination.State: Equatable {}
+extension HealthCardPasswordPinDomain.Destination.Action: Equatable {}

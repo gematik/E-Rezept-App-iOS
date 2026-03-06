@@ -50,25 +50,21 @@ struct MedicationReminderListView: View {
                                             store
                                                 .send(.selectMedicationReminder(medicationProfileReminderListEntry))
                                         } label: {
-                                            Label(
-                                                title: {
-                                                    SubTitle(
-                                                        title: medicationProfileReminderListEntry.title,
-                                                        description: medicationProfileReminderListEntry.isActive ?
-                                                            L10n.medReminderTxtListPlanActive.text :
-                                                            L10n.medReminderTxtListPlanInactive.text
-                                                    )
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .contentShape(Rectangle())
-                                                    .accessibilityElement(children: .combine)
-                                                    .accessibilityLabel(medicationProfileReminderListEntry.title)
-                                                    .accessibilityValue(medicationProfileReminderListEntry
-                                                        .isActive ?
-                                                        L10n.medReminderTxtListPlanActive.text :
-                                                        L10n.medReminderTxtListPlanInactive.text)
-                                                },
-                                                icon: {}
-                                            )
+                                            LabeledContent {
+                                                Text(medicationProfileReminderListEntry.isActive ?
+                                                    L10n.medReminderTxtListPlanActive.text :
+                                                    L10n.medReminderTxtListPlanInactive.text)
+                                            } label: {
+                                                Text(medicationProfileReminderListEntry.title)
+                                            }
+                                            .labeledContentStyle(.horizontal)
+                                            .accessibilityElement(children: .combine)
+                                            .accessibilityLabel(medicationProfileReminderListEntry.title)
+                                            .accessibilityValue(medicationProfileReminderListEntry
+                                                .isActive ?
+                                                L10n.medReminderTxtListPlanActive.text :
+                                                L10n.medReminderTxtListPlanInactive.text)
+                                            .contentShape(Rectangle())
                                         }
                                         .buttonStyle(.simpleNavigation)
                                         .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
@@ -122,6 +118,8 @@ extension MedicationReminderListView {
                         .font(.headline)
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .accessibilityAddTraits(.isHeader)
+
                     Text(L10n.medReminderTxtListEmptyListSubheadline)
                         .font(.subheadline)
                         .foregroundColor(Colors.systemLabelSecondary)

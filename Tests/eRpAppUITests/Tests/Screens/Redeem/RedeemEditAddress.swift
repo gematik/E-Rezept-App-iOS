@@ -44,7 +44,7 @@ struct RedeemEditAddress: Screen {
             line: line
         )
         textField
-            .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.1)) // offset to accomodate for label spacing
+            .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.9)) // offset to accomodate for label spacing
             .tap()
         textField.typeText(phoneNumber)
     }

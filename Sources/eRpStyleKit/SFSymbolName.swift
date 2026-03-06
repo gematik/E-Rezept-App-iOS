@@ -68,6 +68,7 @@ public enum SFSymbolName {
     public static let cameraViewfinder = "camera.viewfinder"
     public static let docTextViewfinder = "doc.text.viewfinder"
     public static let plusViewFinder = "plus.viewfinder"
+    public static let forwardDisclosureIndicator = "chevron.forward"
     public static let rightDisclosureIndicator = "chevron.right"
     public static let rightDetailDisclosure = "chevron.right.circle.fill"
     public static let checkIcon = "checkmark.circle"

@@ -85,7 +85,8 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPrescriptionDetail_WithComputedStatusWaiting() {
         withDependencies {
-            $0.date = DateGenerator { Date() }
+            // Wed Nov 12 2025 07:54:00 GMT+0000
+            $0.date = DateGenerator { Date(timeIntervalSince1970: 1_762_934_040) }
         } operation: {
             let store = store(with: ErxTask.Fixtures.erxTask8)
             let sut = PrescriptionDetailView(store: store)
@@ -97,7 +98,8 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPrescriptionDetail_WithInProgressStatus() {
         withDependencies {
-            $0.date = DateGenerator { Date() }
+            // Wed Nov 12 2025 07:54:00 GMT+0000
+            $0.date = DateGenerator { Date(timeIntervalSince1970: 1_762_934_040) }
         } operation: {
             let store = store(with: ErxTask.Fixtures.erxTask9)
             let sut = PrescriptionDetailView(store: store)

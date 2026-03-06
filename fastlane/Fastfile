@@ -23,7 +23,7 @@
 require 'json'
 
 xcodes(
-  version: ENV["FL_XCODE_VERSION"] || "16.4.0",
+  version: ENV["FL_XCODE_VERSION"] || "26.2.0",
   select_for_current_build_only: true, 
   update_list: false
 )
@@ -208,7 +208,8 @@ lane :integration_tests do |options|
   )
 rescue => ex
   jenkins_job_url = "https://jenkins.prod.ccs.gematik.solutions/job/e-Rezept-iOS-App-Integration_Tests/#{ENV['BUILD_NUMBER']}"
-  message = "Failed Integration Tests for configuration: #{app_conf} \nReason: #{ex} \n\nBasic Junit report: #{jenkins_job_url}/artifact/fastlane/test_output/#{app_conf}/report.html \n\nConsole log (search for term: \"========== Run the tests for env: #{app_conf} ==========\"): #{jenkins_job_url}/consoleFull"
+  message = "Failed Integration Tests for configuration: #{app_conf} +++++ Reason: #{ex} +++++ Basic Junit report: #{jenkins_job_url}/artifact/fastlane/test_output/#{app_conf}/report.html +++++ Console log search for term: \\\"========== Run the tests for env: #{app_conf} ==========\\\" in: #{jenkins_job_url}/consoleFull"
+
   notify_teams_channel(
     channel_url: ENV["TEAMS_CHANNEL_URL_INT"],
     stream: "Integration Tests",
@@ -267,15 +268,15 @@ lane :generate_documentation do |options|
   sh "mkdir -p ../docs/technical"
 
   # docc build
-  sh "cd .. && xcrun xcodebuild -project eRp-App.xcodeproj -derivedDataPath build/docsData -scheme eRpFeatures -destination 'platform=iOS Simulator,name=iPhone 16' -parallelizeTargets docbuild | cd -"
+  sh "cd .. && xcrun xcodebuild -project eRp-App.xcodeproj -derivedDataPath build/docsData -scheme eRpFeatures -destination 'platform=iOS Simulator,name=iPhone 17' -parallelizeTargets docbuild | cd -"
 
   paths = schemes.map { |scheme|
     "../build/docsData/Build/Products/Debug-iphonesimulator/#{scheme}.doccarchive"
   }.join(" ")
 
   sh "rm -rf ../build/docs/AllSchemes.doccarchive"
-  sh "$(xcrun --find docc) merge #{paths}  --synthesized-landing-page-name \"E-Rezept ABC\" --output-path ../build/docs/AllSchemes.doccarchive"
-  sh "$(xcrun --find docc) process-archive transform-for-static-hosting \"../build/docs/AllSchemes.doccarchive\" --hosting-base-path /technical/ --output-path ../docs/technical"
+  sh "$(xcrun --find docc) merge #{paths}  --synthesized-landing-page-name \"E-Rezept App iOS Technical Dokumentation\" --output-path ../build/docs/AllSchemes.doccarchive"
+  sh "$(xcrun --find docc) process-archive transform-for-static-hosting \"../build/docs/AllSchemes.doccarchive\" --hosting-base-path /E-Rezept-App-iOS/technical/ --output-path ../docs/technical"
 
   # generate landing page
   generate_docs_index_html
@@ -955,7 +956,7 @@ lane :update_changelog do |option|
 
   gitlab_login()
   release_notes = sh("cd .. && glab changelog generate --from #{from} --version #{new_version}")
-  release_notes = release_notes.gsub(/^\#\# ([0-9\.]*) \(.*\)/, '# \1')
+  release_notes = release_notes.gsub(/^\#\# ([0-9\.]*) \(.*\)/, '# Release \1')
 
   filename = "../ReleaseNotes.md"
   lines = File.read(filename).lines

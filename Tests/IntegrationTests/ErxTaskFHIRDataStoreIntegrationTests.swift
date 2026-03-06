@@ -217,12 +217,13 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         var success = false
         withDependencies {
             let profile = Profile(name: "Test User")
-            let profileDataStoreMock = MockProfileDataStore()
-            profileDataStoreMock.fetchProfileByReturnValue = Just(profile)
+            let profileDataStoreMock = ProfileDataStoreMock()
+            profileDataStoreMock
+                .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(profile)
                 .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             $0.profileDataStore = profileDataStoreMock
             $0.erxRemoteDataStore = cloud
-            $0.erxLocalDataStore = MockErxLocalDataStore()
+            $0.erxLocalDataStore = ErxLocalDataStoreMock()
             $0.medicationScheduleRepository = .testValue
         } operation: {
             let cancellable = redeemService.redeem([order], profileId: UUID())

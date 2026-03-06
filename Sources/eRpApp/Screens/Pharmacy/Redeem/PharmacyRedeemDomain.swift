@@ -41,7 +41,7 @@ import SwiftUI
 // swiftlint:disable type_body_length file_length
 @Reducer
 struct PharmacyRedeemDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = redeem_success
         case redeemSuccess(RedeemSuccessDomain)
@@ -333,23 +333,26 @@ struct PharmacyRedeemDomain {
                 }
 
                 if state.selectedPrescriptions.isEmpty {
-                    state.destination = .alert(ErpAlertState<Destination.Alert>(for: error, actions: {
+                    state.destination = .alert(ErpAlertState<Destination.Alert>(
+                        for: error,
+                        title: nil
+                    ) {
                         ButtonState(action: .send(.closeRedeem)) {
                             TextState(L10n.phaRedeemBtnPrescriptionAlreadyRedeemedAlertDismiss)
                         }
                         ButtonState(role: .cancel) {
                             TextState(L10n.amgBtnAlertCancel)
                         }
-                    }))
+                    })
                 } else {
-                    state.destination = .alert(ErpAlertState(for: error, actions: {
+                    state.destination = .alert(ErpAlertState(for: error, title: nil) {
                         ButtonState(action: .send(.retryRedeem)) {
                             TextState(L10n.phaRedeemBtnPrescriptionAlreadyRedeemedAlertProceedWithout)
                         }
                         ButtonState(role: .cancel) {
                             TextState(L10n.amgBtnAlertCancel)
                         }
-                    }))
+                    })
                 }
             } else {
                 state.destination = .alert(.init(for: error))
@@ -606,4 +609,6 @@ extension PharmacyRedeemDomain {
     }
 }
 
+extension PharmacyRedeemDomain.Destination.State: Equatable {}
+extension PharmacyRedeemDomain.Destination.Action: Equatable {}
 // swiftlint:enable type_body_length file_length

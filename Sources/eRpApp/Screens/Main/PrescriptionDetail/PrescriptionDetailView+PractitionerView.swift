@@ -31,34 +31,39 @@ extension PrescriptionDetailView {
         var body: some View {
             ScrollView(.vertical) {
                 SectionContainer {
-                    SubTitle(
-                        title: store.practitioner.name ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPractitionerName
-                    )
+                    LabeledContent {
+                        Text(store.practitioner.name ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPractitionerName)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrName)
 
-                    SubTitle(
-                        title: store.practitioner.qualification ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPractitionerQualification
-                    )
+                    LabeledContent {
+                        Text(store.practitioner.qualification ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPractitionerQualification)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrQualification)
 
-                    SubTitle(
-                        title: store.practitioner.lanr ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPractitionerId
-                    )
+                    LabeledContent {
+                        Text(store.practitioner.lanr ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPractitionerId)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrLanr)
 
-                    SubTitle(
-                        title: store.practitioner.address ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscDtlPrTxtAddress
-                    )
+                    LabeledContent {
+                        Text(store.practitioner.address ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscDtlPrTxtAddress)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrAddress)
 
-                    SubTitle(
-                        title: store.practitioner.email ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscDtlPrTxtEmail
-                    )
+                    LabeledContent {
+                        Text(store.practitioner.email ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscDtlPrTxtEmail)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrEmail)
                 }.sectionContainerStyle(.inline)
             }

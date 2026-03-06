@@ -48,7 +48,8 @@ extension PrescriptionDetailView {
                     case .notGranted:
                         HintView<PrescriptionDetailDomain.Action>(
                             hint: Hints.activateInvoice,
-                            textAction: { store.send(.showGrantConsentAlert) }
+                            textAction: { store.send(.showGrantConsentAlert) },
+                            closeAction: nil
                         )
                         .border(Colors.primary300, width: 0.5, cornerRadius: 16)
                     case .notAuthenticated:
@@ -68,6 +69,7 @@ extension PrescriptionDetailView {
             message: L10n.prscDtlTxtPkvHintActivateMsg,
             actionText: L10n.prscDtlBtnPkvHintActivate,
             actionImageName: SFSymbolName.arrowRight,
+            actionStyle: .rightAligned,
             image: AccessibilityImage(
                 asset: Asset.Prescriptions.Details.refreshLamp,
                 accessibilityName: A11y.prescriptionDetails.prscDtlImgHintPkvActivate

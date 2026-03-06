@@ -53,7 +53,7 @@ struct PharmacySearchDomain {
         case locationManager
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = pharmacySearch_detail
         case pharmacyDetail(PharmacyDetailDomain)
@@ -589,11 +589,11 @@ struct PharmacySearchDomain {
                 else { return .none }
 
                 state.currentLocation = location
-                return .run(operation: { send in
+                return .run { send in
                     await locationManager.stopUpdatingLocation()
                     await send(.performSearch)
                     await send(.geoCodeLocation(location))
-                })
+                }
             default:
                 return .none
             }
@@ -696,23 +696,24 @@ extension PharmacySearchDomain {
         }
         return .run { [searchCriteria = searchCriteria, position = position] send in
             do {
-                let response = try await pharmacyRepository.searchRemote(
+                let pharmacies = try await pharmacyRepository.searchRemote(
                     searchCriteria.searchTerm,
                     position,
-                    searchCriteria.filter
-                        .asPharmacyRepositoryFilters
+                    searchCriteria.filter.asPharmacyRepositoryFilters
                 )
-                .map { pharmacy in
-                    PharmacyLocationViewModel(
-                        pharmacy: pharmacy,
-                        referenceLocation: searchCriteria
-                            .location,
-                        referenceDate: referenceDateForOpenHours,
-                        timeOnlyFormatter: uiDateFormatter
-                            .timeOnlyFormatter
-                    )
+
+                let viewModels = await MainActor.run {
+                    pharmacies
+                        .map { pharmacy in
+                            PharmacyLocationViewModel(
+                                pharmacy: pharmacy,
+                                referenceLocation: searchCriteria.location,
+                                referenceDate: referenceDateForOpenHours,
+                                timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
+                            )
+                        }
                 }
-                await send(.response(.pharmaciesReceived(.success(response))))
+                await send(.response(.pharmaciesReceived(.success(viewModels))))
             } catch let error as PharmacyRepositoryError {
                 await send(.response(.pharmaciesReceived(.failure(error))))
             }
@@ -799,4 +800,6 @@ extension PharmacySearchDomain {
     )
 }
 
+extension PharmacySearchDomain.Destination.State: Equatable {}
+extension PharmacySearchDomain.Destination.Action: Equatable {}
 // swiftlint:enable type_body_length

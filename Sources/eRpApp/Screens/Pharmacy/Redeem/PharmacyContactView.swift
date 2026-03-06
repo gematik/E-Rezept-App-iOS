@@ -42,11 +42,11 @@ struct PharmacyContactView: View {
                     }, content: {
                         LabeledContent(L10n.phaContactTxtPhone) {
                             TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.phone)
+                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
                                 .introspect(.textField, on: .iOS(.v17, .v18, .v26)) { textField in
                                     textField.clearButtonMode = .whileEditing
                                 }
                         }
-                        .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
                         .textContentType(.telephoneNumber)
                         .keyboardType(.phonePad)
 

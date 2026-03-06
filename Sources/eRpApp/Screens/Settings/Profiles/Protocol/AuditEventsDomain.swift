@@ -30,7 +30,7 @@ import Foundation
 
 @Reducer
 struct AuditEventsDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = cardWall
         case cardWall(CardWallIntroductionDomain)
@@ -247,3 +247,6 @@ extension AuditEventsDomain {
         }
     }
 }
+
+extension AuditEventsDomain.Destination.State: Equatable {}
+extension AuditEventsDomain.Destination.Action: Equatable {}

@@ -44,6 +44,10 @@ class SmartMockErxLocalDataStore: ErxLocalDataStore, SmartMock {
         saveChargeItemsOfRecordings = mocks?.saveChargeItemsOfRecordings ?? .delegate
         deleteOfChargeItemsRecordings = mocks?.deleteOfChargeItemsRecordings ?? .delegate
         updateDiGaInfoRecordings = mocks?.updateDiGaInfoRecordings ?? .delegate
+        saveEuCommunicationsProfileIdRecordings = mocks?.saveEuCommunicationsProfileIdRecordings ?? .delegate
+        listAllEuCommunicationCountryCodeProfileIdRecordings = mocks?.listAllEuCommunicationCountryCodeProfileIdRecordings ?? .delegate
+        deleteEuCommunicationsProfileIdRecordings = mocks?.deleteEuCommunicationsProfileIdRecordings ?? .delegate
+        loadLatestActiveEuCommunicationProfileIdRecordings = mocks?.loadLatestActiveEuCommunicationProfileIdRecordings ?? .delegate
     }
 
     var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>
@@ -494,6 +498,108 @@ class SmartMockErxLocalDataStore: ErxLocalDataStore, SmartMock {
         }
     }
 
+    var saveEuCommunicationsProfileIdRecordings: MockAnswer<Bool>
+
+    func save(euCommunications: [EuCommunication], profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.save(
+                    euCommunications: euCommunications,
+                    profileId: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.saveEuCommunicationsProfileIdRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = saveEuCommunicationsProfileIdRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.save(
+                    euCommunications: euCommunications,
+                    profileId: profileId
+            )
+        }
+    }
+
+    var listAllEuCommunicationCountryCodeProfileIdRecordings: MockAnswer<[EuCommunication]>
+
+    func listAllEuCommunication(countryCode: String?, profileId: UUID?) -> AnyPublisher<[EuCommunication], LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listAllEuCommunication(
+                    countryCode: countryCode,
+                    profileId: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listAllEuCommunicationCountryCodeProfileIdRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listAllEuCommunicationCountryCodeProfileIdRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listAllEuCommunication(
+                    countryCode: countryCode,
+                    profileId: profileId
+            )
+        }
+    }
+
+    var deleteEuCommunicationsProfileIdRecordings: MockAnswer<Bool>
+
+    func delete(euCommunications: [EuCommunication], profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.delete(
+                    euCommunications: euCommunications,
+                    profileId: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.deleteEuCommunicationsProfileIdRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = deleteEuCommunicationsProfileIdRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.delete(
+                    euCommunications: euCommunications,
+                    profileId: profileId
+            )
+        }
+    }
+
+    var loadLatestActiveEuCommunicationProfileIdRecordings: MockAnswer<EuCommunication?>
+
+    func loadLatestActiveEuCommunication(profileId: UUID?) -> AnyPublisher<EuCommunication?, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.loadLatestActiveEuCommunication(
+                    profileId: profileId
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.loadLatestActiveEuCommunicationProfileIdRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = loadLatestActiveEuCommunicationProfileIdRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.loadLatestActiveEuCommunication(
+                    profileId: profileId
+            )
+        }
+    }
+
     struct Mocks: Codable {
         var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>? = .delegate
         var listAllTasksOfRecordings: MockAnswer<[ErxTask]>? = .delegate
@@ -513,6 +619,10 @@ class SmartMockErxLocalDataStore: ErxLocalDataStore, SmartMock {
         var saveChargeItemsOfRecordings: MockAnswer<Bool>? = .delegate
         var deleteOfChargeItemsRecordings: MockAnswer<Bool>? = .delegate
         var updateDiGaInfoRecordings: MockAnswer<Bool>? = .delegate
+        var saveEuCommunicationsProfileIdRecordings: MockAnswer<Bool>? = .delegate
+        var listAllEuCommunicationCountryCodeProfileIdRecordings: MockAnswer<[EuCommunication]>? = .delegate
+        var deleteEuCommunicationsProfileIdRecordings: MockAnswer<Bool>? = .delegate
+        var loadLatestActiveEuCommunicationProfileIdRecordings: MockAnswer<EuCommunication?>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -535,7 +645,11 @@ class SmartMockErxLocalDataStore: ErxLocalDataStore, SmartMock {
                 listAllChargeItemsOfRecordings: listAllChargeItemsOfRecordings,
                 saveChargeItemsOfRecordings: saveChargeItemsOfRecordings,
                 deleteOfChargeItemsRecordings: deleteOfChargeItemsRecordings,
-                updateDiGaInfoRecordings: updateDiGaInfoRecordings
+                updateDiGaInfoRecordings: updateDiGaInfoRecordings,
+                saveEuCommunicationsProfileIdRecordings: saveEuCommunicationsProfileIdRecordings,
+                listAllEuCommunicationCountryCodeProfileIdRecordings: listAllEuCommunicationCountryCodeProfileIdRecordings,
+                deleteEuCommunicationsProfileIdRecordings: deleteEuCommunicationsProfileIdRecordings,
+                loadLatestActiveEuCommunicationProfileIdRecordings: loadLatestActiveEuCommunicationProfileIdRecordings
             )
         )
     }
@@ -557,6 +671,7 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         listTasksNextPageOfRecordings = mocks?.listTasksNextPageOfRecordings ?? .delegate
         listDetailedTasksForRecordings = mocks?.listDetailedTasksForRecordings ?? .delegate
         deleteTasksRecordings = mocks?.deleteTasksRecordings ?? .delegate
+        markEURedeemableForByPatientAuthorizationRecordings = mocks?.markEURedeemableForByPatientAuthorizationRecordings ?? .delegate
         redeemOrderRecordings = mocks?.redeemOrderRecordings ?? .delegate
         listAllCommunicationsAfterForRecordings = mocks?.listAllCommunicationsAfterForRecordings ?? .delegate
         fetchAuditEventByRecordings = mocks?.fetchAuditEventByRecordings ?? .delegate
@@ -569,6 +684,9 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         fetchConsentsRecordings = mocks?.fetchConsentsRecordings ?? .delegate
         grantConsentRecordings = mocks?.grantConsentRecordings ?? .delegate
         revokeConsentRecordings = mocks?.revokeConsentRecordings ?? .delegate
+        loadRemoteEuAccessCodeRecordings = mocks?.loadRemoteEuAccessCodeRecordings ?? .delegate
+        grantEuAccessPermissionAccessCodeRecordings = mocks?.grantEuAccessPermissionAccessCodeRecordings ?? .delegate
+        deleteEuAccessCodeRecordings = mocks?.deleteEuAccessCodeRecordings ?? .delegate
     }
 
     var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>
@@ -689,6 +807,32 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         } else {
             return wrapped.delete(
                     tasks: tasks
+            )
+        }
+    }
+
+    var markEURedeemableForByPatientAuthorizationRecordings: MockAnswer<ErxTask?>
+
+    func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        guard !isRecording else {
+            let result = wrapped.markEURedeemable(
+                    for: id,
+                    byPatientAuthorization: byPatientAuthorization
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.markEURedeemableForByPatientAuthorizationRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = markEURedeemableForByPatientAuthorizationRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.markEURedeemable(
+                    for: id,
+                    byPatientAuthorization: byPatientAuthorization
             )
         }
     }
@@ -985,12 +1129,81 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         }
     }
 
+    var loadRemoteEuAccessCodeRecordings: MockAnswer<EuAccessCode?>
+
+    func loadRemoteEuAccessCode() -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        guard !isRecording else {
+            let result = wrapped.loadRemoteEuAccessCode(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.loadRemoteEuAccessCodeRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = loadRemoteEuAccessCodeRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.loadRemoteEuAccessCode(
+            )
+        }
+    }
+
+    var grantEuAccessPermissionAccessCodeRecordings: MockAnswer<EuAccessCode?>
+
+    func grantEuAccessPermission(accessCode: EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        guard !isRecording else {
+            let result = wrapped.grantEuAccessPermission(
+                    accessCode: accessCode
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.grantEuAccessPermissionAccessCodeRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = grantEuAccessPermissionAccessCodeRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.grantEuAccessPermission(
+                    accessCode: accessCode
+            )
+        }
+    }
+
+    var deleteEuAccessCodeRecordings: MockAnswer<Bool>
+
+    func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError> {
+        guard !isRecording else {
+            let result = wrapped.deleteEuAccessCode(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.deleteEuAccessCodeRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = deleteEuAccessCodeRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.deleteEuAccessCode(
+            )
+        }
+    }
+
     struct Mocks: Codable {
         var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>? = .delegate
         var listAllTasksAfterRecordings: MockAnswer<PagedContent<[ErxTask]>>? = .delegate
         var listTasksNextPageOfRecordings: MockAnswer<PagedContent<[ErxTask]>>? = .delegate
         var listDetailedTasksForRecordings: MockAnswer<PagedContent<[ErxTask]>>? = .delegate
         var deleteTasksRecordings: MockAnswer<Bool>? = .delegate
+        var markEURedeemableForByPatientAuthorizationRecordings: MockAnswer<ErxTask?>? = .delegate
         var redeemOrderRecordings: MockAnswer<ErxTaskOrder>? = .delegate
         var listAllCommunicationsAfterForRecordings: MockAnswer<[ErxTask.Communication]>? = .delegate
         var fetchAuditEventByRecordings: MockAnswer<ErxAuditEvent?>? = .delegate
@@ -1003,6 +1216,9 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         var fetchConsentsRecordings: MockAnswer<[ErxConsent]>? = .delegate
         var grantConsentRecordings: MockAnswer<ErxConsent?>? = .delegate
         var revokeConsentRecordings: MockAnswer<Bool>? = .delegate
+        var loadRemoteEuAccessCodeRecordings: MockAnswer<EuAccessCode?>? = .delegate
+        var grantEuAccessPermissionAccessCodeRecordings: MockAnswer<EuAccessCode?>? = .delegate
+        var deleteEuAccessCodeRecordings: MockAnswer<Bool>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -1013,6 +1229,7 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
                 listTasksNextPageOfRecordings: listTasksNextPageOfRecordings,
                 listDetailedTasksForRecordings: listDetailedTasksForRecordings,
                 deleteTasksRecordings: deleteTasksRecordings,
+                markEURedeemableForByPatientAuthorizationRecordings: markEURedeemableForByPatientAuthorizationRecordings,
                 redeemOrderRecordings: redeemOrderRecordings,
                 listAllCommunicationsAfterForRecordings: listAllCommunicationsAfterForRecordings,
                 fetchAuditEventByRecordings: fetchAuditEventByRecordings,
@@ -1024,7 +1241,10 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
                 deleteChargeItemsRecordings: deleteChargeItemsRecordings,
                 fetchConsentsRecordings: fetchConsentsRecordings,
                 grantConsentRecordings: grantConsentRecordings,
-                revokeConsentRecordings: revokeConsentRecordings
+                revokeConsentRecordings: revokeConsentRecordings,
+                loadRemoteEuAccessCodeRecordings: loadRemoteEuAccessCodeRecordings,
+                grantEuAccessPermissionAccessCodeRecordings: grantEuAccessPermissionAccessCodeRecordings,
+                deleteEuAccessCodeRecordings: deleteEuAccessCodeRecordings
             )
         )
     }

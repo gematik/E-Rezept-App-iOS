@@ -30,6 +30,7 @@ struct SettingsLegalInfoView: View {
     var body: some View {
         SectionContainer(header: {
             Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
+                .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
         }, content: {
             Button {

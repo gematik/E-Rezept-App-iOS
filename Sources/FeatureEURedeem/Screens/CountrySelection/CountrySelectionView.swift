@@ -34,61 +34,87 @@ public struct CountrySelectionView: View {
 
     public var body: some View {
         VStack {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(L10n.euredeemCountrySelectionTitle)
-                    .font(.title3.bold())
-                Text(L10n.euredeemCountrySelectionSubtitle)
-                    .font(.subheadline)
-                    .padding(.bottom, 8)
+            if store.countries.isEmpty, !store.isCountryLoading {
+                VStack(spacing: 8) {
+                    Image(decorative: Asset.EUReedem.euLogo)
+                        .padding(.bottom, 28)
+                        .padding(.top, 86)
+                    Text(L10n.euredeemCountryEmptyTitle)
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(Color.white)
+                    Text(L10n.euredeemCountryEmptySubtitle)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.white)
 
-                SearchBar(
-                    searchText: $store.searchText,
-                    prompt: L10n.euredeemCountrySelectionSearchPrompt.text
-                ) {
-                    store.send(.serachList)
-                }
-                .padding(.top, 24)
-
-                HStack {
                     Spacer()
-                    Button {
-                        store.send(.toggleLocation)
-                    } label: {
-                        HStack {
-                            Image(systemName: SFSymbolName.scope)
-                            Text(L10n.euredeemCountrySelectionBtnLocation)
-                        }
-                        .font(.subheadline.weight(.semibold))
-                    }
-                    .padding(.bottom)
                 }
-            }
-            .padding(.horizontal)
+                .padding(.top, 32)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(red: 0, green: 0.2, blue: 0.6)) // #003399
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.euredeemCountrySelectionTitle)
+                        .font(.title3.bold())
+                    Text(L10n.euredeemCountrySelectionSubtitle)
+                        .font(.subheadline)
+                        .padding(.bottom, 8)
 
-            List {
-                ForEach(store.countries) { country in
-                    Button {
-                        store.send(.selectCountry(country))
-                    } label: {
-                        HStack {
-                            Text(country.flag)
-                                .font(.title)
-                            Text(country.name)
+                    SearchBar(
+                        searchText: $store.searchText,
+                        prompt: L10n.euredeemCountrySelectionSearchPrompt.text
+                    ) {}
+                        .padding(.top, 24)
+
+                    HStack {
+                        Spacer()
+                        Button {
+                            store.send(.toggleLocation)
+                        } label: {
+                            HStack {
+                                Image(systemName: store.locationFilterIsEnabled
+                                    ? SFSymbolName.cross
+                                    : SFSymbolName.scope)
+                                Text(store.locationFilterIsEnabled
+                                    ? L10n.euredeemCountrySelectionBtnNoLocation
+                                    : L10n.euredeemCountrySelectionBtnLocation)
+                            }
+                            .font(.subheadline.weight(.semibold))
                         }
-                        .alignmentGuide(.listRowSeparatorLeading) { $0[.listRowSeparatorLeading] + 40 }
+                        .padding(.bottom)
                     }
                 }
+                .padding(.horizontal)
+
+                List {
+                    ForEach(store.filteredCountries) { country in
+                        Button {
+                            store.send(.selectCountry(country))
+                        } label: {
+                            HStack {
+                                Text(country.flag)
+                                    .font(.title)
+                                Text(country.name)
+                            }
+                            .alignmentGuide(.listRowSeparatorLeading) { $0[.listRowSeparatorLeading] + 40 }
+                        }
+                    }
+                }
+                .listStyle(PlainListStyle())
             }
-            .listStyle(PlainListStyle())
         }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         .task {
             store.send(.loadAllCountries)
+        }
+        .task {
+            await store.send(.task).finish()
         }
         .background(Color(uiColor: .systemBackground))
     }
 }
 
-#Preview {
+#Preview("Countries") {
     CountrySelectionView(
         store: .init(initialState: CountrySelectionDomain.State(
             countries: [
@@ -100,4 +126,14 @@ public struct CountrySelectionView: View {
             CountrySelectionDomain()
         }
     )
+}
+
+#Preview("No Countries") {
+    NavigationStack {
+        CountrySelectionView(
+            store: .init(initialState: CountrySelectionDomain.State()) {
+                CountrySelectionDomain()
+            }
+        )
+    }
 }

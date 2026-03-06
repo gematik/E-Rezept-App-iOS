@@ -46,9 +46,9 @@ public struct SecondaryButtonStyle: ButtonStyle {
         case (false, false):
             return Colors.primary.disabled(for: colorScheme)
         case (true, true):
-            return Colors.red600
+            return Colors.red700
         case (true, false):
-            return Colors.red600.disabled(for: colorScheme)
+            return Colors.red700.disabled(for: colorScheme)
         }
     }
 
@@ -88,6 +88,70 @@ extension ButtonStyle where Self == SecondaryButtonStyle {
 /// A button style that applies fg and bg color, as well as border radius.
 ///
 /// To apply this style to a button, or to a view that contains buttons, use
+/// the ``View.buttonStyle(.secondarySmall)`` modifier.
+public struct SecondarySmallButtonStyle: ButtonStyle {
+    private var isDestructive: Bool
+    private var isEnabled: Bool
+    private var backgroundColor: Color
+
+    public init(enabled: Bool = true, destructive: Bool = false, background: Color = Colors.systemBackground) {
+        isEnabled = enabled
+        isDestructive = destructive
+        backgroundColor = background
+    }
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var foregroundColor: Color {
+        switch (isDestructive, isEnabled) {
+        case (false, true):
+            return Colors.primary
+        case (false, false):
+            return Colors.primary.disabled(for: colorScheme)
+        case (true, true):
+            return Colors.red700
+        case (true, false):
+            return Colors.red700.disabled(for: colorScheme)
+        }
+    }
+
+    public func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .multilineTextAlignment(.center)
+            .opacity(configuration.isPressed ? 0.25 : 1)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .frame(minHeight: 36, alignment: .center)
+            .background(backgroundColor)
+            .foregroundColor(foregroundColor)
+            .border(foregroundColor, width: 1.0, cornerRadius: 24)
+    }
+}
+
+extension ButtonStyle where Self == SecondarySmallButtonStyle {
+    /// A button style that applies fg and bg color, as well as border radius.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.secondarySmall)`` modifier.
+    public static var secondarySmall: SecondarySmallButtonStyle { SecondarySmallButtonStyle(enabled: true) }
+
+    /// A button style that applies fg and bg color, as well as border radius.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.secondarySmall(isEnabled:,isDestructive: false))`` modifier.
+    public static func secondarySmall(
+        isEnabled: Bool = true,
+        isDestructive: Bool = false,
+        background: Color = Colors.systemBackground
+    ) -> SecondarySmallButtonStyle {
+        SecondarySmallButtonStyle(enabled: isEnabled, destructive: isDestructive, background: background)
+    }
+}
+
+/// A button style that applies fg and bg color, as well as border radius.
+///
+/// To apply this style to a button, or to a view that contains buttons, use
 /// the ``View.buttonStyle(.secondary)`` modifier.
 public struct SecondaryAltButtonStyle: ButtonStyle {
     private var isDestructive: Bool
@@ -107,9 +171,9 @@ public struct SecondaryAltButtonStyle: ButtonStyle {
         case (false, false):
             return Colors.primary.disabled(for: colorScheme)
         case (true, true):
-            return Colors.red600
+            return Colors.red700
         case (true, false):
-            return Colors.red600.disabled(for: colorScheme)
+            return Colors.red700.disabled(for: colorScheme)
         }
     }
 

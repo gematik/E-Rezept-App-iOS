@@ -34,11 +34,11 @@ final class MedicationReminderListDomainTests: XCTestCase {
     typealias TestStore = TestStoreOf<MedicationReminderListDomain>
 
     let mainQueue = DispatchQueue.immediate
-    var mockUserProfileService: MockUserProfileService!
+    var mockUserProfileService: UserProfileServiceMock!
 
     override func setUp() {
         super.setUp()
-        mockUserProfileService = MockUserProfileService()
+        mockUserProfileService = UserProfileServiceMock()
     }
 
     func testLoadMedicationSchedule() async {
@@ -122,7 +122,8 @@ final class MedicationReminderListDomainTests: XCTestCase {
             UserProfile.Fixtures.olafOffline,
         ]
 
-        mockUserProfileService.userProfilesPublisherReturnValue = Just(expectedProfiles)
+        mockUserProfileService
+            .userProfilesPublisherAnyPublisherUserProfileUserProfileServiceErrorReturnValue = Just(expectedProfiles)
             .setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
 

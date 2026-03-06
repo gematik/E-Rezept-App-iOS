@@ -31,7 +31,7 @@ import XCTest
 final class StandardUserSessionTests: XCTestCase {
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
     var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
-    var mockProfileDataStore = MockProfileDataStore()
+    var mockProfileDataStore = ProfileDataStoreMock()
 
     let idToken: String =
         "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2lkcF9zaWcifQ.eyJhdF9oYXNoIjoiUzc2aFllak83dHgwMFVuYVpjaEZ0USIsInN1YiI6IlFYWTNRTHZ0OGdfT0F1VmRmV04zbHJWMGE1OEhLNGExTWtJYnZiWmRCb0EiLCJvcmdhbml6YXRpb25OYW1lIjoiVGVzdCBHS1YtU1ZOT1QtVkFMSUQiLCJwcm9mZXNzaW9uT0lEIjoiMS4yLjI3Ni4wLjc2LjQuNDkiLCJpZE51bW1lciI6IlgxMTA0NDM4NzQiLCJhbXIiOlsibWZhIiwic2MiLCJwaW4iXSwiaXNzIjoiaHR0cHM6Ly9pZHAuZGV2LmdlbWF0aWsuc29sdXRpb25zIiwiZ2l2ZW5fbmFtZSI6IkhlaW56IEhpbGxiZXJ0Iiwibm9uY2UiOiI1NTU3NTc3QTc1NzY2MTUzNDciLCJhdWQiOiJlUmV6ZXB0QXBwIiwiYWNyIjoiZ2VtYXRpay1laGVhbHRoLWxvYS1oaWdoIiwiYXpwIjoiZVJlemVwdEFwcCIsImF1dGhfdGltZSI6MTYxOTUxNjk5NCwic2NvcGUiOiJlLXJlemVwdCBvcGVuaWQiLCJleHAiOjE2MTk1MTcyOTQsImlhdCI6MTYxOTUxNjk5NCwiZmFtaWx5X25hbWUiOiJDw7ZyZGVzIiwianRpIjoiZmUwY2QzYTEyMGVlYjRiMyJ9.VYUiZ6cG8-EZyyMu5IV_owIlJ_5oJmRsB66rdILBGxiRGnlj2jX1Oxe_hMPYigL9dD2PwU8sZWOvuA3p1HZE9w" // swiftlint:disable:this line_length
@@ -45,7 +45,7 @@ final class StandardUserSessionTests: XCTestCase {
         let sut = MockUserSession()
         let profileIdNotInStore = UUID()
         sut.mockUserDataStore.underlyingSelectedProfileId = Just(profileIdNotInStore).eraseToAnyPublisher()
-        sut.mockProfileDataStore.listAllProfilesReturnValue = Just([])
+        sut.mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = Just([])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -66,7 +66,8 @@ final class StandardUserSessionTests: XCTestCase {
 
         let sut = MockUserSession()
         sut.profileId = currentProfile.id
-        sut.mockProfileDataStore.listAllProfilesReturnValue = Just([currentProfile, otherProfile])
+        sut.mockProfileDataStore
+            .listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = Just([currentProfile, otherProfile])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -85,7 +86,8 @@ final class StandardUserSessionTests: XCTestCase {
 
         let sut = MockUserSession()
         sut.profileId = currentProfile.id
-        sut.mockProfileDataStore.listAllProfilesReturnValue = Just([currentProfile, otherProfile])
+        sut.mockProfileDataStore
+            .listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = Just([currentProfile, otherProfile])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 

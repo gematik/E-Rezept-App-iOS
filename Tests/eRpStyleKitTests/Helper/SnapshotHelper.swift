@@ -141,24 +141,19 @@ extension ViewImageConfig {
 
 extension UITraitCollection {
     static func iPhone14(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
-        let base: [UITraitCollection] = [
-            .init(forceTouchCapability: .available),
-            .init(layoutDirection: .leftToRight),
-            .init(preferredContentSizeCategory: .medium),
-            .init(userInterfaceIdiom: .phone),
-        ]
-
         switch orientation {
         case .landscape:
-            return .init(traitsFrom: base + [
-                .init(horizontalSizeClass: .regular),
-                .init(verticalSizeClass: .compact),
-            ])
+            return UITraitCollection { mutableTraits in
+                mutableTraits.userInterfaceIdiom = .phone
+                mutableTraits.horizontalSizeClass = .regular
+                mutableTraits.verticalSizeClass = .compact
+            }
         case .portrait:
-            return .init(traitsFrom: base + [
-                .init(horizontalSizeClass: .compact),
-                .init(verticalSizeClass: .regular),
-            ])
+            return UITraitCollection { mutableTraits in
+                mutableTraits.userInterfaceIdiom = .phone
+                mutableTraits.horizontalSizeClass = .compact
+                mutableTraits.verticalSizeClass = .regular
+            }
         }
     }
 }

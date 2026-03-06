@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 @MainActor
-class ExtAuthUITests: XCTestCase, Sendable {
+class ExtAuthUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() async throws {

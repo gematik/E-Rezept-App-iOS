@@ -84,6 +84,10 @@ public struct CodeView: View {
                 CodeActionButtons(store: store)
             }
         }
+        .task {
+            await store.send(.task).finish()
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -133,19 +137,14 @@ private struct CodeActionButtons: View {
                     store.send(.delegate(.takeReceipt))
                 },
                 label: {
-                    HStack {
-                        Image(systemName: SFSymbolName.camera)
-                            .font(.body)
-
-                        Text(L10n.euredeemCodeTakeReceiptButton)
-                            .font(.body)
-                            .fontWeight(.medium)
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Colors.primary)
-                    .cornerRadius(12)
+                    Text(L10n.euredeemCodeTakeReceiptButton)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Colors.primary)
+                        .cornerRadius(12)
                 }
             )
             .padding()
@@ -195,7 +194,7 @@ struct ManualCodeView: View {
                         .foregroundColor(Colors.systemLabel)
                 }
 
-                Text(store.insuranceNumber)
+                Text(store.insuranceId ?? "")
                     .font(.system(.title, design: .monospaced))
                     .kerning(10)
                     .fontWeight(.bold)
@@ -218,35 +217,35 @@ struct ManualCodeView: View {
                         .foregroundColor(Colors.systemLabel)
                 }
 
-                Text(store.isExpired ? L10n.euredeemCodeExpiredTitle
-                    .text : formatCodeForDisplay(store.exchangeCode))
-                                    .font(.system(.title, design: .monospaced).bold())
-                                    .foregroundColor(store.isExpired ? Colors.red900 : Colors.systemLabel)
-                                    .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .padding(8)
-                                    .frame(
-                                        maxWidth: .infinity,
-                                        minHeight: 54,
-                                        maxHeight: 54,
-                                        alignment: .center
-                                    )
-                                    .background(store.isExpired ? Colors.red100 : Colors.primary100)
-                                    .cornerRadius(8)
-                                    .overlay(
-                                        store.isExpired ?
-                                            RoundedRectangle(cornerRadius: 8)
-                                            .inset(by: 0.5)
-                                            .stroke(
-                                                Colors.red700,
-                                                style: StrokeStyle(lineWidth: 1, dash: [4, 4])
-                                            )
-                                            : nil
-                                    )
+                Text(store.isExpired ? L10n.euredeemCodeExpiredTitle.text
+                    : formatCodeForDisplay(store.euAccessCode?.accessCode ?? ""))
+                    .font(.system(.title, design: .monospaced).bold())
+                    .foregroundColor(store.isExpired ? Colors.red900 : Colors.systemLabel)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .padding(8)
+                    .frame(
+                        maxWidth: .infinity,
+                        minHeight: 54,
+                        maxHeight: 54,
+                        alignment: .center
+                    )
+                    .background(store.isExpired ? Colors.red100 : Colors.primary100)
+                    .cornerRadius(8)
+                    .overlay(
+                        store.isExpired ?
+                            RoundedRectangle(cornerRadius: 8)
+                            .inset(by: 0.5)
+                            .stroke(
+                                Colors.red700,
+                                style: StrokeStyle(lineWidth: 1, dash: [4, 4])
+                            )
+                            : nil
+                    )
             }
 
-            if !store.isExpired {
-                Text(L10n.euredeemCodeValidityManual)
+            if store.minutesRemaining > 0, !store.isExpired {
+                Text(L10n.euredeemCodeValidityManual(String(store.minutesRemaining)))
                     .font(.caption)
                     .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
@@ -329,8 +328,8 @@ struct QRCodeView: View {
                     : nil
             )
 
-            if !store.isExpired {
-                Text(L10n.euredeemCodeQrDescription)
+            if store.minutesRemaining > 0, !store.isExpired {
+                Text(L10n.euredeemCodeQrDescription(String(store.minutesRemaining)))
                     .font(.caption)
                     .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
@@ -368,8 +367,9 @@ struct QRCodeView: View {
         CodeView(store: CodeDomain.Dummies.storeFor(
             CodeDomain.State(
                 displayMode: .qrCode,
-                insuranceNumber: "M123456789",
-                exchangeCode: "A1b2C3"
+                insuranceId: "M123456789",
+                euAccessCode: .init(),
+                countryCode: "De"
             )
         ))
     }
@@ -386,11 +386,8 @@ struct QRCodeView: View {
         CodeView(store: CodeDomain.Dummies.storeFor(
             CodeDomain.State(
                 displayMode: .qrCode,
-                insuranceNumber: "M123456789",
-                exchangeCode: "A1b2C3",
-                qrCodeImage: nil,
-                isExpired: true,
-                expirationDate: Calendar.current.date(byAdding: .minute, value: -1, to: Date())
+                insuranceId: "M123456789",
+                countryCode: "De"
             )
         ))
     }

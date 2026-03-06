@@ -13,16 +13,20 @@
     --primary-800-color: #90CDF4;
   }
 }
-
+* { font: -apple-system-body !important; }
 * {
     overflow-wrap: break-word;
 }
-
+p {
+  font-size: 1rem;
+}
 body {
   font-family: SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif;
   font-style: normal;
   margin: 0 16px;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 h1, h2, h3, h4, h5, h6 {
   color: var(--primary-color);
@@ -34,45 +38,46 @@ h5 {
 
 h1 {
   /* SF / Title 1 - Bold */
-  font-size: 28px;
-  line-height: 42px;
-  letter-spacing: 0.87px;
+  font-size: 1.75rem; /* 28px */
+  line-height: 2.625rem; /* 42px */
+  letter-spacing: 0.054rem; /* 0.87px */
 }
 
 h2 {
   /* SF / Title 2 - Bold */
-  font-size: 22px;
-  line-height: 33px;
+  font-size: 1.375rem; /* 22px */
+  line-height: 2.063rem; /* 33px */
   /* or 127% */
-  letter-spacing: 0.8px;
+  letter-spacing: 0.05rem; /* 0.8px */
 }
 h3 {
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.875rem; /* 30px */
   /* or 120% */
 
-  letter-spacing: 0.75px;
+  letter-spacing: 0.047rem; /* 0.75px */
 }
 h4 {
-  font-size: 17px;
-  line-height: 24px;
+  font-size: 1.063rem; /* 17px */
+  line-height: 1.5rem; /* 24px */
   /* or 129% */
 
-  letter-spacing: -0.408px;
+  letter-spacing: -0.026rem; /* -0.408px */
 }
 h5 {
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 0.938rem; /* 15px */
+  line-height: 1.375rem; /* 22px */
   /* identical to box height, or 133% */
 
   display: flex;
   align-items: center;
-  letter-spacing: -0.24px;
+  letter-spacing: -0.015rem; /* -0.24px */
 }
 
 a {
   color: var(--primary-600-color);
   font-family: ui-sans-serif;
+  font-size: 1rem;
 }
 
 ul {
@@ -83,15 +88,15 @@ ul li {
   font-family: ui-sans-serif;
   font-style: normal;
   font-weight: normal;
-  font-size: 17px;
-  line-height: 24px;
+  font-size: 1.063rem; /* 17px */
+  line-height: 1.5rem; /* 24px */
   /* identical to box height, or 129% */
 
-  letter-spacing: -0.408px;
+  letter-spacing: -0.026rem; /* -0.408px */
 }
 
 section.license {
-  font-size: 17px;
-  line-height: 24px;
+  font-size: 1.063rem; /* 17px */
+  line-height: 1.5rem; /* 24px */
   font-style: italic;
 }

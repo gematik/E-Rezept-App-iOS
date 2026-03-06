@@ -109,3 +109,104 @@ public class TrustStoreSessionMock: TrustStoreSession {
 
 
 }
+public class VAUAccessTokenProviderMock: VAUAccessTokenProvider {
+
+    public init() {}
+
+    public var vauBearerToken: AnyPublisher<BearerToken, VAUError> {
+        get { return underlyingVauBearerToken }
+        set(value) { underlyingVauBearerToken = value }
+    }
+    public var underlyingVauBearerToken: (AnyPublisher<BearerToken, VAUError>)!
+
+
+
+}
+class VAUCryptoMock: VAUCrypto {
+
+
+
+
+    //MARK: - encrypt
+
+    var encryptDataThrowableError: (any Error)?
+    var encryptDataCallsCount = 0
+    var encryptDataCalled: Bool {
+        return encryptDataCallsCount > 0
+    }
+    var encryptDataReturnValue: Data!
+    var encryptDataClosure: (() throws -> Data)?
+
+    func encrypt() throws -> Data {
+        encryptDataCallsCount += 1
+        if let error = encryptDataThrowableError {
+            throw error
+        }
+        if let encryptDataClosure = encryptDataClosure {
+            return try encryptDataClosure()
+        } else {
+            return encryptDataReturnValue
+        }
+    }
+
+    //MARK: - decrypt
+
+    var decryptDataDataStringThrowableError: (any Error)?
+    var decryptDataDataStringCallsCount = 0
+    var decryptDataDataStringCalled: Bool {
+        return decryptDataDataStringCallsCount > 0
+    }
+    var decryptDataDataStringReceivedData: (Data)?
+    var decryptDataDataStringReceivedInvocations: [(Data)] = []
+    var decryptDataDataStringReturnValue: String!
+    var decryptDataDataStringClosure: ((Data) throws -> String)?
+
+    func decrypt(data: Data) throws -> String {
+        decryptDataDataStringCallsCount += 1
+        decryptDataDataStringReceivedData = data
+        decryptDataDataStringReceivedInvocations.append(data)
+        if let error = decryptDataDataStringThrowableError {
+            throw error
+        }
+        if let decryptDataDataStringClosure = decryptDataDataStringClosure {
+            return try decryptDataDataStringClosure(data)
+        } else {
+            return decryptDataDataStringReturnValue
+        }
+    }
+
+
+}
+class VAUCryptoProviderMock: VAUCryptoProvider {
+
+
+
+
+    //MARK: - provide
+
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoThrowableError: (any Error)?
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoCallsCount = 0
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoCalled: Bool {
+        return provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoCallsCount > 0
+    }
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReceivedArguments: (message: String, vauCertificate: VAUCertificate, bearerToken: BearerToken)?
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReceivedInvocations: [(message: String, vauCertificate: VAUCertificate, bearerToken: BearerToken)] = []
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReturnValue: VAUCrypto!
+    var provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoClosure: ((String, VAUCertificate, BearerToken) throws -> VAUCrypto)?
+
+    func provide(for message: String, vauCertificate: VAUCertificate, bearerToken: BearerToken) throws -> VAUCrypto {
+        provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoCallsCount += 1
+        provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReceivedArguments = (message: message, vauCertificate: vauCertificate, bearerToken: bearerToken)
+        provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReceivedInvocations.append((message: message, vauCertificate: vauCertificate, bearerToken: bearerToken))
+        if let error = provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoThrowableError {
+            throw error
+        }
+        if let provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoClosure = provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoClosure {
+            return try provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoClosure(message, vauCertificate, bearerToken)
+        } else {
+            return provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReturnValue
+        }
+    }
+
+
+}

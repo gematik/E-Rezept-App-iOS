@@ -29,12 +29,12 @@ import XCTest
 
 @MainActor
 final class MedicationScheduleRepositoryTests: XCTestCase {
-    var mockMedicationScheduleStore: MockMedicationScheduleStore!
+    var mockMedicationScheduleStore: MedicationScheduleStoreMock!
 
     override func setUp() {
         super.setUp()
 
-        mockMedicationScheduleStore = MockMedicationScheduleStore()
+        mockMedicationScheduleStore = MedicationScheduleStoreMock()
     }
 
     func testCreate() async throws {
@@ -57,17 +57,21 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
         }
 
         let schedule1 = Self.Fixtures.medicationScheduleOneEntry
-        mockMedicationScheduleStore.saveMedicationSchedulesReturnValue = [schedule1]
-        mockMedicationScheduleStore.fetchAllReturnValue = [schedule1]
+        mockMedicationScheduleStore.saveMedicationSchedulesMedicationScheduleMedicationScheduleReturnValue = [schedule1]
+        mockMedicationScheduleStore.fetchAllMedicationScheduleReturnValue = [schedule1]
 
         // when
         try await sut.create(schedule1)
 
         // then
-        expect(self.mockMedicationScheduleStore.saveMedicationSchedulesCalled).to(beTrue())
-        expect(self.mockMedicationScheduleStore.saveMedicationSchedulesCallsCount) == 1
-        expect(self.mockMedicationScheduleStore.fetchAllCalled).to(beTrue())
-        expect(self.mockMedicationScheduleStore.fetchAllCallsCount) == 1
+        expect(self.mockMedicationScheduleStore.saveMedicationSchedulesMedicationScheduleMedicationScheduleCalled)
+            .to(beTrue())
+        expect(
+            self.mockMedicationScheduleStore.saveMedicationSchedulesMedicationScheduleMedicationScheduleCallsCount
+        ) ==
+            1
+        expect(self.mockMedicationScheduleStore.fetchAllMedicationScheduleCalled).to(beTrue())
+        expect(self.mockMedicationScheduleStore.fetchAllMedicationScheduleCallsCount) == 1
 
         notificationSchedulerCancelAllPendingRequestsCallsCount.withValue {
             XCTAssertEqual($0, 1)
@@ -82,16 +86,19 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
         // Create (and schedule) a second MedicationSchedule:
         // given
         let schedule2 = Self.Fixtures.medicationScheduleOneEntryEndDistantFuture
-        mockMedicationScheduleStore.saveMedicationSchedulesReturnValue = [schedule2]
-        mockMedicationScheduleStore.fetchAllReturnValue = [schedule1, schedule2]
+        mockMedicationScheduleStore.saveMedicationSchedulesMedicationScheduleMedicationScheduleReturnValue = [schedule2]
+        mockMedicationScheduleStore.fetchAllMedicationScheduleReturnValue = [schedule1, schedule2]
 
         // when
         try await sut.create(schedule2)
 
         // then
-        expect(self.mockMedicationScheduleStore.saveMedicationSchedulesCallsCount) == 2
-        expect(self.mockMedicationScheduleStore.fetchAllCalled).to(beTrue())
-        expect(self.mockMedicationScheduleStore.fetchAllCallsCount) == 2
+        expect(
+            self.mockMedicationScheduleStore.saveMedicationSchedulesMedicationScheduleMedicationScheduleCallsCount
+        ) ==
+            2
+        expect(self.mockMedicationScheduleStore.fetchAllMedicationScheduleCalled).to(beTrue())
+        expect(self.mockMedicationScheduleStore.fetchAllMedicationScheduleCallsCount) == 2
 
         notificationSchedulerCancelAllPendingRequestsCallsCount.withValue {
             XCTAssertEqual($0, 2)
@@ -113,13 +120,13 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
         }
 
         let schedule = Self.Fixtures.medicationScheduleOneEntry
-        mockMedicationScheduleStore.fetchAllReturnValue = [schedule]
+        mockMedicationScheduleStore.fetchAllMedicationScheduleReturnValue = [schedule]
 
         // when
         let result = try await sut.readAll()
 
         // then
-        expect(self.mockMedicationScheduleStore.fetchAllCalled).to(beTrue())
+        expect(self.mockMedicationScheduleStore.fetchAllMedicationScheduleCalled).to(beTrue())
         expect(result) == [schedule]
     }
 
@@ -141,11 +148,11 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
             MedicationScheduleRepository.liveValue
         }
 
-        mockMedicationScheduleStore.fetchAllClosure = {
+        mockMedicationScheduleStore.fetchAllMedicationScheduleClosure = {
             actualCallOrder.append("fetchAllClosure")
             return []
         }
-        mockMedicationScheduleStore.deleteMedicationSchedulesClosure = { _ in
+        mockMedicationScheduleStore.deleteMedicationSchedulesMedicationScheduleVoidClosure = { _ in
             actualCallOrder.append("deleteMedicationSchedulesClosure")
         }
         let schedule = Self.Fixtures.medicationScheduleOneEntry
@@ -164,8 +171,8 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
         try await sut.delete([schedule])
 
         // then
-        expect(self.mockMedicationScheduleStore.deleteMedicationSchedulesCalled).to(beTrue())
-        expect(self.mockMedicationScheduleStore.fetchAllCalled).to(beTrue())
+        expect(self.mockMedicationScheduleStore.deleteMedicationSchedulesMedicationScheduleVoidCalled).to(beTrue())
+        expect(self.mockMedicationScheduleStore.fetchAllMedicationScheduleCalled).to(beTrue())
         let actualAsyncCallOrder = await actor.calledAPIOrder()
         expect(expectedAsyncCallOrder).to(equal(actualAsyncCallOrder))
         expect(expectedSyncCallOrder).to(equal(actualCallOrder))

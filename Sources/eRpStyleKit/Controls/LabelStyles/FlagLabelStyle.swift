@@ -58,7 +58,7 @@ public struct FlagLabelStyle: LabelStyle {
         case .blue:
             return Colors.primary700
         case .red:
-            return Colors.red600
+            return Colors.red700
         }
     }
 

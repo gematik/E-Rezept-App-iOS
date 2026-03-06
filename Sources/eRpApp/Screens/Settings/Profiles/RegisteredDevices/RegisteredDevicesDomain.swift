@@ -73,7 +73,7 @@ struct RegisteredDevicesDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = cardWall
         case cardWallCAN(CardWallCANDomain)
@@ -135,7 +135,7 @@ struct RegisteredDevicesDomain {
             case let .success(entries):
                 state.content = .loaded(
                     entries.pairingEntries
-                        .sorted(by: { $0.creationTime > $1.creationTime })
+                        .sorted { $0.creationTime > $1.creationTime }
                         .map { ($0, dateFormatter) }
                         .map(State.Entry.init)
                 )
@@ -154,7 +154,7 @@ struct RegisteredDevicesDomain {
         case let .response(.loadDevicesReceived(.success(entries))):
             state.content = .loaded(
                 entries.pairingEntries
-                    .sorted(by: { $0.creationTime > $1.creationTime })
+                    .sorted { $0.creationTime > $1.creationTime }
                     .map { ($0, dateFormatter) }
                     .map(State.Entry.init)
             )
@@ -349,3 +349,6 @@ extension SignedPairingData {
         )
     }
 }
+
+extension RegisteredDevicesDomain.Destination.State: Equatable {}
+extension RegisteredDevicesDomain.Destination.Action: Equatable {}

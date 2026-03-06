@@ -26,7 +26,7 @@ import Nimble
 import XCTest
 
 @MainActor
-final class MedicationReminderUITests: XCTestCase, Sendable {
+final class MedicationReminderUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func tearDown() async throws {
@@ -87,7 +87,7 @@ final class MedicationReminderUITests: XCTestCase, Sendable {
         // Check "Off"
         expect(details.medicationReminderCell().value as? String).to(equal("Aus"))
         // Abgabehinweise korrekt auf 1-1-1-1
-        expect(details.dosageInstructionCell().label).to(beginWith("1-1-1-1"))
+        expect(details.dosageInstructionCell().label).to(beginWith("Einnahmehinweise, 1-1-1-1"))
 
         let reminderSetup = details.tapSetupMedicationReminder()
 

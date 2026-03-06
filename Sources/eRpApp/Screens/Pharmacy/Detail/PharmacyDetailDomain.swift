@@ -36,7 +36,7 @@ import SwiftUI
 
 @Reducer
 struct PharmacyDetailDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
@@ -418,3 +418,6 @@ extension PharmacyDetailDomain {
         }
     }
 }
+
+extension PharmacyDetailDomain.Destination.State: Equatable {}
+extension PharmacyDetailDomain.Destination.Action: Equatable {}

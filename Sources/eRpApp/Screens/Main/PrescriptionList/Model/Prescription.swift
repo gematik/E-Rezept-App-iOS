@@ -524,7 +524,7 @@ extension Prescription {
             switch progress {
             case .request: return Colors.primary500
             case .insurance: return Colors.yellow500
-            case .download, .activate, .completed: return Colors.secondary600
+            case .download, .activate, .completed: return Colors.secondary700
             case .archive: return Colors.systemGray2
             case .noInformation: return Colors.red500
             }

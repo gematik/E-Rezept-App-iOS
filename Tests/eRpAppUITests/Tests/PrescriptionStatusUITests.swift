@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 @MainActor
-class PrescriptionStatusUITests: XCTestCase, Sendable {
+class PrescriptionStatusUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() async throws {

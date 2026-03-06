@@ -23,6 +23,7 @@
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import eRpStyleKit
 import Pharmacy
 import SnapshotTesting
 import SwiftUI
@@ -43,6 +44,7 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
                 EmptyReducer()
             })
         }
+        .tint(Colors.primary)
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -58,11 +60,11 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
         let sut = NavigationStack {
             PharmacyPrescriptionSelectionView(store: StoreOf<PharmacyPrescriptionSelectionDomain>(
                 initialState: initialState
-
             ) {
                 EmptyReducer()
             })
         }
+        .tint(Colors.primary)
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())

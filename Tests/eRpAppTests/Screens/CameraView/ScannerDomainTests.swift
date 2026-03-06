@@ -44,7 +44,7 @@ final class ScannerDomainTests: XCTestCase {
         withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let userSessionContainer = MockUsersSessionContainer()
+        let userSessionContainer = UsersSessionContainerMock()
         userSessionContainer.userSession = MockUserSession()
 
         return TestStore(initialState: state) {
@@ -98,52 +98,52 @@ final class ScannerDomainTests: XCTestCase {
     }
 
     func testScanUniversalLink() async {
-        let mockRouter = MockRouting()
+        let mockRouter = RoutingMock()
         let store = testStore { dependencies in
             dependencies.router = mockRouter
         }
 
-        let url: URL = "https://erezept.gematik.de/pharmacies/#tiid=123"
+        let url = URL(string: "https://erezept.gematik.de/pharmacies/#tiid=123")!
 
-        expect(mockRouter.routeToCallsCount).to(equal(0))
+        expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(0))
         await store.send(.analyse(scanOutput: [.text(url.absoluteString)])) {
             $0.scanState = .loading(nil)
         }
         await testScheduler.advance()
-        expect(mockRouter.routeToCallsCount).to(equal(1))
-        expect(mockRouter.routeToReceivedEndpoint).to(equal(.universalLink(url)))
+        expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(1))
+        expect(mockRouter.routeToEndpointEndpointVoidReceivedEndpoint).to(equal(.universalLink(url)))
     }
 
     func testScanForeignUrlIsIgnored() async {
-        let mockRouter = MockRouting()
+        let mockRouter = RoutingMock()
         let store = testStore { dependencies in
             dependencies.router = mockRouter
         }
 
-        let foreignUrl: URL = "https://example.com/some-page"
+        let foreignUrl = URL(string: "https://example.com/some-page")!
 
-        expect(mockRouter.routeToCallsCount).to(equal(0))
+        expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(0))
         expect(self.isDismissInvoked.value).to(beFalse())
 
         await store.send(.analyse(scanOutput: [.text(foreignUrl.absoluteString)]))
         await testScheduler.advance()
 
         // Verify that router was NOT called and dismiss was NOT invoked
-        expect(mockRouter.routeToCallsCount).to(equal(0))
+        expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(0))
         expect(self.isDismissInvoked.value).to(beFalse())
     }
 
     func testScanSupportedUniversalLinks() async {
         let supportedUrls: [URL] = [
-            "https://erezept.gematik.de/extauth",
-            "https://erezept.gematik.de/pharmacies/index.html",
-            "https://erezept.gematik.de/pharmacies",
-            "https://erezept.gematik.de/prescription",
+            URL(string: "https://erezept.gematik.de/extauth")!,
+            URL(string: "https://erezept.gematik.de/pharmacies/index.html")!,
+            URL(string: "https://erezept.gematik.de/pharmacies")!,
+            URL(string: "https://erezept.gematik.de/prescription")!,
         ]
 
         for url in supportedUrls {
             // Create a fresh store for each test to avoid dismissed store issues
-            let mockRouter = MockRouting()
+            let mockRouter = RoutingMock()
             let store = testStore { dependencies in
                 dependencies.router = mockRouter
             }
@@ -155,23 +155,23 @@ final class ScannerDomainTests: XCTestCase {
             await testScheduler.advance()
 
             // Verify router was called for supported URL
-            expect(mockRouter.routeToCallsCount).to(equal(1))
-            expect(mockRouter.routeToReceivedEndpoint).to(equal(.universalLink(url)))
+            expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(1))
+            expect(mockRouter.routeToEndpointEndpointVoidReceivedEndpoint).to(equal(.universalLink(url)))
             expect(self.isDismissInvoked.value).to(beTrue())
         }
     }
 
     func testScanUnsupportedUniversalLinkPathsAreIgnored() async {
         let unsupportedUrls: [URL] = [
-            "https://erezept.gematik.de/unknown",
-            "https://erezept.gematik.de/some/other/path",
-            "https://example.org/pharmacies", // wrong domain but correct path
-            "https://erezept.gematik.de/", // root path
+            URL(string: "https://erezept.gematik.de/unknown")!,
+            URL(string: "https://erezept.gematik.de/some/other/path")!,
+            URL(string: "https://example.org/pharmacies")!, // wrong domain but correct path
+            URL(string: "https://erezept.gematik.de/")!, // root path
         ]
 
         for url in unsupportedUrls {
             // Create a fresh store for each test
-            let mockRouter = MockRouting()
+            let mockRouter = RoutingMock()
             let store = testStore { dependencies in
                 dependencies.router = mockRouter
             }
@@ -182,7 +182,7 @@ final class ScannerDomainTests: XCTestCase {
             await testScheduler.advance()
 
             // Verify router was NOT called for unsupported URL
-            expect(mockRouter.routeToCallsCount).to(equal(0))
+            expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(0))
             expect(self.isDismissInvoked.value).to(beFalse())
         }
     }

@@ -114,7 +114,7 @@ struct ExtAuthPendingDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         case extAuthAlert(ErpAlertState<Alert>)
@@ -314,3 +314,6 @@ extension URLComponents {
         queryItems?.first { $0.name == name }
     }
 }
+
+extension ExtAuthPendingDomain.Destination.State: Equatable {}
+extension ExtAuthPendingDomain.Destination.Action: Equatable {}

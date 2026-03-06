@@ -52,5 +52,11 @@
         "text": "**🏛️ Registrace pro více osob** \nRegistrace je nyní možná i pro pojištěnce federálních institucí, jako je federální policie a další. \n \n **🕒 Vylepšená otevírací doba lékáren** \nNyní se zobrazuje pohotovostní služba a zvláštní zavírací doba lékáren, pokud jsou k dispozici. \n \n **💊 Výběr všech receptů** \nPři uplatňování receptů lze nyní vybrat všechny recepty současně. \n \n **♿ Přístupnost** \nBarvy písem a ikon byly upraveny pro dosažení vyššího kontrastu. Dále byl vylepšen hlasový výstup VoiceOver pro úpravu profilového obrázku a rozpoznávání stavu přihlášení.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Zobrazení kódů receptů** \nObrazovka pro dávkové a jednotlivé kódy byla přepracována pro intuitivnější použití. \n \n **❤️ Oblíbené položky z lékárny** \nOblíbené položky z lékárny nyní fungují spolehlivěji a jsou kompatibilní s VoiceOverem. \n \n **♿ Přístupnost** \nNavigace pomocí VoiceOveru a klávesnice je vylepšena, tlačítka, text a vstupní pole jsou snadněji identifikovatelná a položky seznamu jsou logičtěji strukturované. Zvětšené písmo nyní funguje na všech obrazovkách aplikací. Animovaná videa se přehrávají pouze jednou, aby podpořila uživatele s kognitivním postižením.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

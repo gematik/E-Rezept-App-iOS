@@ -62,13 +62,13 @@ struct DebugEnvironmentView: View {
                 Text(state.environmentName)
                     .foregroundColor(Colors.systemColorWhite)
                     .padding(.horizontal, 16)
-                    .background(Colors.red600)
+                    .background(Colors.red700)
                     .cornerRadius(4)
                     .font(Font.system(size: 16).bold())
 
                 if state.loggingEnabled {
                     Circle()
-                        .fill(Colors.red600)
+                        .fill(Colors.red700)
                         .frame(width: 8, height: 8)
                         .offset(x: 12, y: 0)
                 }

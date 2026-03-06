@@ -260,7 +260,7 @@ final class RealIDPClientTests: XCTestCase {
         }
 
         let encodedJwe = jwe.encoded().utf8string!
-        let encodedJWEBody = "signed_challenge=\(encodedJwe)".data(using: .utf8)!
+        let encodedJWEBody = Data("signed_challenge=\(encodedJwe)".utf8)
 
         let state = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc"
 
@@ -325,7 +325,7 @@ final class RealIDPClientTests: XCTestCase {
             encryption: .a256gcm,
             contentType: "NJWT")
 
-        let jwePayload = "<dummy_jwe_payload>".data(using: .utf8)!
+        let jwePayload = Data("<dummy_jwe_payload>".utf8)
 
         let jwe = try JWE(
             header: header,
@@ -347,7 +347,7 @@ final class RealIDPClientTests: XCTestCase {
 
         let jwe = try dummyJwe()
         let encodedJwe = jwe.encoded().utf8string!
-        let encodedJWEBody = "encrypted_registration_data=\(encodedJwe)".data(using: .utf8)!
+        let encodedJWEBody = Data("encrypted_registration_data=\(encodedJwe)".utf8)
 
         var counter = 0
         let endpoint = localDiscoveryDocument.pairing.url
@@ -396,7 +396,7 @@ final class RealIDPClientTests: XCTestCase {
 
         let jwe = try dummyJwe()
         let encodedJwe = jwe.encoded().utf8string!
-        let encodedJWEBody = "encrypted_registration_data=\(encodedJwe)".data(using: .utf8)!
+        let encodedJWEBody = Data("encrypted_registration_data=\(encodedJwe)".utf8)
 
         var counter = 0
         let endpoint = localDiscoveryDocument.pairing.url
@@ -443,7 +443,7 @@ final class RealIDPClientTests: XCTestCase {
 
         let jwe = try dummyJwe()
         let encodedJwe = jwe.encoded().utf8string!
-        let encodedJWEBody = "encrypted_signed_authentication_data=\(encodedJwe)".data(using: .utf8)!
+        let encodedJWEBody = Data("encrypted_signed_authentication_data=\(encodedJwe)".utf8)
 
         let state = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc"
 
@@ -499,7 +499,7 @@ final class RealIDPClientTests: XCTestCase {
     func testSendAltVerifyReturnsError() throws {
         let jwe = try dummyJwe()
         let encodedJwe = jwe.encoded().utf8string!
-        let encodedJWEBody = "encrypted_signed_authentication_data=\(encodedJwe)".data(using: .utf8)!
+        let encodedJWEBody = Data("encrypted_signed_authentication_data=\(encodedJwe)".utf8)
 
         var counter = 0
         let authenticationEndpoint = localDiscoveryDocument.authenticationPaired.url
@@ -644,7 +644,7 @@ final class RealIDPClientTests: XCTestCase {
         let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey()
         let nonce = try! generateSecureRandom(length: 12)
         let aesKeyData = try! Data(hex: "668D155004E1110DB6914BA40346A302312FA3F1AB647EC79FA12F96793E5205")
-        return IDPCrypto(randomGenerator: { _ in "UWWzuvaSG".data(using: .utf8)! },
+        return IDPCrypto(randomGenerator: { _ in Data("UWWzuvaSG".utf8) },
                          brainpoolKeyPairGenerator: { privateKey },
                          aesNonceGenerator: { nonce },
                          aesKey: SymmetricKey(data: aesKeyData))
@@ -685,14 +685,16 @@ final class RealIDPClientTests: XCTestCase {
             "client_id": config.clientId,
         ]
 
-        let httpBodyData = parameters
-            .sorted(by: { $0.0 > $1.0 })
-            .map { key, value -> String in
-                let escapedValue = value.urlPercentEscapedString()
-                return "\(key)=\(escapedValue ?? value)"
-            }
-            .joined(separator: "&")
-            .data(using: .utf8)!
+        let httpBodyData = Data(
+            parameters
+                .sorted(by: { $0.0 > $1.0 })
+                .map { key, value -> String in
+                    let escapedValue = value.urlPercentEscapedString()
+                    return "\(key)=\(escapedValue ?? value)"
+                }
+                .joined(separator: "&")
+                .utf8
+        )
 
         let idpTokenResponsePath = Bundle.module
             .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
@@ -746,14 +748,16 @@ final class RealIDPClientTests: XCTestCase {
             "client_id": config.clientId,
         ]
 
-        let httpBodyData = parameters
-            .sorted(by: { $0.0 > $1.0 })
-            .map { key, value -> String in
-                let escapedValue = value.urlPercentEscapedString()
-                return "\(key)=\(escapedValue ?? value)"
-            }
-            .joined(separator: "&")
-            .data(using: .utf8)!
+        let httpBodyData = Data(
+            parameters
+                .sorted(by: { $0.0 > $1.0 })
+                .map { key, value -> String in
+                    let escapedValue = value.urlPercentEscapedString()
+                    return "\(key)=\(escapedValue ?? value)"
+                }
+                .joined(separator: "&")
+                .utf8
+        )
 
         let idpTokenResponsePath = Bundle.module
             .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
@@ -789,9 +793,10 @@ final class RealIDPClientTests: XCTestCase {
     }
 
     func testLoadDirectoryKKApps() throws {
-        let loadDirectoryKKAppsResponse =
-            "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJmZWRfaWRwX2xpc3QiOlt7ImlkcF9uYW1lIjogIkdlbWF0aWsgS0siLCJpZHBfaXNzIjogImtrQXBwSWQwMDEiLCAiaWRwX3Nla18yIjogdHJ1ZX0seyAgICAiaWRwX25hbWUiOiAiQW5kZXJlIEtLIiwgImlkcF9pc3MiOiAia2tBcHBJZDAwMiIsICJpZHBfc2VrXzIiOiB0cnVlfSx7ICAgICJpZHBfbmFtZSI6ICJBbmRlcmUgS0syIiwgImlkcF9pc3MiOiAia2tBcHBJZDAwMiIsICJpZHBfc2VrXzIiOiBmYWxzZX0seyAgICAiaWRwX25hbWUiOiAiQW5kZXJlIEtLMyIsICJpZHBfaXNzIjogImtrQXBwSWQwMDIifV19.NnAngqzLOG9aP-QIr_GvEbCdyTE9NqzR8NiEOWu8rR8FZJE136iC1Tft2mglZ0f2oTQM0JLquzKouaeui8qAgA" // swiftlint:disable:this line_length
-            .data(using: .utf8)!
+        let loadDirectoryKKAppsResponse = Data(
+            "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJmZWRfaWRwX2xpc3QiOlt7ImlkcF9uYW1lIjogIkdlbWF0aWsgS0siLCJpZHBfaXNzIjogImtrQXBwSWQwMDEiLCAiaWRwX3Nla18yIjogdHJ1ZX0seyAgICAiaWRwX25hbWUiOiAiQW5kZXJlIEtLIiwgImlkcF9pc3MiOiAia2tBcHBJZDAwMiIsICJpZHBfc2VrXzIiOiB0cnVlfSx7ICAgICJpZHBfbmFtZSI6ICJBbmRlcmUgS0syIiwgImlkcF9pc3MiOiAia2tBcHBJZDAwMiIsICJpZHBfc2VrXzIiOiBmYWxzZX0seyAgICAiaWRwX25hbWUiOiAiQW5kZXJlIEtLMyIsICJpZHBfaXNzIjogImtrQXBwSWQwMDIifV19.NnAngqzLOG9aP-QIr_GvEbCdyTE9NqzR8NiEOWu8rR8FZJE136iC1Tft2mglZ0f2oTQM0JLquzKouaeui8qAgA"
+                .utf8 // swiftlint:disable:previous line_length
+        )
         let responseJWT = try JWT(from: loadDirectoryKKAppsResponse)
 
         var counter = 0
