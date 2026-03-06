@@ -474,6 +474,62 @@ digraph G {
         href="errors.html#verifypinerror"
     ];
 
+    "EuCodeGenerationError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="EuCodeGenerationError" width="200" COLSPAN="2" ID="EuCodeGenerationError"><FONT POINT-SIZE="16.0">EuCodeGenerationError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04601</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="euCGImageConversion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">euCGImageConversion</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="EuCodeGenerationError"
+        fontsize="10pt"
+        href="errors.html#eucodegenerationerror"
+    ];
+
+    "EuRedeemServiceError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="EuRedeemServiceError" width="200" COLSPAN="2" ID="EuRedeemServiceError"><FONT POINT-SIZE="16.0">EuRedeemServiceError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="eRxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">eRxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04702</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="localStoreError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">localStoreError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04703</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="euCodeGeneration" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">euCodeGeneration</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04704</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04705</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noTokenAvailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noTokenAvailable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-04706</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="loginHandler" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">loginHandler</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="EuRedeemServiceError"
+        fontsize="10pt"
+        href="errors.html#euredeemserviceerror"
+    ];
+
     "HTTPClientError" [
         label=
     <
@@ -2244,6 +2300,24 @@ digraph G {
         href="errors.html#error"
     ];
 
+    "ErxTaskError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="ErxTaskError" width="200" COLSPAN="2" ID="ErxTaskError"><FONT POINT-SIZE="16.0">ErxTaskError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unableToConstructInputPatch" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unableToConstructInputPatch</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="ErxTaskError"
+        fontsize="10pt"
+        href="errors.html#error"
+    ];
+
     "ErxTaskOrderError" [
         label=
     <
@@ -2286,6 +2360,24 @@ digraph G {
         id="ErxRepositoryError"
         fontsize="10pt"
         href="errors.html#erxrepositoryerror"
+    ];
+
+    "EuAccessCodeError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="EuAccessCodeError" width="200" COLSPAN="2" ID="EuAccessCodeError"><FONT POINT-SIZE="16.0">EuAccessCodeError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-20901</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unableToConstructEuAccessCodeRequest" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unableToConstructEuAccessCodeRequest</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="EuAccessCodeError"
+        fontsize="10pt"
+        href="errors.html#error"
     ];
 
     "LocalStoreError" [
@@ -2601,6 +2693,10 @@ digraph G {
   "NFCSignatureProviderError":verifyCardError -> "VerifyPINError";
   "NFCSignatureProviderError":signingFailure -> "SigningError";
   "NFCSignatureProviderError":secureEnclaveError -> "SecureEnclaveSignatureProviderError";
+  "EuRedeemServiceError":eRxRepository -> "ErxRepositoryError";
+  "EuRedeemServiceError":localStoreError -> "LocalStoreError";
+  "EuRedeemServiceError":euCodeGeneration -> "EuCodeGenerationError";
+  "EuRedeemServiceError":loginHandler -> "LoginHandlerError";
   "IDPError":internal -> "InternalError";
   "IDPError":biometrics -> "SecureEnclaveSignatureProviderError";
   "PharmacyRepositoryError":local -> "LocalStoreError";

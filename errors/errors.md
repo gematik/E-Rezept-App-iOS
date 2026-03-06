@@ -1,12 +1,12 @@
 # Swift Error Documentation
 
-Generated on: 2025-12-22 13:40:23
+Generated on: 2026-02-24 15:11:34
 
 ## Summary
 
-- **Total Files**: 71
-- **Total Error Enums**: 84
-- **Total Error Cases**: 351
+- **Total Files**: 75
+- **Total Error Enums**: 88
+- **Total Error Cases**: 360
 
 ## Table of Contents
 
@@ -25,6 +25,8 @@ Generated on: 2025-12-22 13:40:23
 - [NFCSignatureProviderError](#nfcsignatureprovidererror)
 - [SigningError](#signingerror)
 - [VerifyPINError](#verifypinerror)
+- [EuCodeGenerationError](#eucodegenerationerror)
+- [EuRedeemServiceError](#euredeemserviceerror)
 - [HTTPClientError](#httpclienterror)
 - [IDPError](#idperror)
 - [InternalError](#internalerror)
@@ -80,8 +82,10 @@ Generated on: 2025-12-22 13:40:23
 - [DefaultDataMatrixStringEncoderError](#defaultdatamatrixstringencodererror)
 - [ErxConsentError](#erxconsenterror)
 - [StatusError](#statuserror)
+- [ErxTaskError](#erxtaskerror)
 - [ErxTaskOrderError](#erxtaskordererror)
 - [ErxRepositoryError](#erxrepositoryerror)
+- [EuAccessCodeError](#euaccesscodeerror)
 - [LocalStoreError](#localstoreerror)
 - [RemoteStoreError](#remotestoreerror)
 - [ScannedErxTaskError](#scannederxtaskerror)
@@ -404,6 +408,46 @@ User input error
 | `00605` | `passwordNotUsable` | Password is transport protected |
 | `00606` | `passwordNotFound` | Referenced password could not be found |
 | `00607` | `unknownFailure` | Any (unexpected) error not specified in gemSpec_COS 14.6.6.2 |
+
+---
+
+## EuCodeGenerationError
+
+**Error Code**: `046`
+**Qualified Name**: `EuCodeGenerationError`
+**File**: `./Sources/FeatureEURedeem/EuAccessCodeGenerator.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `04601` | `euCGImageConversion` | No description |
+
+---
+
+## EuRedeemServiceError
+
+**Error Code**: `047`
+**Qualified Name**: `EuRedeemServiceError`
+**File**: `./Sources/FeatureEURedeem/EuRedeemServiceError.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `04701` | `eRxRepository` | No description |
+| `04702` | `localStoreError` | No description |
+| `04703` | `euCodeGeneration` | No description |
+| `04704` | `unspecified` | No description |
+| `04705` | `noTokenAvailable` | No description |
+| `04706` | `loginHandler` | No description |
+
+### Related Errors
+
+- Case `eRxRepository` → [ErxRepositoryError](#erxrepositoryerror)
+- Case `localStoreError` → [LocalStoreError](#localstoreerror)
+- Case `euCodeGeneration` → [EuCodeGenerationError](#eucodegenerationerror)
+- Case `loginHandler` → [LoginHandlerError](#loginhandlererror)
 
 ---
 
@@ -1497,6 +1541,20 @@ User input error
 
 ---
 
+## ErxTaskError
+
+**Error Code**: `209`
+**Qualified Name**: `ErxTask.Error`
+**File**: `./Sources/eRpKit/ErxModels/ErxTask.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `20901` | `unableToConstructInputPatch` | No description |
+
+---
+
 ## ErxTaskOrderError
 
 **Error Code**: `208`
@@ -1529,6 +1587,20 @@ User input error
 
 - Case `local` → [LocalStoreError](#localstoreerror)
 - Case `remote` → [RemoteStoreError](#remotestoreerror)
+
+---
+
+## EuAccessCodeError
+
+**Error Code**: `209`
+**Qualified Name**: `EuAccessCode.Error`
+**File**: `./Sources/eRpKit/EuAccessCode.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `20901` | `unableToConstructEuAccessCodeRequest` | No description |
 
 ---
 
@@ -1748,6 +1820,10 @@ This section shows how errors are related to each other through associated types
 - `NFCSignatureProviderError.verifyCardError` → `VerifyPINError`
 - `NFCSignatureProviderError.signingFailure` → `SigningError`
 - `NFCSignatureProviderError.secureEnclaveError` → `SecureEnclaveSignatureProviderError`
+- `EuRedeemServiceError.eRxRepository` → `ErxRepositoryError`
+- `EuRedeemServiceError.localStoreError` → `LocalStoreError`
+- `EuRedeemServiceError.euCodeGeneration` → `EuCodeGenerationError`
+- `EuRedeemServiceError.loginHandler` → `LoginHandlerError`
 - `IDPError.`internal`` → `InternalError`
 - `IDPError.biometrics` → `SecureEnclaveSignatureProviderError`
 - `PharmacyRepositoryError.local` → `LocalStoreError`

@@ -1,9 +1,9 @@
 {
   "summary": {
-    "total_files": 71,
-    "total_enums": 84,
-    "total_cases": 351,
-    "generated_at": "2025-12-22T13:40:23+01:00"
+    "total_files": 75,
+    "total_enums": 88,
+    "total_cases": 360,
+    "generated_at": "2026-02-24T15:11:33+01:00"
   },
   "errors": [
     {
@@ -593,6 +593,73 @@
           "name": "unknownFailure",
           "qualified_name": "NFCSignatureProviderError.VerifyPINError.unknownFailure",
           "documentation": "Any (unexpected) error not specified in gemSpec_COS 14.6.6.2"
+        }
+      ]
+    },
+    {
+      "code": "046",
+      "name": "EuCodeGenerationError",
+      "qualified_name": "EuCodeGenerationError",
+      "documentation": "",
+      "file": "FeatureEURedeem/EuAccessCodeGenerator.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04601",
+          "name": "euCGImageConversion",
+          "qualified_name": "EuCodeGenerationError.euCGImageConversion",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "047",
+      "name": "EuRedeemServiceError",
+      "qualified_name": "EuRedeemServiceError",
+      "documentation": "",
+      "file": "FeatureEURedeem/EuRedeemServiceError.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "04701",
+          "name": "eRxRepository",
+          "qualified_name": "EuRedeemServiceError.eRxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "04702",
+          "name": "localStoreError",
+          "qualified_name": "EuRedeemServiceError.localStoreError",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "04703",
+          "name": "euCodeGeneration",
+          "qualified_name": "EuRedeemServiceError.euCodeGeneration",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "04704",
+          "name": "unspecified",
+          "qualified_name": "EuRedeemServiceError.unspecified",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "04705",
+          "name": "noTokenAvailable",
+          "qualified_name": "EuRedeemServiceError.noTokenAvailable",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "04706",
+          "name": "loginHandler",
+          "qualified_name": "EuRedeemServiceError.loginHandler",
+          "documentation": ""
         }
       ]
     },
@@ -2842,6 +2909,22 @@
       ]
     },
     {
+      "code": "209",
+      "name": "Error",
+      "qualified_name": "ErxTask.Error",
+      "documentation": "",
+      "file": "eRpKit/ErxModels/ErxTask.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20901",
+          "name": "unableToConstructInputPatch",
+          "qualified_name": "ErxTask.Error.unableToConstructInputPatch",
+          "documentation": ""
+        }
+      ]
+    },
+    {
       "code": "208",
       "name": "Error",
       "qualified_name": "ErxTaskOrder.Error",
@@ -2883,6 +2966,22 @@
           "full_id": "20002",
           "name": "remote",
           "qualified_name": "ErxRepositoryError.remote",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "209",
+      "name": "Error",
+      "qualified_name": "EuAccessCode.Error",
+      "documentation": "",
+      "file": "eRpKit/EuAccessCode.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "20901",
+          "name": "unableToConstructEuAccessCodeRequest",
+          "qualified_name": "EuAccessCode.Error.unableToConstructEuAccessCodeRequest",
           "documentation": ""
         }
       ]
