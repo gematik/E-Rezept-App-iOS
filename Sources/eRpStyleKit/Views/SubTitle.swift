@@ -114,19 +114,13 @@ public struct DefaultSubTitleStyle: SubTitleStyle {
             if let details = configuration.details {
                 details
                     .font(.subheadline)
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
         }
     }
 }
 
 public struct SectionContainerSubTitleStyle: SubTitleStyle {
-    let showSeparator: Bool
-
-    public init(showSeparator: Bool = false) {
-        self.showSeparator = showSeparator
-    }
-
     public func makeBody(configuration: SubTitleConfiguration) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             configuration.title
@@ -142,21 +136,20 @@ public struct SectionContainerSubTitleStyle: SubTitleStyle {
             if let details = configuration.details {
                 details
                     .font(.subheadline)
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
         }
-        .bottomDivider(showSeparator: showSeparator)
+        .bottomDividerIfNeeded()
         .padding(.leading)
+        .rootSectionContainerElement(false)
     }
 }
 
 public struct DetailNavigationSubTitleStyle: SubTitleStyle {
-    let showSeparator: Bool
     let minChevronSpacing: CGFloat
     let stateText: String?
 
-    init(showSeparator: Bool, minChevronSpacing: CGFloat? = nil, stateText: String? = nil) {
-        self.showSeparator = showSeparator
+    init(minChevronSpacing: CGFloat? = nil, stateText: String? = nil) {
         self.minChevronSpacing = minChevronSpacing ?? 16
         self.stateText = stateText
     }
@@ -190,20 +183,18 @@ public struct DetailNavigationSubTitleStyle: SubTitleStyle {
             }
 
             Image(systemName: SFSymbolName.chevronForward)
-                .foregroundColor(Color(.tertiaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
                 .font(.body.weight(.semibold))
         }
-        .bottomDivider(showSeparator: showSeparator)
+        .bottomDividerIfNeeded()
         .padding(.leading)
     }
 }
 
 public struct InfoNavigationSubTitleStyle: SubTitleStyle {
-    let showSeparator: Bool
     let minChevronSpacing: CGFloat
 
-    init(showSeparator: Bool, minChevronSpacing: CGFloat? = nil) {
-        self.showSeparator = showSeparator
+    init(minChevronSpacing: CGFloat? = nil) {
         self.minChevronSpacing = minChevronSpacing ?? 16
     }
 
@@ -233,7 +224,7 @@ public struct InfoNavigationSubTitleStyle: SubTitleStyle {
                 .foregroundColor(Colors.primary700)
                 .font(.subheadline.weight(.semibold))
         }
-        .bottomDivider(showSeparator: showSeparator)
+        .bottomDividerIfNeeded()
         .padding(.leading)
     }
 }
@@ -242,6 +233,16 @@ public struct PlainSectionContainerSubTitleStyle: SubTitleStyle {
     public init() {}
 
     public func makeBody(configuration: SubTitleConfiguration) -> some View {
+        PlainSectionContainerSubTitleBody(configuration: configuration)
+    }
+}
+
+private struct PlainSectionContainerSubTitleBody: View {
+    let configuration: SubTitleConfiguration
+
+    @Environment(\.sectionContainerElementInformation) var sectionContainerElementInformation
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             configuration
                 .title
@@ -257,9 +258,11 @@ public struct PlainSectionContainerSubTitleStyle: SubTitleStyle {
             if let details = configuration.details {
                 details
                     .font(.subheadline)
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
         }
+        .rootSectionContainerElement(false)
+        .sectionContainerElementInformation(sectionContainerElementInformation.disableRoot())
     }
 }
 
@@ -316,14 +319,6 @@ extension SubTitleStyle where Self == SectionContainerSubTitleStyle {
     public static var sectionContainer: SectionContainerSubTitleStyle {
         SectionContainerSubTitleStyle()
     }
-
-    /// A SubTitleStyle that applies an optional divider at the bottom.
-    ///
-    /// To apply this style to a SubTitle, or to a view that contains SubTitles, use
-    /// the ``View/subTitleStyle(.sectionContainer(showSeparator:))`` modifier.
-    public static func sectionContainer(showSeparator: Bool = true) -> SectionContainerSubTitleStyle {
-        SectionContainerSubTitleStyle(showSeparator: showSeparator)
-    }
 }
 
 extension SubTitleStyle where Self == DetailNavigationSubTitleStyle {
@@ -332,7 +327,7 @@ extension SubTitleStyle where Self == DetailNavigationSubTitleStyle {
     /// To apply this style to a SubTitle, or to a view that contains SubTitle, use
     /// the ``View/subTitleStyle(_:)`` modifier.
     public static var navigation: DetailNavigationSubTitleStyle {
-        DetailNavigationSubTitleStyle(showSeparator: true)
+        DetailNavigationSubTitleStyle()
     }
 
     /// A SubTitleStyle that applies a navigation chevron and optionally skips the divider.
@@ -340,12 +335,10 @@ extension SubTitleStyle where Self == DetailNavigationSubTitleStyle {
     /// To apply this style to a SubTitle, or to a view that contains SubTitles, use
     /// the ``View/subTitleStyle(.navigation(showSeparator:))`` modifier.
     public static func navigation(
-        showSeparator: Bool = true,
         minChevronSpacing: CGFloat? = nil,
         stateText: String? = nil
     ) -> DetailNavigationSubTitleStyle {
         DetailNavigationSubTitleStyle(
-            showSeparator: showSeparator,
             minChevronSpacing: minChevronSpacing,
             stateText: stateText
         )
@@ -358,18 +351,7 @@ extension SubTitleStyle where Self == InfoNavigationSubTitleStyle {
     /// To apply this style to a SubTitle, or to a view that contains SubTitle, use
     /// the ``View/subTitleStyle(_:)`` modifier.
     public static var info: InfoNavigationSubTitleStyle {
-        InfoNavigationSubTitleStyle(showSeparator: true)
-    }
-
-    /// A SubTitleStyle that applies an info icon and optionally skips the divider.
-    ///
-    /// To apply this style to a SubTitle, or to a view that contains SubTitles, use
-    /// the ``View/subTitleStyle(.info(showSeparator:))`` modifier.
-    public static func info(
-        showSeparator: Bool = true,
-        minChevronSpacing: CGFloat? = nil
-    ) -> InfoNavigationSubTitleStyle {
-        InfoNavigationSubTitleStyle(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing)
+        InfoNavigationSubTitleStyle()
     }
 }
 
@@ -427,13 +409,13 @@ struct SubTitle_Preview: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 0) {
             SubTitle(title: "abc", description: "def")
-                .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: true))
+                .subTitleStyle(SectionContainerSubTitleStyle())
 
             SubTitle(title: "abc", details: "def", bundle: .module)
-                .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: true))
+                .subTitleStyle(SectionContainerSubTitleStyle())
 
             SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
-                .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: true))
+                .subTitleStyle(SectionContainerSubTitleStyle())
 
             SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
                 .subTitleStyle(.navigation)

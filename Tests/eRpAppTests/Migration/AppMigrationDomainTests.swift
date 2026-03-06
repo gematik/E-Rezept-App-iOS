@@ -33,8 +33,8 @@ import XCTest
 
 @MainActor
 final class AppMigrationDomainTests: XCTestCase {
-    private var mockMigrationManager = MockModelMigrating()
-    private var mockUserDataStore = MockUserDataStore()
+    private var mockMigrationManager = ModelMigratingMock()
+    private var mockUserDataStore = UserDataStoreMock()
     private var finishedMigrationCalledCount: Int = 0
     private var finishedMigrationCalled: Bool {
         finishedMigrationCalledCount > 0
@@ -93,7 +93,7 @@ final class AppMigrationDomainTests: XCTestCase {
             let factory: CoreDataControllerFactory = .init(databaseUrl: { databaseFile }) {
                 @Shared(.coreDataController) var coreDataController
 
-                var fileProtection: FileProtectionType = {
+                let fileProtection: FileProtectionType = {
                     #if os(macOS)
                     return FileProtectionType(rawValue: "none")
                     #else
@@ -130,13 +130,16 @@ final class AppMigrationDomainTests: XCTestCase {
         let startVersion: ModelVersion = .displayName
         let endVersion: ModelVersion = .shouldAutoUpdateNameAtNextLogin
         mockMigrationManager
-            .startModelMigrationFromDefaultProfileNameReturnValue = CurrentValueSubject(endVersion)
-            .setFailureType(to: MigrationError.self)
-            .eraseToAnyPublisher()
+            .startModelMigrationFromCurrentVersionModelVersionDefaultProfileNameStringAnyPublisherModelVersionMigrationErrorReturnValue =
+            CurrentValueSubject(endVersion)
+                .setFailureType(to: MigrationError.self)
+                .eraseToAnyPublisher()
 
         mockUserDataStore.underlyingLatestCompatibleModelVersion = startVersion
         await store.send(.loadCurrentModelVersion)
-        expect(self.mockMigrationManager.startModelMigrationFromDefaultProfileNameCallsCount) == 1
+        expect(self.mockMigrationManager
+            .startModelMigrationFromCurrentVersionModelVersionDefaultProfileNameStringAnyPublisherModelVersionMigrationErrorCallsCount) ==
+            1
         await store.receive(.startMigration(from: startVersion)) { state in
             state.migration = .inProgress
         }
@@ -150,8 +153,10 @@ final class AppMigrationDomainTests: XCTestCase {
     func testMigratingWithErrorAndRetry() async {
         let store = testStore()
         let expectedError = MigrationError.initialization(error: LocalStoreError.notImplemented)
-        mockMigrationManager.startModelMigrationFromDefaultProfileNameReturnValue = Fail(error: expectedError)
-            .eraseToAnyPublisher()
+        mockMigrationManager
+            .startModelMigrationFromCurrentVersionModelVersionDefaultProfileNameStringAnyPublisherModelVersionMigrationErrorReturnValue =
+            Fail(error: expectedError)
+                .eraseToAnyPublisher()
         mockUserDataStore.underlyingLatestCompatibleModelVersion = .taskStatus
 
         await store.send(.startMigration(from: .taskStatus)) { state in

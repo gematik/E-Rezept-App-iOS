@@ -50,7 +50,7 @@ final class ExtAuthPendingViewSnapshotTests: ERPSnapshotTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         mockUserSession.mockUserDataStore.underlyingSelectedProfileId = Just(UUID()).eraseToAnyPublisher()
-        mockUserSession.mockProfileDataStore.listAllProfilesReturnValue =
+        mockUserSession.mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue =
             Just([])
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()
@@ -77,7 +77,7 @@ final class ExtAuthPendingViewSnapshotTests: ERPSnapshotTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         mockUserSession.mockUserDataStore.underlyingSelectedProfileId = Just(UUID()).eraseToAnyPublisher()
-        mockUserSession.mockProfileDataStore.listAllProfilesReturnValue =
+        mockUserSession.mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue =
             Just([])
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()

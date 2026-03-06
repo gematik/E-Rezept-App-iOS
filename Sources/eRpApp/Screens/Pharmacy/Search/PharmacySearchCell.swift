@@ -41,21 +41,17 @@ struct PharmacySearchCell: View {
                     .fontWeight(.semibold)
                     .foregroundColor(Colors.systemLabel)
                     .padding([.top, .bottom], 1)
-                    .accessibilitySortPriority(100)
                     .fixedSize(horizontal: false, vertical: true)
                 HStack {
                     Text(pharmacy.pharmacyLocation.address?.fullAddress ?? "")
                         .lineLimit(1)
                 }
-                .accessibilitySortPriority(90)
                 .foregroundColor(Colors.systemLabelSecondary)
 
                 ColoredOpeningHours(openingState: pharmacy.todayOpeningState)
                     .padding(.top, 1)
-                    .accessibilitySortPriority(80)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilitySortPriority(1000)
             .padding(.trailing, showDistance && pharmacy.distanceInM != nil ? 0 : 16)
 
             if showDistance,
@@ -63,13 +59,11 @@ struct PharmacySearchCell: View {
                 Text(distance)
                     .font(Font.footnote.weight(.semibold))
                     .foregroundColor(Colors.systemLabelSecondary)
-                    .accessibilitySortPriority(50)
                     .padding(.trailing, 4)
             }
 
             if isFavorite {
                 Image(systemName: SFSymbolName.starFill).foregroundColor(Colors.starYellow)
-                    .accessibilitySortPriority(60)
             }
 
             if loading {
@@ -143,7 +137,7 @@ struct PharmacySearchCell_Previews: PreviewProvider {
                         )
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
-                        .buttonStyle(.navigation(showSeparator: true, minChevronSpacing: 0))
+                        .buttonStyle(.navigation(minChevronSpacing: 0))
                         .modifier(SectionContainerCellModifier(last: false))
                     }
                 }

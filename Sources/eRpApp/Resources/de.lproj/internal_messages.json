@@ -52,5 +52,11 @@
         "text": "**🏛️ Anmeldung für mehr Personen**\nDie Anmeldung ist jetzt auch für Versicherte von Bundeseinrichtungen, wie der Bundespolizei und anderen möglich.\n\n**🕒 Bessere Apothekenöffnungszeiten**\nNotdienst- und Sonderschließzeiten von Apotheken werden jetzt angezeigt, sofern diese hinterlegt sind.\n\n**💊 Auswahl von allen Rezepten**\nBeim Einlösen können jetzt alle Rezepte gleichzeitig ausgewählt werden.\n\n**♿ Barrierefreiheit**\nDie Farben von Schriften und Icons wurden angepasst, um höhere Kontrastwerte zu erzielen. Zudem wurden die VoiceOver-Sprachausgaben für das Bearbeiten des Profilbilds und Erkennen des Anmeldestatus verbessert.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Rezeptcodes anzeigen**\nDer Screen für Sammel- und Einzelcodes wurde überarbeitet, um die Nutzung intuitiver zu gestalten.\n\n**❤️ Apothekenfavoriten**\nDie Apothekenfavoriten funktionieren jetzt zuverlässiger und sind mit VoiceOver bedienbar.\n\n**♿ Barrierefreiheit**\nDie VoiceOver- und Tastaturbedienung funktioniert besser, Buttons, Texte und Eingabefelder sind besser erkennbar und Listenelemente sind logischer aufgebaut. Vergrößerte Schrift funktioniert ab jetzt auf allen Screens der App. Animierte Videos werden nur einmal abgespielt, um kognitiv eingeschränkte Nutzende zu unterstützen.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

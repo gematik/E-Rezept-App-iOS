@@ -24,6 +24,7 @@ import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureCardWall
 import FeatureHelpers
 import IDP
 import Nimble
@@ -52,28 +53,28 @@ final class EditProfileDomainTests: XCTestCase {
 
     let mainQueue = DispatchQueue.immediate
 
-    var mockUsersSessionContainer: MockUsersSessionContainer!
-    var mockAppSecurityManager: MockAppSecurityManager!
+    var mockUsersSessionContainer: UsersSessionContainerMock!
+    var mockAppSecurityManager: AppSecurityManagerMock!
     var mockUserSession: MockUserSession!
-    var mockProfileDataStore: MockProfileDataStore!
-    var mockUserDataStore: MockUserDataStore!
-    var mockProfileSecureDataWiper: MockProfileSecureDataWiper!
-    var mockRouting: MockRouting!
-    var mockUserSessionProvider: MockUserSessionProvider!
-    var mockSecureEnclaveSignatureProvider: MockSecureEnclaveSignatureProvider!
+    var mockProfileDataStore: ProfileDataStoreMock!
+    var mockUserDataStore: UserDataStoreMock!
+    var mockProfileSecureDataWiper: ProfileSecureDataWiperMock!
+    var mockRouting: RoutingMock!
+    var mockUserSessionProvider: UserSessionProviderMock!
+    var mockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProviderMock!
 
     override func setUp() {
         super.setUp()
 
-        mockAppSecurityManager = MockAppSecurityManager()
+        mockAppSecurityManager = AppSecurityManagerMock()
         mockUserSession = MockUserSession()
-        mockProfileDataStore = MockProfileDataStore()
-        mockUserDataStore = MockUserDataStore()
-        mockProfileSecureDataWiper = MockProfileSecureDataWiper()
-        mockRouting = MockRouting()
-        mockUserSessionProvider = MockUserSessionProvider()
-        mockSecureEnclaveSignatureProvider = MockSecureEnclaveSignatureProvider()
-        mockUsersSessionContainer = MockUsersSessionContainer()
+        mockProfileDataStore = ProfileDataStoreMock()
+        mockUserDataStore = UserDataStoreMock()
+        mockProfileSecureDataWiper = ProfileSecureDataWiperMock()
+        mockRouting = RoutingMock()
+        mockUserSessionProvider = UserSessionProviderMock()
+        mockSecureEnclaveSignatureProvider = SecureEnclaveSignatureProviderMock()
+        mockUsersSessionContainer = UsersSessionContainerMock()
     }
 
     func testSavingAnEmptyNameDisplaysError() async {
@@ -92,7 +93,8 @@ final class EditProfileDomainTests: XCTestCase {
     func testSavingAnAlteredName() async {
         let sut = testStore(for: Fixtures.profileA)
 
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -105,13 +107,15 @@ final class EditProfileDomainTests: XCTestCase {
 
         await sut.receive(.response(.updateProfileReceived(.success(true))))
 
-        expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount).to(equal(1))
+        expect(self.mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCallsCount).to(equal(1))
     }
 
     func testSavingColor() async {
         let sut = testStore(for: Fixtures.profileA)
 
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -127,7 +131,8 @@ final class EditProfileDomainTests: XCTestCase {
 
         await sut.receive(.response(.updateProfileReceived(.success(true))))
 
-        expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount).to(equal(2))
+        expect(self.mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCallsCount).to(equal(2))
     }
 
     func testSavingFailsDisplaysAlert() async {
@@ -135,8 +140,10 @@ final class EditProfileDomainTests: XCTestCase {
 
         let error = LocalStoreError.notImplemented
 
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Fail(error: error)
-            .eraseToAnyPublisher()
+        mockProfileDataStore
+            .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue =
+            Fail(error: error)
+                .eraseToAnyPublisher()
 
         await sut.send(\.binding.color, .green) { state in
             state.color = .green
@@ -170,7 +177,7 @@ final class EditProfileDomainTests: XCTestCase {
 
         let sut = testStore(for: Fixtures.profileWithDeleteConfirmation)
 
-        mockProfileDataStore.listAllProfilesReturnValue = Just(
+        mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = Just(
             [
                 Fixtures.erxProfile,
                 ProfilesDomainTests.Fixtures.erxProfileA,
@@ -182,18 +189,20 @@ final class EditProfileDomainTests: XCTestCase {
 
         mockUserDataStore.selectedProfileId = Just(nil).eraseToAnyPublisher()
 
-        mockProfileDataStore.deleteProfilesReturnValue = Just(true)
+        mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
 
         // Should show a confirmation dialog
         await sut.send(.destination(.presented(.alert(.confirmDeleteProfile))))
 
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfReceivedInvocations)
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReceivedInvocations)
             .to(equal([Fixtures.erxProfile.id]))
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCallsCount).to(equal(1))
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCallsCount)
+            .to(equal(1))
 
         await sut.receive(.delegate(.close))
     }
@@ -213,7 +222,7 @@ final class EditProfileDomainTests: XCTestCase {
 
         let sut = testStore(for: Fixtures.profileWithDeleteConfirmation)
 
-        mockProfileDataStore.listAllProfilesReturnValue = Just(
+        mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = Just(
             [
                 Fixtures.erxProfile,
                 ProfilesDomainTests.Fixtures.erxProfileA,
@@ -223,11 +232,12 @@ final class EditProfileDomainTests: XCTestCase {
         .setFailureType(to: LocalStoreError.self)
         .eraseToAnyPublisher()
 
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
         mockUserDataStore.selectedProfileId = Just(Fixtures.profileWithDeleteConfirmation.profileId)
             .eraseToAnyPublisher()
 
-        mockProfileDataStore.deleteProfilesReturnValue = Just(true)
+        mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         // Should show a confirmation dialog
@@ -235,8 +245,8 @@ final class EditProfileDomainTests: XCTestCase {
 
         await sut.receive(.delegate(.close))
 
-        expect(self.mockUserDataStore.setSelectedProfileIdCalled).to(beTrue())
-        expect(self.mockUserDataStore.setSelectedProfileIdReceivedInvocations)
+        expect(self.mockUserDataStore.setSelectedProfileIdUUIDVoidCalled).to(beTrue())
+        expect(self.mockUserDataStore.setSelectedProfileIdUUIDVoidReceivedInvocations)
             .to(contain(ProfilesDomainTests.Fixtures.erxProfileA.id))
     }
 
@@ -247,40 +257,42 @@ final class EditProfileDomainTests: XCTestCase {
         mockUserSession.mockUserDataStore = mockUserDataStore
 
         let listProfilesPublisher: PassthroughSubject<[Profile], LocalStoreError> = PassthroughSubject()
-        mockProfileDataStore.listAllProfilesReturnValue = listProfilesPublisher.eraseToAnyPublisher()
+        mockProfileDataStore.listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue = listProfilesPublisher
+            .eraseToAnyPublisher()
             .eraseToAnyPublisher()
 
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
         mockUserDataStore.selectedProfileId = Just(Fixtures.profileWithDeleteConfirmation.profileId)
             .eraseToAnyPublisher()
 
-        mockProfileDataStore.saveProfilesReturnValue = Just(true)
+        mockProfileDataStore.saveProfilesProfileAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        mockProfileDataStore.deleteProfilesReturnValue = Just(true)
+        mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         // Should show a confirmation dialog
         await sut.send(.destination(.presented(.alert(.confirmDeleteProfile))))
 
-        expect(self.mockProfileDataStore.saveProfilesCalled).to(beFalse())
-        expect(self.mockProfileDataStore.deleteProfilesCalled).to(beFalse())
+        expect(self.mockProfileDataStore.saveProfilesProfileAnyPublisherBoolLocalStoreErrorCalled).to(beFalse())
+        expect(self.mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorCalled).to(beFalse())
 
         listProfilesPublisher.send([Fixtures.erxProfile])
 
-        expect(self.mockProfileDataStore.saveProfilesCalled).to(beTrue())
-        expect(self.mockProfileDataStore.deleteProfilesCalled).to(beFalse())
+        expect(self.mockProfileDataStore.saveProfilesProfileAnyPublisherBoolLocalStoreErrorCalled).to(beTrue())
+        expect(self.mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorCalled).to(beFalse())
 
         listProfilesPublisher.send([Fixtures.erxProfile, ProfilesDomainTests.Fixtures.erxProfileA])
 
         await sut.receive(.delegate(.close))
 
-        expect(self.mockProfileDataStore.saveProfilesCalled).to(beTrue())
-        expect(self.mockProfileDataStore.deleteProfilesCalled).to(beTrue())
+        expect(self.mockProfileDataStore.saveProfilesProfileAnyPublisherBoolLocalStoreErrorCalled).to(beTrue())
+        expect(self.mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorCalled).to(beTrue())
 
-        expect(self.mockUserDataStore.setSelectedProfileIdCalled).to(beTrue())
-        expect(self.mockUserDataStore.setSelectedProfileIdReceivedInvocations)
+        expect(self.mockUserDataStore.setSelectedProfileIdUUIDVoidCalled).to(beTrue())
+        expect(self.mockUserDataStore.setSelectedProfileIdUUIDVoidReceivedInvocations)
             .to(contain(ProfilesDomainTests.Fixtures.erxProfileA.id))
     }
 
@@ -291,16 +303,18 @@ final class EditProfileDomainTests: XCTestCase {
             .erxProfileWithTokenAndDetails)
                     .setFailureType(to: LocalStoreError.self)
                     .eraseToAnyPublisher()
-        mockProfileDataStore.fetchProfileByReturnValue = fetchProfileByPublisher
+        mockProfileDataStore
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue =
+            fetchProfileByPublisher
 
         let mockSecureUserStore = MockSecureUserStore()
         mockSecureUserStore.tokenState = Just(Fixtures.token).eraseToAnyPublisher()
         mockSecureUserStore.can = Just(Fixtures.can).eraseToAnyPublisher()
         mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
-        mockProfileSecureDataWiper.secureStorageOfReturnValue = mockSecureUserStore
+        mockProfileSecureDataWiper.secureStorageOfProfileIdUUIDSecureUserDataStoreReturnValue = mockSecureUserStore
         let mockUserSession = MockUserSession()
         mockUserSession.secureUserStore = mockSecureUserStore
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
 
         mockAppSecurityManager.underlyingAvailableSecurityOptions = (options: [.password], error: nil)
 
@@ -324,27 +338,31 @@ final class EditProfileDomainTests: XCTestCase {
             $0.fullName = Fixtures.erxProfileWithTokenAndDetails.fullName
         }
 
-        expect(self.mockUserSessionProvider.userSessionForCalled).to(beTrue())
-        expect(self.mockProfileDataStore.fetchProfileByCalled).to(beTrue())
+        expect(self.mockUserSessionProvider.userSessionForUuidUUIDUserSessionCalled).to(beTrue())
+        expect(self.mockProfileDataStore.fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorCalled)
+            .to(beTrue())
 
         await sut.send(.delegate(.close))
     }
 
-    func testReloginProfileDeletesTokenAndRoutesToMain() async {
+    func testReloginProfileDeletesTokenAndOpensCardWall() async {
         mockUsersSessionContainer.userSession = mockUserSession
         mockUserSession.mockUserDataStore = mockUserDataStore
 
         let sut = testStore(for: Fixtures.profileA)
 
-        mockProfileDataStore.listAllProfilesReturnValue = Just([ProfilesDomainTests.Fixtures.erxProfileA])
-            .setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
+        mockProfileDataStore
+            .listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue =
+            Just([ProfilesDomainTests.Fixtures.erxProfileA])
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
 
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
         mockUserDataStore.selectedProfileId = Just(Fixtures.profileA.profileId)
             .eraseToAnyPublisher()
 
-        mockProfileDataStore.deleteProfilesReturnValue = Just(true)
+        mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -352,22 +370,28 @@ final class EditProfileDomainTests: XCTestCase {
             $0.token = nil
         }
 
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCallsCount).to(equal(1))
-        expect(self.mockRouting.routeToReceivedEndpoint).to(equal(.mainScreen(.login)))
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCallsCount)
+            .to(equal(1))
+        await sut.receive(.showCardWall) {
+            $0.destination = .cardWall(.init(isNFCReady: true, profileId: Fixtures.uuid))
+        }
     }
 
     func testLogoutProfileDeletesToken() async {
         let sut = testStore(for: Fixtures.profileA)
 
-        mockProfileDataStore.listAllProfilesReturnValue = Just([ProfilesDomainTests.Fixtures.erxProfileA])
-            .setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
+        mockProfileDataStore
+            .listAllProfilesAnyPublisherProfileLocalStoreErrorReturnValue =
+            Just([ProfilesDomainTests.Fixtures.erxProfileA])
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
 
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
         mockUserDataStore.selectedProfileId = Just(Fixtures.profileA.profileId)
             .eraseToAnyPublisher()
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
-        mockProfileDataStore.deleteProfilesReturnValue = Just(true)
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
+        mockProfileDataStore.deleteProfilesProfileAnyPublisherBoolLocalStoreErrorReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
@@ -375,7 +399,8 @@ final class EditProfileDomainTests: XCTestCase {
             $0.token = nil
         }
 
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCallsCount).to(equal(1))
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCallsCount)
+            .to(equal(1))
     }
 
     func testShowDeleteBiometricPairingAlert() async {
@@ -395,16 +420,18 @@ final class EditProfileDomainTests: XCTestCase {
         mockSecureUserStore.can = Just(Fixtures.can).eraseToAnyPublisher()
         mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
         mockUserSession.secureUserStore = mockSecureUserStore
-        let mockBiometricsIdpSessionLoginHandler = MockLoginHandler()
-        mockBiometricsIdpSessionLoginHandler.isAuthenticatedOrAuthenticateReturnValue = Just(.success(true))
+        let mockBiometricsIdpSessionLoginHandler = LoginHandlerMock()
+        mockBiometricsIdpSessionLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
         mockUserSession.pairingIdpSessionLoginHandler = mockBiometricsIdpSessionLoginHandler
         let mockIDPSession = IDPSessionMock()
         mockIDPSession.unregisterDevice_Publisher = Just(true).setFailureType(to: IDPError.self).eraseToAnyPublisher()
         mockIDPSession.idpToken.send(Fixtures.token)
         mockUserSession.pairingIdpSession = mockIDPSession
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
 
         // when confirming deletion
         await sut.send(.destination(.presented(.alert(.confirmDeleteBiometricPairing)))) { state in
@@ -413,14 +440,16 @@ final class EditProfileDomainTests: XCTestCase {
             state.destination = nil
         }
 
-        expect(mockBiometricsIdpSessionLoginHandler.isAuthenticatedOrAuthenticateCallsCount).to(equal(1))
+        expect(mockBiometricsIdpSessionLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount).to(equal(1))
         expect(mockIDPSession.autoRefreshedToken_Called).to(beTrue())
         expect(mockIDPSession.unregisterDevice_CallsCount).to(equal(1))
 
         let result = Result<Bool, IDPError>.success(true)
         await sut.receive(.response(.deleteBiometricPairingReceived(result)))
 
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCallsCount).to(equal(1))
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCallsCount)
+            .to(equal(1))
     }
 
     func testDeleteBiometricPairingFailedUnregisterCall() async {
@@ -431,9 +460,10 @@ final class EditProfileDomainTests: XCTestCase {
         mockSecureUserStore.set(keyIdentifier: Fixtures.keyIdentifier)
         mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
         mockUserSession.secureUserStore = mockSecureUserStore
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
-        let mockBiometricsIdpSessionLoginHandler = MockLoginHandler()
-        mockBiometricsIdpSessionLoginHandler.isAuthenticatedOrAuthenticateReturnValue = Just(.success(true))
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
+        let mockBiometricsIdpSessionLoginHandler = LoginHandlerMock()
+        mockBiometricsIdpSessionLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
         mockUserSession.pairingIdpSessionLoginHandler = mockBiometricsIdpSessionLoginHandler
         let mockIDPSession = IDPSessionMock()
@@ -441,8 +471,9 @@ final class EditProfileDomainTests: XCTestCase {
         mockIDPSession.unregisterDevice_Publisher = Fail(error: expectedError).eraseToAnyPublisher()
         mockIDPSession.idpToken.send(Fixtures.token)
         mockUserSession.pairingIdpSession = mockIDPSession
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
 
         // when confirming deletion
         await sut.send(.destination(.presented(.alert(.confirmDeleteBiometricPairing)))) { state in
@@ -451,7 +482,8 @@ final class EditProfileDomainTests: XCTestCase {
             state.destination = nil
         }
 
-        expect(mockBiometricsIdpSessionLoginHandler.isAuthenticatedOrAuthenticateCallsCount).to(equal(1))
+        expect(mockBiometricsIdpSessionLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount).to(equal(1))
         expect(mockIDPSession.autoRefreshedToken_Called).to(beTrue())
         expect(mockIDPSession.unregisterDevice_CallsCount).to(equal(1))
 
@@ -462,7 +494,7 @@ final class EditProfileDomainTests: XCTestCase {
             state.destination = .alert(EditProfileDomain.AlertStates.deleteBiometricPairingFailed(with: expectedError))
         }
 
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCalled).to(beFalse())
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCalled).to(beFalse())
     }
 
     func testDeleteBiometricPairingWithMissingPairingTokenToDoRelogin() async {
@@ -472,15 +504,18 @@ final class EditProfileDomainTests: XCTestCase {
         mockSecureUserStore.tokenState = Just(Fixtures.token).eraseToAnyPublisher()
         mockSecureUserStore.can = Just(Fixtures.can).eraseToAnyPublisher()
         mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
-        let mockBiometricsIdpSessionLoginHandler = MockLoginHandler()
-        mockBiometricsIdpSessionLoginHandler.isAuthenticatedOrAuthenticateReturnValue = Just(.success(false))
-            .eraseToAnyPublisher()
+        let mockBiometricsIdpSessionLoginHandler = LoginHandlerMock()
+        mockBiometricsIdpSessionLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue =
+            Just(.success(false))
+                .eraseToAnyPublisher()
         mockUserSession.pairingIdpSessionLoginHandler = mockBiometricsIdpSessionLoginHandler
         let mockIDPSession = IDPSessionMock()
         mockUserSession.secureUserStore = mockSecureUserStore
         mockUserSession.pairingIdpSession = mockIDPSession
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
-        mockProfileSecureDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
+        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
+            .eraseToAnyPublisher()
         mockUsersSessionContainer.userSession = mockUserSession
 
         // when confirming deletion
@@ -490,7 +525,8 @@ final class EditProfileDomainTests: XCTestCase {
             state.destination = nil
         }
 
-        expect(mockBiometricsIdpSessionLoginHandler.isAuthenticatedOrAuthenticateCallsCount).to(equal(1))
+        expect(mockBiometricsIdpSessionLoginHandler
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount).to(equal(1))
         expect(mockIDPSession.autoRefreshedToken_Called).to(beTrue())
         expect(mockIDPSession.unregisterDevice_Called).to(beFalse())
 
@@ -500,7 +536,10 @@ final class EditProfileDomainTests: XCTestCase {
             state.destination = nil
         }
 
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCalled).to(beTrue())
+        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCalled).to(beTrue())
+        await sut.receive(.showCardWall) {
+            $0.destination = .cardWall(.init(isNFCReady: true, profileId: Fixtures.uuid))
+        }
     }
 
     func testDeleteBiometricPairingConfirmationAlertCancelation() async {
@@ -519,7 +558,7 @@ extension EditProfileDomainTests {
 
         static let token = IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
         static let can = "123132"
-        static let keyIdentifier = "1234567890".data(using: .utf8)!
+        static let keyIdentifier = Data("1234567890".utf8)
 
         static let profileA = EditProfileDomain.State(
             name: "Anna Vetter",

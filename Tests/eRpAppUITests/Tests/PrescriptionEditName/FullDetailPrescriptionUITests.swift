@@ -25,7 +25,7 @@ import Foundation
 import XCTest
 
 @MainActor
-final class FullDetailPrescriptionUITests: XCTestCase, Sendable {
+final class FullDetailPrescriptionUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() async throws {

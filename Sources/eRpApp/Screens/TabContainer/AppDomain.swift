@@ -142,7 +142,7 @@ struct AppDomain {
                 .presented(.editProfile(.destination(.presented(.alert(.confirmDeleteProfile)))))
             )
         ),
-        .settings(action: .destination(.presented(.newProfile(.response(.saveReceived(.success)))))):
+        .settings(action: .destination(.presented(.newProfile(.createAndSaveProfileReceived(.success))))):
             return .concatenate(
                 .send(.main(action: .setNavigation(tag: .none))),
                 .send(.orders(action: .resetNavigation)),
@@ -157,12 +157,15 @@ struct AppDomain {
             return .merge(
                 .run { [profileId = state.profileId] send in
                     do {
-                        let count = try await erxTaskRepository.countAllUnreadCommunicationsAndChargeItems(
+                        for try await count in erxTaskRepository.countAllUnreadCommunicationsAndChargeItems(
                             profileId,
                             .all
-                        )
-                        await send(.newOrderMessageReceived(count), animation: .default)
-                    } catch {}
+                        ) {
+                            await send(.newOrderMessageReceived(count), animation: .default)
+                        }
+                    } catch {
+                        await send(.newOrderMessageReceived(67))
+                    }
                 },
                 .run { send in
                     do {

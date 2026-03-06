@@ -24,7 +24,7 @@ import SwiftUI
 import UIKit
 
 public struct UIKitTextView: UIViewRepresentable {
-    private var attributedString: NSMutableAttributedString
+    private var attributedString: NSAttributedString
     @Binding private var calculatedHeight: CGFloat
     var onLinkTap: (URL) -> Void
 
@@ -35,15 +35,24 @@ public struct UIKitTextView: UIViewRepresentable {
         foregroundColor: UIColor = UIColor.label,
         onLinkTap: @escaping (URL) -> Void
     ) {
+        UITextView.appearance().linkTextAttributes = [.foregroundColor: UIColor.primary700]
+
         _calculatedHeight = calculatedHeight
-        let result = NSMutableAttributedString(attributedString)
-        result.addAttribute(.font,
-                            value: font,
-                            range: NSRange(location: 0, length: result.length))
-        result.addAttribute(.foregroundColor,
-                            value: foregroundColor,
-                            range: NSRange(location: 0, length: result.length))
-        self.attributedString = result
+        var result = attributedString
+        let range = result.startIndex ..< result.endIndex
+        result[range].font = font
+        result[range].foregroundColor = foregroundColor
+
+        // Enable underlines for links
+        for run in result.runs {
+            guard run.attributes.link != nil else { continue }
+
+            result[run.range].underlineStyle = .single
+            result[run.range].mergeAttributes(AttributeContainer([.underlineStyle: 1]))
+            result[run.range].underlineColor = UIColor.primary700
+        }
+
+        self.attributedString = NSAttributedString(result)
         self.onLinkTap = onLinkTap
     }
 

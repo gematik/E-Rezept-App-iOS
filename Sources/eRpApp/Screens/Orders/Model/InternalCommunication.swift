@@ -37,7 +37,7 @@ struct InternalCommunication: Identifiable, Equatable {
     }
 
     var latestMessage: String {
-        messages.last?.text ?? ""
+        messages.first?.text ?? ""
     }
 
     struct Message: Decodable, Identifiable, Equatable {

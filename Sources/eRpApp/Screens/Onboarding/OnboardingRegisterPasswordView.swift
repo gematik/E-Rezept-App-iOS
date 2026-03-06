@@ -84,20 +84,23 @@ extension OnboardingRegisterPasswordView {
                     .opacity(0.01)
                     .accessibility(hidden: true)
 
-                SecureField(L10n.cpwInpPasswordAPlaceholder, text: $store.passwordA)
-                    .onSubmit { store.send(.enterButtonTapped) }
-                    .padding()
-                    .font(Font.body)
-                    .foregroundColor(Colors.systemLabel)
-                    .background(Color(.systemBackground))
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Colors.systemLabelSecondary, lineWidth: 0.5)
-                    )
-                    .padding(1)
-                    .textContentType(.newPassword)
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
+                SecureField(text: $store.passwordA) {
+                    Text(L10n.cpwInpPasswordAPlaceholder)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                }
+                .onSubmit { store.send(.enterButtonTapped) }
+                .padding()
+                .font(Font.body)
+                .foregroundColor(Colors.systemLabel)
+                .background(Color(.systemBackground))
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Colors.systemLabelSecondary, lineWidth: 0.5)
+                )
+                .padding(1)
+                .textContentType(.newPassword)
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
 
                 Text(L10n.cpwTxtPasswordRecommendation)
                     .font(.footnote)
@@ -117,29 +120,32 @@ extension OnboardingRegisterPasswordView {
                 .animation(.easeInOut, value: store.passwordA)
 
                 VStack(alignment: .leading, spacing: 11) {
-                    SecureField(L10n.cpwInpPasswordBPlaceholder, text: $store.passwordB)
-                        .onSubmit { store.send(.enterButtonTapped) }
-                        .padding()
-                        .font(Font.body)
-                        .foregroundColor(Colors.systemLabel)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(
-                                    store.hasValidPasswordEntries ? Color(.systemGreen) : Color(.systemGray3),
-                                    lineWidth: 1
-                                )
-                        )
-                        .padding(1)
-                        .textContentType(.newPassword)
-                        .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
+                    SecureField(text: $store.passwordB) {
+                        Text(L10n.cpwInpPasswordBPlaceholder)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                    }
+                    .onSubmit { store.send(.enterButtonTapped) }
+                    .padding()
+                    .font(Font.body)
+                    .foregroundColor(Colors.systemLabel)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(
+                                store.hasValidPasswordEntries ? Color(.systemGreen) : Color(.systemGray3),
+                                lineWidth: 1
+                            )
+                    )
+                    .padding(1)
+                    .textContentType(.newPassword)
+                    .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
+                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
 
                     if let message = store.passwordErrorMessage {
                         Text(message)
                             .fixedSize(horizontal: false, vertical: true)
-                            .foregroundColor(Colors.red600)
+                            .foregroundColor(Colors.red700)
                             .font(.footnote)
                             .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordsDontMatch)
                     }

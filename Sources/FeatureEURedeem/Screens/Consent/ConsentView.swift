@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpResources
 import eRpStyleKit
 import SwiftUI
 
@@ -32,66 +33,66 @@ public struct ConsentView: View {
     }
 
     public var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
-            VStack(spacing: 0) {
-                // Content
-                VStack(alignment: .leading, spacing: 24) {
-                    Text(L10n.euredeemConsentTitle)
-                        .font(.title.weight(.bold))
-                        .foregroundColor(Colors.systemLabel)
-                        .padding(.bottom, 8)
-                        .accessibilityIdentifier("eu_consent_title")
-
+        VStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Content
                     VStack(alignment: .leading, spacing: 24) {
-                        Text(L10n.euredeemConsentDescription1)
-                            .font(.subheadline)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibilityIdentifier("eu_consent_description_1")
+                        Text(L10n.euredeemConsentTitle)
+                            .font(.title.weight(.bold))
+                            .foregroundColor(Colors.systemLabel)
+                            .padding(.bottom, 8)
+                            .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentTitle)
 
-                        Text(L10n.euredeemConsentDescription2)
-                            .font(.subheadline)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibilityIdentifier("eu_consent_description_2")
+                        VStack(alignment: .leading, spacing: 24) {
+                            Text(L10n.euredeemConsentDescription1)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentDescription1)
+
+                            Text(L10n.euredeemConsentDescription2)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentDescription2)
+                        }
                     }
-                }
-                .padding(.horizontal)
-                .padding(.top, 32)
-
-                Spacer()
-
-                // Info text
-                Text(L10n.euredeemConsentInfoText)
-                    .font(.subheadline)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .multilineTextAlignment(.center)
                     .padding(.horizontal)
-                    .padding(.bottom, 24)
-                    .accessibilityIdentifier("eu_consent_info_text")
-
-                // Buttons
-                VStack(spacing: 8) {
-                    Button(
-                        action: { store.send(.accept) },
-                        label: {
-                            Text(L10n.euredeemConsentAcceptButton)
-                        }
-                    )
-                    .buttonStyle(.primaryHugging)
-                    .accessibilityIdentifier("eu_consent_accept_button")
-
-                    Button(
-                        action: { store.send(.decline) },
-                        label: {
-                            Text(L10n.euredeemConsentDeclineButton)
-                        }
-                    )
-                    .buttonStyle(.primaryHugging)
-                    .accessibilityIdentifier("eu_consent_decline_button")
+                    .padding(.top, 32)
                 }
-                .padding(.bottom, 24)
             }
+
+            // Info text
+            Text(L10n.euredeemConsentInfoText)
+                .font(.subheadline)
+                .foregroundColor(Colors.systemLabelSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+                .padding(.bottom, 24)
+                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentInfo)
+
+            // Buttons
+            VStack(spacing: 8) {
+                Button(
+                    action: { store.send(.accept) },
+                    label: {
+                        Text(L10n.euredeemConsentAcceptButton)
+                    }
+                )
+                .buttonStyle(.primaryHugging)
+                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmBtnEuConsentAccept)
+
+                Button(
+                    action: { store.send(.decline) },
+                    label: {
+                        Text(L10n.euredeemConsentDeclineButton)
+                    }
+                )
+                .buttonStyle(.primaryHugging)
+                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmBtnEuConsentDecline)
+            }
+            .padding(.bottom, 24)
         }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
     }
 }
 

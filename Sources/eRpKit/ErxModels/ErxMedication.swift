@@ -176,3 +176,16 @@ public struct ErxMedication: Hashable, Codable, Sendable {
         }
     }
 }
+
+extension ErxMedication {
+    /// Name of the medication or its ingredients
+    public var displayName: String? {
+        if let name = name {
+            return name
+        } else {
+            let joinedText = ingredients.compactMap(\.text).joined(separator: ", ")
+            guard !joinedText.isEmpty else { return nil }
+            return joinedText
+        }
+    }
+}

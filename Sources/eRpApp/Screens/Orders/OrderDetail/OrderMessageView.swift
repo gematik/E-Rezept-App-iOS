@@ -75,7 +75,8 @@ struct OrderMessageView: View {
                     case .reply, .diga:
                         store.send(.openPhoneAppWith(url: url))
                     case .chargeItem,
-                         .internalCommunication:
+                         .internalCommunication,
+                         .euEntry:
                         // cases have no custom URLs
                         store.send(.openUrl(url: url))
                     }
@@ -92,6 +93,14 @@ struct OrderMessageView: View {
 
                 if case .dispReq = timelineEntry {
                     // ignore action here since it's used as inline text link
+                } else if case let .euEntry(communication, _) = timelineEntry,
+                          case .deletedAccessCode = communication.eventType {
+                    Text(L10n.ordDetailBtnRevokedCode)
+                        .font(Font.subheadline)
+                        .padding(.top)
+                        .padding(.horizontal)
+                        .foregroundColor(Colors.red700)
+                        .accessibilityIdentifier(A11y.orderDetail.list.ordDetailBtnAccessCodeRevoked)
                 } else {
                     ForEach(timelineEntry.actions) { timelineEntry in
                         Button {

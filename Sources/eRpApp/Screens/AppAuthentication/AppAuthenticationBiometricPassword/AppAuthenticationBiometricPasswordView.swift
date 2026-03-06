@@ -90,20 +90,10 @@ struct PasswordView: View {
             SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
                                   accessibilityLabelKey: L10n.authTxtPasswordLabel,
                                   text: $store.password.sending(\.setPassword),
-                                  textContentType: .password) {
+                                  textContentType: .password,
+                                  borderColor: store.showUnsuccessfulAttemptMessage ? Colors.red700 : nil) {
                 store.send(.loginButtonTapped, animation: .default)
             }
-            .padding()
-            .font(Font.body)
-            .background(Color(.systemBackground))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(
-                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.systemLabelSecondary,
-                        lineWidth: 0.5
-                    )
-            )
             .padding(.horizontal)
             .disabled(store.passwordDelayIsActive)
             .accessibility(identifier: A11y.auth.authEdtPasswordInput)
@@ -119,9 +109,10 @@ struct PasswordView: View {
             } label: {
                 Text(L10n.authBtnPasswordContinue)
             }
+            .disabled(!store.isPasswordLoginButtonEnabled)
             .buttonStyle(
                 .primary(
-                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
+                    isEnabled: store.isPasswordLoginButtonEnabled,
                     width: .wideHugging
                 )
             )
@@ -149,7 +140,7 @@ struct PasswordView: View {
         @Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
         var body: some View {
             Text(store.unsuccessfulAttemptMessage)
-                .foregroundColor(Colors.red600)
+                .foregroundColor(Colors.red700)
                 .font(.footnote)
                 .accessibility(identifier: A11y.auth.authTxtPasswordFailure)
                 .fixedSize(horizontal: false, vertical: true)

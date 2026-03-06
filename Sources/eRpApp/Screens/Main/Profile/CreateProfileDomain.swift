@@ -39,8 +39,8 @@ struct CreateProfileDomain {
         }
     }
 
-    enum Action: Equatable {
-        case setProfileName(String)
+    enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
 
         case createAndSaveProfile(name: String)
         case createAndSaveProfileReceived(Result<UUID, UserProfileServiceError>)
@@ -57,10 +57,10 @@ struct CreateProfileDomain {
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
     var body: some ReducerOf<Self> {
+        BindingReducer()
         Reduce { state, action in
             switch action {
-            case let .setProfileName(profileName):
-                state.profileName = profileName
+            case .binding:
                 return .none
 
             case let .createAndSaveProfile(name):

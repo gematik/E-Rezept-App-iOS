@@ -26,7 +26,7 @@ import Foundation
 import XCTest
 
 @MainActor
-final class DiGaUITests: XCTestCase, Sendable {
+final class DiGaUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() async throws {
@@ -118,7 +118,7 @@ final class DiGaUITests: XCTestCase, Sendable {
         // Umfrage Bubble ist aktiv
         await tabBar.tapSettingsTab { settings in
             expect(settings.app.buttons[A11y.settings.contact.stgConTxtDigaSurvey].label)
-                .to(equal("Umfrage zur DiGA Verordnung, Neu"))
+                .to(equal("Umfrage zur DiGA auf externer Webseite"))
         }
     }
 
@@ -206,7 +206,7 @@ final class DiGaUITests: XCTestCase, Sendable {
             expect(self.app.alerts["Rezept löschen?"].waitForExistence(timeout: 5.0)).to(beTrue())
             self.app.alerts["Rezept löschen?"].buttons["Abbrechen"].tap()
 
-            // Status Acceptet -> nicht löschbar
+            // Status Accepted -> nicht löschbar
             await bridge.sendMessage(.scenarioStep(1))
 
             diGaDetails.tapRefreshButton()
@@ -220,8 +220,14 @@ final class DiGaUITests: XCTestCase, Sendable {
                 .waitForExistence(timeout: 5.0)).to(beTrue())
             self.app.alerts.buttons["Okay"].tap()
 
+            // Wait for the 10-second background refresh (triggered after initial redeem) to complete
+            // before changing the scenario state
+            _ = self.app.buttons["Aktualisieren"].waitForExistence(timeout: 10.0 + 2.0)
+
             // Eingelöst -> Löschbar
             await bridge.sendMessage(.scenarioStep(2))
+            // wait for refresh button
+            expect(self.app.buttons["Aktualisieren"].waitForExistence(timeout: 5.0)).to(beTrue())
             diGaDetails.tapRefreshButton()
 
             _ = diGaDetails.tapMenu()
@@ -332,7 +338,7 @@ final class DiGaUITests: XCTestCase, Sendable {
                 )).to(beTrue())
 
                 expect(diGaDetails.app.buttons[A11y.diga.detail.digaDtlTxtPatientCost].label)
-                    .to(equal("0€, Ihr Beitrag"))
+                    .to(equal("Ihr Beitrag, 0€"))
 
                 expect(diGaDetails
                     .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtProductionCost, label: "250€"))

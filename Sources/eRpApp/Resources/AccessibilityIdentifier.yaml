@@ -252,6 +252,8 @@ settings:
     - stg_txt_edit_profile_insurance_id
     - stg_txt_edit_profile_charge_item_list_section_title
     - stg_txt_edit_profile_charge_item_list_section_show_charge_item_list
+    - stg_txt_edit_profile_eu_redeem_list_section_title
+    - stg_btn_edit_profile_eu_redeem_change_consent
     - stg_txt_edit_profile_login_section_title
     - stg_txt_edit_profile_login_section_activate
     - stg_txt_edit_profile_login_section_connected_devices
@@ -332,6 +334,16 @@ redeem:
     - rdm_btn_delivery_tile
     - rdm_btn_redeem_eu_prsc
     - rdm_btn_close_button
+  eu:
+    consent:
+      - rdm_btn_eu_consent_grant
+      - rdm_btn_eu_consent_revoke
+      - rdm_txt_eu_consent_title
+      - rdm_txt_eu_consent_description1
+      - rdm_txt_eu_consent_description2
+      - rdm_txt_eu_consent_info
+      - rdm_btn_eu_consent_accept
+      - rdm_btn_eu_consent_decline
 orders:
   list:
     - ord_txt_empty_list
@@ -348,6 +360,9 @@ orderDetail:
     - ord_detail_btn_contact_map
     - ord_detail_btn_contact_phone
     - ord_detail_btn_contact_email
+    - ord_detail_btn_refresh_code
+    - ord_detail_btn_revoke_accessCode
+    - ord_detail_btn_accessCode_revoked
   pickupCode:
     - puc_txt_title
     - puc_txt_subtitle
@@ -675,6 +690,11 @@ matrixCode:
   - dmc_img_matrixcode
   - dmc_btn_share
   - dmc_btn_redeem_eu_prsc
+  - dmc_btn_segmented_control
+  - dmc_btn_segmented_control_grouped
+  - dmc_btn_segmented_control_single
+  - dmc_btn_previous_page
+  - dmc_btn_next_page
 medicationReminder:
   - med_reminder_btn_activation_toggle
   - med_reminder_btn_dosage_instruction

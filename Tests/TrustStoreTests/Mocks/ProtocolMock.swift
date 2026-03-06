@@ -22,8 +22,6 @@
 //
 
 import TrustStore
-// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
-
 // sourcery:begin: AutoMockable
 extension TrustStoreClient {}
 extension TrustStoreStorage {}

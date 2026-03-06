@@ -17,96 +17,72 @@ configurations:
       - Sources
       - Tests/eRpAppTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/eRpAppTests
     args:
-      protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp, FeatureHelpers, FeatureCardWall, Profiles, eRpResources ]
-      protocolMockTestableImports: [ eRpFeatures ]
-      autoMockableImports: [ AVS, BfArM, Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
+      autoMockableImports: [ AVS, BfArM, Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,Profiles,TestUtils,TrustStore,VAUClient, ZXingCpp, FeatureCardWall, FeatureHelpers, eRpResources ]
       autoMockableTestableImports: [ eRpFeatures ]
   - sources: # writes to Tests/eRpKitTests/Mocks/Generated/
       - Sources
       - Tests/eRpKitTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/eRpKitTests
     args:
-      protocolMockImports: [ Combine,eRpKit,Foundation ]
-      protocolMockTestableImports: [ eRpKit ]
       autoMockableImports: [ Combine,eRpKit,Foundation ]
       autoMockableTestableImports: [ eRpKit ]
   - sources: # writes to Tests/ErxTaskRepositoryTests/Mocks/Generated/
       - Sources
       - Tests/ErxTaskRepositoryTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/ErxTaskRepositoryTests
     args:
-      protocolMockImports: [ Combine,eRpKit,Foundation ]
-      protocolMockTestableImports: [ ErxTaskRepository ]
       autoMockableImports: [ Combine,eRpKit,Foundation ]
       autoMockableTestableImports: [ ErxTaskRepository ]
   - sources: # writes to Tests/eRpLocalStorageTests/Mocks/Generated/
       - Sources
       - Tests/eRpLocalStorageTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/eRpLocalStorageTests
     args:
-      protocolMockImports: [ Combine,eRpKit,Foundation ]
-      protocolMockTestableImports: [ eRpLocalStorage ]
       autoMockableImports: [ Combine,eRpKit,Foundation ]
       autoMockableTestableImports: [ eRpLocalStorage ]
   - sources: # writes to Tests/IDPTests/Mocks/Generated/
       - Sources
       - Tests/IDPTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/IDPTests
     args:
-      protocolMockImports: [ Combine,Foundation,HTTPClient,OpenSSL,TrustStore ]
-      protocolMockTestableImports: [ IDP ]
       autoMockableImports: [ Combine,Foundation,HTTPClient,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ IDP ]
   - sources: # writes to Tests/IDPLiveTests/Mocks/Generated/
       - Sources
       - Tests/IDPLiveTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/IDPLiveTests
     args:
-      protocolMockImports: [ Combine,Foundation,HTTPClient,IDP,OpenSSL,TrustStore ]
-      protocolMockTestableImports: [ IDPLive ]
       autoMockableImports: [ Combine,Foundation,HTTPClient,IDP,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ IDPLive ]
   - sources: # writes to Tests/IntegrationTests/Mocks/Generated/
       - Sources
       - Tests/IntegrationTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/IntegrationTests
     args:
-      protocolMockImports: [ Combine,eRpKit,OpenSSL,TrustStore, Foundation ]
-      protocolMockTestableImports: [ Pharmacy ]
       autoMockableImports: [ Combine,eRpKit,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ Pharmacy ]
   - sources: # writes to Tests/PharmacyTests/Mocks/Generated/
       - Sources
       - Tests/PharmacyTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/PharmacyTests
     args:
-      protocolMockImports: [ Combine,eRpKit,OpenSSL ]
-      protocolMockTestableImports: [ Pharmacy ]
       autoMockableImports: [ Combine,eRpKit,OpenSSL ]
       autoMockableTestableImports: [ Pharmacy ]
   - sources: # writes to Tests/TrustStoreTests/Mocks/Generated/
@@ -122,11 +98,8 @@ configurations:
       - Sources
       - Tests/VAUClientTests
     templates:
-      - Templates/Sourcery/Tests/ProtocolMock.stencil
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/VAUClientTests
     args:
-      protocolMockImports: [ Combine,Foundation,OpenSSL,TrustStore ]
-      protocolMockTestableImports: [ VAUClient ]
       autoMockableImports: [ Combine,Foundation,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ VAUClient ]

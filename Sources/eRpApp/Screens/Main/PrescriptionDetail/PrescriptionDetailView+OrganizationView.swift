@@ -31,34 +31,39 @@ extension PrescriptionDetailView {
         var body: some View {
             ScrollView(.vertical) {
                 SectionContainer {
-                    SubTitle(
-                        title: store.organization.name ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtOrganizationName
-                    )
+                    LabeledContent {
+                        Text(store.organization.name ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtOrganizationName)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrName)
 
-                    SubTitle(
-                        title: store.organization.identifier ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtOrganizationId
-                    )
+                    LabeledContent {
+                        Text(store.organization.identifier ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtOrganizationId)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrIdentifier)
 
-                    SubTitle(
-                        title: store.organization.address ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtOrganizationAddress
-                    )
+                    LabeledContent {
+                        Text(store.organization.address ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtOrganizationAddress)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrAddress)
 
-                    SubTitle(
-                        title: store.organization.phone ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtOrganizationPhone
-                    )
+                    LabeledContent {
+                        Text(store.organization.phone ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtOrganizationPhone)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrPhone)
 
-                    SubTitle(
-                        title: store.organization.email ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtOrganizationEmail
-                    )
+                    LabeledContent {
+                        Text(store.organization.email ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtOrganizationEmail)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrEmail)
                 }.sectionContainerStyle(.inline)
             }

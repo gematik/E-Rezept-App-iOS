@@ -27,7 +27,7 @@ import Nimble
 import XCTest
 
 @MainActor
-final class PharmacySearchMapUITests: XCTestCase, Sendable {
+final class PharmacySearchMapUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func tearDown() async throws {

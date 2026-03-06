@@ -27,7 +27,7 @@ import ComposableArchitecture
 struct DebugLogDomain {
     enum Token: CaseIterable, Hashable {}
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = prescriptionDetail_sharePrescription
         case share(ShareSheetDomain)
@@ -60,4 +60,8 @@ struct DebugLogDomain {
             .ifLet(\.$destination, action: \.destination)
     }
 }
+
+extension DebugLogDomain.Destination.State: Equatable {}
+extension DebugLogDomain.Destination.Action: Equatable {}
+
 #endif

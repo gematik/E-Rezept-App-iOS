@@ -63,7 +63,7 @@ final class ListsSnapshotTests: ERPSnapshotTestCase {
                                 Image(systemName: SFSymbolName.info)
                             }
                         }
-                        .buttonStyle(.navigation(showSeparator: false))
+                        .buttonStyle(.navigation)
                     }
 
                     SectionContainer {

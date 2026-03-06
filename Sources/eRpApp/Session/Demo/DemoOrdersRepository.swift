@@ -26,9 +26,11 @@ import Foundation
 import IdentifiedCollections
 
 struct DemoOrdersRepository: OrdersRepository {
-    init() {}
-
     func loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error> {
+        AsyncThrowingStream { _ in }
+    }
+
+    func loadEuOrders(profileId _: UUID) -> AsyncThrowingStream<IdentifiedArray<String, EuOrder>, Swift.Error> {
         AsyncThrowingStream { _ in }
     }
 }

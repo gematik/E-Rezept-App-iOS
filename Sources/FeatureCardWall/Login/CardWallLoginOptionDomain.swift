@@ -44,7 +44,7 @@ public struct CardWallLoginOptionDomain {
     }
 
     /// Destination states for navigation from login option screen
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = alert
         /// Show alert dialog
@@ -110,16 +110,15 @@ public struct CardWallLoginOptionDomain {
             if state.selectedLoginOption.isWithBiometry {
                 guard canUseBiometrics() else {
                     state.destination = .alert(ErpAlertState(
-                        title: L10n.cdwTxtBiometrySetupIncomplete,
-                        actions: {
-                            ButtonState(role: .cancel) {
-                                .init(L10n.alertBtnOk)
-                            }
-                            ButtonState(action: .openAppSpecificSettings) {
-                                .init(L10n.tabTxtSettings)
-                            }
+                        title: L10n.cdwTxtBiometrySetupIncomplete
+                    ) {
+                        ButtonState(role: .cancel) {
+                            .init(L10n.alertBtnOk)
                         }
-                    ))
+                        ButtonState(action: .openAppSpecificSettings) {
+                            .init(L10n.tabTxtSettings)
+                        }
+                    })
                     return .none
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
@@ -229,3 +228,6 @@ extension CardWallLoginOptionDomain {
         }
     }
 }
+
+extension CardWallLoginOptionDomain.Destination.State: Equatable {}
+extension CardWallLoginOptionDomain.Destination.Action: Equatable {}

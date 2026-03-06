@@ -1256,7 +1256,7 @@ final class ChargeItemPDFServiceTests13: XCTestCase {
             .decode(ModelsR4.Bundle.self, from: data)
             .parseErxChargeItem(
                 id: identifier,
-                with: "fhirData".data(using: .utf8)!
+                with: Data("fhirData".utf8)
             )
     }
 }

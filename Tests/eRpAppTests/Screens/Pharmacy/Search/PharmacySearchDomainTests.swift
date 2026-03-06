@@ -41,8 +41,8 @@ class PharmacySearchDomainTests: XCTestCase {
     var delaySearchStart: DispatchQueue.SchedulerTimeType.Stride = 0.1
     var searchHistoryMock: SearchHistoryMock!
     var mockUserSession: MockUserSession!
-    var mockRedeemService: MockRedeemService!
-    var mockPrescriptionRepository: MockPrescriptionRepository!
+    var mockRedeemService: RedeemServiceMock!
+    var mockPrescriptionRepository: PrescriptionRepositoryMock!
 
     override func invokeTest() {
         withDependencies { dependencies in
@@ -57,8 +57,8 @@ class PharmacySearchDomainTests: XCTestCase {
 
         mockUserSession = MockUserSession()
         searchHistoryMock = SearchHistoryMock()
-        mockRedeemService = MockRedeemService()
-        mockPrescriptionRepository = MockPrescriptionRepository()
+        mockRedeemService = RedeemServiceMock()
+        mockPrescriptionRepository = PrescriptionRepositoryMock()
     }
 
     override func tearDownWithError() throws {
@@ -575,9 +575,11 @@ class PharmacySearchDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        mockPrescriptionRepository.loadLocalForReturnValue = Just(prescriptions)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .loadLocalForProfileIdUUIDAnyPublisherPrescriptionPrescriptionRepositoryErrorReturnValue =
+            Just(prescriptions)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
         let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
         await withDependencies {
             $0.pharmacyRepository.updateFromRemote = { _ in newPharmacy.pharmacyLocation }

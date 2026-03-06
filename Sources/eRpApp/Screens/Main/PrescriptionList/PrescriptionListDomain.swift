@@ -165,10 +165,10 @@ struct PrescriptionListDomain {
             // If we already we also want to trigger a remote load
             if state.profile != nil {
                 return .concatenate(
-                    .run(operation: { _ in
+                    .run { _ in
                         // sleep a few seconds to allow UI to settle for iOS 17 padding glitch
                         try await Task.sleep(for: .seconds(0.1))
-                    }),
+                    },
                     .merge(
                         .publisher(profilePublisher),
                         .send(.loadRemotePrescriptionsAndSave)
@@ -176,10 +176,10 @@ struct PrescriptionListDomain {
                 )
             }
             return .concatenate(
-                .run(operation: { _ in
+                .run { _ in
                     // sleep a few seconds to allow UI to settle for iOS 17 padding glitch
                     try await Task.sleep(for: .seconds(0.1))
-                }),
+                },
                 .publisher(
                     profilePublisher
                 )

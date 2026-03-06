@@ -36,7 +36,7 @@ public struct ReportButtonStyle: ButtonStyle {
             .padding(.horizontal)
             .padding(.vertical, 8)
             .fixedSize(horizontal: false, vertical: true)
-            .background(Colors.red600)
+            .background(Colors.red700)
             .cornerRadius(16)
     }
 }

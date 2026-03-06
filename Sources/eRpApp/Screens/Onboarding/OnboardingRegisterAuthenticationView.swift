@@ -189,7 +189,7 @@ extension OnboardingRegisterAuthenticationView {
 
                         Image(systemName: SFSymbolName.rightDisclosureIndicator)
                             .font(Font.headline.weight(.semibold))
-                            .foregroundColor(Colors.systemLabelTertiary)
+                            .foregroundColor(Colors.systemLabelSecondary)
                             .padding(8)
                     }
                     .padding()

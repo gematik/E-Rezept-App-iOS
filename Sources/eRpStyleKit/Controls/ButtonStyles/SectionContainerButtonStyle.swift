@@ -25,19 +25,15 @@ import SwiftUI
 /// `ButtonStyle` for `Button`s within `SectionContainer`. This style is applied automatically when creating buttons
 /// within a `SectionContainer`.
 public struct SectionContainerButtonStyle: ButtonStyle {
-    let showSeparator: Bool
-
-    public init(showSeparator: Bool) {
-        self.showSeparator = showSeparator
-    }
+    @Environment(\.sectionContainerStyle) var style
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .keyValuePairStyle(PlainKeyValuePairStyle())
-            .labelStyle(SectionContainerButtonLabelStyle(showSeparator: showSeparator))
+            .labelStyle(SectionContainerButtonLabelStyle())
             .foregroundColor(configuration.isPressed ? Colors.primary.opacity(0.5) : Colors.primary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(configuration.isPressed ? Color(.systemGray5) : Color(.tertiarySystemBackground))
+            .background(configuration.isPressed ? style.content.selectedColor : style.content.backgroundColor)
     }
 }
 
@@ -46,15 +42,7 @@ extension ButtonStyle where Self == SectionContainerButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View/buttonStyle(_:)`` modifier.
-    public static var simple: SectionContainerButtonStyle { SectionContainerButtonStyle(showSeparator: true) }
-
-    /// A button style that applies colors according to figma as well as paddings and wraps it with a divider.
-    ///
-    /// To apply this style to a button, or to a view that contains buttons, use
-    /// the ``View/buttonStyle(.plain(showSeparator:))`` modifier.
-    public static func simple(showSeparator: Bool = true) -> SectionContainerButtonStyle {
-        SectionContainerButtonStyle(showSeparator: showSeparator)
-    }
+    public static var simple: SectionContainerButtonStyle { SectionContainerButtonStyle() }
 }
 
 struct SectionContainerButtonStyle_Preview: PreviewProvider {

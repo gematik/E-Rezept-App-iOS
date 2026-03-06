@@ -30,7 +30,7 @@ import HTTPClient
 struct DebugLogsDomain {
     enum Token: CaseIterable, Hashable {}
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         case share(ShareSheetDomain)
         case logDetail(DebugLogDomain)
@@ -157,7 +157,7 @@ extension DebugLogsDomain {
             var request = URLRequest(url: URL(string: "http://google.com")!)
             request.setValue("12345", forHTTPHeaderField: "X-api-key")
             let response: HTTPResponse = (
-                data: "abcdef".data(using: .utf8)!,
+                data: Data("abcdef".utf8),
                 response: HTTPURLResponse(
                     url: URL(string: "http://google.com")!,
                     statusCode: 200,
@@ -179,7 +179,7 @@ extension DebugLogsDomain {
             var request = URLRequest(url: URL(string: "http://google.com")!)
             request.setValue("12345", forHTTPHeaderField: "X-api-key")
             let response: HTTPResponse = (
-                data: "abcdef".data(using: .utf8)!,
+                data: Data("abcdef".utf8),
                 response: HTTPURLResponse(
                     url: URL(string: "http://google.com")!,
                     statusCode: HTTPStatusCode.found.rawValue,
@@ -201,7 +201,7 @@ extension DebugLogsDomain {
             var request = URLRequest(url: URL(string: "http://google.com")!)
             request.setValue("12345", forHTTPHeaderField: "X-api-key")
             let response: HTTPResponse = (
-                data: "abcdef".data(using: .utf8)!,
+                data: Data("abcdef".utf8),
                 response: HTTPURLResponse(
                     url: URL(string: "http://google.com")!,
                     statusCode: HTTPStatusCode.forbidden.rawValue,
@@ -249,4 +249,8 @@ extension DebugLogsDomain {
         // swiftlint:enable force_unwrapping
     }
 }
+
+extension DebugLogsDomain.Destination.State: Equatable {}
+extension DebugLogsDomain.Destination.Action: Equatable {}
+
 #endif

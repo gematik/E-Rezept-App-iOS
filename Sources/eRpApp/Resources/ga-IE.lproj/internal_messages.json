@@ -52,5 +52,11 @@
         "text": "**🏛️ Clárú do Tuilleadh Daoine** \nIs féidir clárú anois freisin do dhaoine atá árachaithe de chuid institiúidí feidearálacha, amhail na Póilíní Feidearálacha agus eile. \n \n **🕒 Uaireanta Oscailte Feabhsaithe na Cógaslanna** \nTaispeántar seirbhís éigeandála agus amanna dúnta speisialta do chógaslanna anois, más féidir. \n \n **💊 Roghnú na nOideas Uile** \nAgus oidis á bhfuascailt, is féidir na hoidis uile a roghnú ag an am céanna anois. \n \n **♿ Inrochtaineacht** \nTá dathanna na gclónna agus na ndeilbhíní coigeartaithe chun codarsnacht níos airde a bhaint amach. Ina theannta sin, tá feabhas curtha ar aschur cainte VoiceOver chun an pictiúr próifíle a chur in eagar agus stádas logála isteach a aithint.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Taispeáin cóid oideas** \nTá an scáileán le haghaidh cóid bhaisce agus aonair athdheartha le haghaidh úsáide níos iomasaí. \n \n **❤️ Rogha na gCógaslann** \nOibríonn rogha na gcógaslann níos iontaofa anois agus tá siad comhoiriúnach le VoiceOver. \n \n **♿ Inrochtaineacht** \nTá feabhas tagtha ar VoiceOver agus ar nascleanúint an mhéarchláir, tá cnaipí, téacs agus réimsí ionchuir níos inaitheanta, agus tá struchtúr níos loighciúla ar mhíreanna liosta. Oibríonn cló méadaithe anois ar gach scáileán aip. Ní sheinneann físeáin bheoite ach uair amháin chun tacú le húsáideoirí a bhfuil lagú cognaíoch orthu.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

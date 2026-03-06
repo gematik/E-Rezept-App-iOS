@@ -28,7 +28,7 @@ struct OrderHealthCardInquiryView: View {
     @Bindable var store: StoreOf<OrderHealthCardInquiryDomain>
 
     var body: some View {
-        VStack {
+        ScrollView {
             if !store.hasContactInformation {
                 ZStack(alignment: .bottom) {
                     Image(asset: Asset.OrderEGK.womanShrug)
@@ -62,6 +62,7 @@ struct OrderHealthCardInquiryView: View {
                         .foregroundColor(Colors.systemLabel)
                         .padding()
                         .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(L10n.orderEgkServiceSubtitle)
                         .font(.subheadline)
@@ -84,7 +85,7 @@ struct OrderHealthCardInquiryView: View {
                                 Spacer(minLength: 8)
                                 Image(systemName: SFSymbolName.rightDisclosureIndicator)
                                     .font(Font.headline.weight(.semibold))
-                                    .foregroundColor(Color(.tertiaryLabel))
+                                    .foregroundColor(Colors.systemLabelSecondary)
                                     .padding(8)
                             }
                             .padding()
@@ -109,7 +110,7 @@ struct OrderHealthCardInquiryView: View {
                                 Spacer(minLength: 8)
                                 Image(systemName: SFSymbolName.rightDisclosureIndicator)
                                     .font(Font.headline.weight(.semibold))
-                                    .foregroundColor(Color(.tertiaryLabel))
+                                    .foregroundColor(Colors.systemLabelSecondary)
                                     .padding(8)
                             }
                             .padding()

@@ -29,7 +29,7 @@ import Foundation
 
 @Reducer
 struct PrescriptionArchiveDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = prescriptionDetail
         case prescriptionDetail(PrescriptionDetailDomain)
@@ -175,3 +175,6 @@ extension PrescriptionArchiveDomain {
         }
     }
 }
+
+extension PrescriptionArchiveDomain.Destination.State: Equatable {}
+extension PrescriptionArchiveDomain.Destination.Action: Equatable {}

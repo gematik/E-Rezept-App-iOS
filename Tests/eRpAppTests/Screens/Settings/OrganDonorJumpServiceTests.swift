@@ -36,7 +36,7 @@ final class OrganDonorJumpServiceTests: XCTestCase {
         let openedURL = Mutex<URL?>(nil)
         let sut = OrganDonorJumpService.liveValue
 
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         userDataStore.serverEnvironmentName = "RU"
         let userSession = MockUserSession()
         let profile = Profile(name: "Bob", gIdEntry: .init(name: "Alice", identifier: "ABC123"))
@@ -64,7 +64,7 @@ final class OrganDonorJumpServiceTests: XCTestCase {
         let openedURL = Mutex<URL?>(nil)
         let sut = OrganDonorJumpService.liveValue
 
-        let userDataStore = MockUserDataStore()
+        let userDataStore = UserDataStoreMock()
         userDataStore.serverEnvironmentName = "RU"
         let userSession = MockUserSession()
         let profile = Profile(name: "Bob", gIdEntry: nil)

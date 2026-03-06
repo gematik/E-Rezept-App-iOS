@@ -36,14 +36,14 @@ import XCTest
 @MainActor
 final class OrderDetailDomainTests: XCTestCase {
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
-    let mockUserDataStore = MockUserDataStore()
+    let mockUserDataStore = UserDataStoreMock()
     typealias TestStore = TestStoreOf<OrderDetailDomain>
 
     private func testStore(
         for order: Order = .init(orderId: "765432", communications: [], chargeItems: []),
         withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStore {
-        TestStore(initialState: OrderDetailDomain.State(communicationMessage: .order(order))) {
+        TestStore(initialState: OrderDetailDomain.State(communicationMessage: Shared(value: .order(order)))) {
             OrderDetailDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
@@ -122,7 +122,11 @@ final class OrderDetailDomainTests: XCTestCase {
             await store.send(.loadAndShowPharmacy)
 
             await store.receive(.response(.loadAndShowPharmacyReceived(.success(remotePharmacy)))) { state in
-                state.order = Order.lens.pharmacy.set(remotePharmacy)(order)
+                state.$communicationMessage.withLock {
+                    $0.updateOrder {
+                        Order.lens.pharmacy.set(remotePharmacy)($0)
+                    }
+                }
                 state.destination = .pharmacyDetail(.init(
                     prescriptions: Shared(value: []),
                     selectedPrescriptions: Shared(value: []),
@@ -155,7 +159,11 @@ final class OrderDetailDomainTests: XCTestCase {
             await store.send(.loadAndShowPharmacy)
 
             await store.receive(.response(.loadAndShowPharmacyReceived(.failure(.remote(.notFound))))) { state in
-                state.order = Order.lens.pharmacy.set(nil)(order)
+                state.$communicationMessage.withLock {
+                    $0.updateOrder {
+                        Order.lens.pharmacy.set(nil)($0)
+                    }
+                }
                 state.destination = .alert(.init(for: PharmacyRepositoryError.remote(.notFound)))
             }
         }
@@ -238,7 +246,6 @@ final class OrderDetailDomainTests: XCTestCase {
         let store = testStore(for: input)
 
         await store.send(.showPickupCode(dmcCode: "DMC-4711-and-more", hrCode: "4711")) {
-            $0.order = input
             $0.destination = .pickupCode(
                 .init(
                     pickupCodeHR: "4711",
@@ -248,7 +255,6 @@ final class OrderDetailDomainTests: XCTestCase {
             )
         }
         await store.send(.resetNavigation) {
-            $0.order = input
             $0.destination = nil
         }
     }
@@ -318,7 +324,9 @@ final class OrderDetailDomainTests: XCTestCase {
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationWithWrongPayload])
         let store = TestStore(
             initialState: OrderDetailDomain
-                .State(communicationMessage: .order(.init(orderId: orderId, communications: input, chargeItems: [])))
+                .State(communicationMessage: Shared(value: .order(.init(orderId: orderId,
+                                                                        communications: input,
+                                                                        chargeItems: []))))
         ) {
             OrderDetailDomain(deviceInfo: deviceInfo)
         } withDependencies: { dependencies in
@@ -350,7 +358,7 @@ final class OrderDetailDomainTests: XCTestCase {
 
         let store = TestStore(
             initialState: OrderDetailDomain
-                .State(communicationMessage: .internalCommunication(.init(messages: [message])))
+                .State(communicationMessage: Shared(value: .internalCommunication(.init(messages: [message]))))
         ) {
             OrderDetailDomain()
         } withDependencies: {
@@ -362,8 +370,8 @@ final class OrderDetailDomainTests: XCTestCase {
         }
 
         await store.send(.didDisplayTimelineEntries)
-        expect(self.mockUserDataStore.markInternalCommunicationAsReadMessageIdCalled).to(beTrue())
-        expect(self.mockUserDataStore.markInternalCommunicationAsReadMessageIdCallsCount) == 1
+        expect(self.mockUserDataStore.markInternalCommunicationAsReadMessageIdStringVoidCalled).to(beTrue())
+        expect(self.mockUserDataStore.markInternalCommunicationAsReadMessageIdStringVoidCallsCount) == 1
     }
 
     func testChipTextUpdateSoloDispReq() async {
@@ -381,7 +389,6 @@ final class OrderDetailDomainTests: XCTestCase {
 
         await store.send(.tasksReceived([tasks])) {
             $0.erxTasks = IdentifiedArrayOf(uniqueElements: [tasks].sorted())
-            $0.timelineEntries = expectedTimelineEntire
         }
     }
 
@@ -400,7 +407,6 @@ final class OrderDetailDomainTests: XCTestCase {
 
         await store.send(.tasksReceived(tasks)) {
             $0.erxTasks = IdentifiedArrayOf(uniqueElements: tasks.sorted())
-            $0.timelineEntries = expectedTimelineEntire
         }
     }
 
@@ -418,7 +424,6 @@ final class OrderDetailDomainTests: XCTestCase {
 
         await store.send(.tasksReceived([tasks])) {
             $0.erxTasks = IdentifiedArrayOf(uniqueElements: [tasks].sorted())
-            $0.timelineEntries = expectedTimelineEntire
         }
     }
 
@@ -436,7 +441,6 @@ final class OrderDetailDomainTests: XCTestCase {
 
         await store.send(.tasksReceived(tasks)) {
             $0.erxTasks = IdentifiedArrayOf(uniqueElements: tasks.sorted())
-            $0.timelineEntries = expectedTimelineEntire
         }
     }
 
@@ -453,7 +457,6 @@ final class OrderDetailDomainTests: XCTestCase {
 
         await store.send(.tasksReceived(tasks)) {
             $0.erxTasks = IdentifiedArrayOf(uniqueElements: tasks.sorted())
-            $0.timelineEntries = expectedTimelineEntire
         }
     }
 }

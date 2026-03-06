@@ -126,7 +126,7 @@ struct TCAToast_PreviewProvider: PreviewProvider {
     // sourcery: SkipSourcery
     @Reducer
     struct Domain {
-        @Reducer(state: .equatable, action: .equatable)
+        @Reducer
         enum Destination {
             // sourcery: AnalyticsScreen = alert
             @ReducerCaseEphemeral
@@ -165,7 +165,7 @@ struct TCAToast_PreviewProvider: PreviewProvider {
                     state
                         .destination =
                         .toast(.init(style: .action("Action",
-                                                    .init(action: .send(.customAction), label: { TextState("abc") }))))
+                                                    .init(action: .send(.customAction)) { TextState("abc") })))
                     return .none
                 case .destination(.presented(.toast(.customAction))):
                     state.destination = nil
@@ -217,3 +217,6 @@ struct TCAToast_PreviewProvider: PreviewProvider {
         })
     }
 }
+
+extension TCAToast_PreviewProvider.Domain.Destination.State: Equatable {}
+extension TCAToast_PreviewProvider.Domain.Destination.Action: Equatable {}

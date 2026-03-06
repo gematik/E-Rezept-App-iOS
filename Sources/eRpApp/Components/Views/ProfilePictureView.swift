@@ -94,7 +94,7 @@ struct ProfilePictureView: View {
         case .none, .never:
             return nil
         case .connected:
-            return Text(L10n.mainTxtLoggedInState).foregroundColor(Colors.secondary600)
+            return Text(L10n.mainTxtLoggedInState).foregroundColor(Colors.secondary700)
         case .disconnected:
             return Text(L10n.mainTxtLoggedOutState).foregroundColor(Colors.systemGray)
         }

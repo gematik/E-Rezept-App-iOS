@@ -24,12 +24,7 @@
 import IDP
 import TrustStore
 
-// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
-
 // sourcery:begin: AutoMockable
 extension TrustStoreSession {}
-// sourcery:end
-
-// sourcery:begin: ProtocolMock
 extension ExtAuthRequestStorage {}
 // sourcery:end

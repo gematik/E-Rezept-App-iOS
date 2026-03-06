@@ -23,6 +23,7 @@
 import eRpKit
 import Foundation
 import ModelsR4
+import Sharing
 
 extension ErxConsent {
     func asConsentResource(
@@ -44,7 +45,7 @@ extension ErxConsent {
         case .chargcons:
             chargeConsent = ErpCharge.Key.Consent.consent[.v1_1_0]?.asFHIRCanonicalPrimitive(for: "1.1")
         case .euDispense:
-            chargeConsent = EURedeem.Key.Consent.consent[.v1_0_0]?.asFHIRCanonicalPrimitive(for: "1.0")
+            chargeConsent = EURedeem.Key.Consent.consent[.v1_1_1]?.asFHIRCanonicalPrimitive(for: "1.1")
         }
         guard let chargeConsent else {
             throw ErxConsent.Error.unableToConstructConsentRequest
@@ -60,7 +61,7 @@ extension ErxConsent {
         case .chargcons:
             categoryUri = ErpCharge.Key.Consent.consentType[.v1_1_0]?.asFHIRURIPrimitive()
         case .euDispense:
-            categoryUri = EURedeem.Key.Consent.consentType[.v1_0_0]?.asFHIRURIPrimitive()
+            categoryUri = EURedeem.Key.Consent.consentType[.v1_1_1]?.asFHIRURIPrimitive()
         }
         let category = CodeableConcept(coding: [
             Coding(
@@ -74,7 +75,7 @@ extension ErxConsent {
         case .chargcons:
             patientUri = Workflow.Key.unifiedKvIDKeys[.v1_4_3]?.asFHIRURIPrimitive()
         case .euDispense:
-            patientUri = Workflow.Key.unifiedKvIDKeys[.v1_5_2]?.asFHIRURIPrimitive()
+            patientUri = Workflow.Key.unifiedKvIDKeys[.v1_6_1]?.asFHIRURIPrimitive()
         }
         let patient = Identifier(
             system: patientUri,

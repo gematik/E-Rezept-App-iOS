@@ -70,6 +70,7 @@ struct PharmacyDetailView: View {
                                         Image(systemName: SFSymbolName.map)
                                     }
                                 }
+                                .accessibilityLabel(L10n.phaDetailLblLocation(address))
                                 .labelStyle(.trailingIcon)
                                 .buttonStyle(.tertiary(isEnabled: store.pharmacy.canBeDisplayedInMap))
                                 .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
@@ -88,6 +89,16 @@ struct PharmacyDetailView: View {
                                     .font(.title3)
                             }
                         )
+                        .accessibilityValue(Text(
+                            store.pharmacy.isFavorite
+                                ? L10n.phaDetailBtnFavoriteA11yValueEnabled
+                                : L10n.phaDetailBtnFavoriteA11yValueDisabled
+                        ))
+                        .accessibilityHint(Text(
+                            store.pharmacy.isFavorite
+                                ? L10n.phaDetailBtnFavoriteA11yValueEnabledHint
+                                : L10n.phaDetailBtnFavoriteA11yValueDisabledHint
+                        ))
                     }.padding(.bottom, 24)
 
                     if store.inOrdersMessage {
@@ -267,7 +278,7 @@ extension PharmacyDetailView {
                                 .font(Font.monospacedDigit(.body)())
                                 .foregroundColor(
                                     hop.openingState.isOpen ?
-                                        Colors.secondary600 : Colors.systemLabelSecondary
+                                        Colors.secondary700 : Colors.systemLabelSecondary
                                 )
                         }
                     }
@@ -335,7 +346,6 @@ extension PharmacyDetailView {
                     Text(closing.reason)
                         .font(.footnote)
                         .italic()
-                        .opacity(closing.isActive ? 1 : 0.6)
                         .foregroundColor(closing.isActive ? Colors.secondary700 : Colors.systemLabelSecondary)
                         .fontWeight(closing.isActive ? .semibold : .regular)
 
@@ -397,7 +407,8 @@ extension PharmacyDetailView {
             Text(L10n.phaDetailTxtFooterStart)
                 .foregroundColor(Colors.systemLabelSecondary) +
                 Text(L10n.phaDetailTxtFooterMid)
-                .foregroundColor(Colors.primary) +
+                .foregroundColor(Colors.primary)
+                .underline() +
                 Text(L10n.phaDetailTxtFooterEnd)
                 .foregroundColor(Colors.systemLabelSecondary)
         }()
@@ -426,6 +437,7 @@ extension PharmacyDetailView {
                         Image(systemName: SFSymbolName.arrowUpForward)
                     }
                 })
+                    .accessibilityLabel(L10n.phaDetailLblFooter)
                     .labelStyle(.trailingIcon)
                     .buttonStyle(.tertiary)
             }

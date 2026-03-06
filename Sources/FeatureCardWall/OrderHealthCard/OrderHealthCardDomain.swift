@@ -31,7 +31,7 @@ public struct OrderHealthCardDomain {
     /// Initializes a new OrderHealthCardDomain
     public init() {}
     /// Destination states for navigation from order screen
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = contactInsuranceCompany_selectReason
         /// Navigate to service inquiry
@@ -242,3 +242,6 @@ extension OrderHealthCardDomain {
         }
     }
 }
+
+extension OrderHealthCardDomain.Destination.State: Equatable {}
+extension OrderHealthCardDomain.Destination.Action: Equatable {}

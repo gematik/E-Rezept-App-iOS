@@ -29,7 +29,7 @@ import Foundation
 import UIKit
 
 extension PrescriptionDetailDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = chargeItemDetails
         case chargeItem(ChargeItemDomain)
@@ -279,6 +279,28 @@ struct TechnicalInformationsDomain {
     struct State: Equatable {
         let taskId: String
         let accessCode: String?
+
+        init(taskId: String, accessCode: String?) {
+            self.taskId = taskId
+
+            if let accessCode {
+                let softBreak = "\u{200B}"
+                var result = ""
+                var currentIndex = accessCode.startIndex
+
+                while currentIndex < accessCode.endIndex {
+                    let nextIndex = accessCode
+                        .index(currentIndex, offsetBy: 4, limitedBy: accessCode.endIndex) ?? accessCode.endIndex
+                    result.append(contentsOf: accessCode[currentIndex ..< nextIndex])
+                    if nextIndex < accessCode.endIndex { result.append(softBreak) }
+                    currentIndex = nextIndex
+                }
+
+                self.accessCode = result
+            } else {
+                self.accessCode = nil
+            }
+        }
     }
 
     enum Action: Equatable {}
@@ -333,3 +355,6 @@ struct AccidentInfoDomain {
 
     var body: some ReducerOf<Self> { EmptyReducer() }
 }
+
+extension PrescriptionDetailDomain.Destination.State: Equatable {}
+extension PrescriptionDetailDomain.Destination.Action: Equatable {}

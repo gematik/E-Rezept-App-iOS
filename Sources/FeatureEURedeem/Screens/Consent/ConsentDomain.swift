@@ -21,6 +21,9 @@
 //
 
 import ComposableArchitecture
+import ConsentService
+import eRpStyleKit
+import FeatureHelpers
 import Foundation
 
 /// Domain for handling user consent in EU redemption flow
@@ -29,11 +32,15 @@ public struct ConsentDomain {
     /// State for consent screen
     @ObservableState
     public struct State: Equatable {
-        /// Consent status - true = accepted, false = declined, nil = not decided
-        public var consentGiven: Bool?
+        /// Selected user profile ID
+        public var profileID: UUID
+        /// Navigation destinations
+        @Presents public var destination: Destination.State?
 
-        public init(consentGiven: Bool? = nil) {
-            self.consentGiven = consentGiven
+        public init(
+            profileID: UUID
+        ) {
+            self.profileID = profileID
         }
     }
 
@@ -43,12 +50,18 @@ public struct ConsentDomain {
         case accept
         /// Decline consent
         case decline
-        /// Cancel consent dialog
-        case cancel
-        /// Go back
-        case back
+        /// Response actions
+        case response(Response)
         /// Delegate actions to parent
         case delegate(Delegate)
+        /// Destination actions to parent
+        case destination(PresentationAction<Destination.Action>)
+    }
+
+    /// Response actions
+    public enum Response: Equatable {
+        case grantConsentReceived(ConsentService.GrantResult)
+        case revokedConsentReceived(ConsentService.RevokeResult)
     }
 
     /// Delegate actions
@@ -57,33 +70,85 @@ public struct ConsentDomain {
         case consentAccepted
         /// Consent was declined
         case consentDeclined
-        /// Consent was cancelled
-        case consentCancelled
-        /// Back button was tapped
-        case backTapped
+        /// Show CardWall when unauthenticated
+        case showCardWall
+    }
+
+    /// Destination actions
+    @Reducer
+    public enum Destination: Equatable {
+        // sourcery: AnalyticsScreen = alert
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
+
+        public enum Alert: Equatable {
+            case dismiss
+        }
     }
 
     /// Initialize the domain
     public init() {}
+
+    @Dependency(\.consentService) var consentService: ConsentService
 
     /// Reducer body
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .accept:
-                state.consentGiven = true
-                return .send(.delegate(.consentAccepted))
+                return .run { [profileID = state.profileID] send in
+                    let result = try await consentService.grantConsent(category: .euDispense, profileID: profileID)
+                    await send(.response(.grantConsentReceived(result)))
+                }
+            case let .response(.grantConsentReceived(result)):
+                switch result {
+                case .success, .conflict:
+                    return .send(.delegate(.consentAccepted))
+                case .notAuthenticated:
+                    return .send(.delegate(.showCardWall))
+                case let .error(error):
+                    state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
+                    return .none
+                }
             case .decline:
-                state.consentGiven = false
-                return .send(.delegate(.consentDeclined))
-            case .cancel:
-                return .send(.delegate(.consentCancelled))
-            case .back:
-                return .send(.delegate(.backTapped))
-            case .delegate:
+                return .run { [profileID = state.profileID] send in
+                    do {
+                        let result = try await consentService.revokeConsent(category: .euDispense, profileID: profileID)
+                        await send(.response(.revokedConsentReceived(result)))
+                    } catch let error as ConsentService.Error {
+                        await send(.response(.revokedConsentReceived(.error(error))))
+                    }
+                }
+            case let .response(.revokedConsentReceived(result)):
+                switch result {
+                case .success, .conflict:
+                    return .send(.delegate(.consentDeclined))
+                case .notAuthenticated:
+                    return .send(.delegate(.showCardWall))
+                case let .error(error):
+                    guard error.fhirClientOperationOutcomeMissingConsent else {
+                        return .send(.delegate(.consentDeclined))
+                    }
+                    state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
+                    return .none
+                }
+            case .delegate,
+                 .destination:
                 return .none
             }
         }
+        .ifLet(\.$destination, action: \.destination)
+    }
+}
+
+extension ConsentService.Error {
+    var fhirClientOperationOutcomeMissingConsent: Bool {
+        guard case let .erxRepository(.remote(.fhirClient(.http(fhirClientError)))) = self,
+              let operationOutcome = fhirClientError.operationOutcome else {
+            return true
+        }
+        let missingConsentForKVNRMessage = "Could not find any consent for given KVNR "
+        return operationOutcome.issue.first?.details?.text?.value?.string != missingConsentForKVNRMessage
     }
 }
 
@@ -93,7 +158,7 @@ extension ConsentDomain {
     /// Mock data for testing and previews
     enum Dummies {
         /// Sample state for testing
-        static let state = ConsentDomain.State()
+        static let state = ConsentDomain.State(profileID: UUID())
 
         /// Sample store for testing
         static let store = Store(initialState: state) {
@@ -101,3 +166,6 @@ extension ConsentDomain {
         }
     }
 }
+
+extension ConsentDomain.Destination.State: Equatable {}
+extension ConsentDomain.Destination.Action: Equatable {}

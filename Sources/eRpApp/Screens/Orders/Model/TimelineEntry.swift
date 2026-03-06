@@ -28,11 +28,13 @@ import IdentifiedCollections
 import Pharmacy
 import UIKit
 
+// swiftlint:disable:next type_body_length
 enum TimelineEntry: Equatable, Identifiable {
     case dispReq(ErxTask.Communication.Unique, pharmacy: PharmacyLocation?, chipTexts: [String])
     case reply(ErxTask.Communication.Unique, chipTexts: [String])
     case chargeItem(ErxChargeItem)
     case diga(ErxTask.Communication.Unique, chipTexts: [String])
+    case euEntry(EuCommunication, chipTexts: [String])
     case internalCommunication(InternalCommunication.Message)
 
     var id: String {
@@ -45,6 +47,8 @@ enum TimelineEntry: Equatable, Identifiable {
             return chargeItem.identifier
         case let .diga(communication, _):
             return communication.identifier
+        case let .euEntry(communication, _):
+            return communication.id.uuidString
         case let .internalCommunication(message):
             return message.id
         }
@@ -60,9 +64,11 @@ enum TimelineEntry: Equatable, Identifiable {
             return chargeItem.enteredDate ?? ""
         case let .diga(communication, _):
             return communication.timestamp
+        case let .euEntry(communication, _):
+            return dateToString(date: communication.timestamp) ?? ""
         case let .internalCommunication(message):
             // Temporary convert the Date to a String, will be removed when 'lastUpdated: Date'
-            return dateToString(date: message.timestamp)
+            return dateToString(date: message.timestamp) ?? ""
         }
     }
 
@@ -75,6 +81,8 @@ enum TimelineEntry: Equatable, Identifiable {
         case let .chargeItem(chargeItem):
             return chargeItem.isRead
         case let .diga(communication, _):
+            return communication.isRead
+        case let .euEntry(communication, _):
             return communication.isRead
         case let .internalCommunication(message):
             return message.isRead
@@ -105,6 +113,67 @@ enum TimelineEntry: Equatable, Identifiable {
             }
         case let .chargeItem(chargeItem):
             return L10n.ordDetailTxtChargeItem(chargeItem.medication?.name ?? "").text
+        case let .euEntry(communication, _):
+            var body = ""
+            var header = ""
+            let code = communication.euAccessCode?.countryCode ?? L10n.ordDetailMsgsTxtUnknownCountry.text
+            let local = Locale(identifier: Bundle.module.preferredLocalizations.first ?? "de_DE")
+            let countryName = local.localizedString(forRegionCode: code) ?? L10n.ordDetailMsgsTxtUnknownCountry.text
+            switch communication.eventType {
+            case .createdAccessCode:
+                body = L10n.ordDetailMsgsTxtEuCodeBody(countryName).text
+
+                if let validUntil = communication.euAccessCode?.validUntil {
+                    @Dependency(\.uiDateFormatter) var uiFormatter
+                    let formattedDate = uiFormatter.timeOnlyFormatter.string(from: validUntil)
+
+                    @Dependency(\.date) var date
+                    let valid = validUntil > date.now
+
+                    let message = valid ? L10n.ordDetailMsgsTxtCodeValidBody(countryName, formattedDate).text : L10n
+                        .ordDetailMsgsTxtCodeInvalidBody(countryName, formattedDate).text
+                    body.append(message)
+                }
+
+                header = L10n.ordDetailMsgsTxtCreateHeader(countryName, TimelineEntry.countryFlag(from: code)).text
+            case .refreshedAccessCode:
+                body = L10n.ordDetailMsgsTxtEuCodeBody(countryName).text
+
+                if let validUntil = communication.euAccessCode?.validUntil {
+                    @Dependency(\.uiDateFormatter) var uiFormatter
+                    let formattedDate = uiFormatter.timeOnlyFormatter.string(from: validUntil)
+
+                    @Dependency(\.date) var date
+                    let valid = validUntil > date.now
+
+                    let message = valid ? L10n.ordDetailMsgsTxtCodeValidBody(countryName, formattedDate).text : L10n
+                        .ordDetailMsgsTxtCodeInvalidBody(countryName, formattedDate).text
+                    body.append(message)
+                }
+
+                header = L10n.ordDetailMsgsTxtEuRefreshHeader.text
+            case let .deletedAccessCode(origin):
+                body = L10n.ordDetailMsgsTxtEuCodeBody(countryName).text
+                body.append(L10n.ordDetailMsgsTxtEuDeleteBody(countryName).text)
+
+                if origin == .created {
+                    header = L10n.ordDetailMsgsTxtCreateHeader(countryName, TimelineEntry.countryFlag(from: code)).text
+                } else {
+                    header = L10n.ordDetailMsgsTxtEuRefreshHeader.text
+                }
+            case .addedTask:
+                header = L10n.ordDetailMsgsTxtEuAddHeader.text
+                body = L10n.ordDetailMsgsTxtEuAddBody.text
+            case .removedTask:
+                header = L10n.ordDetailMsgsTxtEuRemoveHeader.text
+                body = L10n.ordDetailMsgsTxtEuRemoveBody.text
+            case .redeemedTask,
+                 .unknown:
+                header = L10n.ordDetailMsgsTxtEuUnknownHeader.text
+                body = L10n.ordDetailMsgsTxtEuUnknownBody.text
+            }
+
+            return "**\(header)**\n\(body)"
         case let .internalCommunication(message):
             return message.text
         }
@@ -141,6 +210,14 @@ enum TimelineEntry: Equatable, Identifiable {
             }
             return AttributedString(text)
         case .chargeItem:
+            return AttributedString(text)
+        case .euEntry:
+            if let attributedString = try? AttributedString(
+                markdown: text,
+                options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            ) {
+                return attributedString
+            }
             return AttributedString(text)
         case .internalCommunication:
             if let attributedString = try? AttributedString(
@@ -207,6 +284,21 @@ enum TimelineEntry: Equatable, Identifiable {
         case let .dispReq(_, _, text): return text
         case let .reply(_, text): return text
         case let .diga(_, text): return text
+        case let .euEntry(communication, text):
+            switch communication.eventType {
+            case .createdAccessCode,
+                 .refreshedAccessCode,
+                 .deletedAccessCode:
+                // These events are always related to all erxTasks
+                return [L10n.ordDetailTxtChipAll.text]
+            case .addedTask,
+                 .removedTask,
+                 .redeemedTask:
+                // We already load all erxTask and know the name
+                return text
+            case .unknown:
+                return []
+            }
         case let .chargeItem(chargeItem):
             guard let displayName = chargeItem.medication?.displayName else { return [] }
             return [displayName]
@@ -233,6 +325,10 @@ enum TimelineEntry: Equatable, Identifiable {
                 return A11y.orderDetail.list.ordDetailBtnDmc
             case .ordDetailBtnLink:
                 return A11y.orderDetail.list.ordDetailBtnLink
+            case .euRevokePermission:
+                return A11y.orderDetail.list.ordDetailBtnRevokeAccessCode
+            case .euShowAccessCode:
+                return A11y.orderDetail.list.ordDetailBtnRefreshCode
             case .loadAndShowPharmacy,
                  .ordDetailBtnError,
                  .ordDetailBtnChargeItem:
@@ -246,6 +342,8 @@ enum TimelineEntry: Equatable, Identifiable {
             case ordDetailBtnOnPremise
             case ordDetailBtnLink
             case ordDetailBtnChargeItem
+            case euShowAccessCode
+            case euRevokePermission
         }
     }
 
@@ -287,6 +385,20 @@ enum TimelineEntry: Equatable, Identifiable {
                 ))
             }
             return actions
+        case let .euEntry(communication, _):
+            var actions: IdentifiedArrayOf<ActionEntry> = .init(uniqueElements: [])
+            @Dependency(\.date) var date
+            if communication.euAccessCode?.accessCode != nil,
+               let validUntil = communication.euAccessCode?.validUntil, date.now < validUntil {
+                actions.append(.init(id: .euShowAccessCode,
+                                     name: L10n.ordDetailBtnRefreshCode.text,
+                                     action: .showEuAccessCode))
+
+                actions.append(.init(id: .euRevokePermission,
+                                     name: L10n.ordDetailBtnRevokeCode.text,
+                                     action: .showRevokeSheet))
+            }
+            return actions
         case let .chargeItem(chargeItem):
             return IdentifiedArray(uniqueElements: [
                 ActionEntry(
@@ -322,9 +434,18 @@ extension TimelineEntry {
         }
     }
 
-    func dateToString(date: Date) -> String {
+    func dateToString(date: Date?) -> String? {
+        guard let date = date else { return nil }
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssxxx"
         return formatter.string(from: date)
+    }
+
+    static func countryFlag(from code: String?) -> String {
+        guard let code else { return "" }
+        return code.uppercased()
+            .unicodeScalars
+            .compactMap { UnicodeScalar(127_397 + $0.value) }
+            .reduce(into: "") { $0.unicodeScalars.append($1) }
     }
 }

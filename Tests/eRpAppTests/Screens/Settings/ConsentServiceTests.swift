@@ -34,12 +34,12 @@ import XCTest
 final class ConsentServiceTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
-    var mockUserSessionProvider: MockUserSessionProvider!
+    var mockUserSessionProvider: UserSessionProviderMock!
     var mockUserSession: MockUserSession!
-    var mockLoginHandler: MockLoginHandler!
+    var mockLoginHandler: LoginHandlerMock!
 
     override func invokeTest() {
-        mockUserSessionProvider = MockUserSessionProvider()
+        mockUserSessionProvider = UserSessionProviderMock()
 
         withDependencies { dependencies in
             dependencies.userSessionProvider = mockUserSessionProvider
@@ -53,17 +53,18 @@ final class ConsentServiceTests: XCTestCase {
 
         schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         mockUserSession = MockUserSession()
-        mockLoginHandler = MockLoginHandler()
+        mockLoginHandler = LoginHandlerMock()
 
         mockUserSession.idpSessionLoginHandler = mockLoginHandler
-        mockUserSessionProvider.userSessionForReturnValue = mockUserSession
+        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
     }
 
     func testGrantConsent_happyPath() async throws {
         // given
         let sut = ConsentService.liveValue
 
-        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
         mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsConsentService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
@@ -77,8 +78,8 @@ final class ConsentServiceTests: XCTestCase {
 
             // then
             expect(result) == ConsentService.GrantResult.success
-            expect(self.mockLoginHandler.isAuthenticatedCalled) == true
-            expect(self.mockLoginHandler.isAuthenticatedCallsCount) == 1
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCalled) == true
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount) == 1
         }
     }
 
@@ -86,7 +87,8 @@ final class ConsentServiceTests: XCTestCase {
         // given
         let sut = ConsentService.liveValue
 
-        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
         mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsConsentService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
@@ -109,8 +111,8 @@ final class ConsentServiceTests: XCTestCase {
 
             // then
             expect(runSuccess) == true
-            expect(self.mockLoginHandler.isAuthenticatedCalled) == true
-            expect(self.mockLoginHandler.isAuthenticatedCallsCount) == 1
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCalled) == true
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount) == 1
         }
     }
 
@@ -118,7 +120,8 @@ final class ConsentServiceTests: XCTestCase {
         // given
         let sut = ConsentService.liveValue
 
-        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
         mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsConsentService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
@@ -130,8 +133,8 @@ final class ConsentServiceTests: XCTestCase {
 
             // then
             expect(result) == ConsentService.RevokeResult.success
-            expect(self.mockLoginHandler.isAuthenticatedCalled) == true
-            expect(self.mockLoginHandler.isAuthenticatedCallsCount) == 1
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCalled) == true
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount) == 1
         }
     }
 
@@ -139,7 +142,8 @@ final class ConsentServiceTests: XCTestCase {
         // given
         let sut = ConsentService.liveValue
 
-        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
         mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsConsentService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
@@ -159,8 +163,8 @@ final class ConsentServiceTests: XCTestCase {
 
             // then
             expect(runSuccess) == true
-            expect(self.mockLoginHandler.isAuthenticatedCalled) == true
-            expect(self.mockLoginHandler.isAuthenticatedCallsCount) == 1
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCalled) == true
+            expect(self.mockLoginHandler.isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount) == 1
         }
     }
 }

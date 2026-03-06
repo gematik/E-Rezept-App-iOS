@@ -42,7 +42,7 @@ struct DiGaInsuranceListDomain {
         @Presents var destination: Destination.State?
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
@@ -256,3 +256,6 @@ extension DiGaInsuranceListDomain {
         }
     }
 }
+
+extension DiGaInsuranceListDomain.Destination.State: Equatable {}
+extension DiGaInsuranceListDomain.Destination.Action: Equatable {}

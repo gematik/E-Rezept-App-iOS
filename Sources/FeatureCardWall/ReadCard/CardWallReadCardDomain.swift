@@ -65,7 +65,7 @@ public struct CardWallReadCardDomain {
     }
 
     /// Destination states for navigation from read card screen
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = alert
         /// Show alert dialog
@@ -308,3 +308,6 @@ extension CardWallReadCardDomain {
         }
     }
 }
+
+extension CardWallReadCardDomain.Destination.State: Equatable {}
+extension CardWallReadCardDomain.Destination.Action: Equatable {}

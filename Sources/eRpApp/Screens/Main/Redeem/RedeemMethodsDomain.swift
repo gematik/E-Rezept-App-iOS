@@ -52,11 +52,11 @@ struct RedeemMethodsDomain {
         enum Delegate: Equatable {
             case close
             case redeemOverview([Prescription])
-            case euRedeemTapped
+            case euRedeemTapped([Prescription])
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = redeem_matrixCode
         case matrixCode(MatrixCodeDomain)
@@ -110,3 +110,6 @@ extension RedeemMethodsDomain {
         }
     }
 }
+
+extension RedeemMethodsDomain.Destination.State: Equatable {}
+extension RedeemMethodsDomain.Destination.Action: Equatable {}

@@ -33,56 +33,65 @@ import XCTest
 @MainActor
 final class ErxTaskRepositoryTests: XCTestCase {
     func testGetPagedTasksEvents() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         let gkvProfile = Profile(name: "GKV Profile")
 
-        mockLocalDataStore.fetchLatestLastModifiedForErxTasksOfClosure = { _ in
-            if mockLocalDataStore.fetchLatestLastModifiedForErxTasksOfCallsCount == 1 {
-                return Just(.none)
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
-            } else {
-                return Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
+        mockLocalDataStore
+            .fetchLatestLastModifiedForErxTasksOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                if mockLocalDataStore
+                    .fetchLatestLastModifiedForErxTasksOfProfileIdUUIDAnyPublisherStringLocalStoreErrorCallsCount == 1 {
+                    return Just(.none)
+                        .setFailureType(to: LocalStoreError.self)
+                        .eraseToAnyPublisher()
+                } else {
+                    return Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
+                }
             }
-        }
 
-        mockRemoteDataStore.listDetailedTasksForClosure = { sparseTask in
-            if sparseTask.next == Fixtures.erxTaskPageA.next {
-                return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else if sparseTask.next == Fixtures.erxTaskPageB.next {
-                return Just(Fixtures.erxTaskPageB).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else if sparseTask.next == Fixtures.erxTaskPageC.next {
-                return Just(Fixtures.erxTaskPageC).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else {
-                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+        mockRemoteDataStore
+            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { sparseTask in
+                if sparseTask.next == Fixtures.erxTaskPageA.next {
+                    return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                } else if sparseTask.next == Fixtures.erxTaskPageB.next {
+                    return Just(Fixtures.erxTaskPageB).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                } else if sparseTask.next == Fixtures.erxTaskPageC.next {
+                    return Just(Fixtures.erxTaskPageC).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                } else {
+                    return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+                }
             }
-        }
 
-        mockRemoteDataStore.listAllTasksAfterClosure = { timestamp in
-            if timestamp == nil {
-                return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else {
-                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+        mockRemoteDataStore
+            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { timestamp in
+                if timestamp == nil {
+                    return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                } else {
+                    return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+                }
             }
-        }
 
-        mockRemoteDataStore.listTasksNextPageOfClosure = { previousPage in
-            guard let next = previousPage.next else {
-                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+        mockRemoteDataStore
+            .listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { previousPage in
+                guard let next = previousPage.next else {
+                    return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+                }
+                if next == Fixtures.erxTaskPageA.next {
+                    return Just(Fixtures.erxTaskPageB).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                } else if next == Fixtures.erxTaskPageB.next {
+                    return Just(Fixtures.erxTaskPageC).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                } else {
+                    return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+                }
             }
-            if next == Fixtures.erxTaskPageA.next {
-                return Just(Fixtures.erxTaskPageB).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else if next == Fixtures.erxTaskPageB.next {
-                return Just(Fixtures.erxTaskPageC).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else {
-                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
-            }
-        }
 
-        mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedReturnValue = Just(true)
-            .setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
+        mockLocalDataStore
+            .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorReturnValue =
+            Just(true)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
 
         try await withDependencies { dependencies in
             dependencies.erxLocalDataStore = mockLocalDataStore
@@ -90,26 +99,43 @@ final class ErxTaskRepositoryTests: XCTestCase {
         } operation: {
             try await ErxTaskRepository.loadRemoteLatestTasks(gkvProfile.identifier)
 
-            expect(mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedCallsCount).to(equal(3))
-            expect(mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedReceivedInvocations.count).to(equal(3))
-            expect(mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedReceivedInvocations[0]).to(equal(
-                (tasks: Fixtures.erxTaskPageA.content, gkvProfile.identifier, updateProfileLastAuthenticated: true)
-            ))
-            expect(mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedReceivedInvocations[1]).to(equal(
-                (tasks: Fixtures.erxTaskPageB.content, gkvProfile.identifier, updateProfileLastAuthenticated: true)
-            ))
-            expect(mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedReceivedInvocations[2]).to(equal(
-                (tasks: Fixtures.erxTaskPageC.content, gkvProfile.identifier, updateProfileLastAuthenticated: true)
-            ))
+            expect(mockLocalDataStore
+                .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorCallsCount)
+                            .to(equal(3))
+            expect(mockLocalDataStore
+                .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorReceivedInvocations
+                .count).to(equal(3))
+            expect(mockLocalDataStore
+                .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorReceivedInvocations[
+                    0
+                ])
+                .to(equal(
+                    (tasks: Fixtures.erxTaskPageA.content, gkvProfile.identifier, updateProfileLastAuthenticated: true)
+                ))
+            expect(mockLocalDataStore
+                .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorReceivedInvocations[
+                    1
+                ])
+                .to(equal(
+                    (tasks: Fixtures.erxTaskPageB.content, gkvProfile.identifier, updateProfileLastAuthenticated: true)
+                ))
+            expect(mockLocalDataStore
+                .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorReceivedInvocations[
+                    2
+                ])
+                .to(equal(
+                    (tasks: Fixtures.erxTaskPageC.content, gkvProfile.identifier, updateProfileLastAuthenticated: true)
+                ))
         }
     }
 
     func testLoadingFromRemoteToCallInCorrectOrderForGKV() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         let gkvProfile = Profile(name: "GKV Profile")
-        let profileDataStoreMock = MockProfileDataStore()
-        profileDataStoreMock.fetchProfileByReturnValue = Just(gkvProfile)
+        let profileDataStoreMock = ProfileDataStoreMock()
+        profileDataStoreMock
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(gkvProfile)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         let expectedCallOrder = [
@@ -127,62 +153,75 @@ final class ErxTaskRepositoryTests: XCTestCase {
         var actualCallOrder = [String]()
 
         // tasks
-        mockLocalDataStore.fetchLatestLastModifiedForErxTasksOfClosure = { _ in
-            actualCallOrder.append("lastModifiedErxTaskLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listAllTasksAfterClosure = { _ in
-            actualCallOrder.append("listTasksRemote")
-            return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
-                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listDetailedTasksForClosure = { _ in
-            actualCallOrder.append("listDetailedTasksRemote")
-            return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
-                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestLastModifiedForErxTasksOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("lastModifiedErxTaskLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listTasksRemote")
+                return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
+                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listDetailedTasksRemote")
+                return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
+                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
 
         // medication dispenses
-        mockRemoteDataStore.listMedicationDispensesForClosure = { _ in
-            actualCallOrder.append("listMDRemote")
-            return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockLocalDataStore.saveMedicationDispensesClosure = { _ in
+        mockRemoteDataStore
+            .listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listMDRemote")
+                return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self)
+                    .eraseToAnyPublisher()
+            }
+        mockLocalDataStore.saveMedicationDispensesErxMedicationDispenseAnyPublisherBoolLocalStoreErrorClosure = { _ in
             actualCallOrder.append("saveMDLocal")
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
         // tasks
-        mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedClosure = { _, _, _ in
-            actualCallOrder.append("saveTasksLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorClosure =
+            { _, _, _ in
+                actualCallOrder.append("saveTasksLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockLocalDataStore.listAllTasksOfClosure = { _ in
+        mockLocalDataStore.listAllTasksOfProfileIdUUIDAnyPublisherErxTaskLocalStoreErrorClosure = { _ in
             actualCallOrder.append("listAllTasksLocal")
             return Just([]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
         // communications
-        mockLocalDataStore.fetchLatestTimestampForCommunicationsOfClosure = { _ in
-            actualCallOrder.append("latestTimestampCommunicationLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listAllCommunicationsAfterForClosure = { _, _ in
-            actualCallOrder.append("listAllCommunicationsRemote")
-            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockLocalDataStore.saveCommunicationsOfClosure = { _, _ in
-            actualCallOrder.append("saveCommunicationsLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestTimestampForCommunicationsOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("latestTimestampCommunicationLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllCommunicationsRemote")
+                return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
+        mockLocalDataStore
+            .saveCommunicationsErxTaskCommunicationOfProfileIdUUIDAnyPublisherBoolLocalStoreErrorClosure = { _, _ in
+                actualCallOrder.append("saveCommunicationsLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         // audit events
-        mockRemoteDataStore.listAllAuditEventsAfterForClosure = { _, _ in
-            actualCallOrder.append("listAllAuditEventsRemote")
-            return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
-                .eraseToAnyPublisher()
-        }
+        mockRemoteDataStore
+            .listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllAuditEventsRemote")
+                return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
+                    .eraseToAnyPublisher()
+            }
 
         let sut = ErxTaskRepository.liveValue
 
@@ -198,11 +237,12 @@ final class ErxTaskRepositoryTests: XCTestCase {
     }
 
     func testLoadingFromRemoteToCallInCorrectOrderForPKV() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         let pkvProfile = Profile(name: "PKV Profile", insuranceType: .pKV)
-        let profileDataStoreMock = MockProfileDataStore()
-        profileDataStoreMock.fetchProfileByReturnValue = Just(pkvProfile)
+        let profileDataStoreMock = ProfileDataStoreMock()
+        profileDataStoreMock
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(pkvProfile)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         let expectedCallOrder = [
@@ -223,79 +263,95 @@ final class ErxTaskRepositoryTests: XCTestCase {
         var actualCallOrder = [String]()
 
         // tasks
-        mockLocalDataStore.fetchLatestLastModifiedForErxTasksOfClosure = { _ in
-            actualCallOrder.append("lastModifiedErxTaskLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listAllTasksAfterClosure = { _ in
-            actualCallOrder.append("listTasksRemote")
-            return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
-                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listDetailedTasksForClosure = { _ in
-            actualCallOrder.append("listDetailedTasksRemote")
-            return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
-                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestLastModifiedForErxTasksOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("lastModifiedErxTaskLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listTasksRemote")
+                return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
+                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listDetailedTasksRemote")
+                return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
+                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
 
         // charge items
-        mockLocalDataStore.fetchLatestTimestampForChargeItemsOfClosure = { _ in
-            actualCallOrder.append("fetchLatestTimestampForChargeItemsLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestTimestampForChargeItemsOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("fetchLatestTimestampForChargeItemsLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockRemoteDataStore.listAllChargeItemsAfterClosure = { _ in
-            actualCallOrder.append("listAllChargeItemsRemote")
-            return Just([Fixtures.chargeItem])
-                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
+        mockRemoteDataStore
+            .listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listAllChargeItemsRemote")
+                return Just([Fixtures.chargeItem])
+                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockLocalDataStore.saveChargeItemsOfClosure = { _, _ in
-            actualCallOrder.append("saveChargeItemLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .saveChargeItemsErxSparseChargeItemOfProfileIdUUIDAnyPublisherBoolLocalStoreErrorClosure = { _, _ in
+                actualCallOrder.append("saveChargeItemLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         // medication dispenses
-        mockRemoteDataStore.listMedicationDispensesForClosure = { _ in
-            actualCallOrder.append("listMDRemote")
-            return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockLocalDataStore.saveMedicationDispensesClosure = { _ in
+        mockRemoteDataStore
+            .listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listMDRemote")
+                return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self)
+                    .eraseToAnyPublisher()
+            }
+        mockLocalDataStore.saveMedicationDispensesErxMedicationDispenseAnyPublisherBoolLocalStoreErrorClosure = { _ in
             actualCallOrder.append("saveMDLocal")
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
         // tasks
-        mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedClosure = { _, _, _ in
-            actualCallOrder.append("saveTasksLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorClosure =
+            { _, _, _ in
+                actualCallOrder.append("saveTasksLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockLocalDataStore.listAllTasksOfClosure = { _ in
+        mockLocalDataStore.listAllTasksOfProfileIdUUIDAnyPublisherErxTaskLocalStoreErrorClosure = { _ in
             actualCallOrder.append("listAllTasksLocal")
             return Just([]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
         // communications
-        mockLocalDataStore.fetchLatestTimestampForCommunicationsOfClosure = { _ in
-            actualCallOrder.append("latestTimestampCommunicationLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listAllCommunicationsAfterForClosure = { _, _ in
-            actualCallOrder.append("listAllCommunicationsRemote")
-            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockLocalDataStore.saveCommunicationsOfClosure = { _, _ in
-            actualCallOrder.append("saveCommunicationsLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestTimestampForCommunicationsOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("latestTimestampCommunicationLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllCommunicationsRemote")
+                return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
+        mockLocalDataStore
+            .saveCommunicationsErxTaskCommunicationOfProfileIdUUIDAnyPublisherBoolLocalStoreErrorClosure = { _, _ in
+                actualCallOrder.append("saveCommunicationsLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         // audit events
-        mockRemoteDataStore.listAllAuditEventsAfterForClosure = { _, _ in
-            actualCallOrder.append("listAllAuditEventsRemote")
-            return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
-                .eraseToAnyPublisher()
-        }
+        mockRemoteDataStore
+            .listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllAuditEventsRemote")
+                return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
+                    .eraseToAnyPublisher()
+            }
 
         let sut = ErxTaskRepository.liveValue
 
@@ -311,30 +367,42 @@ final class ErxTaskRepositoryTests: XCTestCase {
     }
 
     func testLoadingCountOfUnreadCommunicationsAndChargeItems() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         let pkvProfile = Profile(name: "PKV Profile", insuranceType: .pKV)
-        let profileDataStoreMock = MockProfileDataStore()
-        profileDataStoreMock.fetchProfileByReturnValue = Just(pkvProfile)
+        let profileDataStoreMock = ProfileDataStoreMock()
+        profileDataStoreMock
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(pkvProfile)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         let expectedCallOrder = [
             "listAllCommunicationsLocal",
+            "listAllEuCommunicationsLocal",
             "listAllChargeItemsLocal",
         ]
         var actualCallOrder = [String]()
 
-        mockLocalDataStore.listAllCommunicationsForClosure = { _ in
-            actualCallOrder.append("listAllCommunicationsLocal")
-            return Just([Fixtures.communication]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .listAllCommunicationsForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationLocalStoreErrorClosure =
+            { _ in
+                actualCallOrder.append("listAllCommunicationsLocal")
+                return Just([Fixtures.communication]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockLocalDataStore.listAllChargeItemsOfClosure = { _ in
-            actualCallOrder.append("listAllChargeItemsLocal")
-            return Just([Fixtures.sparseChargeItemRead, Fixtures.sparseChargeItemNotRead,
-                         Fixtures.sparseChargeItemNotRead2])
-                .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .listAllEuCommunicationCountryCodeStringProfileIdUUIDAnyPublisherEuCommunicationLocalStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllEuCommunicationsLocal")
+                return Just([Fixtures.euCommunication]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+
+        mockLocalDataStore
+            .listAllChargeItemsOfProfileIdUUIDAnyPublisherErxSparseChargeItemLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("listAllChargeItemsLocal")
+                return Just([Fixtures.sparseChargeItemRead, Fixtures.sparseChargeItemNotRead,
+                             Fixtures.sparseChargeItemNotRead2])
+                    .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         let sut = ErxTaskRepository.liveValue
 
@@ -343,28 +411,31 @@ final class ErxTaskRepositoryTests: XCTestCase {
             dependencies.erxRemoteDataStore = mockRemoteDataStore
             dependencies.profileDataStore = profileDataStoreMock
         } operation: {
-            let result = try await sut.countAllUnreadCommunicationsAndChargeItems(pkvProfile.identifier, .all)
-            expect(result) == 2
+            let stream = sut.countAllUnreadCommunicationsAndChargeItems(pkvProfile.identifier, .all)
+            var iterator = stream.makeAsyncIterator()
+            let result = try await iterator.next()
+            expect(result) == 3
             expect(actualCallOrder) == expectedCallOrder
         }
     }
 
     func testDeleteTask() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         var actualCallOrder = [String]()
         let profile = Profile(name: "Profile")
         let asyncCallCounter = TestActor()
-        let profileDataStoreMock = MockProfileDataStore()
-        profileDataStoreMock.fetchProfileByReturnValue = Just(profile)
+        let profileDataStoreMock = ProfileDataStoreMock()
+        profileDataStoreMock
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        mockLocalDataStore.deleteTasksInClosure = { _, _ in
+        mockLocalDataStore.deleteTasksErxTaskInProfileIdUUIDAnyPublisherBoolLocalStoreErrorClosure = { _, _ in
             actualCallOrder.append("deleteLocalTasksCalled")
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
-        mockRemoteDataStore.deleteTasksClosure = { _ in
+        mockRemoteDataStore.deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorClosure = { _ in
             actualCallOrder.append("deleteRemoteTasksCalled")
             return Just(true).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
         }
@@ -391,17 +462,18 @@ final class ErxTaskRepositoryTests: XCTestCase {
     }
 
     func testDeleteScannedTask() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         var actualCallOrder = [String]()
         let profile = Profile(name: "Profile")
-        let profileDataStoreMock = MockProfileDataStore()
-        profileDataStoreMock.fetchProfileByReturnValue = Just(profile)
+        let profileDataStoreMock = ProfileDataStoreMock()
+        profileDataStoreMock
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         let asyncCallCounter = TestActor()
 
-        mockLocalDataStore.deleteTasksInClosure = { _, _ in
+        mockLocalDataStore.deleteTasksErxTaskInProfileIdUUIDAnyPublisherBoolLocalStoreErrorClosure = { _, _ in
             actualCallOrder.append("deleteLocalTasksCalled")
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
@@ -428,77 +500,90 @@ final class ErxTaskRepositoryTests: XCTestCase {
     }
 
     func testUpdateCancelledTask() async throws {
-        let mockLocalDataStore = MockErxLocalDataStore()
-        let mockRemoteDataStore = MockErxRemoteDataStore()
+        let mockLocalDataStore = ErxLocalDataStoreMock()
+        let mockRemoteDataStore = ErxRemoteDataStoreMock()
         var actualCallOrder = [String]()
         let profile = Profile(name: "Profile")
-        let profileDataStoreMock = MockProfileDataStore()
-        profileDataStoreMock.fetchProfileByReturnValue = Just(profile)
+        let profileDataStoreMock = ProfileDataStoreMock()
+        profileDataStoreMock
+            .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         let task = ErxTask(identifier: "1234-5678-9098", status: .ready, flowType: .pharmacyOnly)
 
         // tasks
-        mockLocalDataStore.fetchLatestLastModifiedForErxTasksOfClosure = { _ in
-            actualCallOrder.append("lastModifiedErxTaskLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestLastModifiedForErxTasksOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("lastModifiedErxTaskLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockRemoteDataStore.listAllTasksAfterClosure = { _ in
-            actualCallOrder.append("listAllTasksRemote")
-            return Just(PagedContent(
-                content: [ErxTask(identifier: task.identifier, status: .cancelled, flowType: .pharmacyOnly)], next: nil
-            ))
-                .setFailureType(to: RemoteStoreError.self)
-                .eraseToAnyPublisher()
-        }
+        mockRemoteDataStore
+            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listAllTasksRemote")
+                return Just(PagedContent(
+                    content: [ErxTask(identifier: task.identifier, status: .cancelled, flowType: .pharmacyOnly)],
+                    next: nil
+                ))
+                    .setFailureType(to: RemoteStoreError.self)
+                    .eraseToAnyPublisher()
+            }
 
-        mockRemoteDataStore.listDetailedTasksForClosure = { _ in
-            actualCallOrder.append("listDetailedTasksRemote")
-            return Just(PagedContent(
-                content: [task],
-                next: nil
-            ))
-                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
+        mockRemoteDataStore
+            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+                actualCallOrder.append("listDetailedTasksRemote")
+                return Just(PagedContent(
+                    content: [task],
+                    next: nil
+                ))
+                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockLocalDataStore.fetchTaskByAccessCodeClosure = { _, _ in
+        mockLocalDataStore.fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskLocalStoreErrorClosure = { _, _ in
             actualCallOrder.append("fetchTaskByAccessCodeLocal")
             return Just(task)
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()
         }
 
-        mockLocalDataStore.saveTasksInUpdateProfileLastAuthenticatedClosure = { _, _, _ in
-            actualCallOrder.append("saveTasksLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorClosure =
+            { _, _, _ in
+                actualCallOrder.append("saveTasksLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
-        mockLocalDataStore.listAllTasksOfClosure = { _ in
+        mockLocalDataStore.listAllTasksOfProfileIdUUIDAnyPublisherErxTaskLocalStoreErrorClosure = { _ in
             actualCallOrder.append("listAllTasksLocal")
             return Just([]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
         // communications
-        mockLocalDataStore.fetchLatestTimestampForCommunicationsOfClosure = { _ in
-            actualCallOrder.append("latestTimestampCommunicationLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listAllCommunicationsAfterForClosure = { _, _ in
-            actualCallOrder.append("listAllCommunicationsRemote")
-            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockLocalDataStore.saveCommunicationsOfClosure = { _, _ in
-            actualCallOrder.append("saveCommunicationsLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
+        mockLocalDataStore
+            .fetchLatestTimestampForCommunicationsOfProfileIdUUIDAnyPublisherStringLocalStoreErrorClosure = { _ in
+                actualCallOrder.append("latestTimestampCommunicationLocal")
+                return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+        mockRemoteDataStore
+            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllCommunicationsRemote")
+                return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            }
+        mockLocalDataStore
+            .saveCommunicationsErxTaskCommunicationOfProfileIdUUIDAnyPublisherBoolLocalStoreErrorClosure = { _, _ in
+                actualCallOrder.append("saveCommunicationsLocal")
+                return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
 
         // audit events
-        mockRemoteDataStore.listAllAuditEventsAfterForClosure = { _, _ in
-            actualCallOrder.append("listAllAuditEventsRemote")
-            return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
-                .eraseToAnyPublisher()
-        }
+        mockRemoteDataStore
+            .listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
+            { _, _ in
+                actualCallOrder.append("listAllAuditEventsRemote")
+                return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
+                    .eraseToAnyPublisher()
+            }
 
         let expectedCallOrder = [
             "lastModifiedErxTaskLocal",
@@ -644,6 +729,16 @@ extension ErxTaskRepositoryTests {
             timestamp: "",
             payloadJSON: "",
             isRead: false
+        )
+
+        static let euCommunication = EuCommunication(
+            id: UUID(),
+            eventType: .createdAccessCode,
+            taskId: "task id 13",
+            orderId: "order id",
+            timestamp: Date(),
+            isRead: false,
+            countryCode: "DE"
         )
 
         static let chargeItem = ErxChargeItem(identifier: "id 12", fhirData: Data(), taskId: "task id 12")

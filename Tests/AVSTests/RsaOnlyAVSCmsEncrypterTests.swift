@@ -31,7 +31,7 @@ final class RsaOnlyAVSCmsEncrypterTests: XCTestCase {
     func testCmsEncrypt() throws {
         // given
         let data = Data([0x00])
-        let x509rsa = try X509(pem: x509rsaPem.data(using: .utf8)!)
+        let x509rsa = try X509(pem: Data(x509rsaPem.utf8))
         let recipients = [x509rsa]
 
         let sut = RsaOnlyAVSCmsEncrypter()

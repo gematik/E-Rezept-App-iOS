@@ -47,24 +47,13 @@ struct MedicationReminderSetupView: View {
                 Button {
                     store.send(.showDosageInstructionsInfo)
                 } label: {
-                    HStack(spacing: 10) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(store.medicationSchedule.dosageInstructions)
-                                .foregroundColor(Colors.systemLabel)
-                            Text(L10n.medReminderTxtDosageInstructionSubtitle)
-                                .font(.subheadline)
-                                .foregroundColor(Colors.systemLabelSecondary)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: SFSymbolName.info)
-                            .font(.body.weight(.semibold))
-                            .foregroundColor(Colors.primary)
+                    LabeledContent {
+                        Text(store.medicationSchedule.dosageInstructions)
+                    } label: {
+                        Text(L10n.medReminderTxtDosageInstructionSubtitle)
                     }
-                    .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
+                    .labeledContentStyle(.vertical(icon: SFSymbolName.info))
                 }
-                .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
                 .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnDosageInstruction)
             } header: {
                 VStack(spacing: 16) {
@@ -95,7 +84,7 @@ struct MedicationReminderSetupView: View {
                             Text(store.repetitionValue)
                                 .foregroundColor(Colors.systemLabelSecondary)
                             Image(systemName: SFSymbolName.chevronForward)
-                                .foregroundColor(Color(.tertiaryLabel))
+                                .foregroundColor(Colors.systemLabelSecondary)
                                 .font(.body.weight(.semibold))
                         }
                         .contentShape(Rectangle()) // iOS15 workaround to fix button tap area

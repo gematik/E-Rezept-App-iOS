@@ -27,10 +27,6 @@ import SwiftUI
 struct ShareViewController: UIViewControllerRepresentable {
     @Bindable var store: StoreOf<ShareSheetDomain>
 
-    init(store: StoreOf<ShareSheetDomain>) {
-        self.store = store
-    }
-
     func makeUIViewController(
         context _: UIViewControllerRepresentableContext<ShareViewController>
     ) -> UIActivityViewController {

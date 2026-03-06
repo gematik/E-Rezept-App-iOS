@@ -69,7 +69,7 @@ public struct CardWallExtAuthSelectionDomain {
     }
 
     /// Destination states for navigation from selection screen
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = cardWall_extAuthConfirm
         /// Navigate to authentication confirmation
@@ -187,3 +187,6 @@ extension CardWallExtAuthSelectionDomain {
         }
     }
 }
+
+extension CardWallExtAuthSelectionDomain.Destination.State: Equatable {}
+extension CardWallExtAuthSelectionDomain.Destination.Action: Equatable {}

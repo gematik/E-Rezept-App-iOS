@@ -38,7 +38,7 @@ import VAUClient
 
 class MockUserSession: UserSession {
     lazy var trustStoreSession: TrustStoreSession = DemoTrustStoreSession()
-    var mockPrescriptionRepository: MockPrescriptionRepository
+    var mockPrescriptionRepository: PrescriptionRepositoryMock
     var mockIDPSession: IDPSessionMock
     var profileSecureDataWiper: ProfileSecureDataWiper
     var secureUserStore: SecureUserDataStore
@@ -50,10 +50,10 @@ class MockUserSession: UserSession {
     init(
         isAuthenticated: Bool = true,
         profileId: UUID = UUID(),
-        prescriptionRepository: MockPrescriptionRepository = MockPrescriptionRepository(),
+        prescriptionRepository: PrescriptionRepositoryMock = PrescriptionRepositoryMock(),
         idpSession: IDPSessionMock = IDPSessionMock(),
         secureUserStore: SecureUserDataStore = MockSecureUserStore(),
-        profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper(),
+        profileSecureDataWiper: ProfileSecureDataWiper = ProfileSecureDataWiperMock(),
         mockUpdateChecker: UpdateChecker = UpdateChecker { false }
     ) {
         isLoggedIn = isAuthenticated
@@ -83,12 +83,12 @@ class MockUserSession: UserSession {
         DemoVAUStorage()
     }()
 
-    lazy var mockUserDataStore: MockUserDataStore = {
-        MockUserDataStore()
+    lazy var mockUserDataStore: UserDataStoreMock = {
+        UserDataStoreMock()
     }()
 
     lazy var shipmentInfoDataStore: ShipmentInfoDataStore = {
-        MockShipmentInfoDataStore()
+        ShipmentInfoDataStoreMock()
     }()
 
     var localUserStore: UserDataStore {
@@ -105,8 +105,8 @@ class MockUserSession: UserSession {
 
     private var underlyingOrdersTaskRepository: OrdersRepository!
 
-    lazy var mockProfileDataStore: MockProfileDataStore = {
-        MockProfileDataStore()
+    lazy var mockProfileDataStore: ProfileDataStoreMock = {
+        ProfileDataStoreMock()
     }()
 
     lazy var profileDataStore: ProfileDataStore = {
@@ -118,11 +118,11 @@ class MockUserSession: UserSession {
     }
 
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
-        MockNFCHealthCardPasswordController()
+        NFCHealthCardPasswordControllerMock()
     }()
 
     lazy var appSecurityManager: AppSecurityManager = {
-        MockAppSecurityManager()
+        AppSecurityManagerMock()
     }()
 
     private(set) lazy var deviceSecurityManager: DeviceSecurityManager = {
@@ -136,15 +136,15 @@ class MockUserSession: UserSession {
     }
 
     lazy var avsSession: AVSSession = {
-        MockAVSSession()
+        AVSSessionMock()
     }()
 
     lazy var avsTransactionDataStore: AVSTransactionDataStore = {
-        MockAVSTransactionDataStore()
+        AVSTransactionDataStoreMock()
     }()
 
     lazy var activityIndicating: ActivityIndicating = {
-        MockActivityIndicating()
+        ActivityIndicatingMock()
     }()
 
     lazy var prescriptionRepository: PrescriptionRepository = {
@@ -152,15 +152,15 @@ class MockUserSession: UserSession {
     }()
 
     lazy var idpSessionLoginHandler: LoginHandler = {
-        MockLoginHandler()
+        LoginHandlerMock()
     }()
 
     lazy var pairingIdpSessionLoginHandler: LoginHandler = {
-        MockLoginHandler()
+        LoginHandlerMock()
     }()
 
     lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
-        MockSecureEnclaveSignatureProvider()
+        SecureEnclaveSignatureProviderMock()
     }()
 
     var bfarmSession: BfArMSession = .init(fetchBfArMInfo: { _ in nil }, fetchCachedImage: { _ in nil })
@@ -457,7 +457,7 @@ class FakeErxTaskRepository {
             "1": ErxSparseChargeItem(
                 identifier: "1390f983-1e67-11b2-8555-63bf44001234",
                 taskId: "task id",
-                fhirData: "afasf".data(using: .utf8)!,
+                fhirData: Data("afasf".utf8),
                 enteredDate: "2022-11-22T14:07:47.809+00:00"
             ),
         ]

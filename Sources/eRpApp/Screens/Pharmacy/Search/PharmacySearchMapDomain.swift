@@ -77,7 +77,7 @@ struct PharmacySearchMapDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = pharmacySearch_detail
         case pharmacy(PharmacyDetailDomain)
@@ -371,10 +371,10 @@ struct PharmacySearchMapDomain {
             return .none
         case let .locationManager(.didUpdateLocations(locations)):
             state.currentUserLocation = locations.first
-            return .run(operation: { send in
+            return .run { send in
                 await send(.setMapAfterLocationUpdate)
                 await locationManager.stopUpdatingLocation()
-            })
+            }
         case .showPharmacyFilter:
             state.destination = .filter(.init(
                 pharmacyFilterOptions: state.$pharmacyFilterOptions,
@@ -539,10 +539,13 @@ Equatable {
     }
 }
 
-extension MKCoordinateSpan: @retroactive Equatable {
+extension MKCoordinateSpan: @retroactive
+Equatable {
     public static func ==(lhs: MKCoordinateSpan, rhs: MKCoordinateSpan) -> Bool {
         lhs.latitudeDelta == rhs.latitudeDelta && lhs.longitudeDelta == lhs.longitudeDelta
     }
 }
 
+extension PharmacySearchMapDomain.Destination.State: Equatable {}
+extension PharmacySearchMapDomain.Destination.Action: Equatable {}
 // swiftlint:enable type_body_length

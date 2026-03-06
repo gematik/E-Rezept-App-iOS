@@ -49,7 +49,7 @@ public struct IDPCardWallDomain {
     }
 
     /// Subdomains of the CardWall flow
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Subdomain {
         /// CAN subdomain
         case can(CardWallCANDomain)
@@ -160,3 +160,6 @@ extension IDPCardWallDomain {
         }
     }
 }
+
+extension IDPCardWallDomain.Subdomain.State: Equatable {}
+extension IDPCardWallDomain.Subdomain.Action: Equatable {}

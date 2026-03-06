@@ -36,13 +36,13 @@ final class ChargeItemListDomainTests: XCTestCase {
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
-    var mockChargeItemListDomainService: MockChargeItemListDomainService!
+    var mockChargeItemListDomainService: ChargeItemListDomainServiceMock!
 
     override func setUp() {
         super.setUp()
 
         schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        mockChargeItemListDomainService = MockChargeItemListDomainService()
+        mockChargeItemListDomainService = ChargeItemListDomainServiceMock()
     }
 
     private func testStore(for state: ChargeItemListDomain.State) -> TestStore {
@@ -59,10 +59,14 @@ final class ChargeItemListDomainTests: XCTestCase {
     func testFetchChargeItems_happyPath() async {
         let store = testStore(for: .init(profileId: testProfileId))
 
-        mockChargeItemListDomainService.fetchLocalChargeItemsForReturnValue = Just(.success([])).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .fetchLocalChargeItemsForProfileIdUUIDAnyPublisherChargeItemDomainServiceFetchResultNeverReturnValue =
+            Just(.success([])).eraseToAnyPublisher()
         // user enters ChargeItemListView for the first time, not authenticated
-        mockChargeItemListDomainService.fetchRemoteChargeItemsAndSaveForReturnValue = Just(.notAuthenticated)
-            .eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .fetchRemoteChargeItemsAndSaveForProfileIdUUIDAnyPublisherChargeItemDomainServiceFetchResultNeverReturnValue =
+            Just(.notAuthenticated)
+                .eraseToAnyPublisher()
         await store.send(.fetchChargeItems)
         await testScheduler.run()
         await store.receive(.response(.fetchChargeItemsLocal(.success([]))))
@@ -71,9 +75,13 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
 
         // user authenticates, consent was not given
-        mockChargeItemListDomainService.authenticateForReturnValue = Just(.success).eraseToAnyPublisher()
-        mockChargeItemListDomainService.fetchRemoteChargeItemsAndSaveForReturnValue = Just(.consentNotGranted)
-            .eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .authenticateForProfileIdUUIDAnyPublisherChargeItemDomainServiceAuthenticateResultNeverReturnValue =
+            Just(.success).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .fetchRemoteChargeItemsAndSaveForProfileIdUUIDAnyPublisherChargeItemDomainServiceFetchResultNeverReturnValue =
+            Just(.consentNotGranted)
+                .eraseToAnyPublisher()
         await store.send(.authenticateBottomBannerButtonTapped) { state in
             state.bottomBannerState = nil
         }
@@ -90,7 +98,9 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
 
         // user grants consent, ok
-        mockChargeItemListDomainService.grantChargeItemsConsentForReturnValue = Just(.success).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .grantChargeItemsConsentForProfileIdUUIDAnyPublisherChargeItemListDomainServiceGrantResultNeverReturnValue =
+            Just(.success).eraseToAnyPublisher()
         let twoChargeItems: [ErxSparseChargeItem] = [
             ErxSparseChargeItem(
                 identifier: UUID().uuidString,
@@ -108,8 +118,9 @@ final class ChargeItemListDomainTests: XCTestCase {
 
         let twoChargeItemsGroups = twoChargeItems.asChargeItemGroups()
         mockChargeItemListDomainService
-            .fetchChargeItemsAssumingConsentGrantedForReturnValue = Just(.success(twoChargeItems))
-            .eraseToAnyPublisher()
+            .fetchChargeItemsAssumingConsentGrantedForProfileIdUUIDAnyPublisherChargeItemDomainServiceFetchResultNeverReturnValue =
+            Just(.success(twoChargeItems))
+                .eraseToAnyPublisher()
         await store.send(.destination(.presented(.alert(.grantConsent)))) { state in
             state.destination = nil
         }
@@ -128,10 +139,14 @@ final class ChargeItemListDomainTests: XCTestCase {
     func testFetchChargeItems_userDeniesGrantConsentRequest() async {
         let store = testStore(for: .init(profileId: testProfileId))
 
-        mockChargeItemListDomainService.fetchLocalChargeItemsForReturnValue = Just(.success([])).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .fetchLocalChargeItemsForProfileIdUUIDAnyPublisherChargeItemDomainServiceFetchResultNeverReturnValue =
+            Just(.success([])).eraseToAnyPublisher()
         // Try to fetch the ChargeItems, but no consent was given
-        mockChargeItemListDomainService.fetchRemoteChargeItemsAndSaveForReturnValue = Just(.consentNotGranted)
-            .eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .fetchRemoteChargeItemsAndSaveForProfileIdUUIDAnyPublisherChargeItemDomainServiceFetchResultNeverReturnValue =
+            Just(.consentNotGranted)
+                .eraseToAnyPublisher()
         await store.send(.fetchChargeItems)
         await testScheduler.run()
         await store.receive(.response(.fetchChargeItemsLocal(.success([]))))
@@ -150,8 +165,10 @@ final class ChargeItemListDomainTests: XCTestCase {
 
         // Give permission through the bottom banner, but an unexpected error occurs
         let error = ChargeItemListDomainServiceGrantResult.Error.unexpected
-        mockChargeItemListDomainService.grantChargeItemsConsentForReturnValue = Just(.error(error))
-            .eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .grantChargeItemsConsentForProfileIdUUIDAnyPublisherChargeItemListDomainServiceGrantResultNeverReturnValue =
+            Just(.error(error))
+                .eraseToAnyPublisher()
         await store.send(.grantConsentBottomBannerButtonTapped) { state in
             state.bottomBannerState = nil
         }
@@ -197,7 +214,9 @@ final class ChargeItemListDomainTests: XCTestCase {
             )
         )
 
-        mockChargeItemListDomainService.grantChargeItemsConsentForReturnValue = Just(.conflict).eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .grantChargeItemsConsentForProfileIdUUIDAnyPublisherChargeItemListDomainServiceGrantResultNeverReturnValue =
+            Just(.conflict).eraseToAnyPublisher()
 
         // when user initiates the grant process
         await store.send(.grantConsentBottomBannerButtonTapped) { state in
@@ -230,7 +249,7 @@ final class ChargeItemListDomainTests: XCTestCase {
         let consentServiceError = ConsentService.Error
             .erxRepository(.remote(.fhirClient(.http(.init(httpClientError: httpClientError, operationOutcome: nil)))))
         mockChargeItemListDomainService
-            .grantChargeItemsConsentForReturnValue =
+            .grantChargeItemsConsentForProfileIdUUIDAnyPublisherChargeItemListDomainServiceGrantResultNeverReturnValue =
             Just(.error(.consentService(consentServiceError))).eraseToAnyPublisher()
 
         // when user initiates the grant process
@@ -264,8 +283,10 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
 
         // user confirms
-        mockChargeItemListDomainService.revokeChargeItemsConsentForReturnValue = Just(.success(.success))
-            .eraseToAnyPublisher()
+        mockChargeItemListDomainService
+            .revokeChargeItemsConsentForProfileIdUUIDAnyPublisherChargeItemListDomainServiceRevokeResultNeverReturnValue =
+            Just(.success(.success))
+                .eraseToAnyPublisher()
         await store.send(.destination(.presented(.alert(.revokeConsent)))) { state in
             state.destination = nil
         }

@@ -96,6 +96,7 @@ extension ErxTaskScannerView {
                                 Circle().foregroundColor(Colors.systemGray6)
                             )
                     })
+                        .accessibilityLabel(L10n.scnBtnImportPhoto)
                 }
                 .padding(.horizontal)
 
@@ -178,7 +179,7 @@ extension ErxTaskScannerView {
         }
 
         private func alertTintColor(for scanState: LoadingState<[ScannedErxTask], ScannerDomain.Error>) -> Color {
-            scanState.isValue ? Colors.secondary600 : Colors.systemLabel
+            scanState.isValue ? Colors.secondary700 : Colors.systemLabel
         }
     }
 }
@@ -240,7 +241,7 @@ extension ErxTaskScannerView.ScannerOverlay {
             Text(self.content)
                 .fontWeight(.bold)
                 .font(.system(size: 15))
-                .foregroundColor(Colors.secondary600)
+                .foregroundColor(Colors.secondary700)
                 .padding(5)
                 .background(Colors.systemGray6)
                 .clipShape(Circle())
@@ -290,7 +291,7 @@ extension ErxTaskScannerView.ScannerOverlay {
                     Spacer()
                 }
                 .padding(5)
-                .background(Colors.secondary600)
+                .background(Colors.secondary700)
                 .cornerRadius(20)
                 .padding(20)
             }.background(Colors.systemGray6)

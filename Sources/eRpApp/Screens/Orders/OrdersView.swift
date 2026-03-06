@@ -49,7 +49,7 @@ struct OrdersView: View {
                                     message: message.latestMessage,
                                     subtitle: uiDateFormatter.relativeDate(message.lastUpdated) ?? "",
                                     isNew: message.hasUnreadMessages,
-                                    prescriptionCount: message.order?.tasksCount ?? 0
+                                    prescriptionCount: message.tasksCount
                                 ) {
                                     store.send(.didSelect(message.id))
                                 }
@@ -109,7 +109,8 @@ struct OrdersView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             OrdersView(store: OrdersDomain.Dummies.store)
-            OrdersView(store: OrdersDomain.Dummies.storeFor(OrdersDomain.State(communicationMessage: [])))
+            OrdersView(store: OrdersDomain.Dummies
+                .storeFor(OrdersDomain.State(communicationMessage: Shared(value: []))))
         }
     }
 }

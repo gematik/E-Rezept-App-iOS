@@ -38,6 +38,7 @@ struct HealthCardPasswordIntroductionView: View {
                         store.mode.headLineText
                             .font(.title.bold())
                             .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroHeadline)
+                            .accessibilityAddTraits(.isHeader)
 
                         VStack(alignment: .leading, spacing: 16) {
                             // subheadline
@@ -49,7 +50,7 @@ struct HealthCardPasswordIntroductionView: View {
                                 title: { Text(L10n.stgTxtCardResetIntroNeedYourCard) },
                                 icon: {
                                     Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                        .foregroundColor(Colors.secondary500)
+                                        .foregroundColor(Colors.secondary600)
                                         .font(.title3)
                                 }
                             )
@@ -62,7 +63,7 @@ struct HealthCardPasswordIntroductionView: View {
                                 title: { store.mode.checkmarkText },
                                 icon: {
                                     Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                        .foregroundColor(Colors.secondary500)
+                                        .foregroundColor(Colors.secondary600)
                                         .font(.title3)
                                 }
                             )

@@ -200,10 +200,6 @@ extension View {
 struct TopAndBottomDividerStyle: ViewModifier {
     let showSeparator: Bool
 
-    init(showSeparator: Bool) {
-        self.showSeparator = showSeparator
-    }
-
     func body(content: Content) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             if showSeparator {

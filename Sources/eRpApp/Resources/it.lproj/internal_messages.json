@@ -52,5 +52,11 @@
         "text": "**🏛️ Registrazione per più persone** \nLa registrazione è ora possibile anche per gli assicurati di istituzioni federali, come la Polizia Federale e altri. \n \n **🕒 Orari di apertura delle farmacie migliorati** \nIl servizio di emergenza e gli orari di chiusura speciali per le farmacie vengono ora visualizzati, se disponibili. \n \n **💊 Selezione di tutte le prescrizioni** \nQuando si riscattano le prescrizioni, ora è possibile selezionarle tutte contemporaneamente. \n \n **♿ Accessibilità** \nI colori dei caratteri e delle icone sono stati regolati per ottenere un contrasto maggiore. Inoltre, è stata migliorata la sintesi vocale di VoiceOver per la modifica dell'immagine del profilo e il riconoscimento dello stato di accesso.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Mostra codici di prescrizione** \nLa schermata per i codici batch e singoli è stata riprogettata per un utilizzo più intuitivo. \n \n **❤️ Farmacia preferita** \nI Farmaci preferiti ora funzionano in modo più affidabile e sono compatibili con VoiceOver. \n \n **♿ Accessibilità** \nVoiceOver e la navigazione tramite tastiera sono migliorati, pulsanti, testo e campi di input sono più facilmente identificabili e le voci dell'elenco sono strutturate in modo più logico. Il carattere ingrandito ora funziona su tutte le schermate dell'app. I video animati vengono riprodotti una sola volta per supportare gli utenti con disabilità cognitive.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

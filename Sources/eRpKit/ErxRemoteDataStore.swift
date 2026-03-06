@@ -52,6 +52,14 @@ public protocol ErxRemoteDataStore {
     /// Deletes a sequence of tasks from the store
     func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError>
 
+    /// Marks the `ErxTask` by its id as EU redeemable by a patient
+    /// - Parameters:
+    ///   - id: the `ErxTask` ID
+    ///   - byPatientAuthorization: marks the task as EU redeemable `true` or `false`
+    /// - Returns: Publisher for the load request
+    func markEURedeemable(for id: ErxTask.ID,
+                          byPatientAuthorization: Bool) -> AnyPublisher<ErxTask?, RemoteStoreError>
+
     /// Sends a redeem request of  an `ErxTask` for the selected pharmacy
     /// Note: The response does not verify that the pharmacy has accepted the order
     /// - Parameter order: Order that contains informations about the task,  redeem option
@@ -135,4 +143,18 @@ public protocol ErxRemoteDataStore {
     ///   - category: the `ErxConsent.Category`of the consent to be revoked
     /// - Returns: Publisher for the load request
     func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError>
+
+    /// Loads All active `EuAccessCode`
+    ///
+    /// - Returns: Array of all active `EuAccessCode`
+    func loadRemoteEuAccessCode() -> AnyPublisher<EuAccessCode?, RemoteStoreError>
+
+    ///  Sends an `EuAccessCode` to activate/grand it
+    /// - Parameters:
+    ///   - category: the `EuAccessCode`to be granted
+    /// - Returns: The `EuAccessCode` that was granted
+    func grantEuAccessPermission(accessCode: EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError>
+
+    ///  Delete active `EuAccessCode` from server
+    func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError>
 }

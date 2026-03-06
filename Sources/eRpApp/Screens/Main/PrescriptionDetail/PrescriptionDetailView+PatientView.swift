@@ -32,46 +32,53 @@ extension PrescriptionDetailView {
         var body: some View {
             ScrollView(.vertical) {
                 SectionContainer {
-                    SubTitle(
-                        title: store.patient.name ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientName
-                    )
+                    LabeledContent {
+                        Text(store.patient.name ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientName)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaName)
 
-                    SubTitle(
-                        title: store.patient.insuranceId ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientInsuranceId
-                    )
+                    LabeledContent {
+                        Text(store.patient.insuranceId ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientInsuranceId)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsuranceId)
 
-                    SubTitle(
-                        title: store.patient.address ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientAddress
-                    )
+                    LabeledContent {
+                        Text(store.patient.address ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientAddress)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaAddress)
 
-                    SubTitle(
-                        title: store.patient.birthDate ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientBirthdate
-                    )
+                    LabeledContent {
+                        Text(store.patient.birthDate ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientBirthdate)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaBirthDate)
 
-                    SubTitle(
-                        title: store.patient.phone ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientPhone
-                    )
+                    LabeledContent {
+                        Text(store.patient.phone ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientPhone)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaPhone)
 
-                    SubTitle(
-                        title: store.patient.insurance ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientInsurance
-                    )
+                    LabeledContent {
+                        Text(store.patient.insurance ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientInsurance)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsurance)
 
-                    SubTitle(
-                        title: store.patient.localizedStausMember ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtPatientStatus
-                    )
+                    LabeledContent {
+                        Text(store.patient.localizedStausMember ?? L10n.prscFdTxtNa.text)
+                    } label: {
+                        Text(L10n.prscFdTxtPatientStatus)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaStatus)
 
                 }.sectionContainerStyle(.inline)

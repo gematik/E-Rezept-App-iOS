@@ -111,6 +111,7 @@ public struct CardWallCANView: View {
                             .bold()
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityAddTraits(.isHeader)
 
                         CANScanButton(store: store)
                     }

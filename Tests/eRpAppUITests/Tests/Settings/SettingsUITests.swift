@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 @MainActor
-final class SettingsUITests: XCTestCase, Sendable {
+final class SettingsUITests: XCTestCase {
     var app: XCUIApplication!
     var settingsApp: XCUIApplication!
 

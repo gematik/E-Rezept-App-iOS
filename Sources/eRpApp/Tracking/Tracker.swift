@@ -94,7 +94,7 @@ extension UserDefaults {
 // MARK: TCA Dependency
 
 struct TrackerDependency: DependencyKey {
-    static let liveValue: Tracker = ContentSquareAnalyticsAdapter()
+    static let liveValue: Tracker = DummyTracker()
 
     static let previewValue: Tracker = DummyTracker()
 }

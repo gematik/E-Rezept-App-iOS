@@ -30,7 +30,7 @@ import LocalAuthentication
 
 @Reducer
 struct AppAuthenticationBiometricPasswordDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         case alert(ErpAlertState<Alert>)
@@ -73,6 +73,10 @@ struct AppAuthenticationBiometricPasswordDomain {
             case (true, false):
                 return ""
             }
+        }
+
+        var isPasswordLoginButtonEnabled: Bool {
+            !password.isEmpty && !passwordDelayIsActive
         }
     }
 
@@ -186,3 +190,6 @@ extension AppAuthenticationBiometricPasswordDomain {
         }
     }
 }
+
+extension AppAuthenticationBiometricPasswordDomain.Destination.State: Equatable {}
+extension AppAuthenticationBiometricPasswordDomain.Destination.Action: Equatable {}

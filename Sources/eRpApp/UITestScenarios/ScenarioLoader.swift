@@ -126,7 +126,6 @@ extension Reducer {
             scenario = nil
         }
 
-        // swiftformat:disable:next redundaIntSelf
         return transformDependency(\.self) { dependencies in
             guard scenario != nil || isRecording else { return }
 

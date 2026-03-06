@@ -31,11 +31,11 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
 
     let emptyPassword = AppAuthenticationPasswordDomain.State(password: "")
     let abcPassword = AppAuthenticationPasswordDomain.State(password: "abc")
-    var mockAppSecurityPasswordManager: MockAppSecurityManager!
+    var mockAppSecurityPasswordManager: AppSecurityManagerMock!
 
     override func setUp() {
         super.setUp()
-        mockAppSecurityPasswordManager = MockAppSecurityManager()
+        mockAppSecurityPasswordManager = AppSecurityManagerMock()
     }
 
     func testStore(for state: AppAuthenticationPasswordDomain.State) -> TestStore {
@@ -48,7 +48,7 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
 
     func testDomainInitializesWithActivePasswordDelay() async {
         let clock = TestClock()
-        let mockAppSecurityManager = MockAppSecurityManager()
+        let mockAppSecurityManager = AppSecurityManagerMock()
 
         let store = TestStore(initialState: emptyPassword) {
             AppAuthenticationPasswordDomain()
@@ -57,14 +57,14 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
             $0.continuousClock = clock
         }
 
-        mockAppSecurityManager.currentPasswordDelayReturnValue = 10.0
+        mockAppSecurityManager.currentPasswordDelayTimeIntervalReturnValue = 10.0
 
         let task = await store.send(.task)
         await store.receive(.currentPasswordDelayReceived(10.0)) { state in
             state.passwordDelay = 10.0
         }
-        expect(mockAppSecurityManager.currentPasswordDelayCalled).to(beTrue())
-        expect(mockAppSecurityManager.currentPasswordDelayCallsCount).to(equal(1))
+        expect(mockAppSecurityManager.currentPasswordDelayTimeIntervalCalled).to(beTrue())
+        expect(mockAppSecurityManager.currentPasswordDelayTimeIntervalCallsCount).to(equal(1))
 
         await clock.advance(by: .seconds(9))
         // Receive 9 timer ticks
@@ -93,20 +93,20 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
 
     func testPasswordIsCheckedWhenContinueButtonWasTapped() async {
         let store = testStore(for: abcPassword)
-        mockAppSecurityPasswordManager.matchesPasswordReturnValue = true
+        mockAppSecurityPasswordManager.matchesPasswordStringBoolReturnValue = true
 
-        expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
+        expect(self.mockAppSecurityPasswordManager.matchesPasswordStringBoolCalled).to(beFalse())
         await store.send(.loginButtonTapped)
         await store.receive(.passwordVerificationReceived(true))
 
-        expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())
-        expect(self.mockAppSecurityPasswordManager.resetPasswordDelayCalled).to(beTrue())
-        expect(self.mockAppSecurityPasswordManager.registerFailedPasswordAttemptCalled).to(beFalse())
+        expect(self.mockAppSecurityPasswordManager.matchesPasswordStringBoolCalled).to(beTrue())
+        expect(self.mockAppSecurityPasswordManager.resetPasswordDelayVoidCalled).to(beTrue())
+        expect(self.mockAppSecurityPasswordManager.registerFailedPasswordAttemptVoidCalled).to(beFalse())
     }
 
     func testPasswordDoesNotMatch() async {
         let clock = TestClock()
-        let mockAppSecurityManager = MockAppSecurityManager()
+        let mockAppSecurityManager = AppSecurityManagerMock()
 
         let store = TestStore(initialState: abcPassword) {
             AppAuthenticationPasswordDomain()
@@ -114,10 +114,10 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
             $0.appSecurityManager = mockAppSecurityManager
             $0.continuousClock = clock
         }
-        mockAppSecurityManager.matchesPasswordReturnValue = false
-        mockAppSecurityManager.currentPasswordDelayReturnValue = 10.0
+        mockAppSecurityManager.matchesPasswordStringBoolReturnValue = false
+        mockAppSecurityManager.currentPasswordDelayTimeIntervalReturnValue = 10.0
 
-        expect(mockAppSecurityManager.matchesPasswordCalled).to(beFalse())
+        expect(mockAppSecurityManager.matchesPasswordStringBoolCalled).to(beFalse())
         await store.send(.loginButtonTapped)
         await store.receive(.passwordVerificationReceived(false)) { state in
             state.lastMatchResultSuccessful = false
@@ -133,8 +133,8 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
             }
         }
 
-        expect(mockAppSecurityManager.matchesPasswordCalled).to(beTrue())
-        expect(mockAppSecurityManager.resetPasswordDelayCalled).to(beFalse())
-        expect(mockAppSecurityManager.registerFailedPasswordAttemptCalled).to(beTrue())
+        expect(mockAppSecurityManager.matchesPasswordStringBoolCalled).to(beTrue())
+        expect(mockAppSecurityManager.resetPasswordDelayVoidCalled).to(beFalse())
+        expect(mockAppSecurityManager.registerFailedPasswordAttemptVoidCalled).to(beTrue())
     }
 }

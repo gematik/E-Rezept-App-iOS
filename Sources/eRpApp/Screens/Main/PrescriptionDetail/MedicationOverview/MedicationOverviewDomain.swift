@@ -28,7 +28,7 @@ import SwiftUI
 
 @Reducer
 struct MedicationOverviewDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = prescriptionDetail_medication
         case medication(MedicationDomain)
@@ -120,3 +120,6 @@ extension ErxMedicationDispense {
         )
     }
 }
+
+extension MedicationOverviewDomain.Destination.State: Equatable {}
+extension MedicationOverviewDomain.Destination.Action: Equatable {}

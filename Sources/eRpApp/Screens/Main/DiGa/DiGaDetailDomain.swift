@@ -114,7 +114,7 @@ struct DiGaDetailDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = digasMain:descriptionScreen
         case descriptionDiGA(EmptyDomain)
@@ -743,10 +743,11 @@ extension DiGaDetailDomain {
                 case (nil, nil): return nil
                 }
 
-                return Text(supportString)
+                return Text(supportString + " ")
                     .foregroundColor(Colors.systemLabelSecondary) +
-                    Text(" " + supportUrl)
+                    Text(supportUrl)
                     .foregroundColor(Colors.primary700)
+                    .underline()
             }()
 
             manufacturerCost = bfarmDiGaDetail?.manufacturerCost.map { "\($0)€" }
@@ -917,5 +918,8 @@ extension DiGaDetailDomain {
         }
     }
 }
+
+extension DiGaDetailDomain.Destination.State: Equatable {}
+extension DiGaDetailDomain.Destination.Action: Equatable {}
 
 // swiftlint:enable file_length type_body_length

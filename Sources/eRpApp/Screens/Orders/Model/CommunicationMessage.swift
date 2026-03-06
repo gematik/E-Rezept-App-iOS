@@ -30,6 +30,7 @@ import Pharmacy
 enum CommunicationMessage: Identifiable, Equatable {
     case order(Order)
     case internalCommunication(InternalCommunication)
+    case euOrder(EuOrder)
 
     var id: String {
         switch self {
@@ -37,6 +38,8 @@ enum CommunicationMessage: Identifiable, Equatable {
             return order.id
         case let .internalCommunication(message):
             return message.id
+        case let .euOrder(euOrder):
+            return euOrder.id
         }
     }
 
@@ -46,6 +49,8 @@ enum CommunicationMessage: Identifiable, Equatable {
             return order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
         case let .internalCommunication(message):
             return message.sender
+        case .euOrder:
+            return L10n.ordTxtEuTitle.text
         }
     }
 
@@ -57,6 +62,8 @@ enum CommunicationMessage: Identifiable, Equatable {
             return message.messages.compactMap { message in
                 TimelineEntry.internalCommunication(message)
             }
+        case let .euOrder(euOrder):
+            return euOrder.timelineEntries
         }
     }
 
@@ -69,6 +76,14 @@ enum CommunicationMessage: Identifiable, Equatable {
                 return attributedText
             }
             return AttributedString(message.latestMessage)
+        case let .euOrder(euOrder):
+            if let attributedString = try? AttributedString(
+                markdown: euOrder.latestMessage,
+                options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            ) {
+                return attributedString
+            }
+            return AttributedString(euOrder.latestMessage)
         }
     }
 
@@ -76,7 +91,18 @@ enum CommunicationMessage: Identifiable, Equatable {
         switch self {
         case let .order(order):
             return order
-        case .internalCommunication:
+        case .internalCommunication,
+             .euOrder:
+            return nil
+        }
+    }
+
+    var euOrder: EuOrder? {
+        switch self {
+        case let .euOrder(euOrder):
+            return euOrder
+        case .order,
+             .internalCommunication:
             return nil
         }
     }
@@ -87,6 +113,8 @@ enum CommunicationMessage: Identifiable, Equatable {
             return order.lastUpdated
         case let .internalCommunication(message):
             return message.latestUpdate?.fhirFormattedString(with: .yearMonthDayTimeMilliSeconds) ?? ""
+        case let .euOrder(euOrder):
+            return euOrder.lastUpdated
         }
     }
 
@@ -96,6 +124,19 @@ enum CommunicationMessage: Identifiable, Equatable {
             return order.hasUnreadEntries
         case let .internalCommunication(message):
             return message.hasUnreadMessages
+        case let .euOrder(euOrder):
+            return euOrder.hasUnreadEntries
+        }
+    }
+
+    var tasksCount: Int {
+        switch self {
+        case let .order(order):
+            return order.tasksCount
+        case let .euOrder(euOrder):
+            return euOrder.tasksCount
+        case .internalCommunication:
+            return 0
         }
     }
 }

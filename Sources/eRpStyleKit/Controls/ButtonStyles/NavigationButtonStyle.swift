@@ -43,7 +43,7 @@ public struct NavigationButtonStyle: ButtonStyle {
             Spacer(minLength: minChevronSpacing)
 
             Image(systemName: SFSymbolName.chevronForward)
-                .foregroundColor(Color(.tertiaryLabel))
+                .foregroundColor(Colors.systemLabelSecondary)
                 .font(.body.weight(.semibold))
         }
         .frame(maxWidth: .infinity, alignment: .leading)

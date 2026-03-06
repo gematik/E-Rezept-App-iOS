@@ -31,14 +31,14 @@ import XCTest
 @MainActor
 final class CreateProfileDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
-    var mockUserProfileService: MockUserProfileService!
+    var mockUserProfileService: UserProfileServiceMock!
 
     typealias TestStore = TestStoreOf<CreateProfileDomain>
 
     override func setUp() {
         super.setUp()
 
-        mockUserProfileService = MockUserProfileService()
+        mockUserProfileService = UserProfileServiceMock()
     }
 
     func testStore() -> TestStore {
@@ -62,23 +62,26 @@ final class CreateProfileDomainTests: XCTestCase {
             )
         )
 
-        mockUserProfileService.saveProfilesReturnValue = Just(true)
+        mockUserProfileService.saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorReturnValue = Just(true)
             .setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
 
-        expect(self.mockUserProfileService.saveProfilesCalled).to(beFalse())
+        expect(self.mockUserProfileService.saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorCalled)
+            .to(beFalse())
         await sut.send(.createAndSaveProfile(name: validName))
-        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
-        expect(self.mockUserProfileService.saveProfilesCalled).to(beTrue())
+        expect(self.mockUserProfileService.setSelectedProfileIdUUIDVoidCalled).to(beFalse())
+        expect(self.mockUserProfileService.saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorCalled)
+            .to(beTrue())
 
-        let savedProfile = mockUserProfileService.saveProfilesReceivedProfiles!.first!
-        mockUserProfileService.setSelectedProfileIdClosure = { profileId in
+        let savedProfile = mockUserProfileService
+            .saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorReceivedProfiles!.first!
+        mockUserProfileService.setSelectedProfileIdUUIDVoidClosure = { profileId in
             expect(profileId) == savedProfile.id
         }
 
         await testScheduler.run()
         await sut.receive(.createAndSaveProfileReceived(.success(savedProfile.id)))
-        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beTrue())
+        expect(self.mockUserProfileService.setSelectedProfileIdUUIDVoidCalled).to(beTrue())
 
         await sut.receive(.delegate(.close))
     }
@@ -92,7 +95,8 @@ final class CreateProfileDomainTests: XCTestCase {
         )
 
         await sut.send(.createAndSaveProfile(name: invalidName))
-        expect(self.mockUserProfileService.saveProfilesCalled).to(beFalse())
-        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
+        expect(self.mockUserProfileService.saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorCalled)
+            .to(beFalse())
+        expect(self.mockUserProfileService.setSelectedProfileIdUUIDVoidCalled).to(beFalse())
     }
 }

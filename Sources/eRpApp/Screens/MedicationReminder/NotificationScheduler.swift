@@ -38,28 +38,12 @@ struct NotificationScheduler {
         var date: Date
         var request: UNNotificationRequest
 
-        init(
-            date: Date,
-            request: UNNotificationRequest
-        ) {
-            self.date = date
-            self.request = request
-        }
-
         struct Response: Equatable {
             var notification: Notification
-
-            init(notification: Notification) {
-                self.notification = notification
-            }
         }
 
         struct Settings: Equatable {
             var authorizationStatus: UNAuthorizationStatus
-
-            init(authorizationStatus: UNAuthorizationStatus) {
-                self.authorizationStatus = authorizationStatus
-            }
         }
     }
 }

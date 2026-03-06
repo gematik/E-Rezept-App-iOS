@@ -62,23 +62,26 @@ struct ChargeItemView: View {
 
                     },
                     content: {
-                        SubTitle(
-                            title: dateFormatter.relativeDateAndTime(
+                        LabeledContent {
+                            Text(dateFormatter.relativeDateAndTime(
                                 store.chargeItem.medicationDispense?.whenHandedOver
-                            ) ?? "-",
-                            description: L10n.stgTxtChargeItemCreator
-                        )
+                            ) ?? "-")
+                        } label: {
+                            Text(L10n.stgTxtChargeItemCreator)
+                        }
 
-                        SubTitle(
-                            title: store.chargeItem.pharmacy?.name ?? "-",
-                            description: L10n.stgTxtChargeItemRedeemedAt
-                        )
+                        LabeledContent {
+                            Text(store.chargeItem.pharmacy?.name ?? "-")
+                        } label: {
+                            Text(L10n.stgTxtChargeItemRedeemedAt)
+                        }
 
-                        SubTitle(
-                            title: dateFormatter
-                                .relativeDateAndTime(store.chargeItem.enteredDate) ?? "-",
-                            description: L10n.stgTxtChargeItemRedeemedOn
-                        )
+                        LabeledContent {
+                            Text(dateFormatter
+                                .relativeDateAndTime(store.chargeItem.enteredDate) ?? "-")
+                        } label: {
+                            Text(L10n.stgTxtChargeItemRedeemedOn)
+                        }
                     }
                 )
                 .sectionContainerStyle(.inline)
@@ -132,7 +135,7 @@ struct ChargeItemView: View {
                                store.send(.deleteButtonTapped)
                            }, label: {
                                Text(L10n.stgBtnChargeItemDelete)
-                                   .foregroundColor(Colors.red600)
+                                   .foregroundColor(Colors.red700)
                            })
                 } label: {
                     Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)

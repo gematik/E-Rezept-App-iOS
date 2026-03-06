@@ -29,12 +29,12 @@ import XCTest
 
 @MainActor
 final class DefaultInternalCommunicationProtocolTests: XCTestCase {
-    var mockUserDataStore: MockUserDataStore!
+    var mockUserDataStore: UserDataStoreMock!
 
     override func setUp() {
         super.setUp()
 
-        mockUserDataStore = MockUserDataStore()
+        mockUserDataStore = UserDataStoreMock()
     }
 
     func testLoadWithNewInstall() async throws {
@@ -59,12 +59,12 @@ final class DefaultInternalCommunicationProtocolTests: XCTestCase {
         let result = try await sut.load()
 
         // then
-        // expect to get 2 Messages (Welcome message and Changelog 1.27.0)
+        // expect to get 2 Messages (Changelog 1.27.0 and Welcome message)
         let messages = result.elements.flatMap(\.messages)
         expect(messages.count) == 2
 
-        // expect that only version numbers ["0.0.0", "1.27.0"] & "0.0.0" should be the first element
-        expect(messages.compactMap(\.version).elementsEqual(["0.0.0", "1.27.0"])) == true
+        // expect that only version numbers ["1.27.0", "0.0.0"] & "0.0.0" should be the last element
+        expect(messages.compactMap(\.version).elementsEqual(["1.27.0", "0.0.0"])) == true
     }
 
     func testLoadWithWithUpdatedOldApp() async throws {

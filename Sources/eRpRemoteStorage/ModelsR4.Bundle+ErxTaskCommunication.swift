@@ -45,7 +45,7 @@ extension ModelsR4.Bundle {
         }
 
         guard let profileUrl = communication.meta?.profile?.first?.value?.url.absoluteString,
-              let profile = ErxTask.Communication.Profile(rawValue: profileUrl) else {
+              let profile = ErxTask.Communication.Profile(profileUrl: profileUrl) else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse the communication profile")
         }
 
@@ -145,32 +145,37 @@ extension ModelsR4.Communication {
 }
 
 extension ErxTask.Communication.Profile {
-    init?(rawValue: RawValue) {
-        switch rawValue {
+    init?(profileUrl: String) {
+        let normalizedValue = profileUrl.split(separator: "|", maxSplits: 1).first.map(String.init) ?? profileUrl
+        switch normalizedValue {
         case Workflow.Key.communicationReply[.v1_1_1],
              Workflow.Key.communicationReply[.v1_2_0],
              Workflow.Key.communicationReply[.v1_3_0],
              Workflow.Key.communicationReply[.v1_4_3],
-             Workflow.Key.communicationReply[.v1_5_2]:
+             Workflow.Key.communicationReply[.v1_5_2],
+             Workflow.Key.communicationReply[.v1_6_1]:
             self = .reply
         case Workflow.Key.communicationDispReq[.v1_1_1],
              Workflow.Key.communicationDispReq[.v1_2_0],
              Workflow.Key.communicationDispReq[.v1_3_0],
              Workflow.Key.communicationDispReq[.v1_4_3],
-             Workflow.Key.communicationDispReq[.v1_5_2]:
+             Workflow.Key.communicationDispReq[.v1_5_2],
+             Workflow.Key.communicationDispReq[.v1_6_1]:
             self = .dispReq
         case Workflow.Key.communicationInfoReq[.v1_1_1],
              Workflow.Key.communicationInfoReq[.v1_2_0],
              Workflow.Key.communicationInfoReq[.v1_3_0],
              Workflow.Key.communicationInfoReq[.v1_4_3]:
             self = .infoReq
-        case Workflow.Key.communicationDiga[.v1_5_2]:
+        case Workflow.Key.communicationDiga[.v1_5_2],
+             Workflow.Key.communicationDiga[.v1_6_1]:
             self = .diga
         case Workflow.Key.communicationRepresentative[.v1_1_1],
              Workflow.Key.communicationRepresentative[.v1_2_0],
              Workflow.Key.communicationRepresentative[.v1_3_0],
              Workflow.Key.communicationRepresentative[.v1_4_3],
-             Workflow.Key.communicationRepresentative[.v1_5_2]:
+             Workflow.Key.communicationRepresentative[.v1_5_2],
+             Workflow.Key.communicationRepresentative[.v1_6_1]:
             self = .representative
         default:
             self = .none

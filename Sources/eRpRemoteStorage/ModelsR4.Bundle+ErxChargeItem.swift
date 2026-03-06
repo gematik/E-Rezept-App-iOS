@@ -418,14 +418,14 @@ extension ModelsR4.Invoice {
         switch group {
         case "11":
             let dateValueX = zusatzAttributeExtension
-                .first(where: { $0.url.value?.url.absoluteString == "DatumUhrzeit" })?.value
+                .first { $0.url.value?.url.absoluteString == "DatumUhrzeit" }?.value
             if let valueX = dateValueX, case let Extension.ValueX.dateTime(date) = valueX,
                let date = date.value?.description {
                 return .notdienst(date)
             }
         case "12":
             let stringValueX = zusatzAttributeExtension
-                .first(where: { $0.url.value?.url.absoluteString == "DokumentationFreitext" })?
+                .first { $0.url.value?.url.absoluteString == "DokumentationFreitext" }?
                 .value
             if let valueX = stringValueX, case let Extension.ValueX.string(string) = valueX,
                let string = string.value?.description {
@@ -433,14 +433,14 @@ extension ModelsR4.Invoice {
             }
         case "16":
             let stringValueX = zusatzAttributeExtension
-                .first(where: { $0.url.value?.url.absoluteString == "Spender-PZN" })?.value
+                .first { $0.url.value?.url.absoluteString == "Spender-PZN" }?.value
             if let valueX = stringValueX, case let Extension.ValueX.codeableConcept(string) = valueX,
                let string = string.coding?.first?.code?.value?.string {
                 return .teilmengenabgabe(string)
             }
         case "101":
             let stringValueX = zusatzAttributeExtension
-                .first(where: { $0.url.value?.url.absoluteString == "Schluessel" })?.value
+                .first { $0.url.value?.url.absoluteString == "Schluessel" }?.value
             if let valueX = stringValueX, case let Extension.ValueX.codeableConcept(string) = valueX,
                let string = string.coding?.first?.code?.value?.string {
                 return .autidem(string)

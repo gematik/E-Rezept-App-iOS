@@ -109,11 +109,14 @@ class DemoIDPSession: IDPSession {
                 redirect: ""
             )
         )
-        return currentValue // swiftlint:disable:this trailing_closure
+        return currentValue
             .compactMap { $0 }
-            .handleEvents(receiveOutput: { token in
-                self.storage.set(token: token)
-            })
+            .handleEvents(
+                receiveOutput: { token in
+                    self.storage.set(token: token)
+                },
+                receiveRequest: nil
+            )
             .eraseToAnyPublisher()
     }
 

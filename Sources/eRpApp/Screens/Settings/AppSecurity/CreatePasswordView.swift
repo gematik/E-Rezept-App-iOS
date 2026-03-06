@@ -46,7 +46,7 @@ struct CreatePasswordView: View {
                         if store.showOriginalPasswordWrong {
                             VStack(alignment: .leading) {
                                 Text(L10n.cpwTxtCurrentPasswordWrong)
-                                    .foregroundColor(Colors.red600)
+                                    .foregroundColor(Colors.red700)
                                     .font(.footnote)
                                     .accessibilityIdentifier(A11y.settings.createPassword
                                         .cpwTxtCurrentPasswordWrong)
@@ -57,10 +57,10 @@ struct CreatePasswordView: View {
 
                     },
                     content: {
-                        SecureField(
-                            L10n.cpwInpCurrentPasswordPlaceholder,
-                            text: $store.password
-                        )
+                        SecureField(text: $store.password) {
+                            Text(L10n.cpwInpCurrentPasswordPlaceholder)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                        }
                         .textContentType(.password)
                         .onSubmit { store.send(.enterButtonTapped) }
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
@@ -99,9 +99,11 @@ struct CreatePasswordView: View {
                 content: {
                     VStack {
                         SecureField(
-                            L10n.cpwInpPasswordAPlaceholder,
                             text: $store.passwordA
-                        )
+                        ) {
+                            Text(L10n.cpwInpPasswordAPlaceholder)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                        }
                         .textContentType(.newPassword)
                         .onSubmit { store.send(.enterButtonTapped) }
                         .padding()
@@ -112,9 +114,11 @@ struct CreatePasswordView: View {
 
             SingleElementSectionContainer {
                 SecureField(
-                    L10n.cpwInpPasswordBPlaceholder,
                     text: $store.passwordB
-                )
+                ) {
+                    Text(L10n.cpwInpPasswordBPlaceholder)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                }
                 .textContentType(.newPassword)
                 .onSubmit { store.send(.saveButtonTapped) }
                 .padding()
@@ -134,7 +138,7 @@ struct CreatePasswordView: View {
     @ViewBuilder private func errorFooter() -> some View {
         if let error = store.passwordErrorMessage {
             Text(error)
-                .foregroundColor(Colors.red600)
+                .foregroundColor(Colors.red700)
                 .font(.footnote)
                 .fixedSize(horizontal: false, vertical: true)
                 .transformEffect(.init(translationX: 0, y: -16))

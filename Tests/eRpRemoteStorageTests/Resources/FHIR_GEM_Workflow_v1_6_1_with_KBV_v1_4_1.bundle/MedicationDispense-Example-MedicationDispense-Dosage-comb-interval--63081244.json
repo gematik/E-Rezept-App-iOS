@@ -1,0 +1,101 @@
+{
+  "resourceType": "MedicationDispense",
+  "id": "Example-MedicationDispense-Dosage-comb-interval",
+  "meta": {
+    "profile": [
+      "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense|1.6"
+    ]
+  },
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/5.0/StructureDefinition/extension-MedicationDispense.renderedDosageInstruction",
+      "valueMarkdown": "alle 2 Tage: 08:00 Uhr — je 1 Stück; 18:00 Uhr — je 2 Stück"
+    },
+    {
+      "extension": [
+        {
+          "url": "algorithmVersion",
+          "valueString": "1.0.0"
+        },
+        {
+          "url": "language",
+          "valueCode": "de-DE"
+        }
+      ],
+      "url": "http://ig.fhir.de/igs/medication/StructureDefinition/GeneratedDosageInstructionsMeta"
+    }
+  ],
+  "identifier": [
+    {
+      "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+      "value": "160.000.033.491.280.78"
+    }
+  ],
+  "status": "completed",
+  "medicationReference": {
+    "reference": "Medication/SumatripanMedication"
+  },
+  "subject": {
+    "identifier": {
+      "system": "http://fhir.de/sid/gkv/kvid-10",
+      "value": "X123456789"
+    }
+  },
+  "performer": [
+    {
+      "actor": {
+        "identifier": {
+          "system": "https://gematik.de/fhir/sid/telematik-id",
+          "value": "3-SMC-B-Testkarte-883110000095957"
+        }
+      }
+    }
+  ],
+  "whenHandedOver": "2026-04-01",
+  "dosageInstruction": [
+    {
+      "timing": {
+        "repeat": {
+          "frequency": 1,
+          "period": 2,
+          "periodUnit": "d",
+          "timeOfDay": [
+            "08:00:00"
+          ]
+        }
+      },
+      "doseAndRate": [
+        {
+          "doseQuantity": {
+            "value": 1,
+            "unit": "Stück",
+            "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_BMP_DOSIEREINHEIT",
+            "code": "1"
+          }
+        }
+      ]
+    },
+    {
+      "timing": {
+        "repeat": {
+          "frequency": 1,
+          "period": 2,
+          "periodUnit": "d",
+          "timeOfDay": [
+            "18:00:00"
+          ]
+        }
+      },
+      "doseAndRate": [
+        {
+          "doseQuantity": {
+            "value": 2,
+            "unit": "Stück",
+            "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_BMP_DOSIEREINHEIT",
+            "code": "1"
+          }
+        }
+      ]
+    }
+  ]
+}

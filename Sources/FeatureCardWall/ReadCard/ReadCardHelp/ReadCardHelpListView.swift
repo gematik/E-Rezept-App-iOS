@@ -32,7 +32,7 @@ struct ReadCardHelpListView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     Text(L10n.cdwTxtRcTipFour)
-                        .foregroundColor(Colors.systemGray)
+                        .foregroundColor(Colors.systemLabelSecondary)
                         .padding()
                         .overlay(
                             Rectangle()
@@ -97,8 +97,10 @@ struct ReadCardHelpListView: View {
                                     Button(action: {
                                         store.send(.delegate(.navigateToIntro))
                                     }, label: {
-                                        Text(L10n.cdwTxtRcListExtauthMore)
+                                        Label(L10n.cdwTxtRcListExtauthMore, systemImage: SFSymbolName.arrowForward)
                                     })
+                                        .labelStyle(.trailingIcon)
+                                        .buttonStyle(.tertiary)
                                 }
                             }
                             .padding()

@@ -77,7 +77,7 @@ struct X509ScannerView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Image(systemName: validCertFound ? SFSymbolName.checkmark : SFSymbolName.crossIcon)
-                            .foregroundColor(validCertFound ? Colors.secondary600 : Colors.red600)
+                            .foregroundColor(validCertFound ? Colors.secondary600 : Colors.red700)
                         Text("C.HCI.ENC")
                         Text(name)
                     }

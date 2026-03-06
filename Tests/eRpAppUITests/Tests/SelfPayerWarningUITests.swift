@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 @MainActor
-class SelfPayerWarningUITests: XCTestCase, Sendable {
+class SelfPayerWarningUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func setUp() async throws {

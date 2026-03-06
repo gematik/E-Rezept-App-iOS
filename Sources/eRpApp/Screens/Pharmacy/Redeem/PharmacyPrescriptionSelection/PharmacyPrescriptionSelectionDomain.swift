@@ -101,7 +101,7 @@ struct PharmacyPrescriptionSelectionDomain {
             } else {
                 // Add prescriptions to selection that are not already selected
                 let prescriptionsToSelect = state.prescriptions.filter { prescription in
-                    !state.selectedPrescriptionsCopy.contains(where: { $0.id == prescription.id })
+                    !state.selectedPrescriptionsCopy.contains { $0.id == prescription.id }
                 }
                 state.selectedPrescriptionsCopy.append(contentsOf: prescriptionsToSelect)
             }

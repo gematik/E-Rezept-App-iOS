@@ -52,5 +52,11 @@
         "text": "**🏛️ Înregistrare pentru mai multe persoane** \nÎnregistrarea este acum posibilă și pentru persoanele asigurate ale instituțiilor federale, cum ar fi Poliția Federală și altele. \n \n **🕒 Program îmbunătățit al farmaciilor** \nServiciul de urgență și orele speciale de închidere pentru farmacii sunt acum afișate, dacă sunt disponibile. \n \n **💊 Selecția tuturor rețetelor** \nLa valorificarea rețetelor, toate rețetele pot fi acum selectate simultan. \n \n **♿ Accesibilitate** \nCulorile fonturilor și pictogramelor au fost ajustate pentru a obține un contrast mai mare. În plus, ieșirea vocală VoiceOver pentru editarea imaginii de profil și recunoașterea stării de conectare a fost îmbunătățită.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Afișați codurile de prescripție medicală** \nEcranul pentru codurile de lot și individuale a fost reproiectat pentru o utilizare mai intuitivă. \n \n **❤️ Preferințele farmaciei** \nPreferințele farmaciei funcționează acum mai fiabil și sunt compatibile cu VoiceOver. \n \n **♿ Accesibilitate** \nNavigarea cu VoiceOver și tastatură este îmbunătățită, butoanele, textul și câmpurile de introducere sunt mai ușor de identificat, iar elementele din listă sunt structurate mai logic. Fontul mărit funcționează acum pe toate ecranele aplicației. Videoclipurile animate sunt redate o singură dată pentru a sprijini utilizatorii cu deficiențe cognitive.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

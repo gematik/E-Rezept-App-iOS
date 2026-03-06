@@ -52,5 +52,11 @@
         "text": "**🏛️ Registration for More People** \nRegistration is now also possible for insured persons of federal institutions, such as the Federal Police and others. \n \n **🕒 Improved Pharmacy Opening Hours** \nEmergency service and special closing times for pharmacies are now displayed, if available. \n \n **💊 Selection of All Prescriptions** \nWhen redeeming prescriptions, all prescriptions can now be selected simultaneously. \n \n **♿ Accessibility** \nThe colors of fonts and icons have been adjusted to achieve higher contrast. Additionally, VoiceOver speech output for editing the profile picture and recognizing the login status has been improved.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Show prescription codes** \nThe screen for batch and single codes has been redesigned for more intuitive use. \n \n **❤️ Pharmacy Favorites** \nPharmacy favorites now work more reliably and are compatible with VoiceOver. \n \n **♿ Accessibility** \nVoiceOver and keyboard navigation are improved, buttons, text, and input fields are more easily identifiable, and list items are more logically structured. Enlarged font now works on all app screens. Animated videos play only once to support users with cognitive impairments.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

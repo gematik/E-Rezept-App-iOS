@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 @MainActor
-final class CreatePasswordUITests: XCTestCase, Sendable {
+final class CreatePasswordUITests: XCTestCase {
     var app: XCUIApplication!
 
     override func tearDown() async throws {

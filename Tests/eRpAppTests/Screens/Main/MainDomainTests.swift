@@ -37,24 +37,24 @@ final class MainDomainTests: XCTestCase {
     typealias TestStore = TestStoreOf<MainDomain>
 
     let testScheduler = DispatchQueue.immediate
-    var mockUserSessionContainer: MockUsersSessionContainer!
-    var mockRouter: MockRouting!
+    var mockUserSessionContainer: UsersSessionContainerMock!
+    var mockRouter: RoutingMock!
     var mockUserSession: MockUserSession!
     var mockDeviceSecurityManager: MockDeviceSecurityManager!
-    var mockPrescriptionRepository: MockPrescriptionRepository!
-    var mockProfileDataWiper: MockProfileSecureDataWiper!
-    var mockProfileDataStore: MockProfileDataStore!
+    var mockPrescriptionRepository: PrescriptionRepositoryMock!
+    var mockProfileDataWiper: ProfileSecureDataWiperMock!
+    var mockProfileDataStore: ProfileDataStoreMock!
 
     override func setUp() {
         super.setUp()
 
-        mockUserSessionContainer = MockUsersSessionContainer()
-        mockRouter = MockRouting()
+        mockUserSessionContainer = UsersSessionContainerMock()
+        mockRouter = RoutingMock()
         mockUserSession = MockUserSession()
         mockDeviceSecurityManager = MockDeviceSecurityManager()
-        mockPrescriptionRepository = MockPrescriptionRepository()
-        mockProfileDataWiper = MockProfileSecureDataWiper()
-        mockProfileDataStore = MockProfileDataStore()
+        mockPrescriptionRepository = PrescriptionRepositoryMock()
+        mockProfileDataWiper = ProfileSecureDataWiperMock()
+        mockProfileDataStore = ProfileDataStoreMock()
     }
 
     func testStore() -> TestStore {
@@ -83,7 +83,7 @@ final class MainDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.turnOffDemoMode)
-        expect(self.mockRouter.routeToCalled).to(beTrue())
+        expect(self.mockRouter.routeToEndpointEndpointVoidCalled).to(beTrue())
     }
 
     func testShowScanner() async {
@@ -143,9 +143,11 @@ final class MainDomainTests: XCTestCase {
             // given
             let sut = testStore(for: .init(prescriptionListState: .init(),
                                            horizontalProfileSelectionState: .init()))
-            mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
+            mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue =
+                Just(true)
+                    .setFailureType(to: LocalStoreError.self)
+                    .eraseToAnyPublisher()
             // no drawer was shown yet
             mockUserSession.profileReturnValue = Just(Self.Fixtures.newProfile)
                 .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
@@ -161,8 +163,10 @@ final class MainDomainTests: XCTestCase {
             // when
             await sut.send(.showDrawer)
             // then
-            expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == true
-            expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount) == 1
+            expect(self.mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCalled) == true
+            expect(self.mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCallsCount) == 1
         }
     }
 
@@ -195,9 +199,11 @@ final class MainDomainTests: XCTestCase {
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
             ))
-            mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
+            mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorReturnValue =
+                Just(true)
+                    .setFailureType(to: LocalStoreError.self)
+                    .eraseToAnyPublisher()
 
             // when profile has already seen both drawers before
             mockUserSession
@@ -209,7 +215,8 @@ final class MainDomainTests: XCTestCase {
 
             // then nothing happens
             await sut.receive(.response(.showDrawer(.none)))
-            expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == false
+            expect(self.mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCalled) == false
 
             // when profile hasn't seen the drawer before
             mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile)
@@ -223,8 +230,10 @@ final class MainDomainTests: XCTestCase {
                 state.destination = .grantChargeItemConsentDrawer
             }
 
-            expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == true
-            expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount) == 1
+            expect(self.mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCalled) == true
+            expect(self.mockProfileDataStore
+                .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolLocalStoreErrorCallsCount) == 1
         }
     }
 
@@ -264,8 +273,9 @@ final class MainDomainTests: XCTestCase {
             code: "2041"
         )))
         mockPrescriptionRepository
-            .forcedLoadRemoteForForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
-            .eraseToAnyPublisher()
+            .forcedLoadRemoteForLocaleStringForProfileIdUUIDAnyPublisherPrescriptionRepositoryLoadRemoteResultPrescriptionRepositoryErrorReturnValue =
+            Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
+                .eraseToAnyPublisher()
 
         await sut.send(.refreshPrescription)
         await sut.receive(.prescriptionList(action: .refresh)) {
@@ -290,9 +300,11 @@ final class MainDomainTests: XCTestCase {
             code: "2000"
         )))
         mockPrescriptionRepository
-            .forcedLoadRemoteForForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
+            .forcedLoadRemoteForLocaleStringForProfileIdUUIDAnyPublisherPrescriptionRepositoryLoadRemoteResultPrescriptionRepositoryErrorReturnValue =
+            Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
+                .eraseToAnyPublisher()
+        mockProfileDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
             .eraseToAnyPublisher()
-        mockProfileDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
 
         await withDependencies {
             $0.drawerEvaluation.showDrawerEvaluationOnRefresh = { .none }
@@ -307,7 +319,7 @@ final class MainDomainTests: XCTestCase {
             }
         }
 
-        expect(self.mockProfileDataWiper.wipeSecureDataOfCalled).to(beTrue())
+        expect(self.mockProfileDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCalled).to(beTrue())
     }
 
     func testInvalidateAccessTokenGetsCalledWhenShowingCardWall() async {

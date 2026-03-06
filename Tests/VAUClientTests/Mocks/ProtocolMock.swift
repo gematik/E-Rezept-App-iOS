@@ -24,13 +24,8 @@
 import TrustStore
 @testable import VAUClient
 
-// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
-
 // sourcery:begin: AutoMockable
 extension TrustStoreSession {}
-// sourcery:end
-
-// sourcery:begin: ProtocolMock
 extension VAUAccessTokenProvider {}
 extension VAUCrypto {}
 extension VAUCryptoProvider {}

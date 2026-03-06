@@ -53,9 +53,9 @@ public struct PrimaryButtonStyle: ButtonStyle {
         case (false, false):
             return Colors.primary.disabled(for: colorScheme)
         case (true, true):
-            return Colors.red600
+            return Colors.red700
         case (true, false):
-            return Colors.red600.disabled(for: colorScheme)
+            return Colors.red700.disabled(for: colorScheme)
         }
     }
 
@@ -124,6 +124,110 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     /// the ``View.buttonStyle(.primaryHuggingNarrowly)`` modifier.
     public static var primaryHuggingNarrowly: PrimaryButtonStyle {
         PrimaryButtonStyle(width: .narrowHugging)
+    }
+}
+
+/// A button style that applies fg and bg color, as well as border radius.
+///
+/// To apply this style to a button, or to a view that contains buttons, use
+/// the ``View.buttonStyle(.primarySmall)`` modifier.
+public struct PrimarySmallButtonStyle: ButtonStyle {
+    private var isDestructive: Bool
+
+    var isEnabled: Bool
+    var width: Width
+
+    public enum Width {
+        case infinite
+        case narrowHugging
+        case wideHugging
+    }
+
+    public init(enabled: Bool = true, destructive: Bool = false, width: Width = .infinite) {
+        isEnabled = enabled
+        isDestructive = destructive
+        self.width = width
+    }
+
+    @Environment(\.colorScheme) var colorScheme
+
+    var backgroundColor: Color {
+        switch (isDestructive, isEnabled) {
+        case (false, true):
+            return Colors.primary
+        case (false, false):
+            return Colors.primary.disabled(for: colorScheme)
+        case (true, true):
+            return Colors.red700
+        case (true, false):
+            return Colors.red700.disabled(for: colorScheme)
+        }
+    }
+
+    var foregroundColor: Color {
+        switch isEnabled {
+        case true:
+            return Color.white
+        case false:
+            return Color.white.disabled(for: colorScheme)
+        }
+    }
+
+    var innerHorizontalPadding: CGFloat {
+        switch width {
+        case .infinite:
+            return 16
+        case .wideHugging:
+            return 64
+        case .narrowHugging:
+            return 32
+        }
+    }
+
+    public func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .multilineTextAlignment(.center)
+            .foregroundColor(foregroundColor)
+            .opacity(configuration.isPressed ? 0.25 : 1)
+            .padding(.horizontal, innerHorizontalPadding)
+            .frame(minHeight: 36, alignment: .center)
+            .background(backgroundColor)
+            .cornerRadius(16)
+    }
+}
+
+extension ButtonStyle where Self == PrimarySmallButtonStyle {
+    /// A button style that applies fg and bg color, as well as border radius, defaulting to max available width.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.primarySmall)`` modifier.
+    public static var primarySmall: PrimarySmallButtonStyle { PrimarySmallButtonStyle() }
+
+    /// A button style that applies fg and bg color, as well as border radius.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.primarySmall(isEnabled:,isDestructive: false))`` modifier.
+    public static func primarySmall(
+        isEnabled: Bool = true,
+        isDestructive: Bool = false,
+        width: PrimarySmallButtonStyle.Width = .infinite
+    ) -> PrimarySmallButtonStyle {
+        PrimarySmallButtonStyle(enabled: isEnabled, destructive: isDestructive, width: width)
+    }
+
+    /// A button style that applies fg and bg color, as well as border radius, hugging its contents.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.primarySmallHugging)`` modifier.
+    public static var primarySmallHugging: PrimarySmallButtonStyle { PrimarySmallButtonStyle(width: .wideHugging) }
+
+    /// A button style that applies fg and bg color, as well as border radius, hugging its contents.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.primarySmallHuggingNarrowly)`` modifier.
+    public static var primarySmallHuggingNarrowly: PrimarySmallButtonStyle {
+        PrimarySmallButtonStyle(width: .narrowHugging)
     }
 }
 

@@ -133,6 +133,7 @@ struct HealthCardPasswordCanView: View {
                             .bold()
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityAddTraits(.isHeader)
 
                         Text(L10n.cdwTxtCanDescription)
                             .foregroundColor(Colors.systemLabel)

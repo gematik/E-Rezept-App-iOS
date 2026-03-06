@@ -89,7 +89,7 @@ struct ChargeItemListDomain {
         }
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         // sourcery: AnalyticsScreen = cardWall
         case idpCardWall(CardWallIntroductionDomain)
@@ -503,4 +503,6 @@ extension ChargeItemListDomain {
     }
 }
 
+extension ChargeItemListDomain.Destination.State: Equatable {}
+extension ChargeItemListDomain.Destination.Action: Equatable {}
 // swiftlint:enable type_body_length

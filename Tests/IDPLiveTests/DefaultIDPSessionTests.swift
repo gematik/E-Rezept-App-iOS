@@ -89,7 +89,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     var schedulers: Schedulers!
     var storage: MemStorage!
     var sut: DefaultIDPSession!
-    var extAuthRequestStorageMock: MockExtAuthRequestStorage!
+    var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
 
     var initialToken: IDPToken!
     var dateProvider: TimeProvider!
@@ -123,7 +123,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         trustStoreSessionMock = TrustStoreSessionMock()
         trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = true
 
-        extAuthRequestStorageMock = MockExtAuthRequestStorage()
+        extAuthRequestStorageMock = ExtAuthRequestStorageMock()
 
         // 1 second before token expiration
         let dateProviderDate = issuedDate.addingTimeInterval(TimeInterval(-1))
@@ -228,8 +228,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
-        expect(storage.discoveryDocumentState).to(beNil())
-        expect(trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(1))
+        await expect(storage.discoveryDocumentState).toEventually(beNil())
+        await expect(trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).toEventually(equal(1))
 
         _ = sut
     }
@@ -566,7 +566,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey()
         let nonce = try! generateSecureRandom(length: 12)
         let aesKeyData = try! Data(hex: "668D155004E1110DB6914BA40346A302312FA3F1AB647EC79FA12F96793E5205")
-        return IDPCrypto(randomGenerator: { _ in "UWWzuvaSG".data(using: .utf8)! },
+        return IDPCrypto(randomGenerator: { _ in Data("UWWzuvaSG".utf8) },
                          brainpoolKeyPairGenerator: { privateKey },
                          aesNonceGenerator: { nonce },
                          aesKey: SymmetricKey(data: aesKeyData))
@@ -1037,11 +1037,12 @@ final class DefaultIDPSessionTests: XCTestCase {
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
-        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
-            verifierCode: "verifier_code",
-            nonce: "5557577A7576615347",
-            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
-        )
+        extAuthRequestStorageMock
+            .getExtAuthRequestForStateStringExtAuthChallengeSessionReturnValue = ExtAuthChallengeSession(
+                verifierCode: "verifier_code",
+                nonce: "5557577A7576615347",
+                for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
+            )
 
         sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
@@ -1058,8 +1059,9 @@ final class DefaultIDPSessionTests: XCTestCase {
                     expect(response).to(equal(expected))
                 }
             )
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionReceivedInvocations
+            .first).to(equal("state"))
 
         expect(self.idpClientMock.exchange_Called).to(beTrue())
         expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())
@@ -1095,7 +1097,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             "https://das-e-rezept-fuer-deutschland.de/extauth?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
         )!
 
-        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
+        extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionReturnValue = nil
 
         sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
@@ -1106,8 +1108,9 @@ final class DefaultIDPSessionTests: XCTestCase {
                     fail("Should not be called!")
                 }
             )
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionReceivedInvocations
+            .first).to(equal("state"))
     }
 
     func testExtAuthVerifyAndExchange_kkHasPkvIdentifierFlag() throws {
@@ -1135,11 +1138,12 @@ final class DefaultIDPSessionTests: XCTestCase {
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
-        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
-            verifierCode: "verifier_code",
-            nonce: "5557577A7576615347",
-            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234", pkv: true)
-        )
+        extAuthRequestStorageMock
+            .getExtAuthRequestForStateStringExtAuthChallengeSessionReturnValue = ExtAuthChallengeSession(
+                verifierCode: "verifier_code",
+                nonce: "5557577A7576615347",
+                for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234", pkv: true)
+            )
 
         sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
@@ -1159,8 +1163,9 @@ final class DefaultIDPSessionTests: XCTestCase {
                     expect(response).to(equal(expected))
                 }
             )
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForStateStringExtAuthChallengeSessionReceivedInvocations
+            .first).to(equal("state"))
 
         expect(self.idpClientMock.exchange_Called).to(beTrue())
         expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())

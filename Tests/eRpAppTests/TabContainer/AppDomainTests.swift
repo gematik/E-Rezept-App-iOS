@@ -28,7 +28,7 @@ import XCTest
 
 @MainActor
 final class AppDomainTests: XCTestCase {
-    var mockUserDataStore: MockUserDataStore!
+    var mockUserDataStore: UserDataStoreMock!
 
     typealias TestStore = TestStoreOf<AppDomain>
 
@@ -135,6 +135,6 @@ final class AppDomainTests: XCTestCase {
             searchState: .searchResultEmpty
         )
 
-        static let ordersDomainState = OrdersDomain.State()
+        static let ordersDomainState = OrdersDomain.State(communicationMessage: Shared(value: []))
     }
 }

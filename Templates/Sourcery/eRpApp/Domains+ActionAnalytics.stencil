@@ -60,6 +60,7 @@ import eRpResources
 {% typed actionType as Enum %}
     {% if not actionType.name|contains:"Debug" %} 
 extension {{ actionType.name }}{% if actionType.attributes.Reducer %}.Action{% endif %} {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func analytics(tracker: Tracker) {
         switch self {
             {% call FindAnalyticsActions actionType %}
@@ -67,7 +68,7 @@ extension {{ actionType.name }}{% if actionType.attributes.Reducer %}.Action{% e
             {% if actionType.attributes.Reducer %}
                 {% call FindDestinationActions actionType %}
             {% endif %}
-            default: break
+            case _: break
         }
     }
 }

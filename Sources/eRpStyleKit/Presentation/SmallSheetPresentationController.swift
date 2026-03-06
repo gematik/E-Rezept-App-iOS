@@ -114,7 +114,10 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
         override func viewDidLayoutSubviews() {
             super.viewDidLayoutSubviews()
 
-            preferredContentSize = view.intrinsicContentSize
+            let newSize = view.intrinsicContentSize
+            if preferredContentSize != newSize {
+                preferredContentSize = newSize
+            }
         }
     }
 

@@ -200,6 +200,18 @@ struct UnimplementedErxLocalDataStore: ErxLocalDataStore {
     func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError> {
         fatalError("update(diGaInfo:) has not been implemented")
     }
+    func save(euCommunications: [EuCommunication], profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        fatalError("save(euCommunications:profileId:) has not been implemented")
+    }
+    func listAllEuCommunication(countryCode: String?, profileId: UUID?) -> AnyPublisher<[EuCommunication], LocalStoreError> {
+        fatalError("listAllEuCommunication(countryCode:profileId:) has not been implemented")
+    }
+    func delete(euCommunications: [EuCommunication], profileId: UUID?) -> AnyPublisher<Bool, LocalStoreError> {
+        fatalError("delete(euCommunications:profileId:) has not been implemented")
+    }
+    func loadLatestActiveEuCommunication(profileId: UUID?) -> AnyPublisher<EuCommunication?, LocalStoreError> {
+        fatalError("loadLatestActiveEuCommunication(profileId:) has not been implemented")
+    }
 }
 struct UnimplementedErxMatrixCodeGenerator: ErxMatrixCodeGenerator {
     init() {}
@@ -241,6 +253,9 @@ struct UnimplementedErxRemoteDataStore: ErxRemoteDataStore {
     func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError> {
         fatalError("delete(tasks:) has not been implemented")
     }
+    func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        fatalError("markEURedeemable(for:byPatientAuthorization:) has not been implemented")
+    }
     func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
         fatalError("redeem(order:) has not been implemented")
     }
@@ -276,6 +291,15 @@ struct UnimplementedErxRemoteDataStore: ErxRemoteDataStore {
     }
     func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError> {
         fatalError("revokeConsent(_:) has not been implemented")
+    }
+    func loadRemoteEuAccessCode() -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        fatalError("loadRemoteEuAccessCode has not been implemented")
+    }
+    func grantEuAccessPermission(accessCode: EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        fatalError("grantEuAccessPermission(accessCode:) has not been implemented")
+    }
+    func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError> {
+        fatalError("deleteEuAccessCode has not been implemented")
     }
 }
 class UnimplementedExtAuthRequestStorage: NSObject, ExtAuthRequestStorage {
@@ -416,6 +440,9 @@ struct UnimplementedOrdersRepository: OrdersRepository {
 
     func loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error> {
         fatalError("loadAllOrders has not been implemented")
+    }
+    func loadEuOrders(profileId: UUID) -> AsyncThrowingStream<IdentifiedArray<String, EuOrder>, Swift.Error> {
+        fatalError("loadEuOrders(profileId:) has not been implemented")
     }
 }
 struct UnimplementedPasswordStrengthTester: PasswordStrengthTester {

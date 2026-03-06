@@ -24,6 +24,7 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import FeatureEURedeem
+import Foundation
 
 @Reducer
 struct PharmacyContainerDomain {
@@ -46,10 +47,11 @@ struct PharmacyContainerDomain {
         )
         case euRedeemSelection
         case euRedeemInstructions(_ isRedeeming: Bool)
-        case euRedeemCode
+        case euRedeemCode(countryCode: String)
+        case euNoCountryAlert
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Path {
         // sourcery: AnalyticsScreen = pharmacySearch
         case redeem(PharmacyRedeemDomain)
@@ -68,6 +70,7 @@ struct PharmacyContainerDomain {
 
     @Dependency(\.schedulers) var schedulers
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
     var body: some Reducer<State, Action> {
         Scope(state: \.pharmacySearch, action: \.pharmacySearch) {
@@ -153,8 +156,8 @@ struct PharmacyContainerDomain {
         case let .euRedeemInstructions(isRedeeming):
             state.path.append(.instructions(.init(isRedeeming: isRedeeming)))
             return .none
-        case .euRedeemCode:
-            state.path.append(.code(.init()))
+        case let .euRedeemCode(countryCode):
+            state.path.append(.code(.init(countryCode: countryCode)))
             return .none
         case let .path(.element(id: _, action: .countrySelection(.selectCountry(country)))):
             state.path.removeLast()
@@ -165,27 +168,32 @@ struct PharmacyContainerDomain {
         case let .path(.popFrom(id: id)):
             // Back navigation from PrescriptionSelection to EURedeemSelection
             if let path = state.path[id: id, case: \.prescriptionSelection] {
-                let prescriptions = path.prescriptions.filter(\.isSelected)
+                let prescriptions = path.prescriptions.filter(\.isSetEURedeemableByPatient)
                 guard state.path.ids.count > 1 else { return .none }
                 let previousId = state.path.ids[state.path.index(before: state.path.endIndex - 1)]
-                state.path[id: previousId, case: \.euRedeemSelection]?.selectedPrescriptions = prescriptions
+                state.path[id: previousId, case: \.euRedeemSelection]?.$selectedPrescriptions
+                    .withLock { $0 = prescriptions }
             }
             return .none
-        case let .path(.element(id: _, action: .euRedeemSelection(.delegate(delegate)))):
+        case let .path(.element(id: id, action: .euRedeemSelection(.delegate(delegate)))):
             switch delegate {
             case .selectPrescriptionsButtonTapped:
                 state.path.append(.prescriptionSelection(.init()))
                 return .none
             case .selectCountryButtonTapped:
-                state.path.append(.countrySelection(.init(countries: [])))
+                state.path.append(.countrySelection(.init()))
                 return .none
             case .selectInstructionButtonTapped:
                 return .send(.euRedeemInstructions(false))
             case .redeemButtonTapped:
-                return .run { [userDataStore = self.userDataStore] send in
+                return .run { [path = state.path, userDataStore = self.userDataStore] send in
                     let hideEURedeemInstructions = try await userDataStore.hideEURedeemInstructions.async()
                     if hideEURedeemInstructions {
-                        await send(.euRedeemCode)
+                        guard let code = path[id: id, case: \.euRedeemSelection]?.selectedCountry?.countryCode else {
+                            await send(.euNoCountryAlert)
+                            return
+                        }
+                        await send(.euRedeemCode(countryCode: code))
                     } else {
                         userDataStore.set(hideEURedeemInstructions: true)
                         await send(.euRedeemInstructions(true))
@@ -194,11 +202,27 @@ struct PharmacyContainerDomain {
             case .close:
                 state.path.removeAll()
                 return .none
+            case .unlockCardClose:
+                return .none
             }
-        case let .path(.element(id: _, action: .instructions(.delegate(delegate)))):
+        case .euNoCountryAlert:
+            guard let id = state.path.ids.last
+            else { return .none }
+            state.path[id: id, case: \.euRedeemSelection]?
+                .destination = .alert(EURedeemSelectionDomain.AlertStates.noCountryCode)
+            return .none
+        case let .path(.element(id: id, action: .instructions(.delegate(delegate)))):
             switch delegate {
             case .continueButtonTapped:
-                return .send(.euRedeemCode)
+                guard let code = state.path[id: id, case: \.euRedeemSelection]?.selectedCountry?.countryCode else {
+                    state.path.removeLast()
+                    guard let id = state.path.ids.last
+                    else { return .none }
+                    state.path[id: id, case: \.euRedeemSelection]?
+                        .destination = .alert(EURedeemSelectionDomain.AlertStates.noCountryCode)
+                    return .none
+                }
+                return .send(.euRedeemCode(countryCode: code))
             case .close:
                 state.path.removeAll()
                 return .none
@@ -217,3 +241,6 @@ struct PharmacyContainerDomain {
         }
     }
 }
+
+extension PharmacyContainerDomain.Path.State: Equatable {}
+extension PharmacyContainerDomain.Path.Action: Equatable {}

@@ -39,6 +39,7 @@ struct DeviceSecuritySystemPinView: View {
                         .padding(.vertical)
                         .accessibility(identifier: A11y.security.secTxtSystemPinHeadline)
                         .frame(maxWidth: .infinity)
+                        .accessibilityAddTraits(.isHeader)
 
                     HStack {
                         Spacer(minLength: 0)

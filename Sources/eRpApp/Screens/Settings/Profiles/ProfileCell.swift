@@ -63,7 +63,7 @@ struct ProfileCell: View {
 
             if showAsNavigationLink {
                 Image(systemName: SFSymbolName.chevronForward)
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .foregroundColor(Colors.systemLabelSecondary)
                     .font(.body.weight(.semibold))
             }
         }
@@ -79,7 +79,7 @@ struct ProfileCell: View {
                     .fill(Color(.systemBackground))
                     .frame(width: 12, height: 12)
                     .overlay(Circle()
-                        .fill(status == .connected ? Colors.secondary600 : Colors.red600)
+                        .fill(status == .connected ? Colors.secondary600 : Colors.red700)
                         .frame(width: 8, height: 8))
             }
         }

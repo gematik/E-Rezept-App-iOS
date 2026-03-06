@@ -52,5 +52,11 @@
         "text": "**🏛️ Registratie voor meer mensen** \nRegistratie is nu ook mogelijk voor verzekerden van federale instellingen, zoals de Federale Politie en anderen. \n \n **🕒 Verbeterde openingstijden van apotheken** \nSpoeddiensten en speciale sluitingstijden voor apotheken worden nu weergegeven, indien beschikbaar. \n \n **💊 Selectie van alle recepten** \nBij het inwisselen van recepten kunnen nu alle recepten tegelijkertijd worden geselecteerd. \n \n **♿ Toegankelijkheid** \nDe kleuren van lettertypen en pictogrammen zijn aangepast om een hoger contrast te bereiken. Bovendien is de VoiceOver-spraakuitvoer voor het bewerken van de profielfoto en het herkennen van de inlogstatus verbeterd.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Receptcodes weergeven** \nHet scherm voor batch- en individuele codes is opnieuw ontworpen voor een intuïtiever gebruik. \n \n **❤️ Apotheekfavorieten** \nApotheekfavorieten werken nu betrouwbaarder en zijn compatibel met VoiceOver. \n \n **♿ Toegankelijkheid** \nVoiceOver en toetsenbordnavigatie zijn verbeterd, knoppen, tekst en invoervelden zijn gemakkelijker te herkennen en lijstitems zijn logischer gestructureerd. Vergroot lettertype werkt nu op alle app-schermen. Geanimeerde video's worden slechts één keer afgespeeld om gebruikers met cognitieve beperkingen te ondersteunen.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

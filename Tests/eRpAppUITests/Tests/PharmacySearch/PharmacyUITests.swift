@@ -25,7 +25,7 @@ import Foundation
 import XCTest
 
 @MainActor
-final class PharmacyUITests: XCTestCase, Sendable {
+final class PharmacyUITests: XCTestCase {
     var app: XCUIApplication!
 
     @MainActor

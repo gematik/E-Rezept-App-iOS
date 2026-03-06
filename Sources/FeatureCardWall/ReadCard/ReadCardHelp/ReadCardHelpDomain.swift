@@ -42,7 +42,7 @@ public struct ReadCardHelpDomain {
     }
 
     /// Help page destinations
-    @Reducer(state: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = troubleShooting_readCardHelp1
         /// First help page
@@ -92,3 +92,6 @@ extension ReadCardHelpDomain {
         }
     }
 }
+
+extension ReadCardHelpDomain.Destination.State: Equatable {}
+extension ReadCardHelpDomain.Destination.Action: Equatable {}

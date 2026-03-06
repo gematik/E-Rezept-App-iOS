@@ -54,42 +54,44 @@ struct MedicationView: View {
 
         var body: some View {
             SectionContainer {
-                SubTitle(
-                    title: medication?.displayName ?? L10n.prscTxtFallbackName.text,
-                    description: L10n.prscDtlMedTxtName
-                )
+                LabeledContent {
+                    Text(medication?.displayName ?? L10n.prscTxtFallbackName.text)
+                } label: {
+                    Text(L10n.prscDtlMedTxtName)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedName)
 
                 if let amount = medication?.amount?.description {
-                    SubTitle(title: amount, description: L10n.prscDtlMedTxtAmount)
+                    LabeledContent { Text(amount) } label: { Text(L10n.prscDtlMedTxtAmount) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
                 }
 
                 if let normSizeCode = medication?.normSizeCode {
-                    SubTitle(title: normSizeCode, description: L10n.prscFdTxtDetailsDose)
+                    LabeledContent { Text(normSizeCode) } label: { Text(L10n.prscFdTxtDetailsDose) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNormSizeCode)
                 }
 
                 if let pzn = medication?.pzn {
-                    SubTitle(title: pzn, description: L10n.prscFdTxtDetailsPzn)
+                    LabeledContent { Text(pzn) } label: { Text(L10n.prscFdTxtDetailsPzn) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedPzn)
                 }
 
                 if let dosageForm = medication?.localizedDosageForm {
-                    SubTitle(title: dosageForm, description: L10n.prscFdTxtDetailsDosageForm)
+                    LabeledContent { Text(dosageForm) } label: { Text(L10n.prscFdTxtDetailsDosageForm) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageForm)
                 }
 
                 if let drugCategory = medication?.drugCategory?.localizedName {
-                    SubTitle(title: drugCategory, description: L10n.prscDtlMedTxtDrugCategory)
+                    LabeledContent { Text(drugCategory) } label: { Text(L10n.prscDtlMedTxtDrugCategory) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDrugCategory)
                 }
 
                 if let isVaccine = medication?.isVaccine {
-                    SubTitle(
-                        title: isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
-                        description: L10n.prscDtlMedTxtDrugVaccine
-                    )
+                    LabeledContent {
+                        Text(isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo)
+                    } label: {
+                        Text(L10n.prscDtlMedTxtDrugVaccine)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
                 }
 
@@ -106,37 +108,39 @@ struct MedicationView: View {
 
         var body: some View {
             SectionContainer {
-                SubTitle(
-                    title: medication?.displayName ?? L10n.prscTxtFallbackName.text,
-                    description: L10n.prscDtlMedTxtName
-                )
+                LabeledContent {
+                    Text(medication?.displayName ?? L10n.prscTxtFallbackName.text)
+                } label: {
+                    Text(L10n.prscDtlMedTxtName)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedName)
 
                 if let amount = medication?.amount?.description {
-                    SubTitle(title: amount, description: L10n.prscDtlMedTxtAmount)
+                    LabeledContent { Text(amount) } label: { Text(L10n.prscDtlMedTxtAmount) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
                 }
 
                 if let normSizeCode = medication?.normSizeCode {
-                    SubTitle(title: normSizeCode, description: L10n.prscFdTxtDetailsDose)
+                    LabeledContent { Text(normSizeCode) } label: { Text(L10n.prscFdTxtDetailsDose) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNormSizeCode)
                 }
 
                 if let dosageForm = medication?.localizedDosageForm {
-                    SubTitle(title: dosageForm, description: L10n.prscFdTxtDetailsDosageForm)
+                    LabeledContent { Text(dosageForm) } label: { Text(L10n.prscFdTxtDetailsDosageForm) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageForm)
                 }
 
                 if let drugCategory = medication?.drugCategory?.localizedName {
-                    SubTitle(title: drugCategory, description: L10n.prscDtlMedTxtDrugCategory)
+                    LabeledContent { Text(drugCategory) } label: { Text(L10n.prscDtlMedTxtDrugCategory) }
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDrugCategory)
                 }
 
                 if let isVaccine = medication?.isVaccine {
-                    SubTitle(
-                        title: isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
-                        description: L10n.prscDtlMedTxtDrugVaccine
-                    )
+                    LabeledContent {
+                        Text(isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo)
+                    } label: {
+                        Text(L10n.prscDtlMedTxtDrugVaccine)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
                 }
 
@@ -155,10 +159,11 @@ struct MedicationView: View {
                 if let ingredients = store.medication?.ingredients {
                     ForEach(ingredients, id: \.self) { ingredient in
                         Button(action: { store.send(.showIngredient(ingredient)) }, label: {
-                            SubTitle(
-                                title: ingredient.text ?? L10n.prscTxtFallbackName.text,
-                                details: L10n.prscDtlMedIngredientName
-                            )
+                            LabeledContent {
+                                Text(ingredient.text ?? L10n.prscTxtFallbackName.text)
+                            } label: {
+                                Text(L10n.prscDtlMedIngredientName)
+                            }
                         })
                             .buttonStyle(.navigation)
                             .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBtnIngredient)
@@ -166,41 +171,66 @@ struct MedicationView: View {
                 }
 
                 if let amount = store.medication?.amount?.description {
-                    SubTitle(title: amount, description: L10n.prscDtlMedTxtAmount)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
+                    LabeledContent {
+                        Text(amount)
+                    } label: {
+                        Text(L10n.prscDtlMedTxtAmount)
+                    }
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
                 }
 
                 if let normSizeCode = store.medication?.normSizeCode {
-                    SubTitle(title: normSizeCode, description: L10n.prscFdTxtDetailsDose)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNormSizeCode)
+                    LabeledContent {
+                        Text(normSizeCode)
+                    } label: {
+                        Text(L10n.prscFdTxtDetailsDose)
+                    }
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNormSizeCode)
                 }
 
                 if let dosageForm = store.medication?.localizedDosageForm {
-                    SubTitle(title: dosageForm, description: L10n.prscFdTxtDetailsDosageForm)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageForm)
+                    LabeledContent {
+                        Text(dosageForm)
+                    } label: {
+                        Text(L10n.prscFdTxtDetailsDosageForm)
+                    }
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageForm)
                 }
 
                 if let drugCategory = store.medication?.drugCategory?.localizedName {
-                    SubTitle(title: drugCategory, description: L10n.prscDtlMedTxtDrugCategory)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDrugCategory)
+                    LabeledContent {
+                        Text(drugCategory)
+                    } label: {
+                        Text(L10n.prscDtlMedTxtDrugCategory)
+                    }
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDrugCategory)
                 }
 
                 if let isVaccine = store.medication?.isVaccine {
-                    SubTitle(
-                        title: isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
-                        description: L10n.prscDtlMedTxtDrugVaccine
-                    )
+                    LabeledContent {
+                        Text(isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo)
+                    } label: {
+                        Text(L10n.prscDtlMedTxtDrugVaccine)
+                    }
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
                 }
 
                 if let instructions = store.medication?.manufacturingInstructions {
-                    SubTitle(title: instructions, description: L10n.prscDtlMedManufacturingInstructions)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedManufacturingInstructions)
+                    LabeledContent {
+                        Text(instructions)
+                    } label: {
+                        Text(L10n.prscDtlMedManufacturingInstructions)
+                    }
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedManufacturingInstructions)
                 }
 
                 if let packaging = store.medication?.packaging {
-                    SubTitle(title: packaging, description: L10n.prscDtlMedTxtPackaging)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedPackaging)
+                    LabeledContent {
+                        Text(packaging)
+                    } label: {
+                        Text(L10n.prscDtlMedTxtPackaging)
+                    }
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedPackaging)
                 }
 
                 if let dispenseState = store.dispenseState {
@@ -215,64 +245,58 @@ struct MedicationView: View {
         let dispenseDetail: MedicationDomain.State.DispenseState
         var body: some View {
             if let expiresOn = dispenseDetail.expiresOn {
-                SubTitle(
-                    title: expiresOn,
-                    description: L10n.prscDtlMedTxtBatchExpiresOn
-                )
+                LabeledContent {
+                    Text(expiresOn)
+                } label: {
+                    Text(L10n.prscDtlMedTxtBatchExpiresOn)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBatchExpiresOn)
             }
 
             if let lotNumber = dispenseDetail.lotNumber {
-                SubTitle(
-                    title: lotNumber,
-                    description: L10n.prscDtlMedTxtBatchLotNumber
-                )
+                LabeledContent {
+                    Text(lotNumber)
+                } label: {
+                    Text(L10n.prscDtlMedTxtBatchLotNumber)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBatchLotNumber)
             }
 
             if let dosageInstruction = dispenseDetail.dosageInstruction {
-                SubTitle(
-                    title: dosageInstruction,
-                    description: L10n.prscDtlTxtDosageInstructions
-                )
+                LabeledContent {
+                    Text(dosageInstruction)
+                } label: {
+                    Text(L10n.prscDtlTxtDosageInstructions)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageInstructions)
             }
 
             if let noteText = dispenseDetail.noteText {
-                SubTitle(
-                    title: noteText,
-                    description: L10n.prscDtlMedTxtNote
-                )
+                LabeledContent {
+                    Text(noteText)
+                } label: {
+                    Text(L10n.prscDtlMedTxtNote)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNote)
             }
 
             if let quantity = dispenseDetail.quantity?.description {
-                SubTitle(
-                    title: quantity,
-                    description: L10n.prscDtlMedTxtAmount
-                )
+                LabeledContent {
+                    Text(quantity)
+                } label: {
+                    Text(L10n.prscDtlMedTxtAmount)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
             }
 
             if let whenHandedOver = dispenseDetail.whenHandedOver {
-                SubTitle(
-                    title: whenHandedOver,
-                    description: L10n.prscDtlMedTxtHandedOverDate
-                )
+                LabeledContent {
+                    Text(whenHandedOver)
+                } label: {
+                    Text(L10n.prscDtlMedTxtHandedOverDate)
+                }
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedHandedOverDate)
             }
-        }
-    }
-}
-
-extension ErxMedication {
-    var displayName: String {
-        if let name = name {
-            return name
-        } else {
-            let joinedText = ingredients.compactMap(\.text).joined(separator: ", ")
-            guard !joinedText.isEmpty else { return L10n.prscTxtFallbackName.text }
-            return joinedText
         }
     }
 }

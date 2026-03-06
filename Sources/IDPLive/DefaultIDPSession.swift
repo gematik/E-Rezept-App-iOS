@@ -192,7 +192,7 @@ public class DefaultIDPSession: IDPSession {
         challengeSession: ChallengeSession,
         idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
-        loadDiscoveryDocument() // swiftlint:disable:this trailing_closure
+        loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPToken, IDPError> in
                 guard let self = self else {
                     return Fail(error: IDPError.internal(error: .exchangeUnexpectedNil)).eraseToAnyPublisher()
@@ -249,9 +249,12 @@ public class DefaultIDPSession: IDPSession {
                 }
                 .eraseToAnyPublisher()
             }
-            .handleEvents(receiveOutput: { [weak self] token in
-                self?.storage.set(token: token)
-            })
+            .handleEvents(
+                receiveOutput: { [weak self] token in
+                    self?.storage.set(token: token)
+                },
+                receiveRequest: nil
+            )
             .eraseToAnyPublisher()
     }
 
@@ -294,7 +297,7 @@ public class DefaultIDPSession: IDPSession {
                 } else {
                     // [REQ:gemSpec_IDP_Frontend:A_20512#3] Reset expired documents before loading a new one
                     self.storage.set(discovery: nil)
-                    return self.client // swiftlint:disable:this trailing_closure
+                    return self.client
                         .loadDiscoveryDocument()
                         .flatMap { fetchedDocument -> AnyPublisher<DiscoveryDocument, IDPError> in
                             // Validate JWT/DiscoveryDocument signature
@@ -315,9 +318,12 @@ public class DefaultIDPSession: IDPSession {
                         }
                         // [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
                         .validate(with: self.trustStoreSession, timeProvider: self.time)
-                        .handleEvents(receiveOutput: { [weak self] renewed in
-                            self?.storage.set(discovery: renewed)
-                        })
+                        .handleEvents(
+                            receiveOutput: { [weak self] renewed in
+                                self?.storage.set(discovery: renewed)
+                            },
+                            receiveRequest: nil
+                        )
                         .eraseToAnyPublisher()
                 }
             }
@@ -475,15 +481,17 @@ public class DefaultIDPSession: IDPSession {
 
                 let challengeSession = ExtAuthChallengeSession(verifierCode: verifierCode, nonce: nonce, for: entry)
 
-                // swiftlint:disable:next trailing_closure
                 return self.client.startExtAuth(extAuth, using: document)
                     .first()
-                    .handleEvents(receiveOutput: { _ in
-                        // [REQ:gemSpec_IDP_Frontend:A_22299-01] Remember State parameter for later verification
-                        let storageIdentifier = state
-                        // [REQ:gemSpec_IDP_Frontend:A_22301-01#12] The challenge session has been set here.
-                        self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: storageIdentifier)
-                    })
+                    .handleEvents(
+                        receiveOutput: { _ in
+                            // [REQ:gemSpec_IDP_Frontend:A_22299-01] Remember State parameter for later verification
+                            let storageIdentifier = state
+                            // [REQ:gemSpec_IDP_Frontend:A_22301-01#12] The challenge session has been set here.
+                            self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: storageIdentifier)
+                        },
+                        receiveRequest: nil
+                    )
                     .mapError { $0.asIDPError() }
                     .eraseToAnyPublisher()
             }
@@ -519,7 +527,6 @@ public class DefaultIDPSession: IDPSession {
                     return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
                 }
                 let isPkvExtAuthFlowInitiated = challengeSession.entry.pkv
-                // swiftlint:disable:next trailing_closure
                 return self.exchange(
                     token: token,
                     challengeSession: challengeSession,
@@ -541,9 +548,12 @@ public class DefaultIDPSession: IDPSession {
                         return idpToken
                     }
                 }
-                .handleEvents(receiveOutput: { _ in
-                    self.extAuthRequestStorage.setExtAuthRequest(nil, for: token.state)
-                })
+                .handleEvents(
+                    receiveOutput: { _ in
+                        self.extAuthRequestStorage.setExtAuthRequest(nil, for: token.state)
+                    },
+                    receiveRequest: nil
+                )
                 .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
@@ -666,7 +676,6 @@ extension DefaultIDPSession {
                                      redirect: String) -> AnyPublisher<IDPToken, IDPError> {
         let challenge = challengeSession.challenge
         return loadDiscoveryDocument()
-            // swiftlint:disable:previous trailing_closure
             .flatMap { [weak self] document -> AnyPublisher<IDPToken, IDPError> in
                 guard let self = self else {
                     return Fail(
@@ -679,12 +688,15 @@ extension DefaultIDPSession {
                     }
                     .eraseToAnyPublisher()
             }
-            .handleEvents(receiveCompletion: { [weak self] result in
-                if case let .failure(error) = result,
-                   case IDPError.serverError = error {
-                    self?.storage.set(token: nil)
-                }
-            })
+            .handleEvents(
+                receiveCompletion: { [weak self] result in
+                    if case let .failure(error) = result,
+                       case IDPError.serverError = error {
+                        self?.storage.set(token: nil)
+                    }
+                },
+                receiveRequest: nil
+            )
             .eraseToAnyPublisher()
     }
 }

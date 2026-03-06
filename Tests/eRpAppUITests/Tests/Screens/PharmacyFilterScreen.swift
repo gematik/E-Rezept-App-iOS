@@ -34,7 +34,7 @@ struct PharmacyFilterScreen<Previous>: Screen where Previous: Screen {
     }
 
     func tapFilterOption(_ filterName: String, file _: StaticString = #file, line _: UInt = #line) {
-        app.buttons.element(matching: .init(format: "label == %@", "\(filterName)")).tap()
+        app.switches.element(matching: .init(format: "label == %@", "\(filterName)")).tap()
     }
 
     @discardableResult

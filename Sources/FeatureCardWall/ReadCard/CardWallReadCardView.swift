@@ -41,6 +41,7 @@ public struct CardWallReadCardView: View {
                     .padding(.bottom, 8)
                     .padding(.top, 48)
                     .padding(.horizontal)
+                    .accessibilityAddTraits(.isHeader)
 
                 Text(L10n.cdwTxtRcSubheadline)
                     .font(.subheadline)

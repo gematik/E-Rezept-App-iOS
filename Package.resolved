@@ -36,33 +36,6 @@
       }
     },
     {
-      "identity" : "cs_ios_crashreporter",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ContentSquare/CS_iOS_CrashReporter.git",
-      "state" : {
-        "revision" : "9f00d53c3d2c7a0b2d92a694fc9d4c993bb2b157",
-        "version" : "1.0.1"
-      }
-    },
-    {
-      "identity" : "cs_ios_sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ContentSquare/CS_iOS_SDK.git",
-      "state" : {
-        "revision" : "85795227d296bae0a624cf46f24d664135f63f3f",
-        "version" : "4.42.3"
-      }
-    },
-    {
-      "identity" : "csswiftprotobuf",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ContentSquare/CSSwiftProtobuf.git",
-      "state" : {
-        "revision" : "69144f5873981ce36d53ec188da920f0e05d4cf2",
-        "version" : "1.28.2"
-      }
-    },
-    {
       "identity" : "cwlcatchexception",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattgallagher/CwlCatchException.git",
@@ -132,6 +105,15 @@
       "state" : {
         "revision" : "f70225981241859eb4aa1a18a75531d26637c8cc",
         "version" : "1.4.0"
+      }
+    },
+    {
+      "identity" : "swift-async-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-algorithms",
+      "state" : {
+        "revision" : "6c050d5ef8e1aa6342528460db614e9770d7f804",
+        "version" : "1.1.1"
       }
     },
     {

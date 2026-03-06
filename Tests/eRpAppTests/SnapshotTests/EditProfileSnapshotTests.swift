@@ -23,6 +23,7 @@
 import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
+import eRpStyleKit
 import IDP
 import SnapshotTesting
 import SwiftUI
@@ -51,7 +52,8 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
                 }
             )
         }
-        .frame(width: 375, height: 1807, alignment: .center)
+        .tint(Colors.primary700)
+        .frame(width: 375, height: 1807, alignment: .top)
 
         assertSnapshots(of: sut, as: figmaReference())
     }
@@ -79,7 +81,8 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
                 }
             )
         }
-        .frame(width: 375, height: 1807, alignment: .center)
+        .tint(Colors.primary700)
+        .frame(width: 375, height: 1807, alignment: .top)
 
         assertSnapshots(of: sut, as: figmaReference())
     }
@@ -107,30 +110,34 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
                 }
             )
         }
-        .frame(width: 375, height: 1807, alignment: .center)
+        .tint(Colors.primary700)
+        .frame(width: 375, height: 1807, alignment: .top)
 
         assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testEditProfileFilledWithImageSnapshot() {
-        let sut = EditProfileView(
-            store: .init(
-                initialState: .init(
-                    name: "",
-                    acronym: "",
-                    fullName: nil,
-                    insurance: nil,
-                    can: nil,
-                    insuranceId: nil,
-                    image: .boyWithCard,
-                    userImageData: nil,
-                    color: .green,
-                    profileId: UUID()
-                )
-            ) {
-                EmptyReducer()
-            }
-        )
+        let sut = NavigationStack {
+            EditProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "",
+                        acronym: "",
+                        fullName: nil,
+                        insurance: nil,
+                        can: nil,
+                        insuranceId: nil,
+                        image: .boyWithCard,
+                        userImageData: nil,
+                        color: .green,
+                        profileId: UUID()
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+        .tint(Colors.primary700)
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -138,24 +145,27 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testEditProfileFilledWithAcronymSnapshot() {
-        let sut = EditProfileView(
-            store: .init(
-                initialState: .init(
-                    name: "Anna Vetter",
-                    acronym: "AV",
-                    fullName: nil,
-                    insurance: nil,
-                    can: nil,
-                    insuranceId: nil,
-                    image: ProfilePicture.none,
-                    userImageData: nil,
-                    color: .green,
-                    profileId: UUID()
-                )
-            ) {
-                EmptyReducer()
-            }
-        )
+        let sut = NavigationStack {
+            EditProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "Anna Vetter",
+                        acronym: "AV",
+                        fullName: nil,
+                        insurance: nil,
+                        can: nil,
+                        insuranceId: nil,
+                        image: ProfilePicture.none,
+                        userImageData: nil,
+                        color: .green,
+                        profileId: UUID()
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+        .tint(Colors.primary700)
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -163,50 +173,57 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testEditProfileFilledWithConnectedProfileSnapshot() {
-        let sut = EditProfileView(
-            store: .init(
-                initialState: .init(
-                    name: "Anna V",
-                    acronym: "AV",
-                    fullName: "Anne Vetter",
-                    insurance: "Gematik BKK",
-                    can: "123123",
-                    insuranceId: "X987654321",
-                    image: .boyWithCard,
-                    userImageData: nil,
-                    color: .yellow,
-                    profileId: UUID()
-                )
-            ) {
-                EmptyReducer()
-            }
-        )
-        .frame(width: 375, height: 1400)
+        let sut = NavigationStack {
+            EditProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "Anna V",
+                        acronym: "AV",
+                        fullName: "Anne Vetter",
+                        insurance: "Gematik BKK",
+                        can: "123123",
+                        insuranceId: "X987654321",
+                        image: .boyWithCard,
+                        userImageData: nil,
+                        color: .yellow,
+                        profileId: UUID()
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+        .tint(Colors.primary700)
+        .frame(width: 375, height: 1400, alignment: .top)
 
         assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testEditProfilePrivateInsuranceProfileSnapshot() {
-        let sut = EditProfileView(
-            store: .init(
-                initialState: .init(
-                    name: "Private Paul",
-                    acronym: "PP",
-                    fullName: "Private Paul",
-                    insurance: "Gematik PKV",
-                    can: "123123",
-                    insuranceId: "X987654321",
-                    image: .boyWithCard,
-                    userImageData: nil,
-                    color: .red,
-                    profileId: UUID(),
-                    insuranceType: .pKV
+        let sut =
+            NavigationStack {
+                EditProfileView(
+                    store: .init(
+                        initialState: .init(
+                            name: "Private Paul",
+                            acronym: "PP",
+                            fullName: "Private Paul",
+                            insurance: "Gematik PKV",
+                            can: "123123",
+                            insuranceId: "X987654321",
+                            image: .boyWithCard,
+                            userImageData: nil,
+                            color: .red,
+                            profileId: UUID(),
+                            insuranceType: .pKV
+                        )
+                    ) {
+                        EmptyReducer()
+                    }
                 )
-            ) {
-                EmptyReducer()
             }
-        )
-        .frame(width: 375, height: 1400)
+            .tint(Colors.primary700)
+            .frame(width: 375, height: 1400, alignment: .top)
 
         assertSnapshots(of: sut, as: snapshotModi())
     }

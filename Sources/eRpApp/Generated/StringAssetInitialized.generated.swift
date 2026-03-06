@@ -42,11 +42,6 @@ extension FootnoteView {
         self.init(text: text.key, a11y: a11y)
     }
 }
-extension FormTextFieldView {
-    init(placeholder: String? = nil, subtitle: StringAsset? = nil, text: Binding<String>, showSeparator: Bool = true) {
-    self.init(placeholder: placeholder, subtitle: subtitle?.key, text: text, showSeparator: showSeparator)
-    }
-}
 extension HeadernoteView {
     init(text: StringAsset, a11y: String) {
         self.init(text: text.key, a11y: a11y)
@@ -83,11 +78,6 @@ extension MedicationRedeemView {
 extension OptInCell {
     init(text: StringAsset, isOn: Binding<Bool>) {
         self.init(text: text.key, isOn: isOn)
-    }
-}
-extension PrimaryTextFieldView {
-    init(placeholder: StringAsset, text: Binding<String>, a11y: String) {
-        self.init(placeholder: placeholder.key, text: text, a11y: a11y)
     }
 }
 extension ProgressTile {

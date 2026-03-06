@@ -197,15 +197,13 @@ extension ModelsR4.Bundle {
                 .parseError("Could not parse organization from healthcare service.")
         }
 
-        let countryCode: String?
-        if let valueX = organization
-            .extensions(for: "https://gematik.de/fhir/directory/StructureDefinition/ncpeh-country-ex")
-            .first?.value,
-            case let Extension.ValueX.coding(value) = valueX {
-            countryCode = value.code?.value?.string
-        } else {
-            countryCode = ""
+        guard let valueX = organization.extensions(for: FHIRDirectory.Key.country).first?.value,
+              case let Extension.ValueX.coding(value) = valueX
+        else {
+            throw HealthcareServiceBundleParsingError
+                .parseError("Could not parse country code from organization extension.")
         }
+        let countryCode = value.code?.value?.string
 
         guard let countryName = organization.name?.value?.string else {
             throw HealthcareServiceBundleParsingError.parseError("Could not parse countryName from organization.")

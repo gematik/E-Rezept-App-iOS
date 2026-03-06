@@ -52,5 +52,11 @@
         "text": "Polski: **🏛️ Rejestracja dla większej liczby osób** \nRejestracja jest teraz możliwa również dla osób ubezpieczonych w instytucjach federalnych, takich jak Policja Federalna i inne. \n \n **🕒 Ulepszone godziny otwarcia aptek** \nTeraz wyświetlane są godziny dyżurów i specjalne godziny zamknięcia aptek, jeśli są dostępne. \n \n **💊 Wybór wszystkich recept** \nPodczas realizacji recept wszystkie recepty można teraz wybrać jednocześnie. \n \n **♿ Dostępność** \nKolory czcionek i ikon zostały dostosowane w celu uzyskania większego kontrastu. Ponadto ulepszono wyjście głosowe VoiceOver do edycji zdjęcia profilowego i rozpoznawania statusu logowania.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Pokaż kody recept** \nEkran kodów partii i pojedynczych został przeprojektowany, aby zapewnić bardziej intuicyjną obsługę. \n \n **❤️ Ulubione Apteki** \nUlubione Apteki działają teraz bardziej niezawodnie i są kompatybilne z VoiceOver. \n \n **♿ Ułatwienia dostępu** \nUlepszono nawigację VoiceOver i klawiaturą, przyciski, tekst i pola wprowadzania danych są łatwiejsze do zidentyfikowania, a elementy listy są bardziej logicznie ustrukturyzowane. Powiększona czcionka działa teraz na wszystkich ekranach aplikacji. Animowane filmy są odtwarzane tylko raz, aby ułatwić użytkownikom z upośledzeniem funkcji poznawczych.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

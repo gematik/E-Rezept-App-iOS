@@ -44,10 +44,8 @@ public struct QuartaryButtonStyle: ButtonStyle {
             .font(.subheadline.weight(.semibold))
             .foregroundColor(foregroundColor)
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 8)
-            .background(Colors.systemBackgroundTertiary)
-            .border(Colors.separator, width: 0.5, cornerRadius: 8)
+            .padding()
+            .background(Colors.systemBackground)
     }
 }
 

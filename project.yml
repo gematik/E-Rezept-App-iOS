@@ -69,6 +69,7 @@ schemes:
         - package: eRpKit/VAUClientTests
         - package: eRpKit/AsyncHelpersTests
         - package: eRpKit/FeatureCardWallTests
+        - package: eRpKit/FeatureEURedeemTests
   AllTests_macOS:
     build:
       targets:

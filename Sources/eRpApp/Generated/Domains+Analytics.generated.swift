@@ -241,19 +241,31 @@ extension CoPaymentDomain.State {
 
 extension CodeDomain.State {
     func routeName() -> String? {
-        return nil
+        guard let destination else { return nil }
+        switch destination {
+            case .alert:
+                return destination.analyticsName
+        }
     }
 }
 
 extension ConsentDomain.State {
     func routeName() -> String? {
-        return nil
+        guard let destination else { return nil }
+        switch destination {
+            case .alert:
+                return destination.analyticsName
+        }
     }
 }
 
 extension CountrySelectionDomain.State {
     func routeName() -> String? {
-        return nil
+        guard let destination else { return nil }
+        switch destination {
+            case .alert:
+                return destination.analyticsName
+        }
     }
 }
 
@@ -346,6 +358,10 @@ extension EURedeemSelectionDomain.State {
         switch destination {
             case let .consent(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case let .cardWall(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case .alert:
+                return destination.analyticsName
         }
     }
 }
@@ -362,7 +378,11 @@ extension EditProfileDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case let .chargeItemList(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case let .cardWall(state: state):
+                return state.routeName() ?? destination.analyticsName
             case .insuranceDrawer:
+                return destination.analyticsName
+            case .euRedeemConsentDrawer:
                 return destination.analyticsName
             case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.analyticsName
@@ -645,18 +665,6 @@ extension MedicationReminderSetupDomain.State {
     }
 }
 
-extension NewProfileDomain.State {
-    func routeName() -> String? {
-        guard let destination else { return nil }
-        switch destination {
-            case let .editProfilePicture(state: state):
-                return state.routeName() ?? destination.analyticsName
-            case .alert:
-                return destination.analyticsName
-        }
-    }
-}
-
 extension OSDeprecationDomain.State {
     func routeName() -> String? {
         return nil
@@ -698,6 +706,10 @@ extension OrderDetailDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
+            case .euRevoke:
+                return destination.analyticsName
+            case let .euAccessCode(state: state):
+                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -1034,7 +1046,11 @@ extension ScannerDomain.State {
 
 extension SelectEUPrescriptionsDomain.State {
     func routeName() -> String? {
-        return nil
+        guard let destination else { return nil }
+        switch destination {
+            case .alert:
+                return destination.analyticsName
+        }
     }
 }
 
@@ -1272,6 +1288,30 @@ extension ChargeItemListDomain.Destination.State {
         }
     }
 }
+extension CodeDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .alert:
+                return Analytics.Screens.alert.name
+        }
+    }
+}
+extension ConsentDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .alert:
+                return Analytics.Screens.alert.name
+        }
+    }
+}
+extension CountrySelectionDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .alert:
+                return Analytics.Screens.alert.name
+        }
+    }
+}
 extension DiGaDetailDomain.Destination.State {
     var analyticsName: String {
         switch self {
@@ -1313,6 +1353,10 @@ extension EURedeemSelectionDomain.Destination.State {
         switch self {
             case .consent:
                 return "consent"
+            case .cardWall:
+                return Analytics.Screens.cardWall.name
+            case .alert:
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1327,8 +1371,12 @@ extension EditProfileDomain.Destination.State {
                 return Analytics.Screens.profile_registeredDevices.name
             case .chargeItemList:
                 return Analytics.Screens.chargeItemList.name
+            case .cardWall:
+                return Analytics.Screens.cardWall.name
             case .insuranceDrawer:
                 return Analytics.Screens.profile_insuranceDrawer.name
+            case .euRedeemConsentDrawer:
+                return "euRedeemConsentDrawer"
             case .editProfilePicture:
                 return "editProfilePicture"
         }
@@ -1510,16 +1558,6 @@ extension MedicationReminderSetupDomain.Destination.State {
         }
     }
 }
-extension NewProfileDomain.Destination.State {
-    var analyticsName: String {
-        switch self {
-            case .editProfilePicture:
-                return "editProfilePicture"
-            case .alert:
-                return "alert"
-        }
-    }
-}
 extension OrderDetailDomain.Destination.State {
     var analyticsName: String {
         switch self {
@@ -1533,6 +1571,10 @@ extension OrderDetailDomain.Destination.State {
                 return Analytics.Screens.orders_pharmacyDetail.name
             case .alert:
                 return Analytics.Screens.alert.name
+            case .euRevoke:
+                return "euRevoke"
+            case .euAccessCode:
+                return "euAccessCode"
         }
     }
 }
@@ -1719,6 +1761,14 @@ extension ScannerDomain.Destination.State {
                 return "alert"
             case .sheet:
                 return "sheet"
+        }
+    }
+}
+extension SelectEUPrescriptionsDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .alert:
+                return Analytics.Screens.alert.name
         }
     }
 }

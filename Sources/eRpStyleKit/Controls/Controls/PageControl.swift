@@ -37,21 +37,27 @@ public struct PageControl: View {
         HStack(spacing: 8) {
             ForEach(0 ..< numberOfPages, id: \.self) { page in
                 Circle()
+                    .stroke()
                     .frame(width: 8)
-                    .foregroundColor(page == currentPage ? Colors.primary500 : Colors.systemGray5)
-                    .scaleEffect(
-                        page == currentPage ? CGSize(width: 1.2, height: 1.2) : CGSize(width: 1.0, height: 1.0),
-                        anchor: .center
-                    )
+                    .foregroundColor(Colors.systemLabel)
+                    .overlay {
+                        Circle()
+                            .foregroundColor(Colors.primary)
+                            .scaleEffect(
+                                page == currentPage ? CGSize(width: 1.2, height: 1.2) : CGSize(width: 0.0, height: 0.0),
+                                anchor: .center
+                            )
+                    }
             }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(Colors.systemGray6)
+        .border(Colors.systemGray3, width: 1, cornerRadius: 16)
         .clipShape(RoundedRectangle(cornerSize: CGSize(width: 8, height: 8)))
         .animation(.bouncy, value: numberOfPages)
-        .animation(.easeInOut(duration: 0.2), value: currentPage)
-        .accessibilityHidden(true)
+        .animation(.easeInOut(duration: 0.4), value: currentPage)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(L10n.onbTxtProgressOf("\(currentPage + 1)", "\(numberOfPages)"))
     }
 }
 

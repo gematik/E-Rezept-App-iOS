@@ -36,14 +36,16 @@ final class VAUSessionTests: XCTestCase {
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
 
-        let vauAccessTokenProvider = MockVAUAccessTokenProvider()
+        let vauAccessTokenProvider = VAUAccessTokenProviderMock()
         vauAccessTokenProvider.vauBearerToken = Just("SomeAccessToken").setFailureType(to: VAUError.self)
             .eraseToAnyPublisher()
-        let mockVAUCrypto = MockVAUCrypto()
-        mockVAUCrypto.decryptDataReturnValue = ""
-        mockVAUCrypto.encryptReturnValue = Data()
-        let mockVAUCryptoProvider = MockVAUCryptoProvider()
-        mockVAUCryptoProvider.provideForVauCertificateBearerTokenReturnValue = mockVAUCrypto
+        let mockVAUCrypto = VAUCryptoMock()
+        mockVAUCrypto.decryptDataDataStringReturnValue = ""
+        mockVAUCrypto.encryptDataReturnValue = Data()
+        let mockVAUCryptoProvider = VAUCryptoProviderMock()
+        mockVAUCryptoProvider
+            .provideForMessageStringVauCertificateVAUCertificateBearerTokenBearerTokenVAUCryptoReturnValue =
+            mockVAUCrypto
         let trustStoreSession = TrustStoreSessionMock()
         trustStoreSession.vauCertificateX509ReturnValue = Self.defaultVauCertificate
 

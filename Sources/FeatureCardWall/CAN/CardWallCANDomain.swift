@@ -53,7 +53,7 @@ public struct CardWallCANDomain {
     }
 
     /// Destination states for navigation from CAN screen
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     public enum Destination {
         // sourcery: AnalyticsScreen = cardWall_PIN
         /// Navigate to PIN input
@@ -169,3 +169,6 @@ extension CardWallCANDomain {
         }
     }
 }
+
+extension CardWallCANDomain.Destination.State: Equatable {}
+extension CardWallCANDomain.Destination.Action: Equatable {}

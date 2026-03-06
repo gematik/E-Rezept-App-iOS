@@ -86,7 +86,6 @@ struct PrescriptionDetailDomain {
         case delegate(Delegate)
         case setNavigation(tag: Destination.Tag?)
         case destination(PresentationAction<Destination.Action>)
-
         case redeemPressed
         case showAlert(ShareSheetDomain.Error)
 
@@ -277,13 +276,12 @@ struct PrescriptionDetailDomain {
             state.destination = .alert(
                 ErpAlertState(
                     for: error,
-                    title: L10n.dmcAlertTitle,
-                    actions: {
-                        ButtonState(role: .cancel) {
-                            .init(L10n.alertBtnOk)
-                        }
+                    title: L10n.dmcAlertTitle
+                ) {
+                    ButtonState(role: .cancel) {
+                        .init(L10n.alertBtnOk)
                     }
-                )
+                }
             )
             return .none
         case let .response(.taskDeletedReceived(.failure(fail))):

@@ -25,7 +25,7 @@ import SwiftUI
 
 struct HintView<Action: Equatable>: View {
     let hint: Hint<Action>
-    var closeAccessibilityLable: String?
+    var closeAccessibilityLabel: String?
     var textAction: (() -> Void)?
     var closeAction: (() -> Void)?
 
@@ -115,7 +115,7 @@ struct HintView<Action: Equatable>: View {
                             .padding(.trailing)
                             .padding(.top)
                     }
-                    .accessibility(label: Text(closeAccessibilityLable ?? L10n.hintBtnClose.text))
+                    .accessibility(label: Text(closeAccessibilityLabel ?? L10n.hintBtnClose.text))
                 }
             }
             .frame(maxWidth: .infinity)

@@ -193,7 +193,8 @@ extension PharmacySearchMapView {
 
                 ScrollView {
                     SingleElementSectionContainer {
-                        ForEach(store.clusterPharmacies) { pharmacyViewModel in
+                        ForEach(Array(store.clusterPharmacies.enumerated()),
+                                id: \.element) { index, pharmacyViewModel in
                             Button(
                                 action: {
                                     store.send(.delegate(.showDetails(pharmacyViewModel)))
@@ -210,12 +211,9 @@ extension PharmacySearchMapView {
                                           icon: {})
                                 }
                             )
-                            .buttonStyle(
-                                .navigation(showSeparator: pharmacyViewModel !=
-                                    store.clusterPharmacies
-                                    .last)
-                            )
-                            .modifier(SectionContainerCellModifier())
+                            .buttonStyle(.navigation)
+                            .modifier(SectionContainerCellModifier(last: index ==
+                                    store.clusterPharmacies.count - 1))
                             .accessibilityIdentifier(A11y.pharmacySearchMap
                                 .phaSearchMapBtnClusterPharmacy)
                         }

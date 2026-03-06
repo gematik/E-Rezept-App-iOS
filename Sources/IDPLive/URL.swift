@@ -24,11 +24,11 @@ import Foundation
 
 extension URL {
     func domainReplacingOccurrences(of find: String, with replace: String) -> URL {
-        // swiftlint:disable force_unwrapping
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: true)!
-        components.host = components.host!.replacingOccurrences(of: find, with: replace)
-        return components.url!
-        // swiftlint:enable force_unwrapping
+        // The unwrapping should remove some weird crashes on live, though not replacing the domain will most likely
+        // cause other issues.
+        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: true) else { return self }
+        components.host = components.host?.replacingOccurrences(of: find, with: replace) ?? components.host
+        return components.url ?? self
     }
 
     func correct() -> URL {

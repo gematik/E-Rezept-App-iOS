@@ -115,6 +115,7 @@ final class DefaultInternalCommunication: InternalCommunicationProtocol {
             }
             return nil
         }
+        .sorted { $0.timestamp > $1.timestamp }
 
         let hideWelcomeMessage = try await userDataStore.hideWelcomeMessage.async()
 
@@ -128,7 +129,7 @@ final class DefaultInternalCommunication: InternalCommunicationProtocol {
                 version: "0.0.0",
                 isRead: readMessages.contains("1")
             )
-            messages.insert(welcomeMessage, at: 0)
+            messages.append(welcomeMessage)
         }
         let emptyArray: [InternalCommunication] = []
         return IdentifiedArray(uniqueElements: messages

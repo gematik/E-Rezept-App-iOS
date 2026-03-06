@@ -37,7 +37,7 @@ struct PharmacySearchView: View {
         VStack(spacing: 0) {
             DebugPharmacies(store: store)
 
-            ZStack {
+            Group {
                 switch store.searchState {
                 case .searchAfterLocalizationWasAuthorized,
                      .localizingDevice:
@@ -112,14 +112,14 @@ struct PharmacySearchView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .center)
-            .overlay(VStack {
+            .overlay(alignment: .top) {
                 if store.searchState == .searchRunning {
                     SearchRunningView()
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchSearchRunning)
                         .transition(.slide)
                         .padding(.top, 80)
                 }
-            }, alignment: .top)
+            }
 
             Spacer(minLength: 0)
 
@@ -291,7 +291,7 @@ extension PharmacySearchView {
         var body: some View {
             SingleElementSectionContainer {
                 LazyVStack(spacing: 0) {
-                    ForEach(store.pharmacies) { pharmacyViewModel in
+                    ForEach(Array(store.pharmacies.enumerated()), id: \.element) { index, pharmacyViewModel in
                         Button(
                             action: { store.send(.showDetails(pharmacyViewModel)) },
                             label: { Label(title: {
@@ -306,8 +306,8 @@ extension PharmacySearchView {
                         )
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
-                        .buttonStyle(.navigation(showSeparator: true))
-                        .modifier(SectionContainerCellModifier(last: false))
+                        .buttonStyle(.navigation)
+                        .modifier(SectionContainerCellModifier(last: index == store.pharmacies.count - 1))
                     }
                 }
             }

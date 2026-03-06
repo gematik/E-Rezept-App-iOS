@@ -47,6 +47,7 @@ struct DebugDomain {
         @Shared(.overwriteDIGAIK) var overwriteDIGAIK
         @Shared(.appDefaults) var appDefaults
         @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+        @Shared(.useWorkflow16ForSending) var useWorkflow16: Bool
 
         @Shared(.isVirtualEGKEnabled) var isVirtualEGKEnabled
         @Shared(.virtualEGKCCHAut) var virtualEGKCCHAut

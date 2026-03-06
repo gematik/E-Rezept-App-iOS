@@ -32,7 +32,7 @@ import UserNotifications
 
 @Reducer
 struct MedicationReminderSetupDomain {
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
@@ -76,7 +76,7 @@ struct MedicationReminderSetupDomain {
                 return L10n.medReminderTxtWeekdayEveryDay.text
             } else {
                 let weekdays = medicationSchedule.weekdays
-                    .sorted(by: { $0.rawValue < $1.rawValue })
+                    .sorted { $0.rawValue < $1.rawValue }
                     .map(\.nameAbbreviated)
                     .joined(separator: ", ")
                 return weekdays
@@ -173,11 +173,14 @@ struct MedicationReminderSetupDomain {
             return .none
         case let .authorizationErrorReceived(error):
             // todomedicationReminder maybe a more specific error?
-            state.destination = .alert(ErpAlertState(for: error, actions: {
+            state.destination = .alert(ErpAlertState(
+                for: error,
+                title: nil
+            ) {
                 ButtonState(role: .cancel) {
                     .init(L10n.alertBtnOk)
                 }
-            }))
+            })
             return .none
         case .save:
             return .run { [medicationSchedule = state.medicationSchedule] send in
@@ -438,3 +441,6 @@ extension MedicationSchedule.Weekday {
         }
     }
 }
+
+extension MedicationReminderSetupDomain.Destination.State: Equatable {}
+extension MedicationReminderSetupDomain.Destination.Action: Equatable {}

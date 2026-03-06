@@ -74,6 +74,21 @@ struct MatrixCodeView: View {
                 .foregroundColor(Colors.systemLabelSecondary)
                 .accessibility(identifier: A18n.matrixCode.dmcTxtSubtitle)
 
+            if store.showsDisplayModePicker {
+                Picker(
+                    selection: $store.displayMode.sending(\.displayModeChanged),
+                    label: Text("")
+                ) {
+                    ForEach(MatrixCodeDomain.DisplayMode.allCases, id: \.self) { mode in
+                        Text(mode.text).tag(mode)
+                            .accessibilityIdentifier(mode.accessibilityIdentifier)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .accessibilityIdentifier(A11y.matrixCode.dmcBtnSegmentedControl)
+            }
+
             TabBarView(store: store)
 
             if store.state.type == .erxChargeItem {
@@ -201,16 +216,7 @@ struct MatrixCodeView: View {
                         }
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                         .frame(width: Self.deviceWidth, height: Self.pagedPartHeight)
-
-                        HStack {
-                            Spacer()
-                            PageControl(
-                                numberOfPages: images.count,
-                                currentPage: $store.page.sending(\.pageChanged)
-                            )
-                            Spacer()
-                        }
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 16)
 
                         if let chunk = images[store.page].chunk {
                             Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
@@ -226,6 +232,46 @@ struct MatrixCodeView: View {
                             }
                             .multilineTextAlignment(.center)
                             .animation(.easeInOut.delay(0.2), value: store.page)
+                            .padding(.bottom, 40)
+                        }
+
+                        HStack {
+                            if images.count > 1 {
+                                Button {
+                                    store.send(.pageChanged(store.page - 1), animation: .default)
+                                } label: {
+                                    Image(systemName: SFSymbolName.chevronBackward)
+                                        .foregroundColor(Colors.primary)
+                                        .font(.body.weight(.semibold))
+                                        .padding(8)
+                                }
+                                .disabled(store.page == 0)
+                                .opacity(store.page == 0 ? 0.3 : 1.0)
+                                .accessibilityIdentifier(A11y.matrixCode.dmcBtnPreviousPage)
+                                .accessibilityLabel(L10n.dmcBtnPreviousPage)
+                                .buttonStyle(.quartary)
+                            }
+
+                            PageControl(
+                                numberOfPages: images.count,
+                                currentPage: $store.page.sending(\.pageChanged)
+                            )
+
+                            if images.count > 1 {
+                                Button {
+                                    store.send(.pageChanged(store.page + 1), animation: .default)
+                                } label: {
+                                    Image(systemName: SFSymbolName.chevronForward)
+                                        .foregroundColor(Colors.primary)
+                                        .font(.body.weight(.semibold))
+                                        .padding(8)
+                                }
+                                .disabled(store.page >= images.count - 1)
+                                .opacity(store.page >= images.count - 1 ? 0.3 : 1.0)
+                                .accessibilityIdentifier(A11y.matrixCode.dmcBtnNextPage)
+                                .accessibilityLabel(L10n.dmcBtnNextPage)
+                                .buttonStyle(.quartary)
+                            }
                         }
 
                         Spacer()

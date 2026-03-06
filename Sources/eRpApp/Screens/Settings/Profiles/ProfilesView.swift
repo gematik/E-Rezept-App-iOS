@@ -33,6 +33,7 @@ struct ProfilesView: View {
             header: {
                 Label(title: {
                     Text(L10n.stgTxtHeaderProfiles)
+                        .accessibilityAddTraits(.isHeader)
                 }, icon: {})
                     .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
             }, content: {
@@ -54,7 +55,7 @@ struct ProfilesView: View {
                 }, label: {
                     Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
                 })
-                    .buttonStyle(.simple(showSeparator: false))
+                    .buttonStyle(.simple)
                     .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
             }
         )

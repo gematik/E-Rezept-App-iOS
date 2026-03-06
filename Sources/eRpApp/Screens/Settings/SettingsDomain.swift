@@ -52,7 +52,7 @@ struct SettingsDomain {
         @Presents var destination: Destination.State?
     }
 
-    @Reducer(state: .equatable, action: .equatable)
+    @Reducer
     enum Destination {
         case debug(DebugDomain)
         // sourcery: AnalyticsScreen = alert
@@ -81,7 +81,7 @@ struct SettingsDomain {
         // sourcery: AnalyticsScreen = profile
         case editProfile(EditProfileDomain)
         // sourcery: AnalyticsScreen = settings_newProfile
-        case newProfile(NewProfileDomain)
+        case newProfile(CreateProfileDomain)
         // sourcery: AnalyticsScreen = settings_medicationReminderList
         case medicationReminderList(MedicationReminderListDomain)
 
@@ -280,7 +280,7 @@ struct SettingsDomain {
             case let .showEditProfile(editProfileState):
                 state.destination = .editProfile(editProfileState)
             case .showNewProfile:
-                state.destination = .newProfile(.init(name: "", color: .blue))
+                state.destination = .newProfile(.init())
             case let .alert(alert):
                 state.destination = .alert(
                     alert.pullback { action in
@@ -318,6 +318,9 @@ struct SettingsDomain {
             switch action {
             case .close:
                 state.destination = nil
+                return .none
+            case let .failure(error):
+                state.destination = .alert(.init(for: error))
                 return .none
             }
         case .popToRootView:
@@ -404,3 +407,6 @@ extension SettingsDomain {
         }
     }
 }
+
+extension SettingsDomain.Destination.State: Equatable {}
+extension SettingsDomain.Destination.Action: Equatable {}

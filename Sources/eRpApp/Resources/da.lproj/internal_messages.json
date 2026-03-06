@@ -52,5 +52,11 @@
         "text": "**🏛️ Registrering for flere personer** \nRegistrering er nu også mulig for forsikrede personer hos føderale institutioner, såsom det føderale politi og andre. \n \n **🕒 Forbedrede apotekers åbningstider** \nNødservice og særlige lukketider for apoteker vises nu, hvis tilgængelige. \n \n **💊 Valg af alle recepter** \nVed indløsning af recepter kan alle recepter nu vælges samtidigt. \n \n **♿ Tilgængelighed** \nFarverne på skrifttyper og ikoner er blevet justeret for at opnå højere kontrast. Derudover er VoiceOver-taleoutput til redigering af profilbilledet og genkendelse af loginstatus blevet forbedret.",
         "timestamp": "2025-12-08T08:00:00.000Z",
         "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Vis receptkoder** \nSkærmen for batch- og enkeltkoder er blevet redesignet for mere intuitiv brug. \n \n **❤️ Apoteksfavoritter** \nApoteksfavoritter fungerer nu mere pålideligt og er kompatible med VoiceOver. \n \n **♿ Tilgængelighed** \nVoiceOver og tastaturnavigation er forbedret, knapper, tekst og inputfelter er lettere at identificere, og listeelementer er mere logisk struktureret. Forstørret skrifttype fungerer nu på alle appskærme. Animerede videoer afspilles kun én gang for at understøtte brugere med kognitive funktionsnedsættelser.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
     }
 ]

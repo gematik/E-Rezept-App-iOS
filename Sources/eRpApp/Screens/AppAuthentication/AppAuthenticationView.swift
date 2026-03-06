@@ -116,7 +116,7 @@ struct AppAuthenticationView_Previews: PreviewProvider {
         AppAuthenticationView(
             store: AppAuthenticationDomain.Dummies.storeFor(
                 AppAuthenticationDomain.State(
-                    subdomain: .password(.init())
+                    subdomain: .password(.init(lastMatchResultSuccessful: false))
                 )
             )
         )

@@ -36,15 +36,13 @@ struct HorizontalProfileSelectionView: View {
                         userProfile: userProfile,
                         isSelected: store.selectedProfileId == userProfile.id
                     )
+                    .focusable()
                     .onTapGesture {
                         store.send(.selectProfile(userProfile), animation: .default)
                     }
                     .onLongPressGesture(minimumDuration: 0.5) {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         store.send(.profileButtonLongPressed(userProfile))
-                    }
-                    .if(userProfile == store.profiles.first) {
-                        $0.tooltip(tooltip: MainViewTooltip.rename)
                     }
                     .frame(maxWidth: width * 0.4, alignment: .leading)
                 }
@@ -61,13 +59,10 @@ struct HorizontalProfileSelectionView: View {
                     .border(Colors.systemGray6, cornerRadius: 8)
                     .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
                     .accessibilityLabel(L10n.mainBtnAddProfile)
-                    .tooltip(tooltip: MainViewTooltip.addProfile)
 
                 Spacer()
             }
-
-            .padding(.vertical)
-            .padding(.horizontal)
+            .padding()
             .task {
                 await store.send(.registerListener).finish()
             }

@@ -272,9 +272,11 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     }
 
     func testRedeemResponses_With_Error_From_LoginHandler() throws {
-        let loginHandlerMock = MockLoginHandler()
+        let loginHandlerMock = LoginHandlerMock()
         let expectedError = LoginHandlerError.idpError(.biometrics(.packagingAuthCertificate))
-        loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.failure(expectedError))
+        loginHandlerMock
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(LoginResult
+                .failure(expectedError))
             .eraseToAnyPublisher()
         let sut = ErxTaskRepositoryRedeemService(
             loginHandler: loginHandlerMock
@@ -294,11 +296,15 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
         }
     }
 
-    private func loginHandlerMock(authenticated: Bool) -> MockLoginHandler {
-        let loginHandlerMock = MockLoginHandler()
-        loginHandlerMock.isAuthenticatedReturnValue = Just(LoginResult.success(authenticated)).eraseToAnyPublisher()
-        loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.success(authenticated))
-            .eraseToAnyPublisher()
+    private func loginHandlerMock(authenticated: Bool) -> LoginHandlerMock {
+        let loginHandlerMock = LoginHandlerMock()
+        loginHandlerMock
+            .isAuthenticatedAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(LoginResult
+                .success(authenticated)).eraseToAnyPublisher()
+        loginHandlerMock
+            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue =
+            Just(LoginResult.success(authenticated))
+                .eraseToAnyPublisher()
         return loginHandlerMock
     }
 }

@@ -31,9 +31,9 @@ struct SettingsExploreView: View {
         SectionContainer(header: {
             Label(title: { Text(L10n.stgExpTxtTitle) }, icon: {})
                 .accessibilityIdentifier(A11y.settings.explore.stgConHeaderExplore)
+                .accessibilityAddTraits(.isHeader)
         }, content: {
             Toggle(isOn: $store.isDemoMode.sending(\.toggleDemoModeSwitch).animation()) {
-                EmptyView()
                 Label(L10n.stgTxtDemoMode, systemImage: SFSymbolName.wandAndStars)
                     .accessibilityIdentifier(A11y.settings.demo.stgTxtDemoMode)
             }
@@ -54,6 +54,7 @@ struct SettingsExploreView: View {
             }, label: {
                 Label(L10n.stgConBtnGemmunity, systemImage: SFSymbolName.person2)
             })
+                .accessibilityLabel(L10n.stgConLblGemmunity)
                 .accessibility(identifier: A11y.settings.explore.stgConBtnGemmunity)
                 .buttonStyle(.navigation)
 
@@ -65,6 +66,7 @@ struct SettingsExploreView: View {
             }, label: {
                 Label(L10n.stgConBtnGesundBundDe, systemImage: SFSymbolName.info)
             })
+                .accessibilityLabel(L10n.stgConLblGesundBundDe)
                 .accessibility(identifier: A11y.settings.explore.stgConBtnGesundbundde)
                 .buttonStyle(.navigation)
         })

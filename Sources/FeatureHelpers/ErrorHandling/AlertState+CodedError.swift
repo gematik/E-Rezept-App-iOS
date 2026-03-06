@@ -139,11 +139,13 @@ public enum ErpAlertState<Action: Equatable>: Equatable {
         message: StringAsset? = nil
     ) {
         if let message {
-            self = .info(.init(
-                title: { TextState(title) },
-                actions: actions,
-                message: { TextState(message) }
-            ))
+            self = .info(
+                .init(
+                    title: { TextState(title) },
+                    actions: actions,
+                    message: { TextState(message) } // swiftlint:disable:this trailing_closure
+                )
+            )
         } else {
             self = .info(.init(
                 title: {
