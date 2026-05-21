@@ -28,7 +28,7 @@ import Nimble
 import TestUtils
 import XCTest
 
-// FHIR KBV tests for all types of medications in Version 1.3.2
+/// FHIR KBV tests for all types of medications in Version 1.3.2
 final class FHIR_KBV_v1_3_2_MedicationTests: XCTestCase {
     func testParsingMedication_PZN() throws {
         let medication = try decode(resource: "KBV_PR_ERP_Medication_PZN.json")

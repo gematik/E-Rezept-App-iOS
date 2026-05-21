@@ -74,9 +74,9 @@ extension JWE {
                     let digest = SHA256.hash(data: part1 + sharedSecret + part2)
                     let symmetricKey = SymmetricKey(data: digest)
 
-                    return EncryptionContext(
+                    return try EncryptionContext(
                         symmetricKey: symmetricKey,
-                        ephemeralPublicKey: try JWK.from(brainpoolP256r1: ephemeralPublic)
+                        ephemeralPublicKey: JWK.from(brainpoolP256r1: ephemeralPublic)
                     )
                 }
             }

@@ -22,6 +22,7 @@
 
 import eRpKit
 import Foundation
+
 // swiftlint:disable file_length
 extension ErxTask {
     // swiftlint:disable:next type_body_length
@@ -329,7 +330,7 @@ extension ErxTask {
             organization: demoOrganization
         )
 
-        // Direktzuweisung
+        /// Direktzuweisung
         static let erxTask4: ErxTask = .init(
             identifier: "169.000.000.000.021.02",
             status: .ready,
@@ -410,7 +411,8 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            isEURedeemable: true
+            isEURedeemable: true,
+            isSetEURedeemableByPatient: true
         )
 
         static let erxTask8: ErxTask = .init(
@@ -432,7 +434,8 @@ extension ErxTask {
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization
+            organization: demoOrganization,
+            isEURedeemable: true
         )
 
         static let erxTask9: ErxTask = .init(

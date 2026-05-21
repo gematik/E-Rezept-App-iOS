@@ -64,7 +64,9 @@ extension ButtonStyle where Self == TertiaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.Tertiary)`` modifier.
-    public static var tertiary: TertiaryButtonStyle { TertiaryButtonStyle() }
+    public static var tertiary: TertiaryButtonStyle {
+        TertiaryButtonStyle()
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///

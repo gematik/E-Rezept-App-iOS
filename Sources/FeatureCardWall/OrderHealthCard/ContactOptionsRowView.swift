@@ -36,7 +36,7 @@ struct ContactOptionsRowView: View {
 
     var body: some View {
         VStack {
-            if let phone = phone {
+            if let phone {
                 ContactCellButtonView(
                     text: L10n.orderEgkTxtContactOptionTelephone,
                     a11y: A11y.orderEGK.ogkBtnPhone
@@ -47,7 +47,7 @@ struct ContactOptionsRowView: View {
                 }
             }
 
-            if let web = web {
+            if let web {
                 ContactCellButtonView(text: L10n.orderEgkTxtContactOptionWeb, a11y: A11y.orderEGK.ogkBtnWeb) {
                     if UIApplication.shared.canOpenURL(web) {
                         UIApplication.shared.open(web)
@@ -55,7 +55,7 @@ struct ContactOptionsRowView: View {
                 }
             }
 
-            if let email = email {
+            if let email {
                 ContactCellButtonView(text: L10n.orderEgkTxtContactOptionMail, a11y: A11y.orderEGK.ogkBtnMail) {
                     if UIApplication.shared.canOpenURL(email) {
                         UIApplication.shared.open(email)

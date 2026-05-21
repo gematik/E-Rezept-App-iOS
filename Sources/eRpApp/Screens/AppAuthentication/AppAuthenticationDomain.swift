@@ -66,7 +66,7 @@ struct AppAuthenticationDomain {
     let didCompleteAuthentication: (() -> Void)?
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.subdomain, action: \.subdomain) {
                 Subdomain.body
             }

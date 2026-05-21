@@ -32,15 +32,15 @@ final class DefaultAVSSessionTests: XCTestCase {
     func testRedeem() async throws {
         // given
         let message = AVSMessage.Fixtures.completeExample
-        let url = URL(string: "https://beispielurlversand.de/")!
+        let url = try XCTUnwrap(URL(string: "https://beispielurlversand.de/"))
         let endpoint = AVSEndpoint(url: url)
         let mockAvsMessageConverter = AVSMessageConverterMock()
         mockAvsMessageConverter.convertMessageAVSMessageRecipientsX509DataReturnValue = Data([0x00])
 
         let mockAvsClient = AVSClientMock()
-        mockAvsClient.sendDataDataToEndpointAVSEndpoint_DataHTTPURLResponseHTTPStatusCodeReturnValue = (
+        mockAvsClient.sendDataDataToEndpointAVSEndpoint_DataHTTPURLResponseHTTPStatusCodeReturnValue = try (
             data: Data(),
-            response: HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!,
+            response: XCTUnwrap(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)),
             status: .ok
         )
 

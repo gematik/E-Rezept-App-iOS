@@ -464,7 +464,7 @@ extension ChargeItemListDomainServiceTests {
 
         static let validChargeItemsServiceConsent: ErxConsent = {
             let kvnr = "X114428530"
-            let chargeItemsConsent = ErxConsent(
+            return ErxConsent(
                 identifier: "\(ErxConsent.Category.chargcons.rawValue)-\(kvnr)",
                 insuranceId: kvnr,
                 timestamp: FHIRDateFormatter.shared.string(from: Date(), format: .yearMonthDay),
@@ -472,7 +472,6 @@ extension ChargeItemListDomainServiceTests {
                 category: .chargcons,
                 policyRule: .optIn
             )
-            return chargeItemsConsent
         }()
 
         static let chargeItem = ErxSparseChargeItem(

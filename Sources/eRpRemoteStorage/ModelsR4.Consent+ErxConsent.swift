@@ -30,7 +30,7 @@ extension ModelsR4.Consent {
             throw RemoteStorageBundleParsingError.parseError("Could not parse id from self.")
         }
 
-        guard let scopeRaw = self.scope.coding?.first(where: { coding in
+        guard let scopeRaw = scope.coding?.first(where: { coding in
             coding.system?.value?.url.absoluteString == Terminology.Key.CodeSystem.consentScope
         })?.code?.value?.string,
             let scope = ErxConsent.Scope(rawValue: scopeRaw)
@@ -38,7 +38,7 @@ extension ModelsR4.Consent {
             throw RemoteStorageBundleParsingError.parseError("Could not parse scope from self.")
         }
 
-        guard let categoryRaw = self.category.compactMap(\.coding)
+        guard let categoryRaw = category.compactMap(\.coding)
             .flatMap({ $0 })
             .first(where: { coding in
                 ErpCharge.Key.Consent.consentType.contains {
@@ -61,7 +61,7 @@ extension ModelsR4.Consent {
             throw RemoteStorageBundleParsingError.parseError("Could not parse dateTime from self.")
         }
 
-        guard let policyRuleRaw = self.policyRule?.coding?.first(where: { coding in
+        guard let policyRuleRaw = policyRule?.coding?.first(where: { coding in
             coding.system?.value?.url.absoluteString == Terminology.Key.CodeSystem.actCode
         })?.code?.value?.string,
             let policyRule = ErxConsent.Act(rawValue: policyRuleRaw)

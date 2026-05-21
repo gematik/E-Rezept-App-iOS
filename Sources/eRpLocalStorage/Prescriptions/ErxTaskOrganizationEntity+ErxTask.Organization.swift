@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskOrganizationEntity {
     convenience init?(organization: ErxOrganization?,
                       in context: NSManagedObjectContext) {
-        guard let organization = organization else { return nil }
+        guard let organization else { return nil }
 
         self.init(context: context)
 
@@ -40,7 +40,7 @@ extension ErxTaskOrganizationEntity {
 
 extension ErxOrganization {
     init?(entity: ErxTaskOrganizationEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         self.init(identifier: entity.organizationIdentifier,
                   name: entity.name,

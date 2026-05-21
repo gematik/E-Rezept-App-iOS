@@ -100,7 +100,7 @@ extension ErxTaskOrder {
     }
 }
 
-extension Sequence where Self.Element == ErxTask {
+extension Sequence<ErxTask> {
     func asDiGaOrders(
         orderId: UUID,
         for telematikId: String

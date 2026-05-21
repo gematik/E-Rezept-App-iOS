@@ -96,7 +96,7 @@ public struct SelectEUPrescriptionsDomain {
 
     /// Reducer body
     public var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -110,7 +110,8 @@ public struct SelectEUPrescriptionsDomain {
                     await send(.response(.profileReceived(.success(profile))))
                     let prescriptions = try await erxTaskRepository.loadLocalAllTasks(profileId: profileId).async()
                     await send(.response(.prescriptionReceived(.success(
-                        prescriptions.filter(\.isEURedeemable).map { EUPrescription(erxTask: $0) }
+                        prescriptions.filter { $0.status == .ready }
+                            .map { EUPrescription(erxTask: $0) }
                     ))))
                 } catch let error as LocalStoreError {
                     await send(.response(.profileReceived(.failure(error))))

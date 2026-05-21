@@ -45,7 +45,7 @@ extension EuAccessCode {
 
         var parameterItems: [ParametersParameter] = []
 
-        if let countryCode = countryCode {
+        if let countryCode {
             let coding = Coding(
                 code: countryCode.uppercased().asFHIRStringPrimitive(),
                 system: EURedeem.Key.EuAccessCodeRequest.countryCodeSchemeKey.asFHIRURIPrimitive()
@@ -58,7 +58,7 @@ extension EuAccessCode {
             )
         }
 
-        if let accessCode = accessCode {
+        if let accessCode {
             let identifier = Identifier(
                 system: EURedeem.Key.EuAccessCodeRequest.euAccessCodeKeys[.v1_1_1]?.asFHIRURIPrimitive(),
                 value: accessCode.asFHIRStringPrimitive()

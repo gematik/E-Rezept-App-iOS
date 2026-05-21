@@ -67,221 +67,219 @@ extension ErxTaskRepository: DependencyKey {
         }
     }
 
-    public static let liveValue = {
-        ErxTaskRepository { taskId, accessCode, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadRemoteTask(
-                    taskId: taskId,
-                    accessCode: accessCode,
-                    profileId: profileId
-                )
-            }
-            return try await Self.defaultImplementation.loadRemoteTask(
+    public static let liveValue = ErxTaskRepository { taskId, accessCode, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadRemoteTask(
                 taskId: taskId,
                 accessCode: accessCode,
                 profileId: profileId
             )
-        } loadLocalTask: { taskId, accessCode in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return Self.demoMode.loadLocalTask(taskId: taskId, accessCode: accessCode)
-            }
-            return Self.defaultImplementation.loadLocalTask(taskId: taskId, accessCode: accessCode)
-        } loadLocalAllTasks: { profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return Self.demoMode.loadLocalAllTasks(profileId: profileId)
-            }
-            return Self.defaultImplementation.loadLocalAllTasks(profileId: profileId)
-        } loadRemoteAllTasks: { locale, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadRemoteAllTasks(locale: locale, profileId: profileId)
-            }
-            return try await Self.defaultImplementation.loadRemoteAllTasks(locale: locale, profileId: profileId)
-        } saveTask: { tasks, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.saveTask(erxTasks: tasks, profileId: profileId)
-            }
-            return try await Self.defaultImplementation.saveTask(erxTasks: tasks, profileId: profileId)
-        } deleteTask: { erxTasks, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.deleteTask(erxTasks: erxTasks, profileId: profileId)
-            }
-            return try await Self.defaultImplementation.deleteTask(erxTasks: erxTasks, profileId: profileId)
-        } markTaskEURedeemable: { taskId, profileId, byPatientAuthorization in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.markTaskEURedeemable(taskId, profileId, byPatientAuthorization)
-            }
-            return try await Self.defaultImplementation.markTaskEURedeemable(taskId, profileId, byPatientAuthorization)
-        } redeem: { order in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.redeem(order)
-            }
-            return try await Self.defaultImplementation.redeem(order)
-        } loadLocalCommunications: { profile in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadLocalCommunications(profile: profile)
-            }
-            return try await Self.defaultImplementation.loadLocalCommunications(profile: profile)
-        } saveLocalCommunications: { communications, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.saveLocalCommunications(
-                    communications: communications,
-                    profileId: profileId
-                )
-            }
-            return try await Self.defaultImplementation.saveLocalCommunications(
+        }
+        return try await Self.defaultImplementation.loadRemoteTask(
+            taskId: taskId,
+            accessCode: accessCode,
+            profileId: profileId
+        )
+    } loadLocalTask: { taskId, accessCode in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return Self.demoMode.loadLocalTask(taskId: taskId, accessCode: accessCode)
+        }
+        return Self.defaultImplementation.loadLocalTask(taskId: taskId, accessCode: accessCode)
+    } loadLocalAllTasks: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return Self.demoMode.loadLocalAllTasks(profileId: profileId)
+        }
+        return Self.defaultImplementation.loadLocalAllTasks(profileId: profileId)
+    } loadRemoteAllTasks: { locale, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadRemoteAllTasks(locale: locale, profileId: profileId)
+        }
+        return try await Self.defaultImplementation.loadRemoteAllTasks(locale: locale, profileId: profileId)
+    } saveTask: { tasks, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.saveTask(erxTasks: tasks, profileId: profileId)
+        }
+        return try await Self.defaultImplementation.saveTask(erxTasks: tasks, profileId: profileId)
+    } deleteTask: { erxTasks, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.deleteTask(erxTasks: erxTasks, profileId: profileId)
+        }
+        return try await Self.defaultImplementation.deleteTask(erxTasks: erxTasks, profileId: profileId)
+    } markTaskEURedeemable: { taskId, profileId, byPatientAuthorization in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.markTaskEURedeemable(taskId, profileId, byPatientAuthorization)
+        }
+        return try await Self.defaultImplementation.markTaskEURedeemable(taskId, profileId, byPatientAuthorization)
+    } redeem: { order in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.redeem(order)
+        }
+        return try await Self.defaultImplementation.redeem(order)
+    } loadLocalCommunications: { profile in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadLocalCommunications(profile: profile)
+        }
+        return try await Self.defaultImplementation.loadLocalCommunications(profile: profile)
+    } saveLocalCommunications: { communications, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.saveLocalCommunications(
                 communications: communications,
                 profileId: profileId
             )
-        } updateLocalDiGaInfo: { diGaInfo in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.updateLocalDiGaInfo(diGaInfo)
-            }
-            return try await Self.defaultImplementation.updateLocalDiGaInfo(diGaInfo)
-        } countAllUnreadCommunicationsAndChargeItems: { profileId, commProfile in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return Self.demoMode.countAllUnreadCommunicationsAndChargeItems(profileId, commProfile)
-            }
-            return Self.defaultImplementation.countAllUnreadCommunicationsAndChargeItems(
-                profileId,
-                commProfile
-            )
-        } loadRemoteLatestAuditEvents: { locale in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadRemoteLatestAuditEvents(locale)
-            }
-            return try await Self.defaultImplementation.loadRemoteLatestAuditEvents(locale)
-        } loadRemoteAuditEvents: { url, locale in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadRemoteAuditEvents(url, locale)
-            }
-            return try await Self.defaultImplementation.loadRemoteAuditEvents(url, locale)
-        } loadRemoteChargeItems: { profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadRemoteChargeItems(profileId)
-            }
-            return try await Self.defaultImplementation.loadRemoteChargeItems(profileId)
-        } fetchConsents: {
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.fetchConsents()
-            }
-            return try await Self.defaultImplementation.fetchConsents()
-        } loadLocalChargeItem: { profileId, chargeItemId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadLocalChargeItem(profileId, chargeItemId)
-            }
-            return try await Self.defaultImplementation.loadLocalChargeItem(profileId, chargeItemId)
-        } loadLocalAllChargeItems: { profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadLocalAllChargeItems(profileId)
-            }
-            return try await Self.defaultImplementation.loadLocalAllChargeItems(profileId)
-        } saveChargeItems: { chargeItems, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.saveChargeItems(chargeItems, profileId)
-            }
-            return try await Self.defaultImplementation.saveChargeItems(chargeItems, profileId)
-        } deleteChargeItems: { chargeItems, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.deleteChargeItems(chargeItems, profileId)
-            }
-            return try await Self.defaultImplementation.deleteChargeItems(chargeItems, profileId)
-        } deleteLocalChargeItems: { chargeItems, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.deleteLocalChargeItems(chargeItems, profileId)
-            }
-            return try await Self.defaultImplementation.deleteLocalChargeItems(chargeItems, profileId)
-        } grantConsent: { consent in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.grantConsent(consent)
-            }
-            return try await Self.defaultImplementation.grantConsent(consent)
-        } revokeConsent: { category in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.revokeConsent(category)
-            }
-            return try await Self.defaultImplementation.revokeConsent(category)
-        } loadRemoteEuAccessCode: {
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadRemoteEuAccessCode()
-            }
-            return try await Self.defaultImplementation.loadRemoteEuAccessCode()
-        } grantEuAccessPermission: { euAccessCode in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.grantEuAccessPermission(euAccessCode)
-            }
-            return try await Self.defaultImplementation.grantEuAccessPermission(euAccessCode)
-        } deleteEuAccessCode: { profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.deleteEuAccessCode(profileId: profileId)
-            }
-            return try await Self.defaultImplementation.deleteEuAccessCode(profileId: profileId)
-        } saveEuCommunication: { euCommunications, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.saveEuCommunication(
-                    euCommunications: euCommunications,
-                    profileId: profileId
-                )
-            }
-            return try await Self.defaultImplementation.saveEuCommunication(
-                euCommunications: euCommunications,
-                profileId: profileId
-            )
-        } deleteEuCommunications: { euCommunications, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.deleteEuCommunications(
-                    euCommunications: euCommunications,
-                    profileId: profileId
-                )
-            }
-            return try await Self.defaultImplementation.deleteEuCommunications(
-                euCommunications: euCommunications,
-                profileId: profileId
-            )
-        } loadEuCommunications: { countryCode, profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadEuCommunications(countryCode: countryCode, profileId: profileId)
-            }
-            return try await Self.defaultImplementation.loadEuCommunications(
-                countryCode: countryCode,
-                profileId: profileId
-            )
-        } loadLatestActiveEuCommunication: { profileId in
-            @Shared(.isDemoMode) var isDemoMode
-            if isDemoMode {
-                return try await Self.demoMode.loadLatestActiveEuCommunication(profileId: profileId)
-            }
-            return try await Self.defaultImplementation.loadLatestActiveEuCommunication(profileId: profileId)
         }
-    }()
+        return try await Self.defaultImplementation.saveLocalCommunications(
+            communications: communications,
+            profileId: profileId
+        )
+    } updateLocalDiGaInfo: { diGaInfo in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.updateLocalDiGaInfo(diGaInfo)
+        }
+        return try await Self.defaultImplementation.updateLocalDiGaInfo(diGaInfo)
+    } countAllUnreadCommunicationsAndChargeItems: { profileId, commProfile in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return Self.demoMode.countAllUnreadCommunicationsAndChargeItems(profileId, commProfile)
+        }
+        return Self.defaultImplementation.countAllUnreadCommunicationsAndChargeItems(
+            profileId,
+            commProfile
+        )
+    } loadRemoteLatestAuditEvents: { locale in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadRemoteLatestAuditEvents(locale)
+        }
+        return try await Self.defaultImplementation.loadRemoteLatestAuditEvents(locale)
+    } loadRemoteAuditEvents: { url, locale in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadRemoteAuditEvents(url, locale)
+        }
+        return try await Self.defaultImplementation.loadRemoteAuditEvents(url, locale)
+    } loadRemoteChargeItems: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadRemoteChargeItems(profileId)
+        }
+        return try await Self.defaultImplementation.loadRemoteChargeItems(profileId)
+    } fetchConsents: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.fetchConsents(profileId)
+        }
+        return try await Self.defaultImplementation.fetchConsents(profileId)
+    } loadLocalChargeItem: { profileId, chargeItemId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadLocalChargeItem(profileId, chargeItemId)
+        }
+        return try await Self.defaultImplementation.loadLocalChargeItem(profileId, chargeItemId)
+    } loadLocalAllChargeItems: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadLocalAllChargeItems(profileId)
+        }
+        return try await Self.defaultImplementation.loadLocalAllChargeItems(profileId)
+    } saveChargeItems: { chargeItems, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.saveChargeItems(chargeItems, profileId)
+        }
+        return try await Self.defaultImplementation.saveChargeItems(chargeItems, profileId)
+    } deleteChargeItems: { chargeItems, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.deleteChargeItems(chargeItems, profileId)
+        }
+        return try await Self.defaultImplementation.deleteChargeItems(chargeItems, profileId)
+    } deleteLocalChargeItems: { chargeItems, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.deleteLocalChargeItems(chargeItems, profileId)
+        }
+        return try await Self.defaultImplementation.deleteLocalChargeItems(chargeItems, profileId)
+    } grantConsent: { consent, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.grantConsent(consent, profileId)
+        }
+        return try await Self.defaultImplementation.grantConsent(consent, profileId)
+    } revokeConsent: { category, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.revokeConsent(category, profileId)
+        }
+        return try await Self.defaultImplementation.revokeConsent(category, profileId)
+    } loadRemoteEuAccessCode: {
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadRemoteEuAccessCode()
+        }
+        return try await Self.defaultImplementation.loadRemoteEuAccessCode()
+    } grantEuAccessPermission: { euAccessCode in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.grantEuAccessPermission(euAccessCode)
+        }
+        return try await Self.defaultImplementation.grantEuAccessPermission(euAccessCode)
+    } deleteEuAccessCode: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.deleteEuAccessCode(profileId: profileId)
+        }
+        return try await Self.defaultImplementation.deleteEuAccessCode(profileId: profileId)
+    } saveEuCommunication: { euCommunications, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.saveEuCommunication(
+                euCommunications: euCommunications,
+                profileId: profileId
+            )
+        }
+        return try await Self.defaultImplementation.saveEuCommunication(
+            euCommunications: euCommunications,
+            profileId: profileId
+        )
+    } deleteEuCommunications: { euCommunications, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.deleteEuCommunications(
+                euCommunications: euCommunications,
+                profileId: profileId
+            )
+        }
+        return try await Self.defaultImplementation.deleteEuCommunications(
+            euCommunications: euCommunications,
+            profileId: profileId
+        )
+    } loadEuCommunications: { countryCode, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadEuCommunications(countryCode: countryCode, profileId: profileId)
+        }
+        return try await Self.defaultImplementation.loadEuCommunications(
+            countryCode: countryCode,
+            profileId: profileId
+        )
+    } loadLatestActiveEuCommunication: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return try await Self.demoMode.loadLatestActiveEuCommunication(profileId: profileId)
+        }
+        return try await Self.defaultImplementation.loadLatestActiveEuCommunication(profileId: profileId)
+    }
 
     public static let previewValue = ErxTaskRepository()
 }
@@ -303,7 +301,7 @@ extension ErxTaskRepository {
         @Dependency(\.erxLocalDataStore) var disk
 
         return ErxTaskRepository { taskId, accessCode, profileId in
-            if let accessCode = accessCode {
+            if let accessCode {
                 do {
                     guard let remoteTask = try await cloud.fetchTask(by: taskId, accessCode: accessCode).async()
                     else { return nil }
@@ -477,7 +475,11 @@ extension ErxTaskRepository {
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
-        } fetchConsents: {
+        } fetchConsents: { profileId in
+            @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
+            let cloud = ErxTaskFHIRDataStore {
+                fhirClientServiceFactory.erpClientForProfile(profileId)
+            }
             do {
                 return try await cloud.fetchConsents().async()
             } catch let error as RemoteStoreError {
@@ -516,13 +518,21 @@ extension ErxTaskRepository {
             } catch let error as LocalStoreError {
                 throw ErxRepositoryError.local(error)
             }
-        } grantConsent: { consent in
+        } grantConsent: { consent, profileId in
+            @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
+            let cloud = ErxTaskFHIRDataStore {
+                fhirClientServiceFactory.erpClientForProfile(profileId)
+            }
             do {
                 return try await cloud.grantConsent(consent).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
-        } revokeConsent: { category in
+        } revokeConsent: { category, profileId in
+            @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
+            let cloud = ErxTaskFHIRDataStore {
+                fhirClientServiceFactory.erpClientForProfile(profileId)
+            }
             do {
                 _ = try await cloud.revokeConsent(category).async()
             } catch let error as RemoteStoreError {
@@ -651,7 +661,7 @@ extension ErxTaskRepository {
                     .filter { $0.status != .cancelled },
                 next: tasks.next
             ))
-                .async()
+            .async()
 
             // Early out if no cancelled tasks are present
             guard !updatedCancelledTasks.isEmpty else {
@@ -687,8 +697,33 @@ extension ErxTaskRepository {
 import FeatureEURedeem
 
 extension EuRedeemService: DependencyKey {
+    public static let liveValue: EuRedeemService = .init { countryCode, profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return EuAccessCode(
+                accessCode: "DEMOCODE",
+                countryCode: countryCode,
+                validUntil: Calendar.current.date(byAdding: .hour, value: 1, to: Date()),
+                createdAt: Date()
+            )
+        }
+        return try await Self.defaultValue.grantEuAccessCode(countryCode: countryCode, profileId: profileId)
+    } markTaskEURedeemable: { taskId, byPatientAuthorization, profileId in
+        try await Self.defaultValue.markTaskEURedeemable(
+            taskId: taskId,
+            byPatientAuthorization: byPatientAuthorization,
+            profileId: profileId
+        )
+    } deleteEuAccessCode: { profileId in
+        @Shared(.isDemoMode) var isDemoMode
+        if isDemoMode {
+            return
+        }
+        return try await Self.defaultValue.deleteEuAccessCode(profileId: profileId)
+    }
+
     /// Live implementation of EuRedeemService
-    public static let liveValue = EuRedeemService { countryCode, profileId in
+    public static let defaultValue = EuRedeemService { countryCode, profileId in
         @Dependency(\.userSessionProvider) var userSessionProvider
         @Dependency(\.euAccessCodeGenerator) var euAccessCodeGenerator
         @Dependency(\.erxTaskRepository) var erxTaskRepository
@@ -931,7 +966,7 @@ extension DependencyValues {
 }
 
 extension NFCSignatureProvider: DependencyKey {
-    // Note: Virtual EGK implementation and demo mode check could be added here in the future
+    /// Note: Virtual EGK implementation and demo mode check could be added here in the future
     public static let liveValue = NFCSignatureProvider { can, pin, challenge, profileID in
         @Shared(.isDemoMode) var isDemoMode
         if isDemoMode {
@@ -1098,6 +1133,8 @@ extension PharmacyRepository: DependencyKey {
                 updated.types = remotePharmacy.types
                 updated.status = remotePharmacy.status
                 updated.hoursOfOperation = remotePharmacy.hoursOfOperation
+                updated.physicalFeatures = remotePharmacy.physicalFeatures
+                updated.specialities = remotePharmacy.specialities
                 updated.emergencyServiceHours = remotePharmacy.emergencyServiceHours
                 updated.specialClosingHours = remotePharmacy.specialClosingHours
                 updated.avsEndpoints = remotePharmacy.avsEndpoints
@@ -1270,6 +1307,8 @@ extension PharmacyRemoteDataStore: DependencyKey {
 extension PharmacyRemoteDataStore {
     static func apiFiltersForNearbySearch(filter: [PharmacyRepositoryFilter])
         -> [PharmacyRemoteDataStoreFilter] {
+        var result: [PharmacyRemoteDataStoreFilter] = []
+
         let filterTexts: [String] = filter.compactMap {
             switch $0 {
             case .ready:
@@ -1278,25 +1317,87 @@ extension PharmacyRemoteDataStore {
                 return "Versand"
             case .delivery:
                 return "Botendienst"
+            case .pickup:
+                return "Handverkauf"
+            case let .characteristic(value):
+                return nearbySearchText(for: value)
+            case let .specialty(value):
+                return nearbySearchText(for: value)
             }
         }
-        guard !filterTexts.isEmpty else {
-            return []
+        if !filterTexts.isEmpty {
+            result.append(PharmacyRemoteDataStoreFilter(key: "text", value: filterTexts.joined(separator: " ")))
         }
-        return [PharmacyRemoteDataStoreFilter(key: "text", value: filterTexts.joined(separator: " "))]
+
+        return result
+    }
+
+    /// Maps characteristic codes to their German keyword for the `text` search parameter
+    /// in the `nearPharmacy` operation, which does not support the `characteristic` query parameter.
+    private static func nearbySearchText(for characteristic: PharmacyRepositoryFilter.Characteristic) -> String {
+        switch characteristic {
+        case .parking: return "Parkmöglichkeit"
+        case .publicTransport: return "ÖPNV"
+        case .barrierFree: return "Barrierefrei"
+        case .pickupAutomat: return "Abholautomat"
+        }
+    }
+
+    /// Maps specialty codes to their main German keyword for the `text` search parameter
+    /// in the `nearPharmacy` operation, which does not support the `specialty` query parameter.
+    private static func nearbySearchText(for specialty: PharmacyRepositoryFilter.Specialty) -> String {
+        switch specialty {
+        case .sterileCompounding: return "Sterilherstellung"
+        case .hypertension: return "Bluthochdruck"
+        case .inhalationTechnique: return "Inhalationstechnik"
+        case .polymedication: return "Polymedikation"
+        case .oralCancerTherapy: return "Krebstherapie"
+        case .organTransplantation: return "Organtransplantation"
+        case .vaccination: return "Impfung"
+        case .bodyMeasurements: return "Körperwerte"
+        case .allergyTest: return "Allergietest"
+        case .travelMedicineConsultation: return "Reisemedizin"
+        }
     }
 
     static func apiFiltersForNormalSearch(filter: [PharmacyRepositoryFilter])
         -> [PharmacyRemoteDataStoreFilter] {
-        filter.compactMap {
+        var result: [PharmacyRemoteDataStoreFilter] = filter.compactMap {
             switch $0 {
-            case .ready:
+            case .ready, .characteristic, .specialty:
                 return nil
             case .shipment:
                 return PharmacyRemoteDataStoreFilter(key: "specialty", value: Specialty.shipment.rawValue)
             case .delivery:
                 return PharmacyRemoteDataStoreFilter(key: "specialty", value: Specialty.delivery.rawValue)
+            case .pickup:
+                return PharmacyRemoteDataStoreFilter(key: "specialty", value: Specialty.pickup.rawValue)
             }
+        }
+
+        result.append(contentsOf: characteristicFilters(from: filter))
+        result.append(contentsOf: specialtyFilters(from: filter))
+
+        return result
+    }
+
+    /// Collects all `.characteristic` filter values into individual `characteristic` query parameters.
+    /// Repeating the same FHIR search parameter produces AND semantics.
+    private static func characteristicFilters(from filter: [PharmacyRepositoryFilter])
+        -> [PharmacyRemoteDataStoreFilter] {
+        filter.compactMap {
+            guard case let .characteristic(value) = $0 else { return nil }
+            return PharmacyRemoteDataStoreFilter(key: "characteristic", value: value.rawValue)
+        }
+    }
+
+    /// Collects all `.specialty` filter values into individual `specialty` query parameters.
+    /// Repeating the same FHIR search parameter produces AND semantics.
+    private static func specialtyFilters(from filter: [PharmacyRepositoryFilter])
+        -> [PharmacyRemoteDataStoreFilter] {
+        filter.compactMap {
+            guard case let .specialty(value) = $0 else { return nil }
+            return PharmacyRemoteDataStoreFilter(key: "specialty", value: value.rawValue)
         }
     }
 }

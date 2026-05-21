@@ -30,7 +30,7 @@ public struct EpaMedicationRatio: Equatable, Hashable, Codable, CustomStringConv
     public let denominator: Quantity?
 
     public var description: String {
-        guard let denominator = denominator, denominator.value != "1" else {
+        guard let denominator, denominator.value != "1" else {
             return "\(numerator.description)"
         }
         return "\(numerator.description) / \(denominator.description)"
@@ -50,9 +50,9 @@ public struct EpaMedicationRatio: Equatable, Hashable, Codable, CustomStringConv
         public let code: String?
 
         public var description: String {
-            if let code = code {
+            if let code {
                 return "\(value) \(code)"
-            } else if let unit = unit {
+            } else if let unit {
                 return "\(value) \(unit)"
             } else {
                 return value

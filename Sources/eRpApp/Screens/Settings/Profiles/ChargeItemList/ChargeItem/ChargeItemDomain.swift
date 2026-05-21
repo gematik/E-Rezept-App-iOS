@@ -100,7 +100,7 @@ struct ChargeItemDomain {
     @Dependency(\.dismiss) var dismiss
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -129,7 +129,6 @@ struct ChargeItemDomain {
             return .none
         case .routeToChargeItemList:
             return .run { [profileId = state.profileId] _ in
-
                 await dismiss()
                 await router.routeTo(.settings(.editProfile(.chargeItemListFor(profileId))))
             }
@@ -145,7 +144,6 @@ struct ChargeItemDomain {
             .map(Action.Response.deleteChargeItem)
             .map(Action.response)
             .eraseToAnyPublisher)
-
         case let .destination(.presented(.shareSheet(.delegate(.close(error))))):
             state.destination = nil
             if let shareError = error {

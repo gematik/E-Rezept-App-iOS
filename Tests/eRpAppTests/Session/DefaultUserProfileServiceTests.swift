@@ -248,13 +248,13 @@ extension UserProfile {
     }
 }
 
-extension Array where Element == UserProfile {
+extension [UserProfile] {
     func simplify() -> [UserProfileSimplify] {
         map { $0.simplify() }
     }
 }
 
-extension Array where Element == [UserProfile] {
+extension [[UserProfile]] {
     func simplify() -> [[UserProfileSimplify]] {
         map { $0.simplify() }
     }

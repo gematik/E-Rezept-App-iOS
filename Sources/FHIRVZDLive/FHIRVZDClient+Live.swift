@@ -42,8 +42,7 @@ extension FHIRVZDClient: DependencyKey {
         do {
             let result = try await httpClient.send(request: request)
             if result.status.isSuccessful {
-                let token = try decoder.decode(FHIRVZDToken.self, from: result.data)
-                return token
+                return try decoder.decode(FHIRVZDToken.self, from: result.data)
             } else {
                 throw FHIRVZDError.tokenUnavailable
             }

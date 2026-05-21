@@ -46,5 +46,7 @@ extension ButtonStyle where Self == ReportButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.Tertiary)`` modifier.
-    public static var report: ReportButtonStyle { ReportButtonStyle() }
+    public static var report: ReportButtonStyle {
+        ReportButtonStyle()
+    }
 }

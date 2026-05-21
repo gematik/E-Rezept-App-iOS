@@ -43,8 +43,8 @@ struct SettingsExploreView: View {
             }, label: {
                 Label(L10n.stgConBtnOrganDonor, systemImage: SFSymbolName.heartTextSquare)
             })
-                .accessibility(identifier: A11y.settings.explore.stgConBtnOrganDonor)
-                .buttonStyle(.navigation)
+            .accessibility(identifier: A11y.settings.explore.stgConBtnOrganDonor)
+            .buttonStyle(.navigation)
 
             Button(action: {
                 guard let url = URL(string: "https://www.das-e-rezept-fuer-deutschland.de/ext/community"),
@@ -54,9 +54,9 @@ struct SettingsExploreView: View {
             }, label: {
                 Label(L10n.stgConBtnGemmunity, systemImage: SFSymbolName.person2)
             })
-                .accessibilityLabel(L10n.stgConLblGemmunity)
-                .accessibility(identifier: A11y.settings.explore.stgConBtnGemmunity)
-                .buttonStyle(.navigation)
+            .accessibilityLabel(L10n.stgConLblGemmunity)
+            .accessibility(identifier: A11y.settings.explore.stgConBtnGemmunity)
+            .buttonStyle(.navigation)
 
             Button(action: {
                 guard let url = URL(string: "https://gesundbund.de"),
@@ -66,9 +66,9 @@ struct SettingsExploreView: View {
             }, label: {
                 Label(L10n.stgConBtnGesundBundDe, systemImage: SFSymbolName.info)
             })
-                .accessibilityLabel(L10n.stgConLblGesundBundDe)
-                .accessibility(identifier: A11y.settings.explore.stgConBtnGesundbundde)
-                .buttonStyle(.navigation)
+            .accessibilityLabel(L10n.stgConLblGesundBundDe)
+            .accessibility(identifier: A11y.settings.explore.stgConBtnGesundbundde)
+            .buttonStyle(.navigation)
         })
     }
 }

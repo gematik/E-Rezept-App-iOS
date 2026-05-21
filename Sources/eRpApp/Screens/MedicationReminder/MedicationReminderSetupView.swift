@@ -186,11 +186,11 @@ struct MedicationReminderSetupView: View {
         }
         .environment(\.editMode, .constant(.active))
         .listStyle(.insetGrouped)
-        .bind($store.focus, to: self.$focus)
+        .bind($store.focus, to: $focus)
         .smallSheet($store
             .scope(state: \.destination?.dosageInstructionsInfo,
                    action: \.destination.dosageInstructionsInfo)) { store in
-                DosageInstructionsDrawerView(store: store)
+            DosageInstructionsDrawerView(store: store)
         }
         .navigationDestination(
             item: $store.scope(

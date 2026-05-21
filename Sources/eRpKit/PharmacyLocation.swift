@@ -42,6 +42,8 @@ public struct PharmacyLocation: Identifiable, Equatable {
         imagePath: String? = nil,
         countUsage: Int = 0,
         hoursOfOperation: [HoursOfOperation] = [],
+        physicalFeatures: [PhysicalFeature] = [],
+        specialities: [Speciality] = [],
         specialClosingHours: [SpecialOperationHours] = [],
         emergencyServiceHours: [SpecialOperationHours] = [],
         avsEndpoints: AVSEndpoints? = nil,
@@ -61,6 +63,8 @@ public struct PharmacyLocation: Identifiable, Equatable {
         self.imagePath = imagePath
         self.countUsage = countUsage
         self.hoursOfOperation = hoursOfOperation
+        self.physicalFeatures = physicalFeatures
+        self.specialities = specialities
         self.specialClosingHours = specialClosingHours
         self.emergencyServiceHours = emergencyServiceHours
         self.avsEndpoints = avsEndpoints
@@ -102,6 +106,10 @@ public struct PharmacyLocation: Identifiable, Equatable {
     public var specialClosingHours: [SpecialOperationHours]
     /// Emergency Service Hours
     public var emergencyServiceHours: [SpecialOperationHours]
+    /// Physical features available at this pharmacy location
+    public var physicalFeatures: [PhysicalFeature] = []
+    /// Specialities offered at this pharmacy location
+    public var specialities: [Speciality] = []
     /// Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul
     public var avsEndpoints: AVSEndpoints?
     /// Array of certificates for all recipients
@@ -300,7 +308,7 @@ extension PharmacyLocation {
         public let latitude: Decimal?
         public let longitude: Decimal?
         public var coordinate: CLLocationCoordinate2D? {
-            if let longitude = longitude, let latitude = latitude {
+            if let longitude, let latitude {
                 return CLLocationCoordinate2D(latitude: latitude.doubleValue, longitude: longitude.doubleValue)
             } else {
                 return nil
@@ -326,15 +334,15 @@ extension PharmacyLocation {
 
         public var fullAddress: String {
             var address = ""
-            if let street = street {
+            if let street {
                 address = street
             }
             if let number = houseNumber {
                 address += " \(number)"
             }
 
-            if let city = city {
-                if let zip = zip {
+            if let city {
+                if let zip {
                     address += ", \(zip) \(city)"
                 } else {
                     address += ", \(city)"
@@ -345,15 +353,15 @@ extension PharmacyLocation {
 
         public var fullAddressBreak: String {
             var address = ""
-            if let street = street {
+            if let street {
                 address = street
             }
             if let number = houseNumber {
                 address += " \(number)"
             }
 
-            if let city = city {
-                if let zip = zip {
+            if let city {
+                if let zip {
                     address += "\n\(zip) \(city)"
                 } else {
                     address += "\n\(city)"
@@ -394,6 +402,28 @@ extension PharmacyLocation {
         public let closingTime: String?
     }
 
+    public enum PhysicalFeature: String, Codable, Hashable {
+        case parking = "parkmoeglichkeit"
+        case publicTransport = "oepnv"
+        case barrierFree = "barrierefrei"
+        case pickupAutomat = "abholautomat"
+    }
+
+    public enum Speciality: String, Codable, Hashable {
+        // PharmacyHealthcareSpecialtyCS (codes 10-40 are handled by PharmacyType)
+        case sterileCompounding = "50"
+        case hypertension = "60"
+        case inhalationTechnique = "70"
+        case polymedication = "80"
+        case oralCancerTherapy = "90"
+        case organTransplantation = "100"
+        // HealthcareServiceSpecialtyCS
+        case vaccination = "impfung"
+        case bodyMeasurements = "koerperwerte"
+        case allergyTest = "allergietest"
+        case travelMedicineConsultation = "reisemedizin-beratung"
+    }
+
     public struct SpecialOperationHours: Codable, Hashable {
         public init(reason: String? = nil,
                     startDate: String? = nil,
@@ -432,6 +462,8 @@ extension PharmacyLocation: Codable {
         case imagePath
         case countUsage
         case hoursOfOperation
+        case physicalFeatures
+        case specialities
         case specialClosingHours
         case emergencyServiceHours
         case avsEndpoints

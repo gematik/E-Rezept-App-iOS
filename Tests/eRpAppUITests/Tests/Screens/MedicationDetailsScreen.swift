@@ -24,14 +24,9 @@ import eRpResources
 import Nimble
 import XCTest
 
-struct MedicationDetailsScreen<Previous>: Screen where Previous: Screen {
+struct MedicationDetailsScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
 
     @MainActor
     func tradingName(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> String {

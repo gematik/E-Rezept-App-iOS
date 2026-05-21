@@ -62,7 +62,9 @@ public struct OrderHealthCardDomain {
         case pin
         case healthCardAndPin
 
-        public var id: Int { rawValue }
+        public var id: Int {
+            rawValue
+        }
     }
 
     /// Actions that can be performed in the order domain
@@ -86,7 +88,7 @@ public struct OrderHealthCardDomain {
     public var body: some Reducer<State, Action> {
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 

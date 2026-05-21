@@ -39,14 +39,12 @@ final class CardWallIntroductionDomainTests: XCTestCase {
     var idpSessionMock: IDPSessionMock!
     let uiScheduler = DispatchQueue.test
 
-    lazy var schedulers: Schedulers = {
-        Schedulers(
-            uiScheduler: uiScheduler.eraseToAnyScheduler(),
-            networkScheduler: DispatchQueue.test.eraseToAnyScheduler(),
-            ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
-            computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
-        )
-    }()
+    lazy var schedulers: Schedulers = .init(
+        uiScheduler: uiScheduler.eraseToAnyScheduler(),
+        networkScheduler: DispatchQueue.test.eraseToAnyScheduler(),
+        ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
+        computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
+    )
 
     override func setUp() {
         super.setUp()
@@ -184,7 +182,7 @@ final class CardWallIntroductionDomainTests: XCTestCase {
         }
     }
 
-    func testGIDRememberKKLoadingFailsWithIDPError() async {
+    func testGIDRememberKKLoadingFailsWithIDPError() {
         func testLoadingTriggerFails() async {
             let profile = Profile(name: "Test",
                                   identifier: UUID(),

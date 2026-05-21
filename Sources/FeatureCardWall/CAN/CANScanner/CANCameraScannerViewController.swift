@@ -38,8 +38,8 @@ class CANCameraScannerViewController: UIViewController {
     @IBOutlet var cutoutView: UIView!
 
     var maskLayer = CAShapeLayer()
-    // Device orientation. Updated whenever the orientation changes to a
-    // different supported orientation.
+    /// Device orientation. Updated whenever the orientation changes to a
+    /// different supported orientation.
     var currentOrientation = UIDeviceOrientation.portrait
 
     // MARK: - Capture related objects
@@ -54,23 +54,23 @@ class CANCameraScannerViewController: UIViewController {
 
     // MARK: - Region of interest (ROI) and text orientation
 
-    // Region of video data output buffer that recognition should be run on.
-    // Gets recalculated once the bounds of the preview layer are known.
+    /// Region of video data output buffer that recognition should be run on.
+    /// Gets recalculated once the bounds of the preview layer are known.
     var regionOfInterest = CGRect(x: 0, y: 0, width: 1, height: 1)
-    // Orientation of text to search for in the region of interest.
+    /// Orientation of text to search for in the region of interest.
     var textOrientation = CGImagePropertyOrientation.up
 
     // MARK: - Coordinate transforms
 
     var bufferAspectRatio: Double = 1.0
-    // Transform from UI orientation to buffer orientation.
+    /// Transform from UI orientation to buffer orientation.
     var uiRotationTransform = CGAffineTransform.identity
-    // Transform bottom-left coordinates to top-left.
+    /// Transform bottom-left coordinates to top-left.
     var bottomToTopTransform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -1)
-    // Transform coordinates in ROI to global coordinates (still normalized).
+    /// Transform coordinates in ROI to global coordinates (still normalized).
     var roiToGlobalTransform = CGAffineTransform.identity
 
-    // Vision -> AVF coordinate transform.
+    /// Vision -> AVF coordinate transform.
     var visionToAVFTransform = CGAffineTransform.identity
 
     // MARK: - View controller methods
@@ -301,12 +301,12 @@ class CANCameraScannerViewController: UIViewController {
     }
 
     var request: VNRecognizeTextRequest!
-    // Temporal string tracker
+    /// Temporal string tracker
     let numberTracker = StringTracker()
 
     // MARK: - Text recognition
 
-    // Vision recognition handler.
+    /// Vision recognition handler.
     func recognizeTextHandler(request: VNRequest, error _: Error?) {
         var numbers = [String]()
 

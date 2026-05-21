@@ -265,7 +265,7 @@ extension AVSMessage {
     }
 }
 
-extension Sequence where Self.Element == ErxTask {
+extension Sequence<ErxTask> {
     func asOrders(
         orderId: UUID,
         option redeemOption: RedeemOption,

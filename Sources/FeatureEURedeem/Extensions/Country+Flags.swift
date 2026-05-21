@@ -31,4 +31,13 @@ extension Country {
             .compactMap { UnicodeScalar(127_397 + $0.value) }
             .reduce(into: "") { $0.unicodeScalars.append($1) } ?? "🇪🇺"
     }
+
+    /// A set of all european coutry codes (2025)
+    public static let europeanCountryCodes: Set<String> = [
+        "DE", "FR", "IT", "ES", "PL", "SE", "NO", "CH", "AT", "NL", "BE",
+        "CZ", "DK", "FI", "GR", "HU", "IE", "PT", "RO", "SK", "SI", "HR",
+        "BG", "EE", "LV", "LT", "LU", "MT", "CY", "IS", "LI", "MC", "SM",
+        "VA", "UK", "RU", "UA", "BY", "MD", "AL", "BA", "MK", "RS", "ME",
+        "XK", "TR",
+    ]
 }

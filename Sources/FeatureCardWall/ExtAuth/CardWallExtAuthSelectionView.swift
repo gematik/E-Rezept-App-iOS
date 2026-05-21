@@ -84,8 +84,8 @@ struct CardWallExtAuthSelectionView: View {
                                             .frame(width: 42, height: 42)
                                         }
                                     })
-                                        .buttonStyle(.navigation)
-                                        .modifier(SectionContainerCellModifier())
+                                    .buttonStyle(.navigation)
+                                    .modifier(SectionContainerCellModifier())
                                 }
                             } else {
                                 VStack {

@@ -34,7 +34,7 @@ import Pharmacy
 extension PharmacyRepository {
     // swiftlint:disable:next function_body_length
     static func dummyPharmacyRepository(
-        cloud: HealthcareServiceFHIRDataSource,
+        cloud: HealthcareServiceFHIRDataSource
     ) -> PharmacyRepository {
         let store = PharmacyStore()
         return PharmacyRepository(
@@ -44,7 +44,7 @@ extension PharmacyRepository {
                     throw PharmacyRepositoryError.remote(.notFound)
                 }
                 let storedPharmacy = await store.first { $0.telematikID == telematikId }
-                guard var storedPharmacy = storedPharmacy else {
+                guard var storedPharmacy else {
                     throw PharmacyRepositoryError
                         .local(.read(error: PharmacyCoreDataStore.Error.noMatchingEntity))
                 }
@@ -53,6 +53,8 @@ extension PharmacyRepository {
                 storedPharmacy.types = pharmacy.types
                 storedPharmacy.position = pharmacy.position
                 storedPharmacy.hoursOfOperation = pharmacy.hoursOfOperation
+                storedPharmacy.physicalFeatures = pharmacy.physicalFeatures
+                storedPharmacy.specialities = pharmacy.specialities
                 await store.updateOrAppend(storedPharmacy)
                 return storedPharmacy
             },

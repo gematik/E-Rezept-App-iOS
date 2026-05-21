@@ -75,11 +75,10 @@ struct MedicationReminderSetupDomain {
             } else if medicationSchedule.weekdays.count == MedicationSchedule.Weekday.allCases.count {
                 return L10n.medReminderTxtWeekdayEveryDay.text
             } else {
-                let weekdays = medicationSchedule.weekdays
+                return medicationSchedule.weekdays
                     .sorted { $0.rawValue < $1.rawValue }
                     .map(\.nameAbbreviated)
                     .joined(separator: ", ")
-                return weekdays
             }
         }
 
@@ -101,7 +100,7 @@ struct MedicationReminderSetupDomain {
 
         case showDosageInstructionsInfo
 
-        // testing example, should be moved to appDelegate didFinishLaunching
+        /// testing example, should be moved to appDelegate didFinishLaunching
         case authorizationErrorReceived(Error)
 
         case delegate(Delegate)
@@ -250,7 +249,7 @@ struct DosageInstructionsDomain {
         init(dosageInstructions: String?) {
             title = L10n.prscDtlTxtDosageInstructions.text
 
-            guard let dosageInstructions = dosageInstructions, !dosageInstructions.isEmpty else {
+            guard let dosageInstructions, !dosageInstructions.isEmpty else {
                 description = L10n.prscDtlTxtMissingDosageInstructions.text
                 return
             }

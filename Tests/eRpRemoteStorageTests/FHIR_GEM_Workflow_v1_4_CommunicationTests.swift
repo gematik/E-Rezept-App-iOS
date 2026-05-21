@@ -29,8 +29,8 @@ import SwiftUI
 import TestUtils
 import XCTest
 
-// FHIRBundle tests with
-// - workflow bundle version: 1.4.3
+/// FHIRBundle tests with
+/// - workflow bundle version: 1.4.3
 final class FHIR_GEM_Workflow_v1_4_CommunicationTests: XCTestCase {
     func testListAllCommunicationsWithSuccess() throws {
         let mixedCommunicationsBundle = try decode(

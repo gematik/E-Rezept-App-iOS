@@ -188,38 +188,32 @@ extension ErxTask.Communication {
 
 extension ErxMedication {
     enum Dummies {
-        static let medication1: ErxMedication = {
-            ErxMedication(
-                name: "Saflorblüten-Extrakt Pulver Peroral",
-                pzn: "06876512",
-                amount: .init(numerator: .init(value: "10")),
-                dosageForm: "PUL",
-                normSizeCode: "N1",
-                packaging: nil
-            )
-        }()
+        static let medication1: ErxMedication = .init(
+            name: "Saflorblüten-Extrakt Pulver Peroral",
+            pzn: "06876512",
+            amount: .init(numerator: .init(value: "10")),
+            dosageForm: "PUL",
+            normSizeCode: "N1",
+            packaging: nil
+        )
 
-        static let medication2: ErxMedication = {
-            ErxMedication(
-                name: "Yucca filamentosa",
-                pzn: "06876511",
-                amount: .init(numerator: .init(value: "12")),
-                dosageForm: "FDA",
-                normSizeCode: "N2",
-                packaging: nil
-            )
-        }()
+        static let medication2: ErxMedication = .init(
+            name: "Yucca filamentosa",
+            pzn: "06876511",
+            amount: .init(numerator: .init(value: "12")),
+            dosageForm: "FDA",
+            normSizeCode: "N2",
+            packaging: nil
+        )
 
-        static let medication3: ErxMedication = {
-            ErxMedication(
-                name: "Lebenselixir 9000",
-                pzn: "06876513",
-                amount: .init(numerator: .init(value: "1")),
-                dosageForm: "ELI",
-                normSizeCode: "KTP",
-                packaging: nil
-            )
-        }()
+        static let medication3: ErxMedication = .init(
+            name: "Lebenselixir 9000",
+            pzn: "06876513",
+            amount: .init(numerator: .init(value: "1")),
+            dosageForm: "ELI",
+            normSizeCode: "KTP",
+            packaging: nil
+        )
     }
 }
 

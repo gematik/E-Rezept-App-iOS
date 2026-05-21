@@ -65,7 +65,7 @@ struct OnboardingDomain {
     }
 
     enum Version: String, Equatable {
-        // Add new versions to refresh onboarding
+        /// Add new versions to refresh onboarding
         case none
 
         init?(rawVersion: String?) {

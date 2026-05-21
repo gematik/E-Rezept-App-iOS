@@ -53,8 +53,70 @@ final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
                     initialState: .init(pharmacyFilterOptions: Shared(value: [
                         PharmacySearchFilterDomain.PharmacyFilterOption.currentLocation,
                         PharmacySearchFilterDomain.PharmacyFilterOption.shipment,
+                        PharmacySearchFilterDomain.PharmacyFilterOption.pickupAutomat,
                     ]))
 
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearchFilterView_ServicesCollapsed() {
+        let sut = NavigationStack {
+            PharmacySearchFilterView(
+                store: StoreOf<PharmacySearchFilterDomain>(
+                    initialState: .init(
+                        pharmacyFilterOptions: Shared<[PharmacySearchFilterDomain.PharmacyFilterOption]>(
+                            value: [.vaccination, .allergyTest]
+                        )
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearchFilterView_ServicesExpanded() {
+        let sut = NavigationStack {
+            PharmacySearchFilterView(
+                store: StoreOf<PharmacySearchFilterDomain>(
+                    initialState: .init(
+                        pharmacyFilterOptions: Shared<[PharmacySearchFilterDomain.PharmacyFilterOption]>(
+                            value: [.vaccination, .allergyTest]
+                        ),
+                        showServiceDescriptions: true
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearchFilterView_MixedWithServices() {
+        let sut = NavigationStack {
+            PharmacySearchFilterView(
+                store: StoreOf<PharmacySearchFilterDomain>(
+                    initialState: .init(
+                        pharmacyFilterOptions: Shared<[PharmacySearchFilterDomain.PharmacyFilterOption]>(
+                            value: [.delivery, .barrierFree, .vaccination, .sterileCompounding]
+                        )
+                    )
                 ) {
                     EmptyReducer()
                 }

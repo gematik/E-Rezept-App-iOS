@@ -24,6 +24,7 @@ import ComposableArchitecture
 import ConsentService
 import eRpStyleKit
 import FeatureCardWall
+import FeatureEURedeem
 import IDP
 import SwiftUI
 
@@ -139,23 +140,6 @@ struct EditProfileView: View {
                         }
                     }
                     .accessibilityHidden(true)
-
-                // EURedeemConsentDrawerView small sheet presentation
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .smallSheet(
-                        $store.scope(
-                            state: \.destination?.euRedeemConsentDrawer,
-                            action: \.destination.euRedeemConsentDrawer
-                        )
-                    ) { _ in
-                        EURedeemConsentDrawerView(consentCheck: store.euRedeemConsentCheck) {
-                            store.send(.grantEURedeemConsent)
-                        } revokeConsentAction: {
-                            store.send(.revokeEURedeemConsent)
-                        }
-                    }
-                    .accessibilityHidden(true)
             }
         }
         .background(Color(.secondarySystemBackground).ignoresSafeArea())
@@ -170,6 +154,12 @@ struct EditProfileView: View {
             EditProfilePictureView(store: store)
                 .navigationTitle(L10n.editPictureTxt)
                 .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationDestination(item: $store.scope(
+            state: \.destination?.euRedeemConsent,
+            action: \.destination.euRedeemConsent
+        )) { store in
+            FeatureEURedeem.ConsentView(store: store)
         }
         .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         .fullScreenCover(
@@ -268,9 +258,9 @@ extension EditProfileView {
                                 }
                             } icon: { EmptyView() }
                         })
-                            .accessibility(label: Text(L10n.stgTxtEditProfileLabelKvnr))
-                            .accessibility(value: Text(insuranceId))
-                            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceId)
+                        .accessibility(label: Text(L10n.stgTxtEditProfileLabelKvnr))
+                        .accessibility(value: Text(insuranceId))
+                        .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceId)
                     }
                 })
             } else {
@@ -307,9 +297,9 @@ extension EditProfileView {
                 }, label: {
                     Text(L10n.stgBtnEditProfileLogin)
                 })
-                    .buttonStyle(.primary)
-                    .padding(.bottom)
-                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
+                .buttonStyle(.primary)
+                .padding(.bottom)
+                .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
             }
         }
     }
@@ -341,10 +331,10 @@ extension EditProfileView {
                     EmptyView()
                 }
             })
-                .accessibilityElement(children: .combine)
-                .accessibility(label: Text(L10n.stgTxtEditProfileLabelInsuranceCompany))
-                .accessibility(value: Text(store.insuranceName))
-                .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceCompany)
+            .accessibilityElement(children: .combine)
+            .accessibility(label: Text(L10n.stgTxtEditProfileLabelInsuranceCompany))
+            .accessibility(value: Text(store.insuranceName))
+            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceCompany)
         }
     }
 
@@ -396,7 +386,7 @@ extension EditProfileView {
                     .accessibilityAddTraits(.isHeader)
             }, content: {
                 Button {
-                    store.send(.changeEURedeemConsent)
+                    store.send(.showEURedeemConsent)
                 } label: {
                     Label(title: {
                         KeyValuePair(
@@ -481,7 +471,7 @@ extension EditProfileView {
                                 Text(L10n.stgTxtEditProfileLoginActivateDescription)
                             }, icon: {})
                         })
-                            .disabled(true)
+                        .disabled(true)
                     case .biometryNotEnrolled:
                         Label(title: {
                             Text(L10n.stgTxtEditProfileLoginActivateDescription)
@@ -507,12 +497,12 @@ extension EditProfileView {
                 .accessibilityElement(children: .combine)
                 .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionConnectedDevices)
             })
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.registeredDevices,
-                                       action: \.destination.registeredDevices)
-                ) { store in
-                    RegisteredDevicesView(store: store)
-                }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.registeredDevices,
+                                   action: \.destination.registeredDevices)
+            ) { store in
+                RegisteredDevicesView(store: store)
+            }
         }
 
         private struct FooterView: View {
@@ -586,7 +576,6 @@ extension EditProfileView {
             .buttonStyle(.navigation)
             .accessibilityElement(children: .combine)
             .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowAuditEvents)
-
             .navigationDestination(
                 item: $store.scope(state: \.destination?.auditEvents, action: \.destination.auditEvents)
             ) { store in

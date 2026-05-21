@@ -37,7 +37,7 @@ struct SelectionCell: View {
             action: { isOn.toggle() },
             label: {
                 HStack {
-                    if let systemImage = systemImage {
+                    if let systemImage {
                         Image(systemName: systemImage)
                             .frame(width: iconSize)
                             .font(.body.weight(.semibold))
@@ -52,7 +52,7 @@ struct SelectionCell: View {
                             .font(.body)
                             .foregroundColor(Colors.systemLabel)
 
-                        if let description = description {
+                        if let description {
                             Text(description)
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)

@@ -137,7 +137,7 @@ struct OrderDetailDomain {
     @Dependency(\.euRedeemService) var euRedeemService: EuRedeemService
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -161,14 +161,14 @@ struct OrderDetailDomain {
         case .didDisplayTimelineEntries:
             if let euOrder = state.communicationMessage.euOrder {
                 return .run { [euComms = euOrder.communications.elements] _ in
-                    try await self.setReadState(for: euComms)
+                    try await setReadState(for: euComms)
                 }
             }
 
             if let order = state.communicationMessage.order {
                 return .run { [comms = order.communications.elements, chargeItems = order.chargeItems.elements] _ in
-                    try await self.setReadState(for: comms)
-                    try await self.setReadState(for: chargeItems)
+                    try await setReadState(for: comms)
+                    try await setReadState(for: chargeItems)
                 }
             }
 
@@ -183,7 +183,7 @@ struct OrderDetailDomain {
                 .filter { !$0.isRead }
                 .map(\.id)
 
-            readMessageIDs.forEach { messageId in
+            for messageId in readMessageIDs {
                 userDataStore.markInternalCommunicationAsRead(messageId: messageId)
             }
 
@@ -269,7 +269,7 @@ struct OrderDetailDomain {
             return .none
         case let .openUrl(url: url):
             return .run { send in
-                guard let url = url else { return }
+                guard let url else { return }
                 guard await openURLHandler.canOpenURL(url) else {
                     await send(.response(.showAlert(Self.openUrlAlertState(for: url))))
                     return
@@ -340,7 +340,8 @@ struct OrderDetailDomain {
                 return .none
             }
             state.destination = .euAccessCode(.init(euAccessCode: euAccessCode,
-                                                    countryCode: countryCode))
+                                                    countryCode: countryCode,
+                                                    isLoading: false))
             return .none
         case .euRevokePermission:
             return .run { [profileId = state.profileId] send in
@@ -440,7 +441,7 @@ extension CommunicationMessage {
     }
 }
 
-extension Array where Element == TimelineEntry {
+extension [TimelineEntry] {
     func updateChipTexts(with tasks: [ErxTask]) -> [TimelineEntry] {
         map { entry in
             switch entry {
@@ -519,11 +520,11 @@ extension OrderDetailDomain {
         var urlString = URLComponents(string: "mailto:\(email)")
         var queryItems = [URLQueryItem]()
 
-        if let subject = subject {
+        if let subject {
             queryItems.append(URLQueryItem(name: "subject", value: subject))
         }
 
-        if let body = body {
+        if let body {
             queryItems.append(URLQueryItem(name: "body", value: body))
         }
 
@@ -532,17 +533,15 @@ extension OrderDetailDomain {
         return urlString?.url
     }
 
-    static var openMailAlertState: ErpAlertState<Destination.Alert> = {
-        .init(
-            title: L10n.ordDetailTxtOpenMailErrorTitle,
-            actions: {
-                ButtonState(role: .cancel) {
-                    .init(L10n.alertBtnClose)
-                }
-            },
-            message: L10n.ordDetailTxtOpenMailError
-        )
-    }()
+    static var openMailAlertState: ErpAlertState<Destination.Alert> = .init(
+        title: L10n.ordDetailTxtOpenMailErrorTitle,
+        actions: {
+            ButtonState(role: .cancel) {
+                .init(L10n.alertBtnClose)
+            }
+        },
+        message: L10n.ordDetailTxtOpenMailError
+    )
 
     static func openUrlAlertState(for url: URL) -> ErpAlertState<Destination.Alert> {
         .init(

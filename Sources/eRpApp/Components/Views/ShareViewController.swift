@@ -38,7 +38,7 @@ struct ShareViewController: UIViewControllerRepresentable {
         activityViewController.completionWithItemsHandler = { _, success, _, error in
             if success {
                 store.send(.delegate(.close(nil)))
-            } else if let error = error {
+            } else if let error {
                 store.send(.delegate(.close(.shareFailure(error.localizedDescription))))
             } else {
                 store.send(.delegate(.close(nil)))

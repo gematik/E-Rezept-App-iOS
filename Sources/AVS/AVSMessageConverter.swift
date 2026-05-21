@@ -29,7 +29,7 @@ protocol AVSMessageConverter {
     func convert(_ message: AVSMessage, recipients: [X509]) throws -> Data
 }
 
-// Refer to RFC 5083 https://datatracker.ietf.org/doc/html/rfc5083
+/// Refer to RFC 5083 https://datatracker.ietf.org/doc/html/rfc5083
 struct AuthEnvelopedWithUnauthAttributes: AVSMessageConverter {
     static let encoder = JSONEncoder()
     let avsCmsEncrypter: AVSCmsEncrypter
@@ -40,7 +40,7 @@ struct AuthEnvelopedWithUnauthAttributes: AVSMessageConverter {
         self.avsCmsEncrypter = avsCmsEncrypter
     }
 
-    // Refer to RFC 5083 https://datatracker.ietf.org/doc/html/rfc5083
+    /// Refer to RFC 5083 https://datatracker.ietf.org/doc/html/rfc5083
     func convert(_ message: AVSMessage, recipients: [X509]) throws -> Data {
         // 0. Serialize to JSON
         let data = try Self.encoder.encode(message)
@@ -61,7 +61,7 @@ struct AuthEnvelopedWithUnauthAttributes: AVSMessageConverter {
 
     static let oidRecipientEmail = "1.2.276.0.76.4.173"
 
-    // For unauthAttr syntax, refer to gemSpec_KOMLE 2.2.5 Ungeschützte Attribute (unauthAttrs)
+    /// For unauthAttr syntax, refer to gemSpec_KOMLE 2.2.5 Ungeschützte Attribute (unauthAttrs)
     static func recipientEmailsUnAuthAttribute(recipients: [X509]) throws -> Data {
         let recipientEmails = try recipients
             .map(Self.recipientEmail)
@@ -109,8 +109,8 @@ struct AuthEnvelopedWithUnauthAttributes: AVSMessageConverter {
                         tag: .universal(.sequence),
                         data: .constructed(
                             [
-                                try ASN1Decoder.decode(asn1: holder),
-                                try serialNumber.asn1encode(tag: .universal(.integer)),
+                                ASN1Decoder.decode(asn1: holder),
+                                serialNumber.asn1encode(tag: .universal(.integer)),
                             ]
                         )
                     ),
@@ -183,7 +183,7 @@ extension X509 {
 
          where the value holds an ASN1 object containing the registration number string
          */
-        guard let derBytes = derBytes else {
+        guard let derBytes else {
             throw AVSError.invalidX509Input
         }
         let decoded = try ASN1Decoder.decode(asn1: derBytes)

@@ -125,51 +125,7 @@ public class TrustStoreStorageMock: TrustStoreStorage {
 
     public init() {}
 
-    public var certList: AnyPublisher<CertList?, Never> {
-        get { return underlyingCertList }
-        set(value) { underlyingCertList = value }
-    }
-    public var underlyingCertList: (AnyPublisher<CertList?, Never>)!
-    public var ocspList: AnyPublisher<OCSPList?, Never> {
-        get { return underlyingOcspList }
-        set(value) { underlyingOcspList = value }
-    }
-    public var underlyingOcspList: (AnyPublisher<OCSPList?, Never>)!
 
-
-    //MARK: - set
-
-    public var setCertListCertListVoidCallsCount = 0
-    public var setCertListCertListVoidCalled: Bool {
-        return setCertListCertListVoidCallsCount > 0
-    }
-    public var setCertListCertListVoidReceivedCertList: (CertList)?
-    public var setCertListCertListVoidReceivedInvocations: [(CertList)?] = []
-    public var setCertListCertListVoidClosure: ((CertList?) -> Void)?
-
-    public func set(certList: CertList?) {
-        setCertListCertListVoidCallsCount += 1
-        setCertListCertListVoidReceivedCertList = certList
-        setCertListCertListVoidReceivedInvocations.append(certList)
-        setCertListCertListVoidClosure?(certList)
-    }
-
-    //MARK: - set
-
-    public var setOcspListOCSPListVoidCallsCount = 0
-    public var setOcspListOCSPListVoidCalled: Bool {
-        return setOcspListOCSPListVoidCallsCount > 0
-    }
-    public var setOcspListOCSPListVoidReceivedOcspList: (OCSPList)?
-    public var setOcspListOCSPListVoidReceivedInvocations: [(OCSPList)?] = []
-    public var setOcspListOCSPListVoidClosure: ((OCSPList?) -> Void)?
-
-    public func set(ocspList: OCSPList?) {
-        setOcspListOCSPListVoidCallsCount += 1
-        setOcspListOCSPListVoidReceivedOcspList = ocspList
-        setOcspListOCSPListVoidReceivedInvocations.append(ocspList)
-        setOcspListOCSPListVoidClosure?(ocspList)
-    }
 
     //MARK: - getPKICertificates
 

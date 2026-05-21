@@ -22,7 +22,7 @@
 
 import UIKit
 
-// extension to dismiss keyboard
+/// extension to dismiss keyboard
 extension UIApplication {
     /// Dismisses the keyboard by resigning first responder
     public func dismissKeyboard() {

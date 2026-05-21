@@ -111,7 +111,7 @@ struct EpaMedicationDomain {
 
 extension ErxEpaMedication {
     var displayName: String? {
-        if let name = name {
+        if let name {
             return name
         } else {
             let joinedText = ingredients.compactMap(\.name).joined(separator: ", ")
@@ -193,7 +193,7 @@ extension ErxEpaMedication {
             ingredients: []
         )
 
-        // Extemporaneous Preparation( Kombipackung)
+        /// Extemporaneous Preparation( Kombipackung)
         static let extemporaneousPreparation: ErxEpaMedication = .init(
             epaMedicationType: .extemporaneousPreparation,
             drugCategory: .avm,
@@ -307,7 +307,7 @@ extension ErxEpaMedication {
             ]
         )
 
-        // Rezeptur
+        /// Rezeptur
         static let medicinalProductPackage: ErxEpaMedication = .init(
             epaMedicationType: .medicinalProductPackage,
             drugCategory: .avm,

@@ -54,7 +54,10 @@ struct MedicationReminderListDomain {
     }
 
     struct ProfileMedicationReminder: Identifiable, Equatable {
-        var id: UUID { profile.id }
+        var id: UUID {
+            profile.id
+        }
+
         var profile: UserProfile
         var medicationProfileReminderList: [MedicationSchedule]
     }

@@ -42,7 +42,7 @@ struct HorizontalProfileSelectionChipView: View {
                     .progressViewStyle(CircularProgressViewStyle())
                     .padding(.horizontal, 2)
                     .onAppear {
-                        withAnimation { self.showConnectionStatus = true }
+                        withAnimation { showConnectionStatus = true }
                     }
             } else {
                 if showConnectionStatus {
@@ -51,7 +51,7 @@ struct HorizontalProfileSelectionChipView: View {
                             DispatchQueue.main.asyncAfter(
                                 deadline: .now() + DispatchTimeInterval.seconds(showConnectionStatusTimeInterval)
                             ) {
-                                withAnimation { self.showConnectionStatus = false }
+                                withAnimation { showConnectionStatus = false }
                             }
                         }
                 }

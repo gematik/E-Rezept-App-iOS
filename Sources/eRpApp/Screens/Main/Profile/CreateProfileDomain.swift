@@ -71,6 +71,7 @@ struct CreateProfileDomain {
             case let .createAndSaveProfileReceived(.success(profileId)):
                 userProfileService.set(selectedProfileId: profileId)
                 return .send(.delegate(.close))
+
             case let .createAndSaveProfileReceived(.failure(error)):
                 return .send(.delegate(.failure(error)))
 

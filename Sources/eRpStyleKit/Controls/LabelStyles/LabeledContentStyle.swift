@@ -137,7 +137,9 @@ extension LabeledContentStyle where Self == VerticalLabeledContentStyle {
     ///
     /// To apply this style to a labeledContent, or to a view that contains a label, use
     /// the ``View/labeledContentStyle(_:)`` modifier.
-    public static var vertical: VerticalLabeledContentStyle { .init() }
+    public static var vertical: VerticalLabeledContentStyle {
+        .init()
+    }
 
     /// A labeledContent style that applies the label vertical above the content with an trailing icon.
     ///
@@ -153,7 +155,9 @@ extension LabeledContentStyle where Self == HorizontalLabeledContentStyle {
     ///
     /// To apply this style to a labeledContent, or to a view that contains a label, use
     /// the ``View/labeledContentStyle(_:)`` modifier.
-    public static var horizontal: HorizontalLabeledContentStyle { .init() }
+    public static var horizontal: HorizontalLabeledContentStyle {
+        .init()
+    }
 }
 
 struct LabeledContentStyle_Previews: PreviewProvider {

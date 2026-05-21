@@ -52,7 +52,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
     }
 
     private func loadFactory() -> CoreDataControllerFactory {
-        guard let factory = factory else {
+        guard let factory else {
             return .init(databaseUrl: { self.databaseFile }) {
                 @Shared(.coreDataController) var coreDataController
 
@@ -207,20 +207,20 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testSavingAVSTransactions() throws {
+    func testSavingAVSTransactions() {
         let sut = loadAVSTransactionCoreDataStore()
         let avsTransaction1 = avsTransaction(with: UUID())
         let avsTransaction2 = avsTransaction(with: UUID())
         sut.add(avsTransactions: [avsTransaction1, avsTransaction2])
     }
 
-    func testSavingOneAVSTransaction() throws {
+    func testSavingOneAVSTransaction() {
         let sut = loadAVSTransactionCoreDataStore()
         let avsTransaction = avsTransaction(with: UUID())
         sut.add(avsTransaction: avsTransaction)
     }
 
-    func testSavingPreviousStoredAVSTransaction() throws {
+    func testSavingPreviousStoredAVSTransaction() {
         let sut = loadAVSTransactionCoreDataStore()
         let avsTransactionId = UUID()
         let avsTransaction = avsTransaction(with: avsTransactionId)

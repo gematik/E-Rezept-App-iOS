@@ -25,7 +25,7 @@ import Foundation
 
 extension ErxSparseChargeItem {
     enum Fixtures {
-        // non realistic chargeItem as low detail
+        /// non realistic chargeItem as low detail
         static let chargeItem: ErxSparseChargeItem = .init(
             identifier: "chargeItem_id_12",
             taskId: "chargeItem_task_id_12",

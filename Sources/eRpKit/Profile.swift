@@ -111,8 +111,10 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         case unknown
         case gKV
         case pKV
-        // Federal institutions, e.g. Bundespolizei
+        /// Federal institutions, e.g. Bundespolizei
         case federalKV
+
+        public static let federalKVAlias = "Heilfürsorge"
 
         public var canReceiveChargeItems: Bool {
             switch self {
@@ -134,8 +136,8 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         static var lastUsedColor: Color?
 
         public static func next() -> Color {
-            guard let lastColor = Self.lastUsedColor,
-                  let index = Self.allCases.firstIndex(of: lastColor) else {
+            guard let lastColor = lastUsedColor,
+                  let index = allCases.firstIndex(of: lastColor) else {
                 let newColor = Self.random()
                 Self.lastUsedColor = newColor
                 return newColor
@@ -152,7 +154,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
             return Color.random(using: &generator)
         }
 
-        private static func random<G: RandomNumberGenerator>(using generator: inout G) -> Color {
+        private static func random(using generator: inout some RandomNumberGenerator) -> Color {
             Color.allCases.randomElement(using: &generator) ?? .grey
         }
     }

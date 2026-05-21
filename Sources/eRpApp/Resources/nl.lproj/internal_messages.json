@@ -58,5 +58,11 @@
         "text": "**✨ Receptcodes weergeven** \nHet scherm voor batch- en individuele codes is opnieuw ontworpen voor een intuïtiever gebruik. \n \n **❤️ Apotheekfavorieten** \nApotheekfavorieten werken nu betrouwbaarder en zijn compatibel met VoiceOver. \n \n **♿ Toegankelijkheid** \nVoiceOver en toetsenbordnavigatie zijn verbeterd, knoppen, tekst en invoervelden zijn gemakkelijker te herkennen en lijstitems zijn logischer gestructureerd. Vergroot lettertype werkt nu op alle app-schermen. Geanimeerde video's worden slechts één keer afgespeeld om gebruikers met cognitieve beperkingen te ondersteunen.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Uitgebreidere apotheekgegevens** \nApotheken kunnen nu diensten toevoegen, zoals vaccinaties, en voorzieningen ter plaatse, zoals een drempelvrije toegang. Apotheken kunnen op basis van deze nieuwe informatie worden gefilterd. \n \n **✨ Verbeterde apotheekzoekfunctie** \n Recent bezochte apotheken en favoriete apotheken worden nu duidelijker van elkaar gescheiden. De filters zijn verbeterd. \n \n **✅ Health ID voor personen met een alternatieve verzekering** \nPersonen die niet gedekt zijn door een wettelijke of particuliere ziektekostenverzekering kunnen nu ook inloggen met hun Health ID. \n \n **♿ Toegankelijkheid** \n De filters hebben nu een hoger contrast en hun status is gemakkelijker te herkennen. De toegankelijkheidsverklaring is bijgewerkt en uitgebreid met een sectie waarin de wijzigingsgeschiedenis wordt gedocumenteerd. Sommige knoppen zijn aangepast voor een betere zichtbaarheid.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

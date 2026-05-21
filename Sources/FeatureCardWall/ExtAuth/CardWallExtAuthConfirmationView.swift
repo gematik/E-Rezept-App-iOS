@@ -53,11 +53,11 @@ struct CardWallExtAuthConfirmationView: View {
                         }, label: {
                             Text(L10n.cdwBtnExtauthConfirmContact)
                         })
-                            .accessibility(identifier: A11y.cardWall.extAuthConfirmation
-                                .cdwBtnExtauthConfirmContact)
-                            .confirmationDialog(
-                                $store.scope(state: \.contactActionSheet, action: \.contactSheet)
-                            )
+                        .accessibility(identifier: A11y.cardWall.extAuthConfirmation
+                            .cdwBtnExtauthConfirmContact)
+                        .confirmationDialog(
+                            $store.scope(state: \.contactActionSheet, action: \.contactSheet)
+                        )
                     }
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -120,7 +120,7 @@ struct CardWallExtAuthConfirmationView: View {
                             Image(asset: Asset.CardWall.appIconPlaceholder)
                                 .resizable()
                                 .frame(width: 56, height: 56)
-                                .background(Color.green)
+                                .background(Colors.secondary700)
                                 .cornerRadius(12)
 
                             Text(selectedKKName)

@@ -80,8 +80,10 @@ struct EmojiTextField: UIViewRepresentable {
     // Source: https://stackoverflow.com/questions/11382753/change-the-ios-keyboard-layout-to-emoji
     // Custom UITextField subclass to force emoji keyboard
     class EmojiTextFieldWrapper: UITextField {
-        // required for iOS 13
-        override var textInputContextIdentifier: String? { "" } // return non-nil to show the Emoji keyboard ¯\_(ツ)_/¯
+        /// required for iOS 13
+        override var textInputContextIdentifier: String? {
+            ""
+        } // return non-nil to show the Emoji keyboard ¯\_(ツ)_/¯
 
         override var textInputMode: UITextInputMode? {
             for mode in UITextInputMode.activeInputModes where mode.primaryLanguage == "emoji" {

@@ -167,20 +167,18 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         )
     }()
 
-    private lazy var pharmacyWithTypeAndHours: PharmacyLocation = {
-        PharmacyLocation(
-            id: "4567",
-            status: .active,
-            telematikID: "T.S-1-23",
-            name: "Pharmacy with type and hours",
-            types: [.pharm, .outpharm],
-            hoursOfOperation: [.init(
-                daysOfWeek: ["mon"],
-                openingTime: "08:00:00",
-                closingTime: "18:30:00"
-            )]
-        )
-    }()
+    private lazy var pharmacyWithTypeAndHours: PharmacyLocation = .init(
+        id: "4567",
+        status: .active,
+        telematikID: "T.S-1-23",
+        name: "Pharmacy with type and hours",
+        types: [.pharm, .outpharm],
+        hoursOfOperation: [.init(
+            daysOfWeek: ["mon"],
+            openingTime: "08:00:00",
+            closingTime: "18:30:00"
+        )]
+    )
 
     func testSavingPharmacy() throws {
         let store = loadPharmacyCoreDataStore()
@@ -242,7 +240,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testSavePharmacyWithFailingLoadingDatabase() throws {
+    func testSavePharmacyWithFailingLoadingDatabase() {
         let factory = CoreDataControllerFactory(databaseUrl: {
             self.databaseFile
         }, loadCoreDataController: {
@@ -362,7 +360,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testFetchPharmacyByTelematikIdNoResults() throws {
+    func testFetchPharmacyByTelematikIdNoResults() {
         let store = loadPharmacyCoreDataStore()
 
         var receivedNoResult = false
@@ -429,7 +427,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testUpdatePharmacyWithoutMatchingInStore() throws {
+    func testUpdatePharmacyWithoutMatchingInStore() {
         let store = loadPharmacyCoreDataStore()
         var receivedUpdateValues = [PharmacyLocation]()
         var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()

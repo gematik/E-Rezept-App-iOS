@@ -416,14 +416,14 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
     }
 
-    func testNavigateIntoLowDetailPrescriptionDetails() async {
+    func testNavigateIntoLowDetailPrescriptionDetails() async throws {
         // given
         let prescription = Prescription.Fixtures.prescriptions
 
         let store = testStore(for: mockPrescriptionRepository)
 
         // when
-        await store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription.first!))
+        try await store.send(.prescriptionDetailViewTapped(selectedPrescription: XCTUnwrap(prescription.first)))
 
         // nothing happens, as this is currently supposed to be handled in the parent domain
     }

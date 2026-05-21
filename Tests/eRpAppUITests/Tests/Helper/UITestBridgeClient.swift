@@ -28,7 +28,7 @@ extension Logger {
     static let bridgeClient = Logger(subsystem: "de.gematik.erp4ios.eRezept.tests.bridge-server", category: "eRpApp")
 }
 
-// Singleton class that connects to a port of a UITestBridgeServer and sends messages to the UITest
+/// Singleton class that connects to a port of a UITestBridgeServer and sends messages to the UITest
 @MainActor
 class UITestBridgeClient {
     private let connection: NWConnection
@@ -89,7 +89,7 @@ class UITestBridgeClient {
     private func send(data: Data) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             connection.send(content: data, completion: .contentProcessed { error in
-                if let error = error {
+                if let error {
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: ())

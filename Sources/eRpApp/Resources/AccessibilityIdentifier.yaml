@@ -336,14 +336,33 @@ redeem:
     - rdm_btn_close_button
   eu:
     consent:
-      - rdm_btn_eu_consent_grant
-      - rdm_btn_eu_consent_revoke
-      - rdm_txt_eu_consent_title
-      - rdm_txt_eu_consent_description1
-      - rdm_txt_eu_consent_description2
-      - rdm_txt_eu_consent_info
-      - rdm_btn_eu_consent_accept
-      - rdm_btn_eu_consent_decline
+      - eurdm_btn_consent_grant
+      - eurdm_btn_consent_revoke
+      - eurdm_txt_consent_title
+      - eurdm_txt_consent_description1
+      - eurdm_txt_consent_description2
+      - eurdm_txt_consent_info
+      - eurdm_btn_consent_accept
+      - eurdm_btn_consent_decline
+      - eurdm_btn_consent_abort
+    code:
+      - eurdm_code_toggle_display_mode_button
+      - eurdm_code_close_button
+      - eurdm_code_generate_new_button
+      - eurdm_code_take_receipt_button
+      - eurdm_code_speech_insurance_number_button
+      - eurdm_code_speech_exchange_code_button
+      - eurdm_code_manual_refresh_button
+      - eurdm_code_qr_refresh_button
+      - eurdm_code_txt_step2
+      - eurdm_code_txt_step_description
+      - eurdm_code_txt_insurance_number_label
+      - eurdm_code_txt_insurance_number
+      - eurdm_code_txt_exchange_code_label
+      - eurdm_code_txt_exchange_code
+      - eurdm_code_txt_validity_manual
+      - eurdm_code_txt_qr_expired
+      - eurdm_code_txt_validity_qr
 orders:
   list:
     - ord_txt_empty_list
@@ -581,6 +600,12 @@ pharmacySearch:
   - pha_filter_filter_list
   - pha_search_switch_result_map
   - pha_search_hint_eu_redeem
+pharmacySearchFilter:
+  - psf_btn_close
+  - psf_service_section
+  - psf_btn_explain_toggle
+  - psf_service_list
+  - psf_service_footnote
 pharmacySearchStart:
   - pha_search_txt_quick_filter_title
   - pha_search_btn_quick_filter_nearby
@@ -651,7 +676,6 @@ pharmacyRedeem:
   - pha_redeem_txt_edit_prescription
   - pha_redeem_btn_edit_prescription
   - pha_redeem_txt_add_prescription
-  - pha_redeem_btn_add_prescription
   - pha_redeem_txt_edit_pharmacy
   - pha_redeem_txt_edit_pharmacy_name
   - pha_redeem_txt_edit_pharmacy_adress

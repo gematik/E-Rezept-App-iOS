@@ -36,20 +36,20 @@ class JWTTests: XCTestCase {
         .testResourceFilePath(in: "Resources/JWT", for: "discovery-doc.jwt")
         .readFileContents()
 
-    func testParsingAndValidatingJWT() {
+    func testParsingAndValidatingJWT() throws {
         // Check header vor correct algorithm
-        let jwt = try! JWT(from: document)
+        let jwt = try JWT(from: document)
         expect(jwt.header.alg) == .bp256r1
 
         // Check payload
-        let payload = try! jwt.decodePayload(type: DiscoveryDocumentPayload.self)
+        let payload = try jwt.decodePayload(type: DiscoveryDocumentPayload.self)
         expect(payload.exp.timeIntervalSince1970) == 1_616_143_876
         expect(payload.iat.timeIntervalSince1970) == 1_616_057_476
         expect(payload.token) == URL(string: "http://localhost:8888/token")
         expect(payload.authentication) == URL(string: "http://localhost:8888/sign_response")
 
         // Check signature
-        let data = try! Data(
+        let data = try Data(
             hex: "9334442839a3318ede0569f28c97a08a3e2cac57083b31f2790b3f080cf8038a73a1b3254c30bd40d3744b5cbe6f8113c7a382872a7f3ae1420bfe20e1c9686d" // swiftlint:disable:this line_length
         )
         expect(jwt.signature) == data
@@ -60,7 +60,7 @@ class JWTTests: XCTestCase {
             return
         }
         expect(x509.brainpoolP256r1VerifyPublicKey()).toNot(beNil())
-        expect(try jwt.verify(with: x509.brainpoolP256r1VerifyPublicKey()!)).to(beTrue())
+        expect(try jwt.verify(with: XCTUnwrap(x509.brainpoolP256r1VerifyPublicKey()))).to(beTrue())
     }
 
     func testParsingInvalidJWT() {
@@ -78,29 +78,29 @@ class JWTTests: XCTestCase {
         expect(try JWT(from: "eyAiYWxnIjogIm5vbmUiIH0")).to(throwError(JWT.Error.malformedJWT))
     }
 
-    func testParsingUnsignedJWT() {
+    func testParsingUnsignedJWT() throws {
         struct Payload: Claims {
             let payload: String
         }
-        let jwt = try! JWT(from: "eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9")
+        let jwt = try JWT(from: "eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9")
 
         expect(jwt.header.alg) == JWT.Algorithm.none
 
-        let payload = try! jwt.decodePayload(type: Payload.self)
+        let payload = try jwt.decodePayload(type: Payload.self)
         expect(payload.payload) == "text"
 
         expect(try jwt.verify(with: self.verifyingKey)).to(throwError(JWT.Error.noSignature))
     }
 
-    func testSerialize() {
-        let jwt = try! JWT(from: document)
+    func testSerialize() throws {
+        let jwt = try JWT(from: document)
         let data = jwt.serialize()
         expect(data.data(using: .ascii)) == document
     }
 
-    func testSerializingAndSigningJWT() {
-        let jwtParts = String(data: document, encoding: .ascii)!.split(separator: ".")
-        let jwt = try! JWT(from: document)
+    func testSerializingAndSigningJWT() throws {
+        let jwtParts = try XCTUnwrap(String(data: document, encoding: .ascii)?.split(separator: "."))
+        let jwt = try JWT(from: document)
         let signer = TestJWTSigner()
         let signature = "signature".data(using: .ascii)!
         signer.signature = signature
@@ -124,7 +124,7 @@ class TestJWTSigner: JWTSigner {
 
     func sign(message: Data) async throws -> Data {
         messages.append(message)
-        guard let signature = signature else {
+        guard let signature else {
             throw IDPError.unsupported("No signature set in TestJWTSigner")
         }
         return signature

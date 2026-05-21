@@ -27,17 +27,17 @@ import HTTPClient
 /// The specific error types for the IDP module
 @CodedError("300")
 public enum FHIRVZDError: Swift.Error {
-    @ErrorCode("01")
     /// In case of HTTP/Connection error
+    @ErrorCode("01")
     case network(error: HTTPClientError)
-    @ErrorCode("02")
     /// When a token is being requested, but none can be found
+    @ErrorCode("02")
     case tokenUnavailable
-    @ErrorCode("03")
     /// Message failed to decode/parse
+    @ErrorCode("03")
     case decoding(error: Swift.Error)
-    @ErrorCode("04")
     /// Other error cases
+    @ErrorCode("04")
     case unspecified(error: Swift.Error)
 }
 

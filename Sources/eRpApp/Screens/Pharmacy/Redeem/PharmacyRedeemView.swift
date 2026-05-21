@@ -32,15 +32,10 @@ import SwiftUIIntrospect
 
 struct PharmacyRedeemView: View {
     @Bindable var store: StoreOf<PharmacyRedeemDomain>
-    static let height: CGFloat = {
-        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
+    static let height: CGFloat = // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard
+        // vs. Zoomed
         // 245 is the standard height for the gif Display
         245 * UIScreen.main.scale / UIScreen.main.nativeScale
-    }()
-
-    init(store: StoreOf<PharmacyRedeemDomain>) {
-        self.store = store
-    }
 
     var body: some View {
         VStack {
@@ -74,7 +69,7 @@ struct PharmacyRedeemView: View {
                             state: \.serviceOptionState,
                             action: \.serviceOption
                         ))
-                            .padding(.horizontal)
+                        .padding(.horizontal)
                     }
 
                     if let shipmentInfo = store.selectedShipmentInfo {
@@ -192,14 +187,14 @@ extension PharmacyRedeemView {
                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnAddAddress)
                 }
             })
-                .sectionContainerStyle(.bordered)
+            .sectionContainerStyle(.bordered)
         }
     }
 
     struct ProfileIcon: View {
         let profile: Profile?
         var body: some View {
-            if let profile = profile {
+            if let profile {
                 ProfilePictureView(profile: profile)
                     .frame(width: 40, height: 40, alignment: .center)
             } else {
@@ -217,7 +212,7 @@ extension PharmacyRedeemView {
             SingleElementSectionContainer(header: {
                 Text(L10n.phaRedeemTxtPharmacyHeader)
             }, content: {
-                if let pharmacy = pharmacy {
+                if let pharmacy {
                     Button(action: action) {
                         HStack(spacing: 0) {
                             VStack(alignment: .leading, spacing: 0) {
@@ -375,61 +370,65 @@ extension PharmacyRedeemView {
         @Bindable var store: StoreOf<PharmacyRedeemDomain>
 
         var body: some View {
-            SingleElementSectionContainer(
-                header: {
-                    Label(L10n.phaRedeemTxtPrescription)
-                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
-                },
-                content: {
-                    if !store.selectedPrescriptions.isEmpty {
-                        Button(action: {
-                            store.send(.showPrescriptionSelection)
-                        }, label: {
-                            HStack(spacing: 0) {
-                                VStack(alignment: .leading) {
-                                    Text(
-                                        "\(store.selectedPrescriptions.count) " +
-                                            L10n.phaRedeemTxtPrescription.text
-                                    )
-                                    .font(Font.body)
-                                    .padding(.bottom)
-                                    .foregroundColor(Colors.systemLabel)
-
-                                    Text(store.selectedPrescriptions.map(\.title).joined(separator: " & "))
-                                        .font(Font.subheadline)
-                                        .foregroundColor(Colors.systemLabelSecondary)
-                                        .lineLimit(1)
+            VStack(alignment: .leading, spacing: 0) {
+                Button {
+                    store.send(.showPrescriptionSelection)
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            if store.prescriptions.isEmpty {
+                                Text(L10n.phaRedeemTxtSelectPrescription2)
+                                    .font(.body)
+                                    .foregroundColor(.red)
+                                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddPrescription)
+                            } else {
+                                if store.selectedPrescriptions.isEmpty {
+                                    Text(L10n.phaRedeemTxtSelectPrescription2)
+                                        .font(.body)
+                                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddPrescription)
+                                } else {
+                                    Text(L10n.phaRedeemTxtPrescription)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
+                                    // Show selected prescriptions
+                                    ForEach(store.selectedPrescriptions, id: \.id) { prescription in
+                                        Text(prescription.title)
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                    }
                                 }
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                                Text(L10n.phaRedeemBtnChangePrescription)
-                                    .font(Font.subheadline.weight(.semibold))
-                                    .multilineTextAlignment(.trailing)
-                                    .fixedSize(horizontal: true, vertical: false)
-                                    .padding(.leading)
-                                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtEditPrescription)
                             }
-                            .padding()
-                        })
-                            .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription)
-                    } else {
-                        VStack(spacing: 16) {
-                            Text(L10n.phaRedeemTxtSelectPrescription)
-                                .padding(.top)
-                                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddPrescription)
-
-                            Button(L10n.phaRedeemBtnSelectPrescription) {
-                                store.send(.showPrescriptionSelection)
-                            }
-                            .buttonStyle(.secondaryAlt)
-                            .padding(.bottom)
-                            .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnAddPrescription)
                         }
+
+                        Spacer()
+                        Image(systemName: SFSymbolName.chevronForward)
+                            .foregroundColor(.gray)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(
+                                store.prescriptions.isEmpty
+                                    ? Color.red : Color.gray.opacity(0.3),
+                                lineWidth: 1
+                            )
+                    )
+                    .contentShape(Rectangle())
                 }
-            )
-            .sectionContainerStyle(.bordered)
+                .buttonStyle(PlainButtonStyle())
+                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription)
+
+                if store.prescriptions.isEmpty {
+                    Text(L10n.phaRedeemTxtSelectPrescription2)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.leading)
+                        .padding(.top, 8)
+                }
+            }
+            .padding(.horizontal)
         }
     }
 

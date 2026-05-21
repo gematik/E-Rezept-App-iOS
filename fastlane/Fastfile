@@ -178,6 +178,7 @@ desc "Test the integration of the app with external dependencies e.g. IDP/FD."
 desc "Runs targets, that are excluded from normal CI builds."
 lane :integration_tests do |options|
   reset_simulator_contents
+  reset_test_outputs
 
   if options[:app_conf]
     app_conf = options[:app_conf]
@@ -196,7 +197,8 @@ lane :integration_tests do |options|
     configuration: "Debug",
     test_without_building: true,
     number_of_retries: 3,
-    output_directory: "./fastlane/test_output/#{app_conf}" # default is ./fastlane/test_output
+    output_directory: "./fastlane/test_output/#{app_conf}", # default is ./fastlane/test_output
+    output_style: 'raw'
   )
 
   flaky_note_if_necessary(scan_result: scan_result)
@@ -567,6 +569,10 @@ def make_github_api_request(repo_url)
       return {}
     end
   end
+end
+
+def reset_test_outputs
+  sh "find ../DerivedData -iname \"*.xcresult\" -prune -exec rm -rf {} \\;"
 end
 
 def curl_license_url_from_github(repo_url)

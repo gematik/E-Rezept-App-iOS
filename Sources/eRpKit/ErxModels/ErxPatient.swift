@@ -95,7 +95,7 @@ extension ErxPatient {
         case BEI
 
         public init?(rawValue: String?) {
-            guard let rawValue = rawValue else { return nil }
+            guard let rawValue else { return nil }
             switch rawValue {
             case CodingKeysV2.gesetzlicheKrankenversicherung: self = .GKV
             case CodingKeysV2.privateKrankenversicherung: self = .PKV

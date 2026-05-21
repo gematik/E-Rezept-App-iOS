@@ -108,41 +108,39 @@ private enum ProfilesStoreDemoModeHelper {
 }
 
 extension ProfilesStore {
-    static let demoModeValue = {
-        ProfilesStore { identifier in
-            Just(ProfilesStoreDemoModeHelper.dummyProfiles.first { $0.id == identifier })
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } listAllProfiles: {
-            Just(ProfilesStoreDemoModeHelper.dummyProfiles)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } save: { profiles in
-            ProfilesStoreDemoModeHelper.dummyProfiles = profiles + ProfilesStoreDemoModeHelper.dummyProfiles
-            return Just(true)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } delete: { profiles in
-            let allProfileIds = profiles.map(\.id)
-            ProfilesStoreDemoModeHelper.dummyProfiles = ProfilesStoreDemoModeHelper.dummyProfiles
-                .filter { !allProfileIds.contains($0.id) }
-            return Just(true)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
-        } update: { profileId, mutating in
-            ProfilesStoreDemoModeHelper.dummyProfiles = ProfilesStoreDemoModeHelper.dummyProfiles.map { profile in
-                if profile.id == profileId {
-                    var profile = profile
-                    mutating(&profile)
-                    return profile
-                }
+    static let demoModeValue = ProfilesStore { identifier in
+        Just(ProfilesStoreDemoModeHelper.dummyProfiles.first { $0.id == identifier })
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+    } listAllProfiles: {
+        Just(ProfilesStoreDemoModeHelper.dummyProfiles)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+    } save: { profiles in
+        ProfilesStoreDemoModeHelper.dummyProfiles = profiles + ProfilesStoreDemoModeHelper.dummyProfiles
+        return Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+    } delete: { profiles in
+        let allProfileIds = profiles.map(\.id)
+        ProfilesStoreDemoModeHelper.dummyProfiles = ProfilesStoreDemoModeHelper.dummyProfiles
+            .filter { !allProfileIds.contains($0.id) }
+        return Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+    } update: { profileId, mutating in
+        ProfilesStoreDemoModeHelper.dummyProfiles = ProfilesStoreDemoModeHelper.dummyProfiles.map { profile in
+            if profile.id == profileId {
+                var profile = profile
+                mutating(&profile)
                 return profile
             }
-            return Just(true)
-                .setFailureType(to: LocalStoreError.self)
-                .eraseToAnyPublisher()
+            return profile
         }
-    }()
+        return Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+    }
 }
 
 extension ProfilesStore {

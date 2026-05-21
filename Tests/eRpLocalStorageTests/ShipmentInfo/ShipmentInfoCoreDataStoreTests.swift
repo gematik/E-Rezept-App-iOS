@@ -54,7 +54,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
     }
 
     private func loadFactory() -> CoreDataControllerFactory {
-        guard let factory = factory else {
+        guard let factory else {
             return .init(databaseUrl: { self.databaseFile }) {
                 @Shared(.coreDataController) var coreDataController
 
@@ -264,14 +264,14 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         sut.add(shipmentInfos: [shipmentInfo2, shipmentInfo3])
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllShipmentInfoValues.count).toEventually(equal(4))
+        expect(receivedListAllShipmentInfoValues.count).toEventually(equal(3))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(0))
         expect(receivedListAllShipmentInfoValues[1].count).to(equal(1))
         expect(receivedListAllShipmentInfoValues[1].first) == shipmentInfo1
         expect(receivedListAllShipmentInfoValues[1].count).to(equal(1))
         expect(receivedListAllShipmentInfoValues[1].first) == shipmentInfo1
-        expect(receivedListAllShipmentInfoValues[3].count).to(equal(3))
-        expect(receivedListAllShipmentInfoValues[3]).to(contain([shipmentInfo1, shipmentInfo2, shipmentInfo3]))
+        expect(receivedListAllShipmentInfoValues[2].count).to(equal(3))
+        expect(receivedListAllShipmentInfoValues[2]).to(contain([shipmentInfo1, shipmentInfo2, shipmentInfo3]))
 
         cancellable.cancel()
     }
@@ -294,20 +294,20 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testSavingShipmentInfos() throws {
+    func testSavingShipmentInfos() {
         let sut = loadShipmentInfoCoreDataStore()
         let shipmentInfo1 = shipmentInfo(with: UUID())
         let shipmentInfo2 = shipmentInfo(with: UUID())
         sut.add(shipmentInfos: [shipmentInfo1, shipmentInfo2])
     }
 
-    func testSavingOneShipmentInfo() throws {
+    func testSavingOneShipmentInfo() {
         let sut = loadShipmentInfoCoreDataStore()
         let shipmentInfo = shipmentInfo(with: UUID())
         sut.add(shipmentInfo: shipmentInfo)
     }
 
-    func testSavingPreviousStoredShipmentInfo() throws {
+    func testSavingPreviousStoredShipmentInfo() {
         let sut = loadShipmentInfoCoreDataStore()
         let shipmentId = UUID()
         let shipmentInfo = shipmentInfo(with: shipmentId)
@@ -448,7 +448,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testUpdateShipmentInfoThatIsInStore() {
+    func testUpdateShipmentInfoThatIsInStore() throws {
         let sut = loadShipmentInfoCoreDataStore()
         let input = shipmentInfo()
         sut.add(shipmentInfo: input)
@@ -479,7 +479,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
 
         expect(receivedListAllShipmentInfosValues.count).to(equal(1))
         expect(receivedListAllShipmentInfosValues.first?.count) == 1
-        let result = receivedListAllShipmentInfosValues[0].first!
+        let result = try XCTUnwrap(receivedListAllShipmentInfosValues[0].first)
         expect(result) == expectedResult
 
         cancellable.cancel()

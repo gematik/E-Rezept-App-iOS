@@ -34,7 +34,7 @@ extension Bundle {
         - Returns: Absolute filePath to the Resources in the bundle
      */
     public func resourceFilePath(in bundle: String, for filename: String) -> String {
-        let bundlePath = self.bundlePath
+        let bundlePath = bundlePath
         #if os(macOS)
         let resourceFilePath = "file://\(bundlePath)/Resources/\(bundle).bundle/\(filename)"
         #else
@@ -53,7 +53,7 @@ extension Bundle {
         - Returns: Absolute filePath to the Resources in the bundle
      */
     public func testResourceFilePath(in bundle: String, for filename: String) -> String {
-        let bundlePath = self.bundlePath
+        let bundlePath = bundlePath
         #if os(macOS)
         let resourceFilePath = "file://\(bundlePath)/Contents/Resources/\(bundle).bundle/\(filename)"
         #else

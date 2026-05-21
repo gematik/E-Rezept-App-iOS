@@ -152,7 +152,7 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
         -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
         @Dependency(\.schedulers) var schedulers
         return Future {
-            return try await self.erxTaskRepository.loadRemoteAllTasks(locale, profileId)
+            try await self.erxTaskRepository.loadRemoteAllTasks(locale, profileId)
         }
         .receive(on: schedulers.main)
         .mapError { PrescriptionRepositoryError.erxRepository($0.asErxRepositoryError()) }
@@ -185,7 +185,7 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
                             .eraseToAnyPublisher()
                     } else {
                         return dependencies.yield {
-                            return self.loadRemoteAndSave(for: locale, for: profileId)
+                            self.loadRemoteAndSave(for: locale, for: profileId)
                         }
                     }
                 }

@@ -71,7 +71,7 @@ struct OffsetPreview: View {
     }
 
     var body: some View {
-        Snapshot(self.snapshotting) {
+        Snapshot(snapshotting) {
             NavigationStack {
                 Text("*")
                     .navigationTitle("⚕︎ Redeem")
@@ -88,14 +88,17 @@ class ERPSnapshotTestCase: XCTestCase {
         }
     }
 
-    @MainActor
     override func setUp() {
         super.setUp()
-        SnapshotHelper.fixOffsetProblem()
+        // use MainActor.assumeIsolated here to call main actor isolated code (XCTest runs setUp on the main thread)
+        MainActor.assumeIsolated {
+            SnapshotHelper.fixOffsetProblem()
+        }
     }
 }
 
 extension ViewImageConfig {
+    @MainActor
     static func iPhone14(_ orientation: Orientation) -> ViewImageConfig {
         let safeArea: UIEdgeInsets
         let size: CGSize
@@ -112,6 +115,7 @@ extension ViewImageConfig {
 }
 
 extension UITraitCollection {
+    @MainActor
     static func iPhone14(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
         switch orientation {
         case .landscape:

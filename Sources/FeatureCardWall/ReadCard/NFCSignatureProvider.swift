@@ -60,7 +60,7 @@ public enum NFCSignatureProviderError: Error {
     @ErrorCode("06")
     case signingFailure(SigningError)
 
-    // Wrong pin while opening secure channel
+    /// Wrong pin while opening secure channel
     @ErrorCode("07")
     case wrongPin(retryCount: Int)
 
@@ -108,25 +108,25 @@ public enum NFCSignatureProviderError: Error {
 
     @CodedError("006")
     public enum VerifyPINError: Error, LocalizedError {
-        // Pin verification failed, retry count is the number of retries left for the given `EgkFileSystem.Pin` type
+        /// Pin verification failed, retry count is the number of retries left for the given `EgkFileSystem.Pin` type
         @ErrorCode("01")
         case wrongSecretWarning(retryCount: Int)
-        // Access rule evaluation failure
+        /// Access rule evaluation failure
         @ErrorCode("02")
         case securityStatusNotSatisfied
-        // Write action unsuccessful
+        /// Write action unsuccessful
         @ErrorCode("03")
         case memoryFailure
-        // Exhausted retry counter
+        /// Exhausted retry counter
         @ErrorCode("04")
         case passwordBlocked
-        // Password is transport protected
+        /// Password is transport protected
         @ErrorCode("05")
         case passwordNotUsable
-        // Referenced password could not be found
+        /// Referenced password could not be found
         @ErrorCode("06")
         case passwordNotFound
-        // Any (unexpected) error not specified in gemSpec_COS 14.6.6.2
+        /// Any (unexpected) error not specified in gemSpec_COS 14.6.6.2
         @ErrorCode("07")
         case unknownFailure
 
@@ -268,7 +268,7 @@ enum EGKSignatureProvider {
 }
 
 extension NFCHealthCardSession<Result<SignedChallenge, NFCSignatureProviderError>>.Messages {
-    // Default messages for the sign use case
+    /// Default messages for the sign use case
     static let defaultMessages: Self = .init(
         discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
         connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
@@ -281,7 +281,7 @@ extension NFCHealthCardSession<Result<SignedChallenge, NFCSignatureProviderError
 }
 
 extension NFCHealthCardSession<Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>>.Messages {
-    // Default messages for the signChallengeThenAltAuthWithNFCCard() use case
+    /// Default messages for the signChallengeThenAltAuthWithNFCCard() use case
     static let defaultMessages: Self = .init(
         discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
         connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
@@ -385,142 +385,139 @@ extension DependencyValues {
 
 extension NFCSignatureProvider {
     /// Default implementation of the NFC signature provider
-    public static var defaultImplementation = {
-        NFCSignatureProvider { can, pin, challenge, profileId in
-            guard let nfcHealthCardSession = NFCHealthCardSession(
-                messages: .defaultMessages,
-                can: can,
-                operation: { nfcHealthCardSessionHandle in
-                    try await Self.verifyPin(pin: pin, nfcHealthCardSessionHandle: nfcHealthCardSessionHandle)
+    public static var defaultImplementation = NFCSignatureProvider { can, pin, challenge, profileId in
+        guard let nfcHealthCardSession = NFCHealthCardSession(
+            messages: .defaultMessages,
+            can: can,
+            operation: { nfcHealthCardSessionHandle in
+                try await Self.verifyPin(pin: pin, nfcHealthCardSessionHandle: nfcHealthCardSessionHandle)
 
-                    let jwtSigner = EGKSigner(card: nfcHealthCardSessionHandle.card)
-                    let (signedChallenge, _) = try await Self.signChallenge(
-                        challenge: challenge,
-                        nfcHealthCardSessionHandle: nfcHealthCardSessionHandle,
-                        readCertificateFromCard: { try await nfcHealthCardSessionHandle.card.readAutCertificateAsync()
-                        },
-                        jwtSigner: jwtSigner,
-                        idpChallengeSigner: IDPChallengeSessionSigner.liveValue,
-                        signedChallengeSignatureVerifier: SignedChallengeSignatureVerifier.liveValue,
-                        profileId: profileId
-                    )
+                let jwtSigner = EGKSigner(card: nfcHealthCardSessionHandle.card)
+                let (signedChallenge, _) = try await Self.signChallenge(
+                    challenge: challenge,
+                    nfcHealthCardSessionHandle: nfcHealthCardSessionHandle,
+                    readCertificateFromCard: { try await nfcHealthCardSessionHandle.card.readAutCertificateAsync()
+                    },
+                    jwtSigner: jwtSigner,
+                    idpChallengeSigner: IDPChallengeSessionSigner.liveValue,
+                    signedChallengeSignatureVerifier: SignedChallengeSignatureVerifier.liveValue,
+                    profileId: profileId
+                )
 
-                    nfcHealthCardSessionHandle.updateAlert(message: EGKSignatureProvider.systemNFCDialogSuccess)
-                    return .success(signedChallenge)
-                }
-            )
-            else {
-                // The initializer only returns nil if `NFCTagReaderSession` could not be initialized.
-                return .failure(.nfcHealthCardSession(.couldNotInitializeSession))
+                nfcHealthCardSessionHandle.updateAlert(message: EGKSignatureProvider.systemNFCDialogSuccess)
+                return .success(signedChallenge)
             }
-
-            let signedChallengeResult: Result<SignedChallenge, NFCSignatureProviderError>
-            do {
-                signedChallengeResult = try await nfcHealthCardSession.executeOperation()
-            } catch let error as NFCHealthCardSessionError {
-                let nfcSignatureProviderError: NFCSignatureProviderError
-                if case .wrongCAN = error {
-                    nfcSignatureProviderError = .wrongCAN(error)
-                } else if case let .operation(error) = error,
-                          let verifyPINError = error as? NFCSignatureProviderError.VerifyPINError {
-                    nfcSignatureProviderError = .verifyCardError(verifyPINError)
-                } else {
-                    nfcSignatureProviderError = .nfcHealthCardSession(error)
-                }
-
-                signedChallengeResult = .failure(nfcSignatureProviderError)
-            } catch {
-                signedChallengeResult = .failure(.cardReadingError(error))
-            }
-
-            switch signedChallengeResult {
-            case .success:
-                nfcHealthCardSession.invalidateSession(with: nil)
-            case let .failure(error):
-                nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
-            }
-            do {
-                // The delay is needed to show the error/success message
-                try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
-            } catch {}
-            return signedChallengeResult
-        } signForBiometrics: { can, pin, idpChallengeSession, registerDataProvider, pairingSession, profileId in
-            guard let nfcHealthCardSession = NFCHealthCardSession(
-                messages: .defaultMessages,
-                can: can,
-                operation: { nfcHealthCardSessionHandle in
-                    try await Self.verifyPin(pin: pin, nfcHealthCardSessionHandle: nfcHealthCardSessionHandle)
-
-                    let jwtSigner = EGKSigner(card: nfcHealthCardSessionHandle.card)
-                    let (signedChallenge, certificateData) = try await Self.signChallenge(
-                        challenge: idpChallengeSession,
-                        nfcHealthCardSessionHandle: nfcHealthCardSessionHandle,
-                        readCertificateFromCard: { try await nfcHealthCardSessionHandle.card.readAutCertificateAsync()
-                        },
-                        jwtSigner: jwtSigner,
-                        idpChallengeSigner: IDPChallengeSessionSigner.liveValue,
-                        signedChallengeSignatureVerifier: SignedChallengeSignatureVerifier.liveValue,
-                        profileId: profileId
-                    )
-
-                    // request the pairing data and sign it
-                    let registrationData: RegistrationData
-                    do {
-                        let cert = try X509(der: certificateData)
-                        registrationData = try await registerDataProvider.signPairingSession(
-                            pairingSession,
-                            with: jwtSigner,
-                            certificate: cert
-                        )
-                        .async(\NFCSignatureProviderError.Cases.secureEnclaveError)
-                    } catch let error as CoreNFCError {
-                        return .failure(.nfcHealthCardSession(.coreNFC(error)))
-                    } catch {
-                        return .failure(.signingFailure(.certificate(error)))
-                    }
-
-                    nfcHealthCardSessionHandle.updateAlert(message: EGKSignatureProvider.systemNFCDialogSuccess)
-
-                    return .success((signedChallenge, registrationData))
-                }
-            )
-            else {
-                // The initializer only returns nil if `NFCTagReaderSession` could not be initialized.
-                return .failure(NFCSignatureProviderError.nfcHealthCardSession(.couldNotInitializeSession))
-            }
-
-            let signForBiometricsResult: Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
-            do {
-                signForBiometricsResult = try await nfcHealthCardSession.executeOperation()
-            } catch let error as NFCHealthCardSessionError {
-                let nfcSignatureProviderError: NFCSignatureProviderError
-                if case .wrongCAN = error {
-                    nfcSignatureProviderError = .wrongCAN(error)
-                } else if case let .operation(error) = error,
-                          let verifyPINError = error as? NFCSignatureProviderError.VerifyPINError {
-                    nfcSignatureProviderError = .verifyCardError(verifyPINError)
-                } else {
-                    nfcSignatureProviderError = .nfcHealthCardSession(error)
-                }
-                signForBiometricsResult = .failure(nfcSignatureProviderError)
-            } catch {
-                signForBiometricsResult = .failure(.cardReadingError(error))
-            }
-
-            switch signForBiometricsResult {
-            case .success:
-                nfcHealthCardSession.invalidateSession(with: nil)
-            case let .failure(error):
-                nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
-            }
-            do {
-                // The delay is needed to show the error/success message
-                try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
-            } catch {}
-            return signForBiometricsResult
+        )
+        else {
+            // The initializer only returns nil if `NFCTagReaderSession` could not be initialized.
+            return .failure(.nfcHealthCardSession(.couldNotInitializeSession))
         }
 
-    }()
+        let signedChallengeResult: Result<SignedChallenge, NFCSignatureProviderError>
+        do {
+            signedChallengeResult = try await nfcHealthCardSession.executeOperation()
+        } catch let error as NFCHealthCardSessionError {
+            let nfcSignatureProviderError: NFCSignatureProviderError
+            if case .wrongCAN = error {
+                nfcSignatureProviderError = .wrongCAN(error)
+            } else if case let .operation(error) = error,
+                      let verifyPINError = error as? NFCSignatureProviderError.VerifyPINError {
+                nfcSignatureProviderError = .verifyCardError(verifyPINError)
+            } else {
+                nfcSignatureProviderError = .nfcHealthCardSession(error)
+            }
+
+            signedChallengeResult = .failure(nfcSignatureProviderError)
+        } catch {
+            signedChallengeResult = .failure(.cardReadingError(error))
+        }
+
+        switch signedChallengeResult {
+        case .success:
+            nfcHealthCardSession.invalidateSession(with: nil)
+        case let .failure(error):
+            nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
+        }
+        do {
+            // The delay is needed to show the error/success message
+            try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
+        } catch {}
+        return signedChallengeResult
+    } signForBiometrics: { can, pin, idpChallengeSession, registerDataProvider, pairingSession, profileId in
+        guard let nfcHealthCardSession = NFCHealthCardSession(
+            messages: .defaultMessages,
+            can: can,
+            operation: { nfcHealthCardSessionHandle in
+                try await Self.verifyPin(pin: pin, nfcHealthCardSessionHandle: nfcHealthCardSessionHandle)
+
+                let jwtSigner = EGKSigner(card: nfcHealthCardSessionHandle.card)
+                let (signedChallenge, certificateData) = try await Self.signChallenge(
+                    challenge: idpChallengeSession,
+                    nfcHealthCardSessionHandle: nfcHealthCardSessionHandle,
+                    readCertificateFromCard: { try await nfcHealthCardSessionHandle.card.readAutCertificateAsync()
+                    },
+                    jwtSigner: jwtSigner,
+                    idpChallengeSigner: IDPChallengeSessionSigner.liveValue,
+                    signedChallengeSignatureVerifier: SignedChallengeSignatureVerifier.liveValue,
+                    profileId: profileId
+                )
+
+                // request the pairing data and sign it
+                let registrationData: RegistrationData
+                do {
+                    let cert = try X509(der: certificateData)
+                    registrationData = try await registerDataProvider.signPairingSession(
+                        pairingSession,
+                        with: jwtSigner,
+                        certificate: cert
+                    )
+                    .async(\NFCSignatureProviderError.Cases.secureEnclaveError)
+                } catch let error as CoreNFCError {
+                    return .failure(.nfcHealthCardSession(.coreNFC(error)))
+                } catch {
+                    return .failure(.signingFailure(.certificate(error)))
+                }
+
+                nfcHealthCardSessionHandle.updateAlert(message: EGKSignatureProvider.systemNFCDialogSuccess)
+
+                return .success((signedChallenge, registrationData))
+            }
+        )
+        else {
+            // The initializer only returns nil if `NFCTagReaderSession` could not be initialized.
+            return .failure(NFCSignatureProviderError.nfcHealthCardSession(.couldNotInitializeSession))
+        }
+
+        let signForBiometricsResult: Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
+        do {
+            signForBiometricsResult = try await nfcHealthCardSession.executeOperation()
+        } catch let error as NFCHealthCardSessionError {
+            let nfcSignatureProviderError: NFCSignatureProviderError
+            if case .wrongCAN = error {
+                nfcSignatureProviderError = .wrongCAN(error)
+            } else if case let .operation(error) = error,
+                      let verifyPINError = error as? NFCSignatureProviderError.VerifyPINError {
+                nfcSignatureProviderError = .verifyCardError(verifyPINError)
+            } else {
+                nfcSignatureProviderError = .nfcHealthCardSession(error)
+            }
+            signForBiometricsResult = .failure(nfcSignatureProviderError)
+        } catch {
+            signForBiometricsResult = .failure(.cardReadingError(error))
+        }
+
+        switch signForBiometricsResult {
+        case .success:
+            nfcHealthCardSession.invalidateSession(with: nil)
+        case let .failure(error):
+            nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
+        }
+        do {
+            // The delay is needed to show the error/success message
+            try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
+        } catch {}
+        return signForBiometricsResult
+    }
 }
 
 extension NFCSignatureProvider {

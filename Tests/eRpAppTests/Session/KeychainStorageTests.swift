@@ -43,16 +43,14 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     // swiftlint:enable line_length
-    lazy var testDocument: DiscoveryDocument = {
-        try! DiscoveryDocument(
-            jwt: JWT(from: jwt),
-            encryptPuks: jwk,
-            signingPuks: jwk,
-            createdOn: Date(timeIntervalSince1970: 1_600_000_000)
-        )
-    }()
+    lazy var testDocument: DiscoveryDocument = try! DiscoveryDocument(
+        jwt: JWT(from: jwt),
+        encryptPuks: jwk,
+        signingPuks: jwk,
+        createdOn: Date(timeIntervalSince1970: 1_600_000_000)
+    )
 
-    func testDiscoveryDocumentStorage() throws {
+    func testDiscoveryDocumentStorage() {
         let keychainHelperMock = KeychainAccessHelperMock()
         keychainHelperMock.setGenericPasswordPasswordDataForAccountDataServiceDataBoolReturnValue = true
         let sut = KeychainStorage(profileId: UUID())
@@ -70,7 +68,7 @@ final class KeychainStorageTests: XCTestCase {
         expect(password) == serialized
     }
 
-    func testRetrieveDiscoveryDocumentStorage() throws {
+    func testRetrieveDiscoveryDocumentStorage() {
         let keychainHelperMock = KeychainAccessHelperMock()
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
@@ -171,7 +169,7 @@ final class KeychainStorageTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testKeyIdentifierRetrievalOnAnotherSet() throws {
+    func testKeyIdentifierRetrievalOnAnotherSet() {
         let keychainHelperMock = KeychainAccessHelperMock()
         keychainHelperMock.setGenericPasswordPasswordDataForAccountDataServiceDataBoolReturnValue = true
         let sut = KeychainStorage(profileId: UUID())

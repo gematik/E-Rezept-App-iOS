@@ -67,7 +67,9 @@ extension ToggleStyle where Self == FormToggleStyle {
     ///
     /// To manually apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.form)`` modifier.
-    public static var plain: FormToggleStyle { FormToggleStyle() }
+    public static var plain: FormToggleStyle {
+        FormToggleStyle()
+    }
 }
 
 #Preview {

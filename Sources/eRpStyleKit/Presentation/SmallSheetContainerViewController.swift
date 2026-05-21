@@ -31,7 +31,7 @@ class SmallSheetContainerViewController: UIViewController {
     weak var bottomAnchor: NSLayoutConstraint?
     weak var heightAnchor: NSLayoutConstraint?
 
-    // Retained by ViewController hierarchy
+    /// Retained by ViewController hierarchy
     weak var contentViewController: UIViewController?
 
     init(dismissBackgroundTap: @escaping () -> Void, contentVC: UIViewController) {
@@ -59,7 +59,7 @@ class SmallSheetContainerViewController: UIViewController {
 
     @objc
     func panGesture(_ gesture: UIPanGestureRecognizer) {
-        guard let bottomAnchor = bottomAnchor else {
+        guard let bottomAnchor else {
             return
         }
 
@@ -121,7 +121,7 @@ class SmallSheetContainerViewController: UIViewController {
         panGestureRecognizer.maximumNumberOfTouches = 1
         view.addGestureRecognizer(panGestureRecognizer)
 
-        if let contentViewController = contentViewController {
+        if let contentViewController {
             view.addSubview(fillingFooter)
             view.addSubview(contentViewController.view)
 
@@ -164,7 +164,7 @@ class SmallSheetContainerViewController: UIViewController {
         dismiss()
     }
 
-    // Calculate content size
+    /// Calculate content size
     var contentSize: CGSize? {
         var size = contentViewController?.view.sizeThatFits(CGSize(width: view.bounds.width, height: 0))
 

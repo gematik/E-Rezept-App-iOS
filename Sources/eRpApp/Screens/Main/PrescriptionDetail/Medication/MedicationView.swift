@@ -95,7 +95,7 @@ struct MedicationView: View {
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
                 }
 
-                if let dispenseState = dispenseState {
+                if let dispenseState {
                     DispenseDetailView(dispenseDetail: dispenseState)
                 }
             }.sectionContainerStyle(.inline)
@@ -144,7 +144,7 @@ struct MedicationView: View {
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
                 }
 
-                if let dispenseState = dispenseState {
+                if let dispenseState {
                     DispenseDetailView(dispenseDetail: dispenseState)
                 }
             }.sectionContainerStyle(.inline)
@@ -165,8 +165,8 @@ struct MedicationView: View {
                                 Text(L10n.prscDtlMedIngredientName)
                             }
                         })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBtnIngredient)
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBtnIngredient)
                     }
                 }
 

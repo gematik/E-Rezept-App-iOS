@@ -28,9 +28,9 @@ import Nimble
 import SwiftUI
 import XCTest
 
-// FHIRBundle tests with
-// - workflow bundle version: 1.3.0 and
-// - no prescription bundle (no changes)
+/// FHIRBundle tests with
+/// - workflow bundle version: 1.3.0 and
+/// - no prescription bundle (no changes)
 final class FHIR_GEM_Workflow_v1_3_TaskTests: XCTestCase {
     /// FHIRBundle test of workflow version 1.3.0 without prescription bundle
     func testParseErxTaskWithoutPrescriptionBundle() throws {

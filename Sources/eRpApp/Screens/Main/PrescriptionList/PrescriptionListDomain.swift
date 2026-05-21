@@ -147,7 +147,7 @@ struct PrescriptionListDomain {
     }
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
@@ -359,16 +359,16 @@ extension Publisher where Output == PrescriptionRepositoryLoadRemoteResult, Fail
             PrescriptionRepositoryLoadRemoteResult,
             PrescriptionRepositoryError
         > in
-        if case let PrescriptionRepositoryError
-            .erxRepository(.remote(.fhirClient(FHIRClient.Error.http(fhirClientHttpError)))) = error,
-            case let .httpError(urlError) = fhirClientHttpError.httpClientError,
-            urlError.code.rawValue == HTTPStatusCode.forbidden.rawValue ||
-            urlError.code.rawValue == HTTPStatusCode.unauthorized.rawValue {
-            return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)
-                .setFailureType(to: PrescriptionRepositoryError.self)
-                .eraseToAnyPublisher()
-        }
-        return Fail(error: error).eraseToAnyPublisher()
+            if case let PrescriptionRepositoryError
+                .erxRepository(.remote(.fhirClient(FHIRClient.Error.http(fhirClientHttpError)))) = error,
+                case let .httpError(urlError) = fhirClientHttpError.httpClientError,
+                urlError.code.rawValue == HTTPStatusCode.forbidden.rawValue ||
+                urlError.code.rawValue == HTTPStatusCode.unauthorized.rawValue {
+                return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)
+                    .setFailureType(to: PrescriptionRepositoryError.self)
+                    .eraseToAnyPublisher()
+            }
+            return Fail(error: error).eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()
     }

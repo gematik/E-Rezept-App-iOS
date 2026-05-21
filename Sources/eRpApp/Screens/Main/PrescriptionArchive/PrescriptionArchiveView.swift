@@ -28,10 +28,6 @@ import SwiftUI
 struct PrescriptionArchiveView: View {
     @Bindable var store: StoreOf<PrescriptionArchiveDomain>
 
-    init(store: StoreOf<PrescriptionArchiveDomain>) {
-        self.store = store
-    }
-
     var body: some View {
         ScrollView(.vertical) {
             if !store.diGaPrescriptions.isEmpty {

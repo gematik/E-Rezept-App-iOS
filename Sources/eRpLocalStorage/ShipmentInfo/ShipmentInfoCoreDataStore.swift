@@ -82,7 +82,7 @@ public class ShipmentInfoCoreDataStore: ShipmentInfoDataStore, CoreDataCrudable 
         userDefaults.publisher(for: \UserDefaults.selectedShipmentInfoId)
             .setFailureType(to: LocalStoreError.self)
             .flatMap { [weak self] selectedShipmentId -> AnyPublisher<ShipmentInfo?, LocalStoreError> in
-                guard let self = self,
+                guard let self,
                       let identifier = selectedShipmentId else {
                     return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
                 }

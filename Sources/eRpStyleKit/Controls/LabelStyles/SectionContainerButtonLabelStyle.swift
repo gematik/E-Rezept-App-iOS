@@ -81,7 +81,7 @@ struct SectionContainerButtonLabelStyle_Preview: PreviewProvider {
                     Button(action: {}, label: {
                         Label("Automatic usage usage within a button", systemImage: SFSymbolName.ant)
                     })
-                        .disabled(true)
+                    .disabled(true)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

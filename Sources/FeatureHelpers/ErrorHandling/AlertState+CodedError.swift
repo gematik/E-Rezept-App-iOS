@@ -34,7 +34,7 @@ extension AlertState {
         let resultTitle: () -> TextState
         let resultDescription: () -> TextState
 
-        if let title = title {
+        if let title {
             resultTitle = title
             resultDescription = { TextState(error.descriptionAndSuggestionWithErrorList) }
         } else {
@@ -197,7 +197,7 @@ extension View {
     ///   - toDestinationState: A transformation to extract alert state from the presentation state.
     ///   - fromDestinationAction: A transformation to embed alert actions into the presentation
     ///     action.
-    @ViewBuilder public func alert<State, Action, ButtonAction>(
+    public func alert<State, Action, ButtonAction>(
         _ store: Store<PresentationState<State>, PresentationAction<Action>>,
         state toDestinationState: @escaping (State) -> ErpAlertState<ButtonAction>?,
         action fromDestinationAction: @escaping (ButtonAction) -> Action

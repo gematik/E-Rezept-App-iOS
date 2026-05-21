@@ -39,7 +39,7 @@ public struct CardWallCANInputView: View {
     public var body: some View {
         ZStack {
             HStack(alignment: .center, spacing: 8) {
-                ForEach(Array(self.can).prefix(6), id: \.self) { digit in
+                ForEach(Array(can).prefix(6), id: \.self) { digit in
                     Text(String(digit))
                         .font(.headline)
                         .fontWeight(.bold)
@@ -52,7 +52,7 @@ public struct CardWallCANInputView: View {
                                 .stroke(Colors.systemLabelSecondary, lineWidth: 0.5)
                         )
                 }
-                ForEach(min(self.can.count, 6) ..< 6, id: \.self) { _ in
+                ForEach(min(can.count, 6) ..< 6, id: \.self) { _ in
                     Rectangle()
                         .fill(Colors.systemColorClear)
                         .frame(minWidth: 32, maxWidth: 48, minHeight: 56, maxHeight: 64)

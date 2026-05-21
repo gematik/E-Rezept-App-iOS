@@ -22,7 +22,7 @@
 
 import Foundation
 
-// Protocol to make `DateFormatter` mockable
+/// Protocol to make `DateFormatter` mockable
 protocol ERPDateFormatter {
     func string(from: Date) -> String
 }

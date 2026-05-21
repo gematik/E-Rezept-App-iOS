@@ -51,7 +51,7 @@ public struct StringAsset {
 
     /// The localized and formatted string value.
     public var text: String {
-        let arguments = self.arguments ?? []
+        let arguments = arguments ?? []
 
         // We still need to format, to correctly escape possible %%
         return String(format: NSLocalizedString(rawKey, bundle: bundle, comment: ""), arguments: arguments)
@@ -59,7 +59,7 @@ public struct StringAsset {
 
     /// The localized string as a `LocalizedStringKey` for SwiftUI.
     public var key: LocalizedStringKey {
-        guard let arguments = arguments, !arguments.isEmpty else {
+        guard let arguments, !arguments.isEmpty else {
             return LocalizedStringKey(rawKey)
         }
 

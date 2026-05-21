@@ -131,7 +131,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
             .eraseToAnyPublisher()
     }
 
-    // creates or updates a `Profile`. Note that the `erxTasks` relationship will not be saved
+    /// creates or updates a `Profile`. Note that the `erxTasks` relationship will not be saved
     public func save(profiles: [Profile]) -> AnyPublisher<Bool, LocalStoreError> {
         save(mergePolicy: NSMergePolicy.error) { moc in
             _ = profiles.map { profile -> ProfileEntity in

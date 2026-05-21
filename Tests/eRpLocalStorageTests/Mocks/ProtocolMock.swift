@@ -26,7 +26,9 @@ import eRpKit
 import eRpLocalStorage
 import Foundation
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension CoreDataControllerFactory {}
 extension UserDataStore {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

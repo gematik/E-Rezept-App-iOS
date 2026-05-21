@@ -40,6 +40,7 @@ public struct CodeDomain {
         var euAccessCode: EuAccessCode?
         var countryCode: String
         var qrCodeImage: UIImage?
+        var isLoading: Bool = true
 
         var minutesRemaining: Int {
             @Dependency(\.date) var date
@@ -67,11 +68,13 @@ public struct CodeDomain {
             insuranceId: String? = nil,
             euAccessCode: EuAccessCode? = nil,
             countryCode: String,
+            isLoading: Bool = true
         ) {
             self.displayMode = displayMode
             self.insuranceId = insuranceId
             self.euAccessCode = euAccessCode
             self.countryCode = countryCode
+            self.isLoading = isLoading
         }
     }
 
@@ -81,6 +84,7 @@ public struct CodeDomain {
         case toggleDisplayMode
         case refreshCode
         case generateQRCode(screenSize: CGSize)
+        case speechButtonTapped(text: String)
         case response(Response)
         case delegate(Delegate)
         case destination(PresentationAction<Destination.Action>)
@@ -118,10 +122,11 @@ public struct CodeDomain {
     @Dependency(\.euRedeemService) var euRedeemService: EuRedeemService
     @Dependency(\.euAccessCodeGenerator) var euAccessCodeGenerator: EuAccessCodeGenerator
     @Dependency(\.date) var date
+    @Dependency(\.textToSpeechService) var textToSpeechService
 
     /// Reducer body
     public var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -165,6 +170,9 @@ public struct CodeDomain {
                 state.displayMode = .manual
             }
             return .none
+        case let .speechButtonTapped(text: text):
+            try? textToSpeechService.speakText(text, state.countryCode)
+            return .none
         case .refreshCode,
              .destination(.presented(.alert(.refreshCode))):
             return .run { [countryCode = state.countryCode, profileId = state.profileId] send in
@@ -202,6 +210,7 @@ public struct CodeDomain {
             }
             return .none
         case let .response(.codeRefreshed(.success(euAccessCode))):
+            state.isLoading = false
             state.euAccessCode = euAccessCode
             state.qrCodeImage = nil
 
@@ -210,6 +219,7 @@ public struct CodeDomain {
             }
             return .none
         case let .response(.codeRefreshed(.failure(error))):
+            state.isLoading = false
             switch error {
             case .euCodeGeneration:
                 state.destination = .alert(Self.accessCodeError())
@@ -227,7 +237,7 @@ public struct CodeDomain {
         to end: Date?,
         calendar: Calendar = Calendar.current
     ) -> Int {
-        guard let start = start, let end = end else {
+        guard let start, let end else {
             return 0
         }
         let minutes = calendar.dateComponents([.minute], from: start, to: end).minute
@@ -252,13 +262,14 @@ public struct CodeDomain {
 
 extension CodeDomain {
     enum Dummies {
-        static let state = State(countryCode: "De")
+        static let state = State(countryCode: "De", isLoading: false)
 
         static let expiredState = State(
             displayMode: .manual,
             insuranceId: "M123456789",
             euAccessCode: EuAccessCode(),
-            countryCode: "De"
+            countryCode: "De",
+            isLoading: false
         )
 
         static let store = StoreOf<CodeDomain>(

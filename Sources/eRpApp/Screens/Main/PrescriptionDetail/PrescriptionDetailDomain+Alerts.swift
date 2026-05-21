@@ -56,35 +56,31 @@ extension PrescriptionDetailDomain {
             return activity
         }
 
-        static var confirmDeleteAlertState: ErpAlertState<Destination.Alert> = {
-            .init(
-                title: L10n.dtlTxtDeleteAlertTitle,
-                actions: {
-                    ButtonState(role: .destructive, action: .confirmedDelete) {
-                        .init(L10n.dtlTxtDeleteYes)
-                    }
-                    ButtonState(role: .cancel, action: .dismiss) {
-                        .init(L10n.dtlTxtDeleteNo)
-                    }
-                },
-                message: L10n.dtlTxtDeleteAlertMessage
-            )
-        }()
+        static var confirmDeleteAlertState: ErpAlertState<Destination.Alert> = .init(
+            title: L10n.dtlTxtDeleteAlertTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .confirmedDelete) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel, action: .dismiss) {
+                    .init(L10n.dtlTxtDeleteNo)
+                }
+            },
+            message: L10n.dtlTxtDeleteAlertMessage
+        )
 
-        static var confirmDeleteWithChargeItemAlertState: ErpAlertState<Destination.Alert> = {
-            .init(
-                title: L10n.dtlTxtDeleteWithChargeItemAlertTitle,
-                actions: {
-                    ButtonState(role: .destructive, action: .confirmedDeleteWithChargeItem) {
-                        .init(L10n.dtlTxtDeleteYes)
-                    }
-                    ButtonState(role: .cancel, action: .dismiss) {
-                        .init(L10n.dtlTxtDeleteNo)
-                    }
-                },
-                message: L10n.dtlTxtDeleteWithChargeItemAlertMessage
-            )
-        }()
+        static var confirmDeleteWithChargeItemAlertState: ErpAlertState<Destination.Alert> = .init(
+            title: L10n.dtlTxtDeleteWithChargeItemAlertTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .confirmedDeleteWithChargeItem) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel, action: .dismiss) {
+                    .init(L10n.dtlTxtDeleteNo)
+                }
+            },
+            message: L10n.dtlTxtDeleteWithChargeItemAlertMessage
+        )
 
         static func deletionNotAllowedAlertState(_ prescription: Prescription)
             -> ErpAlertState<Destination.Alert> {
@@ -144,20 +140,18 @@ extension PrescriptionDetailDomain {
             }
         }
 
-        static let grantConsentRequest: ErpAlertState<Destination.Alert> = {
-            .init(
-                title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
-                actions: {
-                    ButtonState(action: .grantConsent) {
-                        .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate)
-                    }
-                    ButtonState(role: .cancel, action: .grantConsentDeny) {
-                        .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel)
-                    }
-                },
-                message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
-            )
-        }()
+        static let grantConsentRequest: ErpAlertState<Destination.Alert> = .init(
+            title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
+            actions: {
+                ButtonState(action: .grantConsent) {
+                    .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate)
+                }
+                ButtonState(role: .cancel, action: .grantConsentDeny) {
+                    .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel)
+                }
+            },
+            message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
+        )
     }
 
     enum ToastStates {

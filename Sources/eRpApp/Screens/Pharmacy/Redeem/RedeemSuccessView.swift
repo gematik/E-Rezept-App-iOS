@@ -29,10 +29,6 @@ import SwiftUI
 struct RedeemSuccessView: View {
     let store: StoreOf<RedeemSuccessDomain>
 
-    init(store: StoreOf<RedeemSuccessDomain>) {
-        self.store = store
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {

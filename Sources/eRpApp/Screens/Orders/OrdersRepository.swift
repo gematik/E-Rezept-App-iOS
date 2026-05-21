@@ -35,7 +35,7 @@ import Pharmacy
 protocol OrdersRepository {
     func
         loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error>
-    // we load all local EuOrders but when fetching from remote we only fetch for current selected profile
+    /// we load all local EuOrders but when fetching from remote we only fetch for current selected profile
     func loadEuOrders(profileId: UUID) -> AsyncThrowingStream<IdentifiedArray<String, EuOrder>, Swift.Error>
 }
 

@@ -202,7 +202,7 @@ extension EditProfilePictureView {
                                     .border(store.color.border, width: 1, cornerRadius: 99)
                                     .clipShape(Circle())
                             })
-                                .accessibilityLabel(L10n.editPictureChooseAsAvatar(image.accessibility.text))
+                            .accessibilityLabel(L10n.editPictureChooseAsAvatar(image.accessibility.text))
                         }
                     }
                 }

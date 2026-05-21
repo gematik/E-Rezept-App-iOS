@@ -116,10 +116,10 @@ extension OnboardingRegisterAuthenticationView {
                     }
                     .padding()
                 })
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnFaceId)
-                    .buttonStyle(DefaultButtonStyle())
-                    .background(Colors.systemBackgroundTertiary)
-                    .border(Colors.primary, width: 2.0, cornerRadius: 16)
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnFaceId)
+                .buttonStyle(DefaultButtonStyle())
+                .background(Colors.systemBackgroundTertiary)
+                .border(Colors.primary, width: 2.0, cornerRadius: 16)
             }
             .padding(.top, 24)
         }
@@ -156,10 +156,10 @@ extension OnboardingRegisterAuthenticationView {
                     }
                     .padding()
                 })
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnTouchId)
-                    .buttonStyle(DefaultButtonStyle())
-                    .background(Colors.systemBackgroundTertiary)
-                    .border(Colors.primary, width: 2.0, cornerRadius: 16)
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnTouchId)
+                .buttonStyle(DefaultButtonStyle())
+                .background(Colors.systemBackgroundTertiary)
+                .border(Colors.primary, width: 2.0, cornerRadius: 16)
             }
             .padding(.top, 24)
         }
@@ -194,11 +194,11 @@ extension OnboardingRegisterAuthenticationView {
                     }
                     .padding()
                 })
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnPassword)
-                    .buttonStyle(DefaultButtonStyle())
-                    .background(Colors.systemBackgroundTertiary)
-                    .border(Colors.primary, width: 1.0, cornerRadius: 16)
-                    .padding(.bottom)
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnPassword)
+                .buttonStyle(DefaultButtonStyle())
+                .background(Colors.systemBackgroundTertiary)
+                .border(Colors.primary, width: 1.0, cornerRadius: 16)
+                .padding(.bottom)
             }
             .padding(.top, 8)
         }

@@ -58,7 +58,7 @@ extension SecureUserDataStoreClient: DependencyKey {
             },
             setCAN: { profileId, can in
                 do {
-                    if let can = can {
+                    if let can {
                         _ = try keychainHelper.setGenericPassword(can, for: egkPasswordIdentifier(for: profileId))
                     } else {
                         _ = try keychainHelper.unsetGenericPassword(for: egkPasswordIdentifier(for: profileId))

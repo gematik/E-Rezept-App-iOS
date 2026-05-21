@@ -55,7 +55,7 @@ extension Publisher {
     /// Use for awaiting exactly one value (as with `Publisher.first()`)
     ///
     /// - Parameter: use `transformError` to try to embed the thrown error into another one
-    public func async<E2: Swift.Error>(_ transformError: CaseKeyPath<E2, Self.Failure>) async throws -> Output {
+    public func async(_ transformError: CaseKeyPath<some Swift.Error, Self.Failure>) async throws -> Output {
         do {
             return try await _async()
         } catch let error as Self.Failure {
@@ -67,7 +67,7 @@ extension Publisher {
 
     /// Converts publisher to async function with error transformation
     @available(*, deprecated, message: "use CaseKeyPath version")
-    public func async<E2: Swift.Error>(_ transformError: AnyCasePath<E2, Self.Failure>) async throws -> Output {
+    public func async(_ transformError: AnyCasePath<some Swift.Error, Self.Failure>) async throws -> Output {
         do {
             return try await _async()
         } catch let error as Self.Failure {

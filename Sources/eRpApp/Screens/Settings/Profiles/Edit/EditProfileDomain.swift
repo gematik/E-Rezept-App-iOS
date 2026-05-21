@@ -28,6 +28,7 @@ import eRpKit
 import eRpLocalStorage
 import eRpResources
 import FeatureCardWall
+import FeatureEURedeem
 import FeatureHelpers
 import Foundation
 import IDP
@@ -145,7 +146,7 @@ struct EditProfileDomain {
         case cardWall(CardWallIntroductionDomain)
         // sourcery: AnalyticsScreen = profile_insuranceDrawer
         case insuranceDrawer
-        case euRedeemConsentDrawer
+        case euRedeemConsent(FeatureEURedeem.ConsentDomain)
         case editProfilePicture(EditProfilePictureDomain)
 
         enum Alert: Equatable {
@@ -171,9 +172,7 @@ struct EditProfileDomain {
         case relogin
         case showDeleteBiometricPairingAlert
         case showCardWall
-        case changeEURedeemConsent
-        case grantEURedeemConsent
-        case revokeEURedeemConsent
+        case showEURedeemConsent
 
         case destination(PresentationAction<Destination.Action>)
         case resetNavigation
@@ -191,8 +190,7 @@ struct EditProfileDomain {
             case tokenReceived(IDPToken?)
             case biometricKeyIDReceived(Bool)
             case profileReceived(Result<Profile?, LocalStoreError>)
-            case grantConsentReceived(ConsentService.GrantResult)
-            case revokeConsentReceived(ConsentService.RevokeResult)
+            case euConsentCheckReceived(Result<ConsentService.CheckResult, ConsentService.Error>)
         }
 
         enum Delegate {
@@ -205,7 +203,7 @@ struct EditProfileDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
-    // Use changebaleUserSesisonContainer to set the correct user session for demo mode
+    /// Use changebaleUserSesisonContainer to set the correct user session for demo mode
     var userDataStore: UserDataStore {
         changeableUserSessionContainer.userSession.localUserStore
     }
@@ -221,7 +219,7 @@ struct EditProfileDomain {
     var body: some Reducer<State, Action> {
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -245,7 +243,21 @@ struct EditProfileDomain {
                         .map(Action.response)
                         .receive(on: schedulers.main)
                         .eraseToAnyPublisher
-                )
+                ),
+                .run { [profileId = state.profileId] send in
+                    do {
+                        let result = try await consentService.checkForConsent(
+                            category: .euDispense,
+                            profileID: profileId
+                        )
+                        await send(.response(.euConsentCheckReceived(.success(result))))
+                    } catch let error as ConsentService.Error {
+                        await send(.response(.euConsentCheckReceived(.failure(error))))
+                    } catch let error as ErxRepositoryError {
+                        await send(.response(.euConsentCheckReceived(.failure(ConsentService.Error
+                                .erxRepository(error)))))
+                    }
+                }
             )
         case .onAppear:
             // Routing needs to be split from EditProfileView on
@@ -321,51 +333,58 @@ struct EditProfileDomain {
         case .showCardWall:
             state.destination = .cardWall(.init(isNFCReady: true, profileId: state.profileId))
             return .none
-        case .changeEURedeemConsent:
-            state.destination = .euRedeemConsentDrawer
+        case .showEURedeemConsent:
+            let constentType: ConsentDomain.ConsentType = {
+                switch state.euRedeemConsentCheck {
+                case .granted:
+                    return .granted
+                case .notGranted:
+                    return .notGranted
+                case .notAuthenticated, .error:
+                    return .unknown
+                }
+            }()
+            state.destination = .euRedeemConsent(.init(
+                profileID: state.profileId,
+                consentType: constentType
+            ))
             return .none
-        case .grantEURedeemConsent:
-            state.destination = nil
-            return .run { [profileID = state.profileId] send in
-                let result = try await consentService.grantConsent(category: .euDispense, profileID: profileID)
-                await send(.response(.grantConsentReceived(result)))
-            }
-        case .revokeEURedeemConsent:
-            state.destination = nil
-            return .run { [profileID = state.profileId] send in
-                let result = try await consentService.revokeConsent(category: .euDispense, profileID: profileID)
-                await send(.response(.revokeConsentReceived(result)))
-            }
-        case let .response(.grantConsentReceived(result)):
-            switch result {
-            case .success, .conflict:
-                state.euRedeemConsentCheck = .granted
-            case .notAuthenticated:
-                state.euRedeemConsentCheck = .notAuthenticated
+        case let .response(.euConsentCheckReceived(.success(result))):
+            state.euRedeemConsentCheck = result
+            return .none
+        case let .response(.euConsentCheckReceived(.failure(error))):
+            state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
+            return .none
+        case let .destination(.presented(.euRedeemConsent(.delegate(action)))):
+            switch action {
+            case .consentAccepted, .consentDeclined, .close:
+                state.destination = nil
+                return .none
+            case .showCardWall:
                 state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
-            case let .error(error):
-                state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
                 return .none
             }
-            return .none
-        case let .response(.revokeConsentReceived(result)):
-            switch result {
-            case .success, .conflict:
-                state.euRedeemConsentCheck = .notGranted
-            case .notAuthenticated:
-                state.euRedeemConsentCheck = .notAuthenticated
-                state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
-            case let .error(error):
-                state.destination = .alert(.init(for: error, title: L10n.errTitleGeneric))
-                return .none
-            }
-            return .none
         case .destination(.presented(.alert(.cardWall))):
             return .run { send in
                 await send(.showCardWall)
             }
         case .destination(.presented(.cardWall(action: .delegate(.close)))):
             state.destination = nil
+            return .none
+        case .destination(.dismiss):
+            if case .cardWall = state.destination {
+                return .run { [profileId = state.profileId] send in
+                    do {
+                        let result = try await consentService.checkForConsent(
+                            category: .euDispense,
+                            profileID: profileId
+                        )
+                        await send(.response(.euConsentCheckReceived(.success(result))))
+                    } catch let error as ConsentService.Error {
+                        await send(.response(.euConsentCheckReceived(.failure(error))))
+                    }
+                }
+            }
             return .none
         case .setUserToGKVInsured:
             state.insuranceType = .gKV
@@ -395,7 +414,6 @@ struct EditProfileDomain {
         case let .response(.updateProfileReceived(.failure(error))):
             state.destination = .alert(.init(for: error))
             return .none
-
         // [REQ:BSI-eRp-ePA:O.Auth_14#3|6] The domain accepts the intent and wipes tokens and other login related data
         case .delegate(.logout):
             state.token = nil
@@ -574,8 +592,8 @@ extension EditProfileDomain {
             )
             .first()
             .flatMap { pairingToken, keyIdentifier -> AnyPublisher<Action, Never> in
-                guard let keyIdentifier = keyIdentifier,
-                      let pairingToken = pairingToken,
+                guard let keyIdentifier,
+                      let pairingToken,
                       let base64KeyIdentifier = keyIdentifier.encodeBase64UrlSafe(),
                       let deviceIdentifier = String(data: base64KeyIdentifier, encoding: .utf8) else {
                     return Just(Action.relogin).eraseToAnyPublisher()
@@ -657,35 +675,31 @@ extension EditProfileDomain {
     enum AlertStates {
         typealias Action = EditProfileDomain.Destination.Alert
 
-        static let deleteProfile: ErpAlertState<Action> = {
-            .init(
-                title: L10n.stgTxtEditProfileDeleteConfirmationTitle,
-                actions: {
-                    ButtonState(role: .destructive, action: .confirmDeleteProfile) {
-                        .init(L10n.dtlTxtDeleteYes)
-                    }
-                    ButtonState(role: .cancel) {
-                        .init(L10n.stgBtnEditProfileDeleteAlertCancel)
-                    }
-                },
-                message: L10n.stgTxtEditProfileDeleteConfirmationMessage
-            )
-        }()
+        static let deleteProfile: ErpAlertState<Action> = .init(
+            title: L10n.stgTxtEditProfileDeleteConfirmationTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .confirmDeleteProfile) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel) {
+                    .init(L10n.stgBtnEditProfileDeleteAlertCancel)
+                }
+            },
+            message: L10n.stgTxtEditProfileDeleteConfirmationMessage
+        )
 
-        static let deleteBiometricPairing: ErpAlertState<Action> = {
-            .init(
-                title: L10n.stgTxtEditProfileDeletePairingTitle,
-                actions: {
-                    ButtonState(role: .destructive, action: .confirmDeleteBiometricPairing) {
-                        .init(L10n.dtlTxtDeleteYes)
-                    }
-                    ButtonState(role: .cancel) {
-                        .init(L10n.stgBtnEditProfileDeleteAlertCancel)
-                    }
-                },
-                message: L10n.stgTxtEditProfileDeletePairingMessage
-            )
-        }()
+        static let deleteBiometricPairing: ErpAlertState<Action> = .init(
+            title: L10n.stgTxtEditProfileDeletePairingTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .confirmDeleteBiometricPairing) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel) {
+                    .init(L10n.stgBtnEditProfileDeleteAlertCancel)
+                }
+            },
+            message: L10n.stgTxtEditProfileDeletePairingMessage
+        )
 
         static func deleteBiometricPairingFailed(with error: IDPError) -> ErpAlertState<Action> {
             .init(

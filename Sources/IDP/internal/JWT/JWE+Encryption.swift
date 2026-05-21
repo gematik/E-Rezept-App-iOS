@@ -118,7 +118,7 @@ extension JWE {
 
         func decryptAES256GCM(jwe: JWE.Backing, key: SymmetricKey) throws -> Data {
             let sealedBox = try AES.GCM.SealedBox(
-                nonce: try AES.GCM.Nonce(data: jwe.iv),
+                nonce: AES.GCM.Nonce(data: jwe.iv),
                 ciphertext: jwe.ciphertext,
                 tag: jwe.tag
             )

@@ -25,7 +25,7 @@ import Combine
 import eRpKit
 import UIKit
 
-// Encodes a string with a given `MatrixCodeGenerator` into an DMC image.
+/// Encodes a string with a given `MatrixCodeGenerator` into an DMC image.
 class MockErxMatrixCodeGenerator: ErxMatrixCodeGenerator {
     init() {
         uiImage = Asset.qrcode.image

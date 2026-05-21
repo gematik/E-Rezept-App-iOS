@@ -47,11 +47,6 @@ struct ScrollViewWithStickyHeader<Content: View, Header: View>: View {
                     content
                 } header: {
                     header
-                        .overlay(
-                            Divider().foregroundColor(Colors.separator).opacity(effectStrength),
-                            alignment: .bottom
-                        )
-                        .background(.bar)
                 }
             }
         }
@@ -174,7 +169,7 @@ struct ScrollViewWithStickyHeader_Preview: PreviewProvider {
                             .frame(height: 1200)
                             .frame(maxWidth: .infinity, alignment: .center)
                     }
-                    .background(Color.green)
+                    .background(Colors.secondary700)
                     Toggle(isOn: $trigger) {
                         Label("DEF", image: "qrcode")
                     }

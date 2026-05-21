@@ -77,7 +77,7 @@ struct MemojiPickerView: View {
     }
 }
 
-// Example SwiftUI view using the custom text field
+/// Example SwiftUI view using the custom text field
 struct MemojiPickerViewContentView: View {
     var body: some View {
         Text("abc")

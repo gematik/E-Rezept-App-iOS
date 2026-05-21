@@ -260,7 +260,7 @@ final class OrderDetailDomainTests: XCTestCase {
     }
 
     @available(iOS 18.0, *)
-    func testSelectingValidUrl() async {
+    func testSelectingValidUrl() async throws {
         let openedURL = Mutex<URL?>(nil)
 
         let orderId = "12343-1236-432"
@@ -274,7 +274,7 @@ final class OrderDetailDomainTests: XCTestCase {
             dependencies.openURLHandler.canOpenURL = { _ in true }
         }
 
-        let expectedUrl = URL(string: "https://www.das-e-rezept-fuer-deutschland.de")!
+        let expectedUrl = try XCTUnwrap(URL(string: "https://www.das-e-rezept-fuer-deutschland.de"))
         await store.send(.showOpenUrlSheet(url: expectedUrl)) { state in
             state.openUrlSheetUrl = expectedUrl
         }
@@ -284,9 +284,9 @@ final class OrderDetailDomainTests: XCTestCase {
         expect(openedURL.withLock { $0 }).to(equal(expectedUrl))
     }
 
-    func testSelectingInvalidUrl() async {
+    func testSelectingInvalidUrl() async throws {
         let orderId = "12343-1236-432"
-        let expectedUrl = URL(string: "www.invalid-url.de")!
+        let expectedUrl = try XCTUnwrap(URL(string: "www.invalid-url.de"))
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentInvalidUrl])
         let store = testStore(
             for: .init(orderId: orderId, communications: input, chargeItems: [])

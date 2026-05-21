@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskMedicationEntity {
     convenience init?(medication: ErxMedication?,
                       in context: NSManagedObjectContext) {
-        guard let medication = medication else { return nil }
+        guard let medication else { return nil }
 
         self.init(context: context)
 
@@ -55,7 +55,7 @@ extension ErxTaskMedicationEntity {
 
 extension ErxMedication {
     init?(entity: ErxTaskMedicationEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         var batch: ErxMedication.Batch?
         if entity.lot != nil || entity.expiresOn != nil {

@@ -62,24 +62,6 @@ public class MemStorage: IDPStorage, SecureEGKCertificateStorage, TrustStoreStor
         discoveryDocumentState = document
     }
 
-    @Published public private(set) var certListState: CertList?
-    public var certList: AnyPublisher<CertList?, Never> {
-        $certListState.eraseToAnyPublisher()
-    }
-
-    public func set(certList: CertList?) {
-        certListState = certList
-    }
-
-    @Published public private(set) var ocspListState: OCSPList?
-    public var ocspList: AnyPublisher<OCSPList?, Never> {
-        $ocspListState.eraseToAnyPublisher()
-    }
-
-    public func set(ocspList: OCSPList?) {
-        ocspListState = ocspList
-    }
-
     @Published private(set) var pkiCertificatesState: PKICertificates?
     public func getPKICertificates() -> PKICertificates? {
         pkiCertificatesState
@@ -127,12 +109,12 @@ public class MemStorage: IDPStorage, SecureEGKCertificateStorage, TrustStoreStor
         userPseudonymState = userPseudonym
     }
 
-    @Published private(set) var certificateState: X509?
-    public var certificate: AnyPublisher<X509?, Never> {
+    @Published private(set) var certificateState: IDPX509?
+    public var certificate: AnyPublisher<IDPX509?, Never> {
         $certificateState.eraseToAnyPublisher()
     }
 
-    public func set(certificate: X509?) {
+    public func set(certificate: IDPX509?) {
         certificateState = certificate
     }
 

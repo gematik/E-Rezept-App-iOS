@@ -21,6 +21,7 @@
 //
 
 import Foundation
+
 /// Represent a CAN number
 ///
 /// Format should be a number with a count of 6 digits.

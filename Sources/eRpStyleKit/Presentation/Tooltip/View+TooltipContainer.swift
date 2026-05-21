@@ -40,8 +40,7 @@ struct TooltipContainerModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .overlayPreferenceValue(TooltipAnchorKey.self, alignment: .top) { tooltipElement in
-
-                if let tooltipElement = tooltipElement, enabled {
+                if let tooltipElement, enabled {
                     GeometryReader { proxy in
                         ZStack {
                             Cutout(inset: 8)

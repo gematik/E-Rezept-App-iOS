@@ -123,13 +123,43 @@ extension PharmacyRepository: TestDependencyKey {
 }
 
 /// Available filters for the Pharmacy Repository
-public enum PharmacyRepositoryFilter {
+public enum PharmacyRepositoryFilter: Equatable {
     /// Matching pharmacies are marked as E-Rezept ready
     case ready
     /// Matching pharmacies provide online service for ordering medications
     case shipment
     /// Matching pharmacies provide local delivery services (Botendienst)
     case delivery
+    /// Matching pharmacies provide in-store pickup (Handverkauf)
+    case pickup
+    /// Matching pharmacies have on-site physical features (characteristic)
+    case characteristic(Characteristic)
+    /// Matching pharmacies offer a specific service (specialty)
+    case specialty(Specialty)
+
+    /// Physical feature characteristics that can be queried via the FHIR `characteristic` search parameter.
+    public enum Characteristic: String, Equatable, CaseIterable {
+        case parking = "parkmoeglichkeit"
+        case publicTransport = "oepnv"
+        case barrierFree = "barrierefrei"
+        case pickupAutomat = "abholautomat"
+    }
+
+    /// Service specialties that can be queried via the FHIR `specialty` search parameter.
+    public enum Specialty: String, Equatable, CaseIterable {
+        // PharmacyHealthcareSpecialtyCS (codes 50+)
+        case sterileCompounding = "50"
+        case hypertension = "60"
+        case inhalationTechnique = "70"
+        case polymedication = "80"
+        case oralCancerTherapy = "90"
+        case organTransplantation = "100"
+        // HealthcareServiceSpecialtyCS
+        case vaccination = "impfung"
+        case bodyMeasurements = "koerperwerte"
+        case allergyTest = "allergietest"
+        case travelMedicineConsultation = "reisemedizin-beratung"
+    }
 }
 
 /// Position which is used as a search point for an "around me" search.

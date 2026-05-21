@@ -42,20 +42,18 @@ extension DiGaDetailDomain {
             }
         }
 
-        static var confirmDeleteAlertState: ErpAlertState<Action> = {
-            .init(
-                title: L10n.digaDtlTxtDeleteAlertTitle,
-                actions: {
-                    ButtonState(role: .destructive, action: .confirmedDelete) {
-                        .init(L10n.dtlTxtDeleteYes)
-                    }
-                    ButtonState(role: .cancel, action: .dismiss) {
-                        .init(L10n.dtlTxtDeleteNo)
-                    }
-                },
-                message: L10n.digaDtlTxtDeleteAlertMessage
-            )
-        }()
+        static var confirmDeleteAlertState: ErpAlertState<Action> = .init(
+            title: L10n.digaDtlTxtDeleteAlertTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .confirmedDelete) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel, action: .dismiss) {
+                    .init(L10n.dtlTxtDeleteNo)
+                }
+            },
+            message: L10n.digaDtlTxtDeleteAlertMessage
+        )
 
         static func missingTokenAlertState() -> ErpAlertState<Action> {
             .init(

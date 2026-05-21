@@ -222,7 +222,7 @@ final class MatrixCodeDomainTests: XCTestCase {
         await store
             .send(.destination(.presented(.sharePrescription(.delegate(ShareSheetDomain.Action.Delegate
                     .close(expectedError)))))) {
-                    $0.destination = nil
+                $0.destination = nil
             }
 
         await store.receive(.showAlert(expectedError)) {

@@ -50,7 +50,7 @@ public struct DemoBannerView<Content: View>: View {
                     Text(L10n.bnrTxtDemoMode)
                         .accessibility(identifier: A11y.controls.demoMode.bnrTxtDemoMode)
 
-                    if let innerContent = innerContent {
+                    if let innerContent {
                         innerContent
                             .font(Font.subheadline.weight(.regular))
                     }
@@ -114,7 +114,7 @@ extension View {
     }
 
     /// A view modifier that adds a demo banner to the top of the view hierarchy.
-    public func demoBanner<Content: View>(isPresented: Bool, @ViewBuilder content: () -> Content) -> some View {
+    public func demoBanner(isPresented: Bool, @ViewBuilder content: () -> some View) -> some View {
         modifier(DemoBannerViewModifier(visible: isPresented, innerContent: content()))
     }
 }

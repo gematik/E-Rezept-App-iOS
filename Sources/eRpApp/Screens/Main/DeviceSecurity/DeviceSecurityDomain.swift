@@ -48,7 +48,7 @@ struct DeviceSecurityDomain {
     @Dependency(\.deviceSecurityManager) var deviceSecurityManager: DeviceSecurityManager
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
     }
 
     private func core(state _: inout State, action: Action) -> Effect<Action> {

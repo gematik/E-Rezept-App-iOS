@@ -260,7 +260,7 @@ extension JWE.Backing {
 
     /// Encode the JWE backing data to compact serialization format
     /// - Returns: Data containing the encoded JWE components
-    public func encoded() -> Data {
+    func encoded() -> Data {
         let encodedHeader = header.encodeBase64UrlSafe() ?? Data()
         let encodedWrappedKey = wrappedKey.encodeBase64UrlSafe() ?? Data()
         let encodedIV = iv.encodeBase64UrlSafe() ?? Data()

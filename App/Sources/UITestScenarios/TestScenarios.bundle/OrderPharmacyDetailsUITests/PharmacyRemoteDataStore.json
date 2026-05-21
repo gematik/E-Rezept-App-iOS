@@ -56,7 +56,9 @@
                     }
                 ],
                 "specialClosingHours": [],
-                "emergencyServiceHours": []
+                "emergencyServiceHours": [],
+                "physicalFeatures": [],
+                "specialities": []
             },
             {
                 "created": 742827752.591564,
@@ -109,7 +111,9 @@
                     }
                 ],
                 "specialClosingHours": [],
-                "emergencyServiceHours": []
+                "emergencyServiceHours": [],
+                "physicalFeatures": [],
+                "specialities": []
             },
             {
                 "created": 742827752.591564,
@@ -159,7 +163,9 @@
                     }
                 ],
                 "specialClosingHours": [],
-                "emergencyServiceHours": []
+                "emergencyServiceHours": [],
+                "physicalFeatures": [],
+                "specialities": []
             }
         ]
     },
@@ -220,7 +226,9 @@
                     }
                 ],
                 "specialClosingHours": [],
-                "emergencyServiceHours": []
+                "emergencyServiceHours": [],
+                "physicalFeatures": [],
+                "specialities": []
             }
         ]
     }

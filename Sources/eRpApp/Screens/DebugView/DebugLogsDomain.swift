@@ -49,7 +49,9 @@ struct DebugLogsDomain {
         var filter: String = ""
 
         enum Sort: String, Equatable, CaseIterable, Identifiable {
-            var id: Sort { self }
+            var id: Sort {
+                self
+            }
 
             case byNameAsc = "by name ↑"
             case byNameDesc = "by name ↓"
@@ -73,7 +75,7 @@ struct DebugLogsDomain {
         mutating func updateLogs(from store: DebugLiveLogger) {
             var logs = store.requests
 
-            let filter = self.filter.lowercased()
+            let filter = filter.lowercased()
 
             if filter.lengthOfBytes(using: .utf8) > 0 {
                 logs = logs.filter { $0.requestUrl.lowercased().contains(filter) }
@@ -127,7 +129,7 @@ struct DebugLogsDomain {
 
     var body: some ReducerOf<DebugLogsDomain> {
         BindingReducer()
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 }

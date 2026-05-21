@@ -391,23 +391,23 @@ extension FHIRClient {
 
         return execute(operation: ErxTaskFHIROperation
             .deleteChargeItem(id: id, accessCode: accessCode, handler: handler))
-                    .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
-                        // When the server responds with 410 (gone | processing) or 404 (notFound)
-                        // we handle this as a success case for deletion.
-                        // The response code 410 indicates that access to the target resource is no longer
-                        // available at the origin server and that this condition is likely to be permanent.
-                        // The response code 404 indicates that server does not know the task which means we can
-                        // safely delete it locally as well. Also see comments in ticket ERA-800.
-                        if case let FHIRClient.Error.http(fhirClientHttpError) = error,
-                           let operationOutcome = fhirClientHttpError.operationOutcome,
-                           let type = operationOutcome.issue.first?.code,
-                           type == IssueType.processing || type == IssueType.notFound {
-                            return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
-                        }
-                        throw error
-                    }
-                    .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.unknown($0) }
-                    .eraseToAnyPublisher()
+            .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
+                // When the server responds with 410 (gone | processing) or 404 (notFound)
+                // we handle this as a success case for deletion.
+                // The response code 410 indicates that access to the target resource is no longer
+                // available at the origin server and that this condition is likely to be permanent.
+                // The response code 404 indicates that server does not know the task which means we can
+                // safely delete it locally as well. Also see comments in ticket ERA-800.
+                if case let FHIRClient.Error.http(fhirClientHttpError) = error,
+                   let operationOutcome = fhirClientHttpError.operationOutcome,
+                   let type = operationOutcome.issue.first?.code,
+                   type == IssueType.processing || type == IssueType.notFound {
+                    return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
+                }
+                throw error
+            }
+            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.unknown($0) }
+            .eraseToAnyPublisher()
     }
 
     /// Loads All consents of a given profile

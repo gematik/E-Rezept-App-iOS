@@ -46,7 +46,7 @@ extension DiGaDispenseEntity {
 
 extension DiGaDispense {
     init?(entity: DiGaDispenseEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         self.init(
             redeemCode: entity.redeemCode,

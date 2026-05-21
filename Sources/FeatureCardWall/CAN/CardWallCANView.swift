@@ -237,7 +237,7 @@ public struct CardWallCANView: View {
                             onSuccessfulScanAction: {
                                 store.send(.successfulScan)
                             },
-                            closeAction: { canScan in
+                            closeAction: { _ in
                                 if let canScan = scannedcan {
                                     store.send(.update(can: canScan.value))
                                 }

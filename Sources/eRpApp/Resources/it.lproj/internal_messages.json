@@ -58,5 +58,11 @@
         "text": "**✨ Mostra codici di prescrizione** \nLa schermata per i codici batch e singoli è stata riprogettata per un utilizzo più intuitivo. \n \n **❤️ Farmacia preferita** \nI Farmaci preferiti ora funzionano in modo più affidabile e sono compatibili con VoiceOver. \n \n **♿ Accessibilità** \nVoiceOver e la navigazione tramite tastiera sono migliorati, pulsanti, testo e campi di input sono più facilmente identificabili e le voci dell'elenco sono strutturate in modo più logico. Il carattere ingrandito ora funziona su tutte le schermate dell'app. I video animati vengono riprodotti una sola volta per supportare gli utenti con disabilità cognitive.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Dettagli farmacia migliorati** \nLe farmacie possono ora aggiungere servizi come vaccinazioni e funzionalità in loco come l'accesso senza barriere. Le farmacie possono essere filtrate in base a queste nuove informazioni. \n \n **✨ Ricerca farmacia migliorata** \nLe farmacie utilizzate di recente e le farmacie preferite sono ora separate in modo più chiaro. I filtri sono stati migliorati. \n \n **✅ ID sanitario per persone con assicurazione alternativa** \nLe persone che non sono coperte da un'assicurazione sanitaria pubblica o privata possono ora accedere anche utilizzando il loro ID sanitario. \n \n **♿ Accessibilità** \nI filtri ora hanno un contrasto maggiore e il loro stato è più facilmente identificabile. La dichiarazione di accessibilità è stata aggiornata e ampliata per includere una sezione che documenta la cronologia delle modifiche. Alcuni pulsanti sono stati modificati per migliorarne la visibilità.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

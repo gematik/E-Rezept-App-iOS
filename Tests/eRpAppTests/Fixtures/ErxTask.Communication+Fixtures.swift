@@ -27,7 +27,7 @@ import Foundation
 extension ErxTask.Communication {
     // swiftlint:disable:next type_body_length
     enum Fixtures {
-        // Order id 1
+        /// Order id 1
         static let allOrderId1Communications = [
             ErxTask.Communication.Fixtures.communicationDispReq1,
             ErxTask.Communication.Fixtures.communicationReply1,
@@ -72,7 +72,7 @@ extension ErxTask.Communication {
             isRead: true
         )
 
-        // communication with a task that contains a charge_item
+        /// communication with a task that contains a charge_item
         static let communicationDispReqWithChargeItem: ErxTask.Communication = .init(
             identifier: "disp_req_id_3",
             profile: .dispReq,
@@ -85,7 +85,7 @@ extension ErxTask.Communication {
             isRead: true
         )
 
-        // Order id 2
+        /// Order id 2
         static let allOrderId2Communications = [
             ErxTask.Communication.Fixtures.communicationDispReqOrder2,
         ]

@@ -24,10 +24,10 @@ import eRpKit
 import Foundation
 import ModelsR4
 
-// Note: All values should be implemented in a loosely manner so that
-// medications from any profile type can be parsed. This is relevant because medications
-// are created during MedicationDispense by the DAV and they are not restricted
-// to use the KBV profiles
+/// Note: All values should be implemented in a loosely manner so that
+/// medications from any profile type can be parsed. This is relevant because medications
+/// are created during MedicationDispense by the DAV and they are not restricted
+/// to use the KBV profiles
 extension ModelsR4.Medication {
     var profileType: ErxMedication.ProfileType? {
         guard let profileType = meta?.profile?.first?.value?.url.absoluteString else {

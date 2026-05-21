@@ -39,7 +39,7 @@ extension ErxTask {
             lastModified: "2021-07-10T10:55:04+02:00"
         )
 
-        // non realistic task
+        /// non realistic task
         static let taskWithAllFieldsFilled: ErxTask =
             .init(
                 identifier: "task_id_17",

@@ -36,11 +36,9 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
     var mockNFCSessionController: NFCHealthCardPasswordControllerMock!
 
     let uiScheduler = DispatchQueue.test
-    lazy var schedulers: Schedulers = {
-        Schedulers(
-            uiScheduler: self.uiScheduler.eraseToAnyScheduler()
-        )
-    }()
+    lazy var schedulers: Schedulers = .init(
+        uiScheduler: self.uiScheduler.eraseToAnyScheduler()
+    )
 
     override func setUp() {
         super.setUp()
@@ -57,7 +55,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
         }
     }
 
-    func testUnlockCard_Success() async throws {
+    func testUnlockCard_Success() async {
         let sut = testStore(
             for: .init(mode: .healthCardResetPinCounterNoNewSecret(can: "123123", puk: "12345678"))
         )

@@ -64,7 +64,7 @@ struct SettingsDomain {
         case healthCardPasswordSetCustomPin(HealthCardPasswordIntroductionDomain)
         // sourcery: AnalyticsScreen = healthCardPassword_unlockCard
         case healthCardPasswordUnlockCard(HealthCardPasswordIntroductionDomain)
-        //
+        ///
         case appSecurity(AppSecurityDomain)
         // sourcery: AnalyticsScreen = settings_productImprovements_complyTracking
         case complyTracking(EmptyDomain)
@@ -169,7 +169,6 @@ struct SettingsDomain {
                 changeableUserSessionContainer.switchToStandardMode()
             }
             return .none
-
         // Tracking
         // [REQ:gemSpec_eRp_FdV:A_19088, A_19089-01#5, A_19092-01#4, A_19097-01#1] React to later opt-in or deactivation
         // of usage analytics
@@ -348,29 +347,25 @@ extension SettingsDomain {
             message: { TextState(L10n.stgTxtLanguageSettingsAlertDescription) }
         )
 
-    static var demoModeOnAlertState: AlertState<Destination.Alert> = {
-        AlertState(
-            title: { TextState(L10n.stgTxtAlertTitleDemoMode) },
-            actions: {
-                ButtonState(role: .cancel, action: .send(.dismiss)) {
-                    TextState(L10n.alertBtnOk)
-                }
-            },
-            message: { TextState(L10n.stgTxtAlertMessageDemoModeOn) }
-        )
-    }()
+    static var demoModeOnAlertState: AlertState<Destination.Alert> = AlertState(
+        title: { TextState(L10n.stgTxtAlertTitleDemoMode) },
+        actions: {
+            ButtonState(role: .cancel, action: .send(.dismiss)) {
+                TextState(L10n.alertBtnOk)
+            }
+        },
+        message: { TextState(L10n.stgTxtAlertMessageDemoModeOn) }
+    )
 
-    static var demoModeOffAlertState: AlertState<Destination.Alert> = {
-        AlertState(
-            title: { TextState(L10n.stgTxtAlertTitleDemoModeOff) },
-            actions: {
-                ButtonState(role: .cancel, action: .send(.dismiss)) {
-                    TextState(L10n.alertBtnOk)
-                }
-            },
-            message: { TextState(L10n.stgTxtAlertMessageDemoModeOff) }
-        )
-    }()
+    static var demoModeOffAlertState: AlertState<Destination.Alert> = AlertState(
+        title: { TextState(L10n.stgTxtAlertTitleDemoModeOff) },
+        actions: {
+            ButtonState(role: .cancel, action: .send(.dismiss)) {
+                TextState(L10n.alertBtnOk)
+            }
+        },
+        message: { TextState(L10n.stgTxtAlertMessageDemoModeOff) }
+    )
 
     static var donorRegisterAlertState: AlertState<Destination.Alert> =
         AlertState(

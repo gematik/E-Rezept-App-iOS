@@ -41,7 +41,7 @@ final class RealAVSClientTests: XCTestCase {
     func testSend() async throws {
         // given
         var counter = 0
-        let endPoint = AVSEndpoint(url: URL(string: avsURLString)!)
+        let endPoint = try AVSEndpoint(url: XCTUnwrap(URL(string: avsURLString)))
         stub(
             condition:
             isAbsoluteURLString(avsURLString)
@@ -67,7 +67,7 @@ final class RealAVSClientTests: XCTestCase {
         // given
         var counter = 0
         let status = 400
-        let endPoint = AVSEndpoint(url: URL(string: avsURLString)!)
+        let endPoint = try AVSEndpoint(url: XCTUnwrap(URL(string: avsURLString)))
         stub(
             condition:
             isAbsoluteURLString(avsURLString)

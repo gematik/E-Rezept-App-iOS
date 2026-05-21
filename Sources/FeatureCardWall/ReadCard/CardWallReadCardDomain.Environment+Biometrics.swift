@@ -93,11 +93,11 @@ extension CardWallReadCardDomain.Environment {
             let biometrieIdpSession = try sessionProvider.biometrieIdpSession(profileID)
             idpChallengeSession = try await biometrieIdpSession.requestChallenge()
                 .async(\CardWallReadCardDomain.State.Error.Cases.idpError) // IDPError
-            signedChallengeResponse = await nfcSessionProvider.signForBiometrics(
+            signedChallengeResponse = try await nfcSessionProvider.signForBiometrics(
                 can: can,
                 pin: pin,
                 challenge: idpChallengeSession,
-                registerDataProvider: try sessionProvider.signatureProvider(profileID),
+                registerDataProvider: sessionProvider.signatureProvider(profileID),
                 pairingSession: pairingSession,
                 profileId: profileID
             )

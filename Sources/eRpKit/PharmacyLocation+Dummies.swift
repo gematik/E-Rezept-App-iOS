@@ -59,6 +59,17 @@ extension PharmacyLocation {
                     openingTime: "08:00:00",
                     closingTime: "18:00:00"
                 ),
+            ],
+            physicalFeatures: [
+                .barrierFree,
+                .parking,
+                .pickupAutomat,
+                .publicTransport,
+            ],
+            specialities: [
+                .vaccination,
+                .hypertension,
+                .polymedication,
             ]
         )
 
@@ -79,6 +90,14 @@ extension PharmacyLocation {
                         openingTime: "08:00:00",
                         closingTime: "12:00:00"
                     ),
+                ],
+                physicalFeatures: [
+                    .barrierFree,
+                    .parking,
+                ],
+                specialities: [
+                    .vaccination,
+                    .allergyTest,
                 ]
             )
 

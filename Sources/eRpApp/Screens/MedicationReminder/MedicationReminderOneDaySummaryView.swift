@@ -32,10 +32,6 @@ struct MedicationReminderOneDaySummaryView: View {
 
     @ScaledMetric var headerPlusBottomPlusSomeHeight = 320 // use this for limiting the ScrollView's height
 
-    init(store: StoreOf<MedicationReminderOneDaySummaryDomain>) {
-        self.store = store
-    }
-
     @Dependency(\.uiDateFormatter) var dateFormatter
 
     var body: some View {
@@ -70,7 +66,7 @@ struct MedicationReminderOneDaySummaryView: View {
                     }
                     .padding(.horizontal)
                 }
-                .frame(maxHeight: UIScreen.main.bounds.size.height - self.headerPlusBottomPlusSomeHeight)
+                .frame(maxHeight: UIScreen.main.bounds.size.height - headerPlusBottomPlusSomeHeight)
             }
 
             Button {
@@ -199,9 +195,9 @@ struct MedicationReminderOneDaySummaryView: View {
             HStack(spacing: 8) {
                 Image(SFSymbolName
                     .alarm)
-                                    .font(.largeTitle)
-                                    .foregroundColor(Colors.primary700)
-                                    .padding([.top, .bottom, .leading])
+                    .font(.largeTitle)
+                    .foregroundColor(Colors.primary700)
+                    .padding([.top, .bottom, .leading])
 
                 VStack(alignment: .leading) {
                     Text(L10n.medReminderTxtOneDaySummaryEmptyEventTitle)

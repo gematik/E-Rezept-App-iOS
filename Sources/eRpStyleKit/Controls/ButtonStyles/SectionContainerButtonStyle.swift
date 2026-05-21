@@ -42,7 +42,9 @@ extension ButtonStyle where Self == SectionContainerButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View/buttonStyle(_:)`` modifier.
-    public static var simple: SectionContainerButtonStyle { SectionContainerButtonStyle() }
+    public static var simple: SectionContainerButtonStyle {
+        SectionContainerButtonStyle()
+    }
 }
 
 struct SectionContainerButtonStyle_Preview: PreviewProvider {

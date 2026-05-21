@@ -25,22 +25,23 @@ import Foundation
 struct ChargeItemHTMLTemplate {
     let content: Content
 
-    var body: String { """
-        <!DOCTYPE html>
-        <html lang="de">
-        \(head)
-        <body>
-        <h1>Digitaler Beleg zur Abrechnung Ihres E-Rezeptes</h1>
-        <sub>Bitte leiten Sie diesen Beleg über die App an Ihre Versicherung weiter.</sub>
-        \(patient)
-        <div class="frame_row">
-            \(doctor)
-            \(pharmacy)
-        </div>
-        \(dispense)
-        </body>
-        </html>
-    """
+    var body: String {
+        """
+            <!DOCTYPE html>
+            <html lang="de">
+            \(head)
+            <body>
+            <h1>Digitaler Beleg zur Abrechnung Ihres E-Rezeptes</h1>
+            <sub>Bitte leiten Sie diesen Beleg über die App an Ihre Versicherung weiter.</sub>
+            \(patient)
+            <div class="frame_row">
+                \(doctor)
+                \(pharmacy)
+            </div>
+            \(dispense)
+            </body>
+            </html>
+        """
     }
 }
 

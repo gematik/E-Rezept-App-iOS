@@ -26,7 +26,7 @@ import Nimble
 import XCTest
 
 final class ErxSparseChargeItemTests: XCTestCase {
-    func testParsingErxSparseItem() throws {
+    func testParsingErxSparseItem() {
         let expected = ErxChargeItem.Fixtures.chargeItemWithFHIRData
         let sut = ErxSparseChargeItem(
             identifier: expected.id,

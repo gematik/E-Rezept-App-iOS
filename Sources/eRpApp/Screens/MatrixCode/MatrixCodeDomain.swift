@@ -101,7 +101,7 @@ struct MatrixCodeDomain {
             let id: UUID
             let image: UIImage
 
-            // nil means not ErxTask related
+            /// nil means not ErxTask related
             let chunk: [ErxTask]? // swiftlint:disable:this discouraged_optional_collection
 
             // swiftlint:disable:next discouraged_optional_collection
@@ -158,7 +158,7 @@ struct MatrixCodeDomain {
     @Dependency(\.imageGenerator) var imageGenerator: ImageGenerator
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -212,8 +212,8 @@ struct MatrixCodeDomain {
                         var images: IdentifiedArrayOf<State.IdentifiedImage> = []
                         do {
                             for chunk in chunkedTasks {
-                                images
-                                    .append(try await erxMatrixCodeGenerator.publishedMatrixCode(
+                                try await images
+                                    .append(erxMatrixCodeGenerator.publishedMatrixCode(
                                         for: Array(chunk),
                                         with: calcMatrixCodeSize(screenSize: screenSize)
                                     )
@@ -232,8 +232,8 @@ struct MatrixCodeDomain {
                         var images: IdentifiedArrayOf<State.IdentifiedImage> = []
                         do {
                             for single in singleTasks {
-                                images
-                                    .append(try await erxMatrixCodeGenerator.publishedMatrixCode(
+                                try await images
+                                    .append(erxMatrixCodeGenerator.publishedMatrixCode(
                                         for: single,
                                         with: calcMatrixCodeSize(screenSize: screenSize)
                                     )

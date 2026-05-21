@@ -129,7 +129,7 @@ struct AppDomain {
             SettingsDomain()
         }
 
-        Reduce(self.core)
+        Reduce(core)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity

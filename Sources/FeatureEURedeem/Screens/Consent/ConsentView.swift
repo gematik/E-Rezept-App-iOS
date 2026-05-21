@@ -42,18 +42,19 @@ public struct ConsentView: View {
                             .font(.title.weight(.bold))
                             .foregroundColor(Colors.systemLabel)
                             .padding(.bottom, 8)
-                            .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentTitle)
+                            .accessibilityAddTraits(.isHeader)
+                            .accessibilityIdentifier(A11y.redeem.eu.consent.eurdmTxtConsentTitle)
 
                         VStack(alignment: .leading, spacing: 24) {
                             Text(L10n.euredeemConsentDescription1)
                                 .font(.subheadline)
                                 .foregroundColor(Colors.systemLabelSecondary)
-                                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentDescription1)
+                                .accessibilityIdentifier(A11y.redeem.eu.consent.eurdmTxtConsentDescription1)
 
                             Text(L10n.euredeemConsentDescription2)
                                 .font(.subheadline)
                                 .foregroundColor(Colors.systemLabelSecondary)
-                                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentDescription2)
+                                .accessibilityIdentifier(A11y.redeem.eu.consent.eurdmTxtConsentDescription2)
                         }
                     }
                     .padding(.horizontal)
@@ -62,13 +63,24 @@ public struct ConsentView: View {
             }
 
             // Info text
-            Text(L10n.euredeemConsentInfoText)
+            let infoText = {
+                switch store.consentType {
+                case .granted:
+                    return L10n.euredeemConsentInfoTextGranted
+                case .notGranted:
+                    return L10n.euredeemConsentInfoTextNotGranted
+                case .unknown:
+                    return L10n.euredeemConsentInfoText
+                }
+            }()
+
+            Text(infoText)
                 .font(.subheadline)
                 .foregroundColor(Colors.systemLabelSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .padding(.bottom, 24)
-                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmTxtEuConsentInfo)
+                .accessibilityIdentifier(A11y.redeem.eu.consent.eurdmTxtConsentInfo)
 
             // Buttons
             VStack(spacing: 8) {
@@ -78,8 +90,12 @@ public struct ConsentView: View {
                         Text(L10n.euredeemConsentAcceptButton)
                     }
                 )
-                .buttonStyle(.primaryHugging)
-                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmBtnEuConsentAccept)
+                .buttonStyle(.primary(
+                    isEnabled: store.consentType != .granted,
+                    width: .wideHugging
+                ))
+                .disabled(store.consentType == .granted)
+                .accessibilityIdentifier(A11y.redeem.eu.consent.eurdmBtnConsentAccept)
 
                 Button(
                     action: { store.send(.decline) },
@@ -87,11 +103,24 @@ public struct ConsentView: View {
                         Text(L10n.euredeemConsentDeclineButton)
                     }
                 )
-                .buttonStyle(.primaryHugging)
-                .accessibilityIdentifier(A11y.redeem.eu.consent.rdmBtnEuConsentDecline)
+                .buttonStyle(.primary(
+                    isEnabled: store.consentType != .notGranted,
+                    width: .wideHugging
+                ))
+                .disabled(store.consentType == .notGranted)
+                .accessibilityIdentifier(A11y.redeem.eu.consent.eurdmBtnConsentDecline)
             }
             .padding(.bottom, 24)
         }
+        .navigationBarItems(
+            trailing: Button {
+                store.send(.delegate(.close))
+            } label: {
+                Text(L10n.navCancel)
+            }
+            .accessibility(identifier: A11y.redeem.eu.consent.eurdmBtnConsentAbort)
+            .accessibility(label: Text(L10n.euredeemConsentAbortButton))
+        )
         .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
     }
 }

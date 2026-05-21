@@ -57,29 +57,29 @@ public struct JWT {
     ///   - decoder: JSONDecoder needed with dateDecodingStrategy = .secondsSince1970 and dataDecodingStrategy = .base64
     /// - Throws: `JWT.Error`
     public init(from string: String, decoder: JSONDecoder = JSONDecoder.base1970DateDecoder) throws {
-        /// Regex magic
-        /// if we find a match we should have a parsable JWT structure.
-        /// Note: the signature is not validated at this point
+        // Regex magic
+        // if we find a match we should have a parsable JWT structure.
+        // Note: the signature is not validated at this point
         let result = Self.jwtRegex.matches(in: string, range: NSRange(location: 0, length: string.count))
         guard !result.isEmpty else {
             throw Error.malformedJWT
         }
-        /// We should have one match
-        /// Match locations:
-        /// 0: Entire string that matched
-        /// 1: Header
-        /// 2: Payload
-        /// 3: The dot (.) between payload and signature. Is its own group since it's optional
-        /// 4: The signature. The signature payload subgroup of 3. ^^
-        ///
-        /// Example:
-        /// Regex: `^([A-Za-z0-9-_]+)\.([A-Za-z0-9-_]+)(\.([A-Za-z0-9-_]+))?$`
-        /// JWT: eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9.MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
-        /// 0: eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9.MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
-        /// 1: eyAiYWxnIjogIm5vbmUiIH0
-        /// 2:                         eyJwYXlsb2FkIjoidGV4dCJ9
-        /// 3:                                                 .MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
-        /// 4:                                                  MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
+        // We should have one match
+        // Match locations:
+        // 0: Entire string that matched
+        // 1: Header
+        // 2: Payload
+        // 3: The dot (.) between payload and signature. Is its own group since it's optional
+        // 4: The signature. The signature payload subgroup of 3. ^^
+        //
+        // Example:
+        // Regex: `^([A-Za-z0-9-_]+)\.([A-Za-z0-9-_]+)(\.([A-Za-z0-9-_]+))?$`
+        // JWT: eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9.MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
+        // 0: eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9.MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
+        // 1: eyAiYWxnIjogIm5vbmUiIH0
+        // 2:                         eyJwYXlsb2FkIjoidGV4dCJ9
+        // 3:                                                 .MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
+        // 4:                                                  MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
         guard let rawHeader = (string as NSString).substring(with: result[0].range(at: 1)).data(using: .ascii),
               let payload = (string as NSString).substring(with: result[0].range(at: 2)).data(using: .ascii) else {
             throw Error.encodingError
@@ -123,7 +123,7 @@ public struct JWT {
 
     /// Verify the JWT by checking the signature
     public func verify(with verifier: JWTSignatureVerifier) throws -> Bool {
-        guard let signature = signature else {
+        guard let signature else {
             throw Error.noSignature
         }
         return try verifier.verify(signature: signature, message: backing.rawHeader + Self.dot + backing.payload)
@@ -153,7 +153,7 @@ public struct JWT {
     /// - Returns: serialized base64 urlsafe encoded string
     public func serialize() -> String {
         var data = backing.rawHeader + Self.dot + backing.payload
-        if let signature = signature,
+        if let signature,
            let encodedSignature = signature.encodeBase64UrlSafe() {
             data.append(Self.dot) // .
             data.append(encodedSignature)
@@ -232,7 +232,7 @@ extension JWT {
     ///   - header: the JWT Header
     ///   - payload: JSON encodable payload
     /// - Throws: `Swift.Error` upon JSON encoding error
-    public init<E: Claims>(header: Header, payload: E) throws {
+    public init(header: Header, payload: some Claims) throws {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.dateEncodingStrategy = .secondsSince1970
         jsonEncoder.outputFormatting = .sortedKeys

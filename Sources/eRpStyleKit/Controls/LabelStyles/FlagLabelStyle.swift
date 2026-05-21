@@ -82,13 +82,17 @@ extension LabelStyle where Self == FlagLabelStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``Label/labelStyle(_:)`` modifier.
-    public static var blueFlag: FlagLabelStyle { FlagLabelStyle(.blue) }
+    public static var blueFlag: FlagLabelStyle {
+        FlagLabelStyle(.blue)
+    }
 
     /// A flag label style in red .
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``Label/labelStyle(_:)`` modifier.
-    public static var redFlag: FlagLabelStyle { FlagLabelStyle(.red) }
+    public static var redFlag: FlagLabelStyle {
+        FlagLabelStyle(.red)
+    }
 }
 
 struct FlagLabelStyle_Preview: PreviewProvider {

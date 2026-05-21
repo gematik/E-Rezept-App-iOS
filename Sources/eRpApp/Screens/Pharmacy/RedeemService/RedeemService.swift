@@ -88,7 +88,6 @@ struct AVSRedeemService: RedeemService {
 
         let redeemMessagePublishers: [AnyPublisher<OrderResponse, Never>] =
             orderAndMessages.map { order, message -> AnyPublisher<OrderResponse, Never> in
-
                 Future {
                     try await avsSession.redeem(
                         message: message,

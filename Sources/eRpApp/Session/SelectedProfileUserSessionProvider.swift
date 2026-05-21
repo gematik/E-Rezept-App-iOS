@@ -51,7 +51,7 @@ class SelectedProfileUserSessionProvider {
 
         publisher
             .sink { [weak currentValue = self.currentValueSubject, weak self] profileId, configuration in
-                guard let self = self else {
+                guard let self else {
                     return
                 }
 

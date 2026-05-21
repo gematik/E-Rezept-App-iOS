@@ -58,5 +58,11 @@
         "text": "**✨ Reçete kodlarını göster** \nToplu ve tekli kodlar için ekran, daha sezgisel kullanım için yeniden tasarlandı. \n \n **❤️ Eczane Favorileri** \nEczane favorileri artık daha güvenilir çalışıyor ve VoiceOver ile uyumlu. \n \n **♿ Erişilebilirlik** \nVoiceOver ve klavye navigasyonu iyileştirildi, düğmeler, metin ve giriş alanları daha kolay tanımlanabilir hale getirildi ve liste öğeleri daha mantıklı bir şekilde yapılandırıldı. Büyütülmüş yazı tipi artık tüm uygulama ekranlarında çalışıyor. Bilişsel bozukluğu olan kullanıcıları desteklemek için animasyonlu videolar yalnızca bir kez oynatılıyor.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Geliştirilmiş Eczane Bilgileri** \nEczaneler artık aşılar ve engelsiz erişim gibi yerinde özellikler de ekleyebiliyor. Eczaneler bu yeni bilgilere göre filtrelenebiliyor. \n \n **✨ Geliştirilmiş Eczane Arama** \nSon kullanılan eczaneler ve favori eczaneler artık daha net bir şekilde ayrılıyor. Filtreler iyileştirildi. \n \n **✅ Alternatif Sigortası Olan Kişiler İçin Sağlık Kimliği** \nYasal veya özel sağlık sigortası kapsamında olmayan kişiler artık Sağlık Kimliklerini kullanarak da giriş yapabiliyor. \n \n **♿ Erişilebilirlik** \nFiltreler artık daha yüksek kontrastlı ve durumları daha kolay tanımlanabiliyor. Erişilebilirlik bildirimi güncellendi ve değişiklik geçmişini belgeleyen bir bölüm içerecek şekilde genişletildi. Bazı düğmeler daha iyi görünürlük için ayarlandı.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

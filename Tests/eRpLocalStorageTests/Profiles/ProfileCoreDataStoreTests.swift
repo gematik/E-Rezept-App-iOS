@@ -107,42 +107,36 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         )
     }
 
-    private lazy var profileSimple: Profile = {
-        Profile(
-            name: "Karl",
-            identifier: UUID(),
-            color: .grey
-        )
-    }()
+    private lazy var profileSimple: Profile = .init(
+        name: "Karl",
+        identifier: UUID(),
+        color: .grey
+    )
 
-    private lazy var profileAuthenticated: Profile = {
-        Profile(
-            name: "Karl",
-            identifier: UUID(),
-            givenName: "Karl",
-            familyName: "Heinz",
-            insurance: "Random BKK",
-            insuranceId: "k1234",
-            color: .grey,
-            lastAuthenticated: Date()
-        )
-    }()
+    private lazy var profileAuthenticated: Profile = .init(
+        name: "Karl",
+        identifier: UUID(),
+        givenName: "Karl",
+        familyName: "Heinz",
+        insurance: "Random BKK",
+        insuranceId: "k1234",
+        color: .grey,
+        lastAuthenticated: Date()
+    )
 
-    private lazy var profileWithTasks: Profile = {
-        Profile(
-            name: "Karl",
-            identifier: UUID(),
-            givenName: "Karl",
-            familyName: "Heinz",
-            insurance: "Random BKK",
-            insuranceId: "k1234",
-            color: .grey,
-            image: .boyWithCard,
-            lastAuthenticated: Date(),
-            erxTasks: [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
-                       ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
-        )
-    }()
+    private lazy var profileWithTasks: Profile = .init(
+        name: "Karl",
+        identifier: UUID(),
+        givenName: "Karl",
+        familyName: "Heinz",
+        insurance: "Random BKK",
+        insuranceId: "k1234",
+        color: .grey,
+        image: .boyWithCard,
+        lastAuthenticated: Date(),
+        erxTasks: [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
+                   ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
+    )
 
     func testHasProfileWithoutProfiles() throws {
         let store = loadProfileCoreDataStore()
@@ -214,7 +208,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testSaveProfilesWithFailingLoadingDatabase() throws {
+    func testSaveProfilesWithFailingLoadingDatabase() {
         let factory = CoreDataControllerFactory(databaseUrl: {
             self.databaseFile
         }, loadCoreDataController: {
@@ -387,7 +381,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testFetchProfileByIdNoResults() throws {
+    func testFetchProfileByIdNoResults() {
         let store = loadProfileCoreDataStore()
         let profileToFetch = Profile(name: "profileToFetch")
 
@@ -443,7 +437,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testUpdateProfileWithoutMatchingProfileInStore() throws {
+    func testUpdateProfileWithoutMatchingProfileInStore() {
         let store = loadProfileCoreDataStore()
         var receivedUpdateValues = [Bool]()
         var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()

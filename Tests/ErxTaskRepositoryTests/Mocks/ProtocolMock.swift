@@ -23,7 +23,9 @@
 
 import eRpKit
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension ErxLocalDataStore {}
 extension ErxRemoteDataStore {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

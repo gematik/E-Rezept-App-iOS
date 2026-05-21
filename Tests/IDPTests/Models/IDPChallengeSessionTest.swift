@@ -29,10 +29,10 @@ import TestUtils
 import XCTest
 
 class IDPChallengeSessionTest: XCTestCase {
-    func testSigningWithJWTSigner() {
+    func testSigningWithJWTSigner() throws {
         let signer = TestJWTSigner()
         signer.signature = Data([0x0, 0x1, 0x3, 0x4])
-        let challenge = try! IDPChallenge(
+        let challenge = try IDPChallenge(
             challenge: JWT(header: JWT.Header(), payload: IDPChallenge.Claim())
         )
         let session = IDPChallengeSession(
@@ -42,11 +42,12 @@ class IDPChallengeSessionTest: XCTestCase {
             nonce: "random Nonce"
         )
         let certificates = [Data(repeating: 0x7F, count: 100)]
-        let expectedHeaderAndPayload = try! JWT(
+        let expectedHeaderAndPayload = try JWT(
             header: JWT.Header(alg: .bp256r1, x5c: certificates, typ: "JWT", cty: "NJWT"),
             payload: IDPChallengeResponse(njwt: session.challenge.challenge)
         )
-        let expectedSerialized = expectedHeaderAndPayload.serialize().data(using: .ascii)! + [0x2E] + signer
+        let expectedSerialized = try XCTUnwrap(expectedHeaderAndPayload.serialize().data(using: .ascii)) + [0x2E] +
+            signer
             .signature!
             .encodeBase64UrlSafe()!
         session.sign(with: signer, using: certificates) // swiftlint:disable:this trailing_closure

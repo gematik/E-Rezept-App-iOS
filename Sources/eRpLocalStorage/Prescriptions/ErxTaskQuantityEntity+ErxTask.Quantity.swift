@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskQuantityEntity {
     convenience init?(quantity: ErxMedication.Quantity?,
                       in context: NSManagedObjectContext) {
-        guard let quantity = quantity else { return nil }
+        guard let quantity else { return nil }
 
         self.init(context: context)
 
@@ -37,7 +37,7 @@ extension ErxTaskQuantityEntity {
 
 extension ErxMedication.Quantity {
     init?(entity: ErxTaskQuantityEntity?) {
-        guard let entity = entity,
+        guard let entity,
               let value = entity.value else {
             return nil
         }

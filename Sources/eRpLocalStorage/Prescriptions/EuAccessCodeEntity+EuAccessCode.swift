@@ -28,7 +28,7 @@ extension EuAccessCodeEntity {
         euAccessCode: EuAccessCode?,
         in context: NSManagedObjectContext
     ) {
-        guard let euAccessCode = euAccessCode else { return nil }
+        guard let euAccessCode else { return nil }
         self.init(context: context)
 
         identifier = euAccessCode.identifier
@@ -41,7 +41,7 @@ extension EuAccessCodeEntity {
 
 extension EuAccessCode {
     init?(entity: EuAccessCodeEntity?) {
-        guard let entity = entity,
+        guard let entity,
               let identifier = entity.identifier else {
             return nil
         }

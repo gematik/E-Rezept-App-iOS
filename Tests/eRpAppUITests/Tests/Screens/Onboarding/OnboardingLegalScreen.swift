@@ -88,8 +88,8 @@ struct OnboardingLegalDataScreen: Screen {
                            line _: UInt = #line) -> XCUIElement {
         let predicate = NSPredicate(
             format: "label == %@ AND value == %@",
-            "Datenschutzerklärung",
-            "Datenschutzerklärung"
+            "Datenschutzerklärung für die E-Rezept-App",
+            "Datenschutzerklärung für die E-Rezept-App"
         )
         return app.staticTexts.containing(predicate).firstMatch
     }

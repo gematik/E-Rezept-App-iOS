@@ -57,7 +57,9 @@ extension LabelStyle where Self == SectionContainerLabelStyle {
     ///
     /// To apply this style to a label, or to a view that contains a label, use
     /// the ``View/labelStyle(_:)`` modifier.
-    public static var plain: SectionContainerLabelStyle { SectionContainerLabelStyle() }
+    public static var plain: SectionContainerLabelStyle {
+        SectionContainerLabelStyle()
+    }
 }
 
 struct SectionContainerLabelStyle_Preview: PreviewProvider {

@@ -617,6 +617,8 @@ extension EditProfileDomain.Destination.Action {
                 action.analytics(tracker: tracker)
             case let .cardWall(action):
                 action.analytics(tracker: tracker)
+            case let .euRedeemConsent(action):
+                action.analytics(tracker: tracker)
             case let .editProfilePicture(action):
                 action.analytics(tracker: tracker)
             case _: break

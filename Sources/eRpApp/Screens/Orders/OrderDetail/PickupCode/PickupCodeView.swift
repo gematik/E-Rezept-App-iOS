@@ -71,7 +71,7 @@ struct PickupCodeView: View {
                 originalBrightness = UIScreen.main.brightness
             }
             .onDisappear {
-                if let originalBrightness = originalBrightness {
+                if let originalBrightness {
                     UIScreen.main.brightness = originalBrightness
                 }
             }

@@ -68,7 +68,7 @@ private struct TextFieldWithDoneButtonToolbar: ViewModifier {
                 let doneButton = BarButtonItem(
                     title: "Done",
                     style: UIBarButtonItem.Style.done,
-                    action: self.action
+                    action: action
                 )
                 // TODO: replace color conversion when using iOS 14 // swiftlint:disable:this todo
 //              #if os(iOS)
@@ -79,10 +79,10 @@ private struct TextFieldWithDoneButtonToolbar: ViewModifier {
 //              // use default
 //              #endif
                 doneButton.accessibilityTraits = [.keyboardKey, .button]
-                doneButton.accessibilityIdentifier = self.accessibilityIdentifier
-                doneButton.accessibilityLabel = self.accessibilityLabel
-                doneButton.title = self.title
-                doneButton.isEnabled = self.enabled
+                doneButton.accessibilityIdentifier = accessibilityIdentifier
+                doneButton.accessibilityLabel = accessibilityLabel
+                doneButton.title = title
+                doneButton.isEnabled = enabled
                 toolBar.setItems([flexButton, doneButton], animated: false)
                 textField.inputAccessoryView = toolBar
             }

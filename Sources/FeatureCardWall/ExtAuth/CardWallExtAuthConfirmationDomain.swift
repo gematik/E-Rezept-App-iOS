@@ -95,7 +95,7 @@ public struct CardWallExtAuthConfirmationDomain {
 
     /// The reducer body that handles state transitions and effects
     public var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity

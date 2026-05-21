@@ -41,35 +41,31 @@ extension ChargeItemListDomain {
     enum AlertStates {
         typealias Action = ChargeItemListDomain.Destination.Alert
 
-        static let grantConsentRequest: ErpAlertState<Action> = {
-            .init(
-                title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
-                actions: {
-                    ButtonState(action: .grantConsent) {
-                        .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate)
-                    }
-                    ButtonState(role: .cancel, action: .grantConsentDeny) {
-                        .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel)
-                    }
-                },
-                message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
-            )
-        }()
+        static let grantConsentRequest: ErpAlertState<Action> = .init(
+            title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
+            actions: {
+                ButtonState(action: .grantConsent) {
+                    .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate)
+                }
+                ButtonState(role: .cancel, action: .grantConsentDeny) {
+                    .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel)
+                }
+            },
+            message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
+        )
 
-        static let revokeConsentRequest: ErpAlertState<Action> = {
-            .init(
-                title: L10n.stgTxtChargeItemListAlertRevokeConsentTitle,
-                actions: {
-                    ButtonState(role: .destructive, action: .revokeConsentErrorRetry) {
-                        .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonDeactivate)
-                    }
-                    ButtonState(role: .cancel, action: .revokeConsentErrorOkay) {
-                        .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonCancel)
-                    }
-                },
-                message: L10n.stgTxtChargeItemListAlertRevokeConsentMessage
-            )
-        }()
+        static let revokeConsentRequest: ErpAlertState<Action> = .init(
+            title: L10n.stgTxtChargeItemListAlertRevokeConsentTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .revokeConsentErrorRetry) {
+                    .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonDeactivate)
+                }
+                ButtonState(role: .cancel, action: .revokeConsentErrorOkay) {
+                    .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonCancel)
+                }
+            },
+            message: L10n.stgTxtChargeItemListAlertRevokeConsentMessage
+        )
 
         static func fetchChargeItemsErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(

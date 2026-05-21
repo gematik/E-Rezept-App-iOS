@@ -26,10 +26,6 @@ import XCTest
 struct DiGaInsuranceListScreen: Screen {
     let app: XCUIApplication
 
-    init(app: XCUIApplication) {
-        self.app = app
-    }
-
     func selectInsurance(_ name: String, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
         button(by: name, fileID: fileID, file: file, line: line).tap()
     }

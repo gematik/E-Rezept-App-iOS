@@ -150,7 +150,7 @@ struct MatrixCodeView: View {
             originalBrightness = UIScreen.main.brightness
         }
         .onDisappear {
-            if let originalBrightness = originalBrightness {
+            if let originalBrightness {
                 UIScreen.main.brightness = originalBrightness
             }
         }
@@ -162,9 +162,7 @@ struct MatrixCodeView: View {
         // TabView used for creating the paging effect is very greedy with space. We calculate the size beforehand to
         // accomodate that.
         static let deviceWidth: CGFloat = UIScreen.main.bounds.width
-        static let pagedPartHeight: CGFloat = {
-            deviceWidth + 33
-        }()
+        static let pagedPartHeight: CGFloat = deviceWidth + 33
 
         var body: some View {
             VStack(spacing: 0) {

@@ -58,13 +58,9 @@ extension UserProfileTests {
     static var profile: Profile = .init(name: "YesterDay", lastAuthenticated: Date())
     static var profileNoAuthenticated: Profile = .init(name: "Newer User")
 
-    static let ssoTokenHeaderFuture: String = {
-        "eyJlbmMiOiJBMjU2R0NNIiwiY3R5IjoiTkpXVCIsImV4cCI6NTYxODQ5MjE0MSwiYWxnIjoiZGlyIiwia2lkIjoiMDAwMSJ9"
-    }()
+    static let ssoTokenHeaderFuture: String = "eyJlbmMiOiJBMjU2R0NNIiwiY3R5IjoiTkpXVCIsImV4cCI6NTYxODQ5MjE0MSwiYWxnIjoiZGlyIiwia2lkIjoiMDAwMSJ9"
 
-    static let ssoTokenHeaderExpired: String = {
-        "eyJlbmMiOiJBMjU2R0NNIiwiY3R5IjoiTkpXVCIsImV4cCI6MTYxODQ5MjE0MSwiYWxnIjoiZGlyIiwia2lkIjoiMDAwMSJ9"
-    }()
+    static let ssoTokenHeaderExpired: String = "eyJlbmMiOiJBMjU2R0NNIiwiY3R5IjoiTkpXVCIsImV4cCI6MTYxODQ5MjE0MSwiYWxnIjoiZGlyIiwia2lkIjoiMDAwMSJ9"
 
     static let IDPTokenWithValidSSO = IDPToken(
         accessToken: "abs",

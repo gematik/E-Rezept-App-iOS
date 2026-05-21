@@ -23,7 +23,7 @@
 import Foundation
 
 /// Container format for handling paged FHIR content.
-public struct PagedContent<Content>: Equatable, Codable where Content: Equatable, Content: Codable {
+public struct PagedContent<Content: Equatable & Codable>: Equatable, Codable {
     /// Initializes a PagedContent with a given content and an optional next page link.
     /// - Parameters:
     ///   - content: Actual content of this page.

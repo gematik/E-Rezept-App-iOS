@@ -34,9 +34,9 @@ extension FHIRClient {
     public enum Error: Swift.Error, Equatable, CustomStringConvertible, LocalizedError {
         @ErrorCode("01")
         case internalError(String)
-        @ErrorCode("04")
         /// When the server returned a successful response with inconsistent response data.
         /// E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.
+        @ErrorCode("04")
         case inconsistentResponse
         @ErrorCode("05")
         case decoding(Swift.Error)

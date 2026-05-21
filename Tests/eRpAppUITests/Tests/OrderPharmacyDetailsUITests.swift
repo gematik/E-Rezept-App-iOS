@@ -46,12 +46,13 @@ class OrderPharmacyDetailsUITests: XCTestCase {
         _ = app.wait(for: .runningForeground, timeout: 10.0)
 
         // Interact somehow with the app, to trigger the registered `addUIInterruptionMonitor`
-        // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos swiftlint:disable:this line_length
+        // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos
+        // swiftlint:disable:this line_length
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.01)).tap()
     }
 
     @MainActor
-    func testPharmacyDetails() async throws {
+    func testPharmacyDetails() async {
         let bridge = UITestBridgeClient()
         let pharmacyName = "Schloss Apotheke"
         let tabBar = TabBarScreen(app: app)

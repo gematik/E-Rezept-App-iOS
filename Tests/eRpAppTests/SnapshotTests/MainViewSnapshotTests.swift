@@ -109,7 +109,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
-            .frame(width: 320, height: 700)
+        .frame(width: 320, height: 700)
         assertSnapshots(of: sut, as: snapshotModi())
     }
 
@@ -123,7 +123,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
-            .frame(width: 320, height: 700)
+        .frame(width: 320, height: 700)
         assertSnapshots(of: sut, as: snapshotModi())
     }
 
@@ -149,7 +149,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
-            .frame(width: 320, height: 2000)
+        .frame(width: 320, height: 2000)
 
         assertSnapshots(of: sut, as: snapshotModi())
     }

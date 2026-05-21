@@ -45,7 +45,7 @@ extension PrescriptionDetailView {
                 .smallSheet($store
                     .scope(state: \.destination?.emergencyServiceFeeInfo,
                            action: \.destination.emergencyServiceFeeInfo)) { _ in
-                        EmergencyServiceFeeDrawerView(store: store)
+                    EmergencyServiceFeeDrawerView(store: store)
                 }
                 .accessibility(hidden: true)
 
@@ -54,7 +54,7 @@ extension PrescriptionDetailView {
                 .smallSheet($store
                     .scope(state: \.destination?.selfPayerInfo,
                            action: \.destination.selfPayerInfo)) { _ in
-                        SelDrawerView(store: store)
+                    SelDrawerView(store: store)
                 }
                 .accessibility(hidden: true)
 

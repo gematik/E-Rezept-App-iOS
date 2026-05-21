@@ -50,10 +50,6 @@ struct RedeemScreen: Screen {
         button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription, fileID: fileID, file: file, line: line)
     }
 
-    func addPrescriptionButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.pharmacyRedeem.phaRedeemBtnAddPrescription, fileID: fileID, file: file, line: line)
-    }
-
     func editPharmacyButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPharmacy, fileID: fileID, file: file, line: line)
     }

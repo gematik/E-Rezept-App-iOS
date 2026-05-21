@@ -39,8 +39,8 @@ extension ModelsR4.DeviceRequest {
         return nil
     }
 
-    // According to the definition of codeableConcept, "text" can only be the name of the DiGa
-    // https://simplifier.net/evdga/kbv_pr_evdga_healthapprequest
+    /// According to the definition of codeableConcept, "text" can only be the name of the DiGa
+    /// https://simplifier.net/evdga/kbv_pr_evdga_healthapprequest
     var appName: String? {
         if case let DeviceRequest.CodeX.codeableConcept(codeX) = code {
             return codeX.text?.value?.string
@@ -48,8 +48,8 @@ extension ModelsR4.DeviceRequest {
         return nil
     }
 
-    // According to the definition of codeableConcept, "code" can only be the PZN of the DiGa
-    // https://simplifier.net/evdga/kbv_pr_evdga_healthapprequest
+    /// According to the definition of codeableConcept, "code" can only be the PZN of the DiGa
+    /// https://simplifier.net/evdga/kbv_pr_evdga_healthapprequest
     var pzn: String? {
         if case let DeviceRequest.CodeX.codeableConcept(codeX) = code {
             return codeX.coding?.first?.code?.value?.string

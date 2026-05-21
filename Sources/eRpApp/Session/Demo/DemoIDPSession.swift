@@ -71,8 +71,8 @@ class DemoIDPSession: IDPSession {
     func requestChallenge() -> AnyPublisher<IDPChallengeSession, IDPError> {
         Future { promise in
             promise(Result {
-                IDPChallengeSession(
-                    challenge: try IDPChallenge(
+                try IDPChallengeSession(
+                    challenge: IDPChallenge(
                         challenge: JWT(header: JWT.Header(), payload: DemoPayload())
                     ),
                     verifierCode: "code_verifier",
@@ -128,9 +128,9 @@ class DemoIDPSession: IDPSession {
             ssoToken: "SSO TOKEN",
             redirect: ""
         ))
-            .setFailureType(to: IDPError.self)
-            .delay(for: 1.5, scheduler: uiScheduler)
-            .eraseToAnyPublisher()
+        .setFailureType(to: IDPError.self)
+        .delay(for: 1.5, scheduler: uiScheduler)
+        .eraseToAnyPublisher()
     }
 
     func pairDevice(with _: RegistrationData, token _: IDPToken) -> AnyPublisher<PairingEntry, IDPError> {

@@ -685,9 +685,9 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
 extension PharmacySearchMapDomainTests {
     /// Test-Data values for `PharmacyLocation`
-    public enum TestData {
+    enum TestData {
         /// Test-Date for opening/closing state
-        public static var openHoursTestReferenceDate: Date? {
+        static var openHoursTestReferenceDate: Date? {
             // Current dummy-time is set to 10:00am on 16th (WED) June 2021...
             var dateComponents = DateComponents()
             dateComponents.year = 2021
@@ -701,7 +701,7 @@ extension PharmacySearchMapDomainTests {
         }
 
         /// Test-Data PharmacyDomain.State
-        public static let stateWithNoLocation =
+        static let stateWithNoLocation =
             PharmacySearchMapDomain.State(
                 selectedPrescriptions: Shared(value: []),
                 inRedeemProcess: false,
@@ -740,37 +740,37 @@ extension PharmacySearchMapDomainTests {
         }
 
         /// Test location
-        public static let testLocation = Location(
+        static let testLocation = Location(
             rawValue: CLLocation(latitude: 49.5270345, longitude: 8.4668786)
         )
         /// Test Maplocation
-        public static let testMapLocation = MKCoordinateRegion(
+        static let testMapLocation = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 49.2470345, longitude: 8.8668786),
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
         /// Test-Data address
-        public static let address1 = PharmacyLocation.Address(
+        static let address1 = PharmacyLocation.Address(
             street: "Hinter der Bahn",
             houseNumber: "6",
             zip: "12345",
             city: "Buxtehude"
         )
         /// Test-Data address
-        public static let address2 = PharmacyLocation.Address(
+        static let address2 = PharmacyLocation.Address(
             street: "Meisenweg",
             houseNumber: "23",
             zip: "54321",
             city: "Linsengericht"
         )
         /// Test-Data telecom
-        public static let telecom = PharmacyLocation.Telecom(
+        static let telecom = PharmacyLocation.Telecom(
             phone: "555-Schuh",
             fax: "555-123456",
             email: "info@gematik.de",
             web: "http://www.gematik.de"
         )
         /// Test-Data Pharmacy 1
-        public static let pharmacy1 = PharmacyLocation(
+        static let pharmacy1 = PharmacyLocation(
             id: "1",
             status: .active,
             telematikID: "3-06.2.ycl.123",
@@ -792,7 +792,7 @@ extension PharmacySearchMapDomainTests {
             ]
         )
         /// Test-Data Pharmacy 2
-        public static let pharmacy2 = PharmacyLocation(
+        static let pharmacy2 = PharmacyLocation(
             id: "2",
             status: .inactive,
             telematikID: "3-09.2.S.10.124",
@@ -810,7 +810,7 @@ extension PharmacySearchMapDomainTests {
             ]
         )
         /// Test-Data Pharmacy 3
-        public static let pharmacy3 = PharmacyLocation(
+        static let pharmacy3 = PharmacyLocation(
             id: "3",
             status: .active,
             telematikID: "3-09.2.sdf.125",
@@ -822,7 +822,7 @@ extension PharmacySearchMapDomainTests {
             hoursOfOperation: []
         )
         /// Test-Data Pharmacy 4
-        public static let pharmacy4 = PharmacyLocation(
+        static let pharmacy4 = PharmacyLocation(
             id: "4",
             status: .inactive,
             telematikID: "3-09.2.dfs.126",
@@ -841,14 +841,14 @@ extension PharmacySearchMapDomainTests {
         )
 
         /// Test-Data arry of pharmacies
-        public static let pharmacies = [
+        static let pharmacies = [
             pharmacy1,
             pharmacy2,
             pharmacy3,
             pharmacy4,
         ]
         /// Test-Data array of pharmacies with a location
-        public static let pharmaciesWithLocations = [
+        static let pharmaciesWithLocations = [
             pharmacy1,
         ]
     }

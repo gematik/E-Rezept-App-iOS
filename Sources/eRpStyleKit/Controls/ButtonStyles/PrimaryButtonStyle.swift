@@ -98,7 +98,9 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primary)`` modifier.
-    public static var primary: PrimaryButtonStyle { PrimaryButtonStyle() }
+    public static var primary: PrimaryButtonStyle {
+        PrimaryButtonStyle()
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///
@@ -116,7 +118,9 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primaryHugging)`` modifier.
-    public static var primaryHugging: PrimaryButtonStyle { PrimaryButtonStyle(width: .wideHugging) }
+    public static var primaryHugging: PrimaryButtonStyle {
+        PrimaryButtonStyle(width: .wideHugging)
+    }
 
     /// A button style that applies fg and bg color, as well as border radius, hugging its contents.
     ///
@@ -202,7 +206,9 @@ extension ButtonStyle where Self == PrimarySmallButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primarySmall)`` modifier.
-    public static var primarySmall: PrimarySmallButtonStyle { PrimarySmallButtonStyle() }
+    public static var primarySmall: PrimarySmallButtonStyle {
+        PrimarySmallButtonStyle()
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///
@@ -220,7 +226,9 @@ extension ButtonStyle where Self == PrimarySmallButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primarySmallHugging)`` modifier.
-    public static var primarySmallHugging: PrimarySmallButtonStyle { PrimarySmallButtonStyle(width: .wideHugging) }
+    public static var primarySmallHugging: PrimarySmallButtonStyle {
+        PrimarySmallButtonStyle(width: .wideHugging)
+    }
 
     /// A button style that applies fg and bg color, as well as border radius, hugging its contents.
     ///

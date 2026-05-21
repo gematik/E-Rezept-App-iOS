@@ -71,7 +71,7 @@ public struct CardWallReadCardDomain {
         /// Show alert dialog
         @ReducerCaseEphemeral
         case alert(ErpAlertState<Alert>)
-        // Screen tracking handled inside
+        /// Screen tracking handled inside
         /// Navigate to help screen
         case help(ReadCardHelpDomain)
 
@@ -126,7 +126,7 @@ public struct CardWallReadCardDomain {
 
     /// The reducer body that handles state transitions and effects
     public var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -217,7 +217,7 @@ public struct CardWallReadCardDomain {
             let environment = environment
             return .run { [profileId = state.profileId] send in
                 let can = try await secureStorage.can(profileId).async()
-                guard let can = can else {
+                guard let can else {
                     await send(.response(.state(State.Output.signingChallenge(.error(.inputError(.missingCAN))))))
                     return
                 }

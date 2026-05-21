@@ -58,5 +58,11 @@
         "text": "**✨ Show prescription codes** \nThe screen for batch and single codes has been redesigned for more intuitive use. \n \n **❤️ Pharmacy Favorites** \nPharmacy favorites now work more reliably and are compatible with VoiceOver. \n \n **♿ Accessibility** \nVoiceOver and keyboard navigation are improved, buttons, text, and input fields are more easily identifiable, and list items are more logically structured. Enlarged font now works on all app screens. Animated videos play only once to support users with cognitive impairments.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Enhanced Pharmacy Details** \nPharmacies can now add services such as vaccinations and on-site features like barrier-free access. Pharmacies can be filtered based on this new information. \n \n **✨ Improved Pharmacy Search** \nRecently used pharmacies and favorite pharmacies are now more clearly separated. The filters have been improved. \n \n **✅ Health ID for Individuals with Alternative Insurance** \nIndividuals who are not covered by statutory or private health insurance can now also log in using their Health ID. \n \n **♿ Accessibility** \nThe filters now have higher contrast, and their status is more easily identifiable. The accessibility statement has been updated and expanded to include a section documenting the change history. Some buttons have been adjusted for improved visibility.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

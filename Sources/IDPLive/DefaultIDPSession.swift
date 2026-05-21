@@ -135,7 +135,7 @@ public class DefaultIDPSession: IDPSession {
     public func requestChallenge() -> AnyPublisher<IDPChallengeSession, IDPError> {
         getAndValidateChallenge(redirect: nil)
             .flatMap { [weak self] challengeSession -> AnyPublisher<IDPChallengeSession, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .requestChallengeUnexpectedNil)).eraseToAnyPublisher()
                 }
                 guard let expirationDate = challengeSession.challenge.exp,
@@ -147,7 +147,8 @@ public class DefaultIDPSession: IDPSession {
                 return Just(challengeSession)
                     .setFailureType(to: IDPError.self)
                     .merge(with: Just(())
-                        // To prevent endless-recursion we call Just(Void()) instead of self.requestChallenge(scope: scope) | swiftlint:disable:this line_length
+                        // To prevent endless-recursion we call Just(Void()) instead of self.requestChallenge(scope:
+                        // scope)
                         .setFailureType(to: IDPError.self)
                         .delay(
                             for: .init(expirationDate.timeIntervalSince(self.time()).toDispatchTimeInterval()),
@@ -164,7 +165,7 @@ public class DefaultIDPSession: IDPSession {
     public func verify(_ signedChallenge: SignedChallenge) -> AnyPublisher<IDPExchangeToken, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPExchangeToken, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .verifyUnexpectedNil)).eraseToAnyPublisher()
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_20526-01] Encryption with JWE
@@ -194,7 +195,7 @@ public class DefaultIDPSession: IDPSession {
     ) -> AnyPublisher<IDPToken, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPToken, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .exchangeUnexpectedNil)).eraseToAnyPublisher()
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_20529-01#2|6] Encrypting the `KEY_VERIFIER`
@@ -215,7 +216,7 @@ public class DefaultIDPSession: IDPSession {
                     using: document
                 )
                 .flatMap { [weak self] token -> AnyPublisher<IDPToken, IDPError> in
-                    guard let self = self else {
+                    guard let self else {
                         return Fail(error: IDPError.internal(error: .exchangeTokenUnexpectedNil)).eraseToAnyPublisher()
                     }
                     // [REQ:gemSpec_IDP_Frontend:A_19938-01#3|3,A_20283-01|3] Decrypt, fails if wrong aes key
@@ -264,7 +265,7 @@ public class DefaultIDPSession: IDPSession {
         }
         return getAndValidateChallenge(redirect: token.redirect)
             .flatMap { [weak self] challengeSession -> AnyPublisher<IDPToken, IDPError> in // IDPChallengeSession
-                guard let self = self else {
+                guard let self else {
                     return Fail<IDPToken, IDPError>(error: IDPError.internal(error: .refreshTokenUnexpectedNil))
                         .eraseToAnyPublisher()
                 }
@@ -287,12 +288,12 @@ public class DefaultIDPSession: IDPSession {
             .validateOrNil(with: trustStoreSession, timeProvider: time)
             .setFailureType(to: IDPError.self)
             .flatMap { [weak self] document -> AnyPublisher<DiscoveryDocument, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(
                         error: IDPError.internal(error: .loadDiscoveryDocumentUnexpectedNil)
                     ).eraseToAnyPublisher()
                 }
-                if let document = document {
+                if let document {
                     return Just(document).setFailureType(to: IDPError.self).eraseToAnyPublisher()
                 } else {
                     // [REQ:gemSpec_IDP_Frontend:A_20512#3] Reset expired documents before loading a new one
@@ -334,10 +335,10 @@ public class DefaultIDPSession: IDPSession {
                            token: IDPToken) -> AnyPublisher<PairingEntry, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<PairingEntry, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .pairDeviceUnexpectedNil)).eraseToAnyPublisher()
                 }
-                /// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
+                // [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
                 guard let jwe = try? registrationData.encrypted(with: document.encryptionPublicKey,
                                                                 using: self.cryptoBox) else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
@@ -365,7 +366,7 @@ public class DefaultIDPSession: IDPSession {
     public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<Bool, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .unregisterDeviceUnexpectedNil)).eraseToAnyPublisher()
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the unregister endpoint
@@ -389,7 +390,7 @@ public class DefaultIDPSession: IDPSession {
     public func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<PairingEntries, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .listDevicesUnexpectedNil)).eraseToAnyPublisher()
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the list endpoint
@@ -414,10 +415,10 @@ public class DefaultIDPSession: IDPSession {
     public func altVerify(_ signedChallenge: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPExchangeToken, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .altVerifyUnexpectedNil)).eraseToAnyPublisher()
                 }
-                /// [REQ:gemSpec_IDP_Frontend:A_21431] Encryption
+                // [REQ:gemSpec_IDP_Frontend:A_21431] Encryption
                 guard let jwe = try? signedChallenge.encrypted(with: document.encryptionPublicKey,
                                                                using: self.cryptoBox) else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
@@ -432,7 +433,7 @@ public class DefaultIDPSession: IDPSession {
     public func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<KKAppDirectory, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(
                         error: IDPError.internal(error: .loadDirectoryKKAppsUnexpectedNil)
                     ).eraseToAnyPublisher()
@@ -458,7 +459,7 @@ public class DefaultIDPSession: IDPSession {
     public func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<URL, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .startExtAuthUnexpectedNil)).eraseToAnyPublisher()
                 }
                 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
@@ -516,7 +517,7 @@ public class DefaultIDPSession: IDPSession {
         // [REQ:gemSpec_IDP_Frontend:A_22301-01#10] Send authorization request
         return extAuthVerify(verify)
             .flatMap { [weak self] token -> AnyPublisher<IDPToken, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(
                         error: IDPError.internal(error: .extAuthVerifyAndExchangeUnexpectedNil)
                     ).eraseToAnyPublisher()
@@ -562,7 +563,7 @@ public class DefaultIDPSession: IDPSession {
     private func extAuthVerify(_ verify: IDPExtAuthVerify) -> AnyPublisher<IDPExchangeToken, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPExchangeToken, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .extAuthVerifyUnexpectedNil)).eraseToAnyPublisher()
                 }
                 return self.client.extAuthVerify(verify, using: document)
@@ -618,10 +619,11 @@ extension DefaultIDPSession {
         }
     }
 
-    private func getAndValidateChallenge(redirect: String?) -> AnyPublisher<IDPChallengeSession, IDPError> {
+    private func getAndValidateChallenge(redirect: String?,
+                                         maxRepeats: Int = 1) -> AnyPublisher<IDPChallengeSession, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPChallengeSession, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(error: IDPError.internal(error: .getAndValidateUnexpectedNil)).eraseToAnyPublisher()
                 }
                 // Generate a verifierCode
@@ -645,12 +647,20 @@ extension DefaultIDPSession {
                     redirect: redirect
                 )
                 .flatMap { challenge -> AnyPublisher<IDPChallengeSession, IDPError> in
-
                     // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
                     // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
                     // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
                     guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
                           verified else {
+                        // Reset DiscoveryDocument in case the certificates changed. This will trigger a reload of the
+                        // DiscoveryDocument on the next request, which should fix the issue in case of certificate
+                        // rollover at the IDP. If the document cannot be verified, it cannot be trusted and thus should
+                        // not be used for further requests until a valid document is loaded.
+                        self.storage.set(discovery: nil)
+
+                        if maxRepeats > 0 {
+                            return self.getAndValidateChallenge(redirect: redirect, maxRepeats: maxRepeats - 1)
+                        }
                         return Fail(error: IDPError.validation(error: JWT.Error.invalidSignature))
                             .eraseToAnyPublisher()
                     }
@@ -677,7 +687,7 @@ extension DefaultIDPSession {
         let challenge = challengeSession.challenge
         return loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPToken, IDPError> in
-                guard let self = self else {
+                guard let self else {
                     return Fail(
                         error: IDPError.internal(error: .ssoLoginAndExchangeUnexpectedNil)
                     ).eraseToAnyPublisher()
@@ -746,7 +756,7 @@ extension Publisher where Output == DiscoveryDocument? {
     func validateOrNil(with trustStoreSession: TrustStoreSession,
                        timeProvider: @escaping (() -> Date)) -> AnyPublisher<DiscoveryDocument?, Failure> {
         flatMap { document -> AnyPublisher<DiscoveryDocument?, Failure> in
-            if let document = document,
+            if let document,
                document.isValid(on: timeProvider()) {
                 return Just(document)
                     .setFailureType(to: IDPError.self)
@@ -799,14 +809,14 @@ extension Publisher where Output == IDPToken?, Failure == Never {
         setFailureType(to: IDPError.self)
             .flatMap { [weak session] token -> AnyPublisher<IDPToken?, IDPError> in
                 // We cannot refresh a token if none is existent
-                guard let token = token else {
+                guard let token else {
                     return Just(nil).setFailureType(to: IDPError.self).eraseToAnyPublisher()
                 }
                 // [REQ:BSI-eRp-ePA:O.Auth_10#2] The application is also checking for Access-Token expiration
                 guard token.expires > time() else {
                     // [REQ:gemSpec_IDP_Frontend:A_21326#5,A_21327#5] Either return a refreshed IDPToken
                     //  (or nil in case of error) to overwrite the current one
-                    guard let session = session else {
+                    guard let session else {
                         return Just(nil)
                             .setFailureType(to: IDPError.self)
                             .eraseToAnyPublisher()
@@ -889,7 +899,7 @@ extension SignedAuthenticationData {
         let signedChallengePayload = NestedJWT(njwt: serialize())
         guard let jweHeader = try? JWE.Header(algorithm: algorithm,
                                               encryption: .a256gcm,
-                                              /// [REQ:gemSpec_IDP_Frontend:A_21431] exp header
+                                              // [REQ:gemSpec_IDP_Frontend:A_21431] exp header
                                               expiry: originalChallenge.challenge.exp,
                                               contentType: "NJWT",
                                               type: "JWT"),

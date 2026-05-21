@@ -49,7 +49,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
         // given
         let version = 1
         let supplyOption = AVSMessage.SupplyOptionsType.onPremise
-        let transactionID = UUID(uuidString: "A37E7651-427C-4899-9508-5660677F103C")!
+        let transactionID = try XCTUnwrap(UUID(uuidString: "A37E7651-427C-4899-9508-5660677F103C"))
         let taskID = ""
         let accessCode = ""
         let avsMessage = AVSMessage(

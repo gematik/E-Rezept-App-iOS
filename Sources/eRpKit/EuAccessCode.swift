@@ -42,7 +42,7 @@ public struct EuAccessCode: Hashable, Codable, Sendable {
         countryCode: String? = nil,
         validUntil: Date? = nil,
         createdAt: Date? = nil,
-        profileId: UUID? = nil,
+        profileId: UUID? = nil
     ) {
         self.identifier = identifier
         self.accessCode = accessCode
@@ -56,8 +56,8 @@ public struct EuAccessCode: Hashable, Codable, Sendable {
 extension EuAccessCode {
     @CodedError("209")
     public enum Error: Swift.Error {
-        @ErrorCode("01")
         /// Unable to construct euAccessCode request
+        @ErrorCode("01")
         case unableToConstructEuAccessCodeRequest
     }
 }

@@ -49,9 +49,7 @@ extension EuAccessCodeGenerator: DependencyKey {
                 return Array(digits + lowercase + uppercase)
             }()
 
-            let accessCode = String((0 ..< 6).compactMap { _ in accessCodeCharacters.randomElement() })
-
-            return accessCode
+            return String((0 ..< 6).compactMap { _ in accessCodeCharacters.randomElement() })
         },
         generateQRCodeImage: { string, size in
             let padding: CGFloat = 16
@@ -71,11 +69,9 @@ extension EuAccessCodeGenerator: DependencyKey {
                 throw EuCodeGenerationError.euCGImageConversion("Could not create a cgImage")
             }
 
-            let uiImage = await UIImage(cgImage: image.takeRetainedValue(),
-                                        scale: UIScreen.main.scale,
-                                        orientation: .up)
-
-            return uiImage
+            return await UIImage(cgImage: image.takeRetainedValue(),
+                                 scale: UIScreen.main.scale,
+                                 orientation: .up)
         }
     )
 

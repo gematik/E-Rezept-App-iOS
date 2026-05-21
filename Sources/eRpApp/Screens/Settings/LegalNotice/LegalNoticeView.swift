@@ -64,7 +64,7 @@ extension LegalNoticeView {
         var title: LocalizedStringKey?
         var text: LocalizedStringKey
         var body: some View {
-            if let title = title {
+            if let title {
                 Text(title, bundle: .module)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
@@ -88,7 +88,7 @@ extension LegalNoticeView {
         var phoneLink: URL?
 
         var body: some View {
-            if let title = title {
+            if let title {
                 Text(title, bundle: .module)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
@@ -96,7 +96,7 @@ extension LegalNoticeView {
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h2)
             }
-            if let webLink = webLink {
+            if let webLink {
                 HStack {
                     Image(systemName: SFSymbolName.network)
                         .frame(width: iconSize)
@@ -108,7 +108,7 @@ extension LegalNoticeView {
                 }
                 .padding(.top, 1)
             }
-            if let emailLink = emailLink {
+            if let emailLink {
                 HStack {
                     Image(systemName: SFSymbolName.mail)
                         .frame(width: iconSize)
@@ -120,7 +120,7 @@ extension LegalNoticeView {
                 }
                 .padding(.top, 1)
             }
-            if let phoneLink = phoneLink {
+            if let phoneLink {
                 HStack {
                     Image(systemName: SFSymbolName.phone)
                         .frame(width: iconSize)

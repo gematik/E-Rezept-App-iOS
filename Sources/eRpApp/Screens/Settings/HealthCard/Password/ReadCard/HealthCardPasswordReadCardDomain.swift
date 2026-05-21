@@ -74,7 +74,7 @@ struct HealthCardPasswordReadCardDomain {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = errorAlert
         case alert(ErpAlertState<Alert>)
-        // Screen tracking handled inside
+        /// Screen tracking handled inside
         case help(ReadCardHelpDomain)
 
         enum Alert: Equatable {
@@ -109,7 +109,6 @@ struct HealthCardPasswordReadCardDomain {
                 }
                 await send(action)
             }
-
         case let .response(.nfcHealthCardPasswordControllerResponseReceived(nfcHealthCardPasswordControllerResponse)):
             switch (nfcHealthCardPasswordControllerResponse, state.mode) {
             // success
@@ -119,14 +118,12 @@ struct HealthCardPasswordReadCardDomain {
                 state.destination = .alert(AlertStates.cardUnlocked)
             case (.success, .healthCardSetNewPinSecret):
                 state.destination = .alert(AlertStates.setNewPin)
-
             // warning: retry counter
             case let (.wrongSecretWarning(retryCount: retriesLeft), .healthCardResetPinCounterWithNewSecret),
                  let (.wrongSecretWarning(retryCount: retriesLeft), .healthCardResetPinCounterNoNewSecret):
                 state.destination = .alert(AlertStates.pukIncorrect(retriesLeft: retriesLeft))
             case let (.wrongSecretWarning(retryCount: retriesLeft), .healthCardSetNewPinSecret):
                 state.destination = .alert(AlertStates.pinIncorrect(retriesLeft: retriesLeft))
-
             // error: blocked
             case (.commandBlocked, .healthCardResetPinCounterWithNewSecret):
                 state.destination = .alert(AlertStates.pukCounterExhaustedWithSetNewPin)
@@ -134,7 +131,6 @@ struct HealthCardPasswordReadCardDomain {
                 state.destination = .alert(AlertStates.pukCounterExhausted)
             case (.commandBlocked, .healthCardSetNewPinSecret):
                 state.destination = .alert(AlertStates.pinCounterExhausted)
-
             // error: others
             case (.passwordNotFound, _):
                 state.destination = .alert(AlertStates.passwordNotFound)
@@ -148,7 +144,6 @@ struct HealthCardPasswordReadCardDomain {
                 state.destination = .alert(AlertStates.unknownError)
             }
             return .none
-
         case let .response(.nfcHealthCardPasswordControllerErrorReceived(nfcHealthCardPasswordControllerError)):
             if case .wrongCan = nfcHealthCardPasswordControllerError {
                 state.destination = .alert(AlertStates.wrongCan)
@@ -164,7 +159,6 @@ struct HealthCardPasswordReadCardDomain {
                 state.destination = .alert(AlertStates.alertFor(nfcHealthCardPasswordControllerError))
             }
             return .none
-
         case .openHelpView:
             state.destination = .help(.init())
             return .none
@@ -224,7 +218,7 @@ extension HealthCardPasswordReadCardDomain {
             newPin: String? = nil
         ) async -> HealthCardPasswordReadCardDomain.Action {
             let mode: NFCResetRetryCounterMode
-            if let newPin = newPin {
+            if let newPin {
                 mode = .resetEgkMrPinRetryCountWithNewSecret(newPin)
             } else {
                 mode = .resetEgkMrPinRetryCountWithoutNewSecret

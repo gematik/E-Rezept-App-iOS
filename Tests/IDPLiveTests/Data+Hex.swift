@@ -23,15 +23,20 @@
 import Foundation
 
 extension DataProtocol {
-    var data: Data { .init(self) }
-    var hexa: String { map { .init(format: "%02X", $0) }.joined() }
+    var data: Data {
+        .init(self)
+    }
+
+    var hexa: String {
+        map { .init(format: "%02X", $0) }.joined()
+    }
 }
 
 struct HexaError: Error {}
 
 extension StringProtocol {
     func hexa() throws -> [UInt8] {
-        var startIndex = self.startIndex
+        var startIndex = startIndex
         return try (0 ..< count / 2).map { _ in
             let endIndex = index(after: startIndex)
             defer { startIndex = index(after: endIndex) }

@@ -214,7 +214,7 @@ struct OrderMessageView: View {
         let horizontalPadding: CGFloat = 4
         let verticalPadding: CGFloat = 4
 
-        // Calculate the total size needed
+        /// Calculate the total size needed
         func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache _: inout Void) -> CGSize {
             var currentRowWidth: CGFloat = 0
             var currentRowHeight: CGFloat = 0
@@ -243,7 +243,7 @@ struct OrderMessageView: View {
             return CGSize(width: currentRowWidth, height: totalHeight)
         }
 
-        // Places the subviews
+        /// Places the subviews
         func placeSubviews(in bounds: CGRect, proposal _: ProposedViewSize, subviews: Subviews, cache _: inout Void) {
             // values based on the boundary
             var currentRowWidth: CGFloat = bounds.minX

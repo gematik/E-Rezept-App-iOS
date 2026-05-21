@@ -31,7 +31,7 @@ extension Logger {
     static let bridgeServer = Logger(subsystem: "de.gematik.erp4ios.eRezept.tests.bridge-server", category: "eRpApp")
 }
 
-// Singleton class that openes a port any UITest can connect to and send messages to the app
+/// Singleton class that openes a port any UITest can connect to and send messages to the app
 class UITestBridgeServer {
     private static var sharedInst: UITestBridgeServer?
 
@@ -77,7 +77,7 @@ class UITestBridgeServer {
 
     func addReceive(connection: NWConnection) {
         connection.receive(minimumIncompleteLength: 1, maximumLength: 65535) { [weak self] data, _, isComplete, error in
-            if let data = data,
+            if let data,
                !data.isEmpty {
                 if let message = try? JSONDecoder().decode(UITestBridgeMessage.self, from: data) {
                     Logger.bridgeServer.log(level: .debug, "Received message: \(message)")
@@ -88,7 +88,7 @@ class UITestBridgeServer {
             }
             if isComplete {
                 connection.cancel()
-            } else if let error = error {
+            } else if let error {
                 Logger.bridgeServer.log(level: .error, "Error receiving data: \(error)")
             } else {
                 self?.addReceive(connection: connection)

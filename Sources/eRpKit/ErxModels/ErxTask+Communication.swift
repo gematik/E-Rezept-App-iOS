@@ -117,7 +117,7 @@ extension ErxTask {
             let version: Int
 
             public static func from(string: String?, decoder: JSONDecoder = defaultDecoder) throws -> Self? {
-                guard let string = string else { return nil }
+                guard let string else { return nil }
                 return try from(data: Data(string.utf8), decoder: decoder)
             }
 
@@ -227,7 +227,7 @@ extension ErxTask.Communication: Comparable, Hashable {
         }
     }
 
-    // Acts as the key for an Unique Communication
+    /// Acts as the key for an Unique Communication
     struct UniqueKey: Equatable, Hashable {
         let profile: Profile
         let payload: String?
@@ -245,7 +245,7 @@ extension ErxTask.Communication: Comparable, Hashable {
     }
 }
 
-extension Collection where Element == ErxTask.Communication {
+extension Collection<ErxTask.Communication> {
     /// Returns a result of `[ErxTask.Communication.Unique]` that are unique for there properties:
     /// `profile`, `payload`, `insuranceId`, `telematikId`and `orderId`
     ///  The element is also unique if the `orderId` is `nil`. Duplicated `taskId` from `ErxTask.Communication` with
@@ -267,7 +267,7 @@ extension Collection where Element == ErxTask.Communication {
             groupDict[key, default: []].append(element)
         }
 
-        let grouped = groupDict.map { key, elements -> ErxTask.Communication.Unique in
+        return groupDict.map { key, elements -> ErxTask.Communication.Unique in
             // Array of all taskIds that have the same unique properties and remove all duplicated taskIds
             let taskIds = Array(Set(elements.map(\.taskId)))
             // isRead false if any communication isRead is false
@@ -286,6 +286,5 @@ extension Collection where Element == ErxTask.Communication {
                                                 payloadJSON: key.payload,
                                                 isRead: isRead)
         }
-        return grouped
     }
 }

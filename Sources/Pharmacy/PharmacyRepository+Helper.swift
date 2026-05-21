@@ -24,6 +24,7 @@ import Combine
 import Dependencies
 import DependenciesMacros
 import eRpKit
+import FHIRClient
 import Foundation
 import OpenSSL
 
@@ -55,6 +56,8 @@ extension PharmacyRepository {
                     updated.types = remotePharmacy.types
                     updated.status = remotePharmacy.status
                     updated.hoursOfOperation = remotePharmacy.hoursOfOperation
+                    updated.physicalFeatures = remotePharmacy.physicalFeatures
+                    updated.specialities = remotePharmacy.specialities
                     updated.avsEndpoints = remotePharmacy.avsEndpoints
                     updated.avsCertificates = remotePharmacy.avsCertificates
 
@@ -109,6 +112,10 @@ extension PharmacyRepository {
                     throw PharmacyRepositoryError.remote(error)
                 } catch let error as LocalStoreError {
                     throw PharmacyRepositoryError.local(error)
+                } catch let error as FHIRClient.Error {
+                    throw PharmacyRepositoryError.remote(.fhirClient(error))
+                } catch {
+                    throw PharmacyRepositoryError.remote(.fhirClient(.unknown(error)))
                 }
             },
             loadLocalById: { telematikId in

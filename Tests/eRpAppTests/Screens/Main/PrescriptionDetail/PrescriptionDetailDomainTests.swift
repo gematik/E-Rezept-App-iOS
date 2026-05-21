@@ -396,7 +396,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowCoPaymentInfo() async {
+    func testShowCoPaymentInfo() async throws {
         let erxTaskWithSubjectToChargeStatus = ErxTask.Fixtures.erxTask3
         let sut = testStore(
             .init(
@@ -406,8 +406,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 isArchived: false
             )
         )
-        let expectedCoPaymentState = CoPaymentDomain.State(
-            status: erxTaskWithSubjectToChargeStatus.medicationRequest.coPaymentStatus!
+        let expectedCoPaymentState = try CoPaymentDomain.State(
+            status: XCTUnwrap(erxTaskWithSubjectToChargeStatus.medicationRequest.coPaymentStatus)
         )
 
         await sut.send(.setNavigation(tag: .coPaymentInfo)) {
@@ -428,7 +428,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         await sut.send(.setNavigation(tag: .coPaymentInfo))
     }
 
-    func testShowCoPaymentInfoState_noCharge() async {
+    func testShowCoPaymentInfoState_noCharge() async throws {
         let erxTaskWithNoSubjectToChargeStatus = ErxTask.Fixtures.erxTask2
         let sut = testStore(
             .init(
@@ -438,8 +438,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 isArchived: false
             )
         )
-        let expectedCoPaymentState = CoPaymentDomain.State(
-            status: erxTaskWithNoSubjectToChargeStatus.medicationRequest.coPaymentStatus!
+        let expectedCoPaymentState = try CoPaymentDomain.State(
+            status: XCTUnwrap(erxTaskWithNoSubjectToChargeStatus.medicationRequest.coPaymentStatus)
         )
 
         await sut.send(.setNavigation(tag: .coPaymentInfo)) {
@@ -504,12 +504,12 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testLoadingImageAndShowShareSheet() async {
+    func testLoadingImageAndShowShareSheet() async throws {
         let sut = testStore()
         let expectedUrl =
-            URL( // swiftlint:disable:next line_length
+            try XCTUnwrap(URL( // swiftlint:disable:next line_length
                 string: "https://erezept.gematik.de/prescription#%5B%222390f983-1e67-11b2-8555-63bf44e44fb8%7Ce46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24%7CSaflorbl%C3%BCten-Extrakt%20Pulver%20Peroral%22%5D"
-            )!
+            ))
         let expectedImage = mockMatrixCodeGenerator.uiImage
         let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
             .value(expectedImage)
@@ -529,12 +529,12 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testLoadingImageAndShowShareSheetWithError() async {
+    func testLoadingImageAndShowShareSheetWithError() async throws {
         let sut = testStore()
         let expectedUrl =
-            URL( // swiftlint:disable:next line_length
+            try XCTUnwrap(URL( // swiftlint:disable:next line_length
                 string: "https://erezept.gematik.de/prescription#%5B%222390f983-1e67-11b2-8555-63bf44e44fb8%7Ce46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24%7CSaflorbl%C3%BCten-Extrakt%20Pulver%20Peroral%22%5D"
-            )!
+            ))
         let expectedImage = mockMatrixCodeGenerator.uiImage
         let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
             .value(expectedImage)
@@ -557,7 +557,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         await sut
             .send(.destination(.presented(.sharePrescription(.delegate(ShareSheetDomain.Action.Delegate
                     .close(expectedError)))))) {
-                    $0.destination = nil
+                $0.destination = nil
             }
 
         await sut.receive(.showAlert(expectedError)) {
@@ -577,10 +577,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowPatient() async {
+    func testShowPatient() async throws {
         let sut = testStore()
-        let expectedState = PatientDomain.State(
-            patient: sut.state.prescription.patient!
+        let expectedState = try PatientDomain.State(
+            patient: XCTUnwrap(sut.state.prescription.patient)
         )
 
         await sut.send(.setNavigation(tag: .patient)) {
@@ -588,10 +588,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowPractitioner() async {
+    func testShowPractitioner() async throws {
         let sut = testStore()
-        let expectedState = PractitionerDomain.State(
-            practitioner: sut.state.prescription.practitioner!
+        let expectedState = try PractitionerDomain.State(
+            practitioner: XCTUnwrap(sut.state.prescription.practitioner)
         )
 
         await sut.send(.setNavigation(tag: .practitioner)) {
@@ -599,10 +599,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowOrganization() async {
+    func testShowOrganization() async throws {
         let sut = testStore()
-        let expectedState = OrganizationDomain.State(
-            organization: sut.state.prescription.organization!
+        let expectedState = try OrganizationDomain.State(
+            organization: XCTUnwrap(sut.state.prescription.organization)
         )
 
         await sut.send(.setNavigation(tag: .organization)) {
@@ -610,10 +610,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowAccidentInfo() async {
+    func testShowAccidentInfo() async throws {
         let sut = testStore()
-        let expectedState = AccidentInfoDomain.State(
-            accidentInfo: sut.state.prescription.medicationRequest.accidentInfo!
+        let expectedState = try AccidentInfoDomain.State(
+            accidentInfo: XCTUnwrap(sut.state.prescription.medicationRequest.accidentInfo)
         )
 
         await sut.send(.setNavigation(tag: .accidentInfo)) {
@@ -621,10 +621,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowMedication_when_not_dispensed() async {
+    func testShowMedication_when_not_dispensed() async throws {
         let sut = testStore()
-        let expectedState = MedicationDomain.State(
-            subscribed: sut.state.prescription.medication!
+        let expectedState = try MedicationDomain.State(
+            subscribed: XCTUnwrap(sut.state.prescription.medication)
         )
 
         await sut.send(.setNavigation(tag: .medication)) {
@@ -632,13 +632,13 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowMedicationOverview_when_dispensed() async {
+    func testShowMedicationOverview_when_dispensed() async throws {
         let redeemedPrescription = Prescription(
             erxTask: ErxTask.Fixtures.erxTaskRedeemed
         )
         let sut = testStore(.init(prescription: redeemedPrescription, isArchived: true))
-        let expectedState = MedicationOverviewDomain.State(
-            subscribed: redeemedPrescription.medication!,
+        let expectedState = try MedicationOverviewDomain.State(
+            subscribed: XCTUnwrap(redeemedPrescription.medication),
             dispensed: redeemedPrescription.medicationDispenses
         )
 

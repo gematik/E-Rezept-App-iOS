@@ -27,7 +27,7 @@ typealias TestDate = Date.Fixtures
 
 extension Date {
     enum Fixtures {
-        // Wednesday 2025-04-30 06:47:58 UTC
+        /// Wednesday 2025-04-30 06:47:58 UTC
         static let defaultReferenceDate = Date(timeIntervalSinceReferenceDate: 767_688)
 
         enum LeapInTime: CaseIterable {
@@ -54,7 +54,7 @@ extension Date {
                 FHIRDateFormatter.liveValue.stringWithLongUTCTimeZone(from: date)
             }
         ) -> String? {
-            dateFormatter(Self.createDate(leapInTime, referenceDate: referenceDate))
+            dateFormatter(createDate(leapInTime, referenceDate: referenceDate))
         }
 
         // swiftlint:disable:next cyclomatic_complexity

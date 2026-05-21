@@ -148,19 +148,40 @@ public struct HealthcareServiceFHIRDataSource {
     /// - Parameter filter: `PharmacyRepositoryFilter`s for filtering the pharmacy response
     /// - Returns: Key / value query parameters to use in url requests
     public func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter] {
+        var result: [PharmacyRemoteDataStoreFilter] = []
+
         let filterTexts: [String] = filter.compactMap {
             switch $0 {
-            case .ready:
+            case .ready, .characteristic, .specialty:
                 return nil
             case .shipment:
                 return "Versand"
             case .delivery:
                 return "Botendienst"
+            case .pickup:
+                return "Handverkauf"
             }
         }
-        guard !filterTexts.isEmpty else {
-            return []
+        if !filterTexts.isEmpty {
+            result.append(PharmacyRemoteDataStoreFilter(key: "text", value: filterTexts.joined(separator: " ")))
         }
-        return [PharmacyRemoteDataStoreFilter(key: "text", value: filterTexts.joined(separator: " "))]
+
+        let characteristicValues: [String] = filter.compactMap {
+            guard case let .characteristic(value) = $0 else { return nil }
+            return value.rawValue
+        }
+        for value in characteristicValues {
+            result.append(PharmacyRemoteDataStoreFilter(key: "characteristic", value: value))
+        }
+
+        let specialtyValues: [String] = filter.compactMap {
+            guard case let .specialty(value) = $0 else { return nil }
+            return value.rawValue
+        }
+        for value in specialtyValues {
+            result.append(PharmacyRemoteDataStoreFilter(key: "specialty", value: value))
+        }
+
+        return result
     }
 }

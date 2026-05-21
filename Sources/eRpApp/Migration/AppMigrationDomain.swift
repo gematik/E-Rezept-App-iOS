@@ -82,7 +82,7 @@ struct AppMigrationDomain {
     var finishedMigration: () -> Void
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 

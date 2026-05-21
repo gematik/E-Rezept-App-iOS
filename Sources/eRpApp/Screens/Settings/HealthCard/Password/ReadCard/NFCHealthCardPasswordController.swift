@@ -104,9 +104,9 @@ enum NFCHealthCardPasswordControllerError: Swift.Error {
     case changeReferenceData(Swift.Error)
     @ErrorCode("06")
     case couldNotInitializeSession
-    @ErrorCode("07")
     /// Any error regarding the communication with the NFC health card itself
     /// or sending/receiving data (operation execution)
+    @ErrorCode("07")
     case nfcHealthCardSession(NFCHealthCardSessionError)
 }
 
@@ -279,8 +279,8 @@ extension NFCHealthCardSession<
 }
 
 extension NFCHealthCardPasswordControllerError: Equatable {
-    public static func ==(lhs: NFCHealthCardPasswordControllerError,
-                          rhs: NFCHealthCardPasswordControllerError) -> Bool {
+    static func ==(lhs: NFCHealthCardPasswordControllerError,
+                   rhs: NFCHealthCardPasswordControllerError) -> Bool {
         switch (lhs, rhs) {
         case let (.cardError(lhsError), .cardError(rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
@@ -303,7 +303,7 @@ extension NFCHealthCardPasswordControllerError: Equatable {
 }
 
 extension NFCHealthCardPasswordControllerError: CustomStringConvertible, LocalizedError {
-    public var description: String {
+    var description: String {
         switch self {
         case let .cardError(error):
             return "cardError: \(error.localizedDescription)"

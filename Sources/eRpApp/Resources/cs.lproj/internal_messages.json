@@ -58,5 +58,11 @@
         "text": "**✨ Zobrazení kódů receptů** \nObrazovka pro dávkové a jednotlivé kódy byla přepracována pro intuitivnější použití. \n \n **❤️ Oblíbené položky z lékárny** \nOblíbené položky z lékárny nyní fungují spolehlivěji a jsou kompatibilní s VoiceOverem. \n \n **♿ Přístupnost** \nNavigace pomocí VoiceOveru a klávesnice je vylepšena, tlačítka, text a vstupní pole jsou snadněji identifikovatelná a položky seznamu jsou logičtěji strukturované. Zvětšené písmo nyní funguje na všech obrazovkách aplikací. Animovaná videa se přehrávají pouze jednou, aby podpořila uživatele s kognitivním postižením.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Vylepšené podrobnosti o lékárnách** \nLékárny nyní mohou přidávat služby, jako je očkování, a funkce na místě, jako je bezbariérový přístup. Lékárny lze filtrovat na základě těchto nových informací. \n \n **✨ Vylepšené vyhledávání lékáren** \nNaposledy použité lékárny a oblíbené lékárny jsou nyní jasněji odděleny. Filtry byly vylepšeny. \n \n **✅ Zdravotní průkaz pro osoby s alternativním pojištěním** \nOsoby, které nejsou kryty zákonným ani soukromým zdravotním pojištěním, se nyní mohou také přihlásit pomocí svého zdravotního průkazu. \n \n **♿ Přístupnost** \nFiltry mají nyní vyšší kontrast a jejich stav je snáze identifikovatelný. Prohlášení o přístupnosti bylo aktualizováno a rozšířeno o část dokumentující historii změn. Některá tlačítka byla upravena pro lepší viditelnost.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

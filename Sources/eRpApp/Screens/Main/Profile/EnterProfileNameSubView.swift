@@ -45,13 +45,13 @@ struct EnterProfileNameSubView: View {
     }
 
     var isValidEntry: Bool {
-        guard let validating = validating else { return true }
+        guard let validating else { return true }
         return validating(displayName.wrappedValue)
     }
 
     var body: some View {
         VStack(spacing: 8) {
-            if let closeAction = closeAction {
+            if let closeAction {
                 HStack(spacing: 0) {
                     Spacer()
 
@@ -64,31 +64,31 @@ struct EnterProfileNameSubView: View {
             Section(header:
                 Text(L10n.addTxtTitle)
                     .font(.system(size: 16, weight: .bold))) {
-                    TextField(
-                        "",
-                        text: displayName
-                    )
-                    .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textField in
-                        textField.clearButtonMode = .whileEditing
-                    }
-                    .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
-                    .foregroundColor(Colors.systemLabel)
-                    .padding()
-                    .border(Colors.primary700, width: 2, cornerRadius: 8)
-                    .padding(.vertical)
-                    .padding(.horizontal)
-                    .focused($focused)
+                TextField(
+                    "",
+                    text: displayName
+                )
+                .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textField in
+                    textField.clearButtonMode = .whileEditing
+                }
+                .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
+                .foregroundColor(Colors.systemLabel)
+                .padding()
+                .border(Colors.primary700, width: 2, cornerRadius: 8)
+                .padding(.vertical)
+                .padding(.horizontal)
+                .focused($focused)
 
-                    Button(
-                        action: {
-                            didTapButtonAction()
-                        },
-                        label: {
-                            Text(L10n.addBtnSave)
-                        }
-                    )
-                    .accessibilityIdentifier(A11y.settings.newProfile.stgBtnNewProfileSave)
-                    .buttonStyle(.primary(isEnabled: isValidEntry, isDestructive: false, width: .wideHugging))
+                Button(
+                    action: {
+                        didTapButtonAction()
+                    },
+                    label: {
+                        Text(L10n.addBtnSave)
+                    }
+                )
+                .accessibilityIdentifier(A11y.settings.newProfile.stgBtnNewProfileSave)
+                .buttonStyle(.primary(isEnabled: isValidEntry, isDestructive: false, width: .wideHugging))
             }
         }
         .padding()

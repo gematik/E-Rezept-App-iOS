@@ -64,7 +64,7 @@ public class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvid
         }
     }
 
-    public func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509)
+    public func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: IDPX509)
         -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
         certificateStorage.set(certificate: certificate)
@@ -102,7 +102,7 @@ public class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvid
         certificateStorage.certificate
             .setFailureType(to: SecureEnclaveSignatureProviderError.self)
             .flatMap { certificate -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> in
-                guard let certificate = certificate else {
+                guard let certificate else {
                     return Fail(error: SecureEnclaveSignatureProviderError.packagingAuthCertificate)
                         .eraseToAnyPublisher()
                 }
@@ -113,7 +113,7 @@ public class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvid
 }
 
 extension DefaultSecureEnclaveSignatureProvider {
-    private func authenticationData(for challenge: IDPChallengeSession, with certificate: X509)
+    private func authenticationData(for challenge: IDPChallengeSession, with certificate: IDPX509)
         -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> {
         certificateStorage.keyIdentifier
             .setFailureType(to: SecureEnclaveSignatureProviderError.self)
@@ -171,8 +171,8 @@ extension DefaultSecureEnclaveSignatureProvider {
 }
 
 extension PairingSession {
-    func pairingData(certificate: X509, privateKeyContainer: PrivateKeyContainer) throws -> JWT {
-        guard let authCertSubjectPublicKeyInfoRaw = try? certificate.brainpoolP256r1VerifyPublicKey()?.asn1Encoded(),
+    func pairingData(certificate: IDPX509, privateKeyContainer: PrivateKeyContainer) throws -> JWT {
+        guard let authCertSubjectPublicKeyInfoRaw = try? certificate.idpBrainpoolP256r1VerifyPublicKey()?.asn1Encoded(),
               let encoded = authCertSubjectPublicKeyInfoRaw.encodeBase64UrlSafe(),
               let authCertSubjectPublicKeyInfo = String(data: encoded, encoding: .utf8)
         else {
@@ -190,13 +190,13 @@ extension PairingSession {
         }
 
         do {
-            let pairingData = PairingData(authCertSubjectPublicKeyInfo: authCertSubjectPublicKeyInfo,
-                                          notAfter: Int(try certificate.notAfter().timeIntervalSince1970),
-                                          product: deviceInformation.deviceType.product,
-                                          serialnumber: try certificate.serialNumber(),
-                                          keyIdentifier: privateKeyContainer.tag,
-                                          seSubjectPublicKeyInfo: seSubjectPublicKeyInfo,
-                                          issuer: issuer)
+            let pairingData = try PairingData(authCertSubjectPublicKeyInfo: authCertSubjectPublicKeyInfo,
+                                              notAfter: Int(certificate.notAfter().timeIntervalSince1970),
+                                              product: deviceInformation.deviceType.product,
+                                              serialnumber: certificate.serialNumber(),
+                                              keyIdentifier: privateKeyContainer.tag,
+                                              seSubjectPublicKeyInfo: seSubjectPublicKeyInfo,
+                                              issuer: issuer)
             let pairingDataHeader = JWT.Header(alg: JWT.Algorithm.bp256r1, typ: "JWT")
             return try JWT(header: pairingDataHeader, payload: pairingData)
         } catch {
@@ -204,10 +204,8 @@ extension PairingSession {
         }
     }
 
-    func sign(with signer: JWTSigner, certificate: X509, privateKeyContainer: PrivateKeyContainer)
+    func sign(with signer: JWTSigner, certificate: IDPX509, privateKeyContainer: PrivateKeyContainer)
         -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
-        self.certificate = certificate
-
         guard let authCertRaw = certificate.derBytes,
               let base64authCertRaw = authCertRaw.encodeBase64UrlSafe(),
               let authCert = String(data: base64authCertRaw, encoding: .utf8) else {
@@ -220,7 +218,7 @@ extension PairingSession {
                     RegistrationData(
                         authCert: authCert,
                         signedParingData: signatureJWT.serialize(),
-                        deviceInformation: self.deviceInformation
+                        deviceInformation: deviceInformation
                     )
                 }
                 .mapError(SecureEnclaveSignatureProviderError.signing)
@@ -234,39 +232,21 @@ extension PairingSession {
     }
 }
 
-extension BrainpoolP256r1.Verify.PublicKey {
-    func asn1Encoded() throws -> Data {
-        let asn1 = ASN1Data.constructed(
-            [
-                create(tag: .universal(.sequence), data: ASN1Data.constructed(
-                    [
-                        try ObjectIdentifier.from(string: "1.2.840.10045.2.1").asn1encode(),
-                        try ObjectIdentifier.from(string: "1.3.36.3.3.2.8.1.1.7").asn1encode(),
-                    ]
-                )),
-
-                try x962Value().asn1bitStringEncode(),
-            ]
-        )
-        return try create(tag: .universal(.sequence), data: asn1).serialize()
-    }
-}
-
 extension PrivateKeyContainer {
     /// Returns the public key in ASN.1 format
     /// - Returns: The public key encoded as ASN.1 data
     /// - Throws: An error if the ASN.1 encoding fails
     func asn1PublicKey() throws -> Data {
-        let asn1 = ASN1Data.constructed(
+        let asn1 = try ASN1Data.constructed(
             [
                 create(tag: .universal(.sequence), data: ASN1Data.constructed(
                     [
-                        try ObjectIdentifier.from(string: "1.2.840.10045.2.1").asn1encode(),
-                        try ObjectIdentifier.from(string: "1.2.840.10045.3.1.7").asn1encode(),
+                        ObjectIdentifier.from(string: "1.2.840.10045.2.1").asn1encode(),
+                        ObjectIdentifier.from(string: "1.2.840.10045.3.1.7").asn1encode(),
                     ]
                 )),
 
-                try publicKeyData().asn1bitStringEncode(),
+                publicKeyData().asn1bitStringEncode(),
             ]
         )
         return try create(tag: .universal(.sequence), data: asn1).serialize()

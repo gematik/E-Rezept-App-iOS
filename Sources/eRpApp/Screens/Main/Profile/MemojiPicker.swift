@@ -105,7 +105,7 @@ private struct MemojiPickerTextField: UIViewRepresentable {
     class EmojiTextFieldWrapper: UITextField {
         var memojiSelected: (UIImage) -> Void
 
-        internal init(memojiSelected: @escaping (UIImage) -> Void) {
+        init(memojiSelected: @escaping (UIImage) -> Void) {
             self.memojiSelected = memojiSelected
 
             super.init(frame: .zero)
@@ -123,7 +123,7 @@ private struct MemojiPickerTextField: UIViewRepresentable {
             return nil
         }
 
-        // Memojis are inserted by the pasteboard
+        /// Memojis are inserted by the pasteboard
         override func paste(_ sender: Any?) {
             guard let image = UIPasteboard.general.image else {
                 super.paste(sender)

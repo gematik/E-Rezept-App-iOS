@@ -20,6 +20,8 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+// swiftlint:disable file_length
+
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
@@ -45,7 +47,7 @@ struct PharmacyDetailView: View {
                                 .padding(12)
                                 .background(Circle().foregroundColor(Colors.systemGray6))
                         })
-                            .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnClose)
+                        .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnClose)
                     }
                 }
                 .padding(.top)
@@ -114,6 +116,17 @@ struct PharmacyDetailView: View {
 
                     if !store.pharmacy.hoursOfOperation.isEmpty {
                         OpeningHoursView(dailyOpenHours: store.pharmacyViewModel.openingHours)
+                            .padding(.bottom, 8)
+                    }
+
+                    // "Vor Ort"
+                    if !store.pharmacy.physicalFeatures.isEmpty {
+                        PhysicalFeaturesView(physicalFeatures: store.pharmacy.physicalFeatures)
+                            .padding(.bottom, 8)
+                    }
+
+                    if !store.pharmacy.specialities.isEmpty {
+                        SpecialitiesView(specialities: store.pharmacy.specialities)
                             .padding(.bottom, 8)
                     }
 
@@ -236,10 +249,15 @@ extension PharmacyDetailView {
         @Dependency(\.date) var date
 
         var body: some View {
-            SectionHeaderView(
-                text: L10n.phaDetailOpeningTime,
-                a11y: ""
-            ).padding(.bottom, 8)
+            HStack {
+                Text(L10n.phaDetailOpeningTime)
+                    .font(.headline)
+                    .foregroundColor(Colors.systemLabel)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding([.top])
+                    .padding(.bottom, 8)
+                Spacer()
+            }
 
             // .weekday starts with 1 being sunday, +5 % 7 to let monday be 0 and the first day
             let todayWeekNumber = (Calendar.current.component(.weekday, from: date()) + 5) % 7
@@ -299,13 +317,88 @@ extension PharmacyDetailView {
         }
     }
 
+    /// "Vor Ort"
+    struct PhysicalFeaturesView: View {
+        let physicalFeatures: [PharmacyLocation.PhysicalFeature]
+
+        var body: some View {
+            HStack {
+                Text("Vor Ort")
+                    .font(.headline)
+                    .foregroundColor(Colors.systemLabel)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding([.top])
+                Spacer()
+            }
+
+            // Bullet points sorted alphabetically by their localized display name
+            VStack(alignment: .leading, spacing: 8) {
+                let sortedEntries = physicalFeatures.sorted { lhs, rhs in
+                    lhs.localizedDisplayName.text < rhs.localizedDisplayName.text
+                }
+                ForEach(sortedEntries, id: \.self) { feature in
+                    HStack(spacing: 4) {
+                        Image(systemName: SFSymbolName.checkmarkCircleFill)
+                            .font(.subheadline)
+                            .foregroundColor(Colors.secondary600)
+                            .accessibility(hidden: true)
+
+                        Text(feature.localizedDisplayName.text)
+                            .font(.body)
+                            .foregroundColor(Colors.systemLabel)
+                    }
+                }
+            }
+        }
+    }
+
+    struct SpecialitiesView: View {
+        let specialities: [PharmacyLocation.Speciality]
+
+        var body: some View {
+            HStack {
+                Text(L10n.phaDetailSpecialities)
+                    .font(.headline)
+                    .foregroundColor(Colors.systemLabel)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding([.top])
+                Spacer()
+            }
+
+            let sorted = specialities.sorted { $0.localizedDisplayName.text < $1.localizedDisplayName.text }
+            PharmacySearchFlowLayout(spacing: 8) {
+                ForEach(sorted, id: \.self) { speciality in
+                    ServiceChip(text: speciality.localizedDisplayName.text)
+                }
+            }
+        }
+
+        private struct ServiceChip: View {
+            let text: String
+
+            var body: some View {
+                Text(text)
+                    .font(.subheadline)
+                    .foregroundColor(Colors.primary900)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 4)
+                    .background(Colors.primary100)
+                    .cornerRadius(8)
+            }
+        }
+    }
+
     struct EmergencyServiceView: View {
         let specialOpening: [PharmacyLocationViewModel.SpecialOperationHoursPeriod]
         var body: some View {
-            SectionHeaderView(
-                text: L10n.phaDetailEmergencyService,
-                a11y: ""
-            )
+            HStack {
+                Text(L10n.phaDetailEmergencyService)
+                    .font(.headline)
+                    .foregroundColor(Colors.systemLabel)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding([.top])
+                Spacer()
+            }
 
             ForEach(specialOpening, id: \.self) { specialHours in
                 HStack(spacing: 16) {
@@ -336,10 +429,14 @@ extension PharmacyDetailView {
     struct SpecialClosingView: View {
         let specialClosings: [PharmacyLocationViewModel.SpecialOperationHoursPeriod]
         var body: some View {
-            SectionHeaderView(
-                text: L10n.phaDetailSpecialClosing,
-                a11y: ""
-            )
+            HStack {
+                Text(L10n.phaDetailSpecialClosing)
+                    .font(.headline)
+                    .foregroundColor(Colors.systemLabel)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding([.top])
+                Spacer()
+            }
 
             ForEach(specialClosings, id: \.self) { closing in
                 VStack(alignment: .leading, spacing: 4) {
@@ -371,8 +468,15 @@ extension PharmacyDetailView {
 
         var body: some View {
             VStack {
-                SectionHeaderView(text: L10n.phaDetailContact,
-                                  a11y: A11y.pharmacyDetail.phaDetailContact)
+                HStack {
+                    Text(L10n.phaDetailContact)
+                        .font(.headline)
+                        .foregroundColor(Colors.systemLabel)
+                        .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailContact)
+                        .accessibilityAddTraits(.isHeader)
+                        .padding([.top])
+                    Spacer()
+                }
 
                 if let phone = store.pharmacy.telecom?.phone {
                     Button(action: { store.send(.openPhoneApp) }, label: {
@@ -403,15 +507,13 @@ extension PharmacyDetailView {
     }
 
     struct Footer: View {
-        var text: Text = {
-            Text(L10n.phaDetailTxtFooterStart)
-                .foregroundColor(Colors.systemLabelSecondary) +
-                Text(L10n.phaDetailTxtFooterMid)
-                .foregroundColor(Colors.primary)
-                .underline() +
-                Text(L10n.phaDetailTxtFooterEnd)
-                .foregroundColor(Colors.systemLabelSecondary)
-        }()
+        var text: Text = .init(L10n.phaDetailTxtFooterStart)
+            .foregroundColor(Colors.systemLabelSecondary) +
+            Text(L10n.phaDetailTxtFooterMid)
+            .foregroundColor(Colors.primary)
+            .underline() +
+            Text(L10n.phaDetailTxtFooterEnd)
+            .foregroundColor(Colors.systemLabelSecondary)
 
         var body: some View {
             VStack(alignment: .trailing, spacing: 8) {
@@ -437,9 +539,9 @@ extension PharmacyDetailView {
                         Image(systemName: SFSymbolName.arrowUpForward)
                     }
                 })
-                    .accessibilityLabel(L10n.phaDetailLblFooter)
-                    .labelStyle(.trailingIcon)
-                    .buttonStyle(.tertiary)
+                .accessibilityLabel(L10n.phaDetailLblFooter)
+                .labelStyle(.trailingIcon)
+                .buttonStyle(.tertiary)
             }
             .font(.footnote)
         }
@@ -482,4 +584,23 @@ struct PharmacyDetailView_Previews: PreviewProvider {
             )
         }
     }
+}
+
+#Preview("Specialities - Large Font") {
+    ScrollView {
+        PharmacyDetailView.SpecialitiesView(specialities: [
+            .vaccination,
+            .bodyMeasurements,
+            .sterileCompounding,
+            .allergyTest,
+            .travelMedicineConsultation,
+            .oralCancerTherapy,
+            .organTransplantation,
+            .polymedication,
+            .inhalationTechnique,
+            .hypertension,
+        ])
+        .padding()
+    }
+    .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 }

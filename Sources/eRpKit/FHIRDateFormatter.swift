@@ -28,7 +28,7 @@ public class FHIRDateFormatter {
     public static let shared = FHIRDateFormatter()
     private init() {}
 
-    // Thread-safe immutable cache: one formatter per DateFormats
+    /// Thread-safe immutable cache: one formatter per DateFormats
     private static let isoDateFormatters: [DateFormats: ISO8601DateFormatter] = {
         var dict: [DateFormats: ISO8601DateFormatter] = [:]
         for format in DateFormats.allCases {

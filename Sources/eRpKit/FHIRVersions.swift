@@ -27,8 +27,8 @@ import Foundation
 // swiftlint:disable line_length
 // swiftlint:disable file_length
 
-/// Checkout the FHIR Version document for more informations about all types of versions and when they will be applied
-/// https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc
+// Checkout the FHIR Version document for more informations about all types of versions and when they will be applied
+// https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc
 
 /// These Code Systems and Value Sets are cited in HL7 Published artifacts
 /// (International Standards and Implemenation Guides) in a convenient browsable form.
@@ -472,7 +472,7 @@ public enum ErpPrescription {
 public enum EpaMedication {
     /// Supported Versions EPA medication definitions
     public enum Version: String {
-        // https://simplifier.net/packages/de.gematik.epa.medication/1.1.1
+        /// https://simplifier.net/packages/de.gematik.epa.medication/1.1.1
         case v1_1_1 = "1.1.1"
     }
 
@@ -909,6 +909,12 @@ public enum FHIRDirectory {
             /// code system for pharmacy services (e.g. pickup, shipment, delivery)
             public static let pharmacyHealthcareSpecialty =
                 "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS"
+            /// code system for healthcare service specialties (e.g. vaccination, body measurements)
+            public static let healthcareServiceSpecialty =
+                "https://gematik.de/fhir/directory/CodeSystem/HealthcareServiceSpecialtyCS"
+            /// code system for physical features (e.g. parking, barrier-free, public transport)
+            public static let physicalFeatures =
+                "https://gematik.de/fhir/directory/CodeSystem/physicalFeatures"
         }
 
         /// structure definition of speical opening times (e.g. emergency service (Notdienst))

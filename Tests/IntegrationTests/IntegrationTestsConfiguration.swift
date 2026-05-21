@@ -83,7 +83,7 @@ let integrationTestsEnvironmentDummy = IntegrationTestsConfiguration(
 )
 
 extension IntegrationTestsConfiguration {
-    // Signing identity for Test-User: Juna Fuchs, Kvnr: X114428530
+    /// Signing identity for Test-User: Juna Fuchs, Kvnr: X114428530
     static let signer = try! Brainpool256r1Signer(
         x5c: Bundle(for: IntegrationTestsConfiguration.self)
             .path(
@@ -139,10 +139,8 @@ let integrationTestsEnvironmentTU: IntegrationTestsConfiguration = {
     )
 }()
 
-let integrationTestsEnvironmentPU: IntegrationTestsConfiguration = {
-    IntegrationTestsConfiguration(
-        appConfiguration: environmentPU,
-        brainpool256r1Signer: nil,
-        idpsekURLServer: nil
-    )
-}()
+let integrationTestsEnvironmentPU: IntegrationTestsConfiguration = .init(
+    appConfiguration: environmentPU,
+    brainpool256r1Signer: nil,
+    idpsekURLServer: nil
+)

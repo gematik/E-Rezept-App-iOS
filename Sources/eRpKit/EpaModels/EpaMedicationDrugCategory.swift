@@ -23,12 +23,12 @@
 /// Category of a drug
 /// https://gematik.de/fhir/terminology/CodeSystem/epa-drug-category-cs
 public enum EpaMedicationDrugCategory: String, Equatable, Codable, Sendable {
-    // "00" Arzneimittel oder in die Arzneimittelversorgung nach § 31 SGB V einbezogenes Produkt
+    /// "00" Arzneimittel oder in die Arzneimittelversorgung nach § 31 SGB V einbezogenes Produkt
     case avm = "00"
-    // "01" BtM Betäubungsmittel
+    /// "01" BtM Betäubungsmittel
     case btm = "01"
-    // "02" AMVV § 3a Abs. 1 (Thalidomid o. ä.) (Arzneimittelverschreibungsverordnung)
+    /// "02" AMVV § 3a Abs. 1 (Thalidomid o. ä.) (Arzneimittelverschreibungsverordnung)
     case amvv = "02"
-    // Sonstiges
+    /// Sonstiges
     case other = "03"
 }

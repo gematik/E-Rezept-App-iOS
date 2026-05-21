@@ -24,8 +24,8 @@ import eRpResources
 import Nimble
 import XCTest
 
-// Note: Editing secure fields via UITests seems to be blocked by "autofill passwords" by now.
-// For now employ a programmatic work around as in https://stackoverflow.com/a/76656325
+/// Note: Editing secure fields via UITests seems to be blocked by "autofill passwords" by now.
+/// For now employ a programmatic work around as in https://stackoverflow.com/a/76656325
 @MainActor
 struct ChangePasswordScreen: Screen {
     let app: XCUIApplication

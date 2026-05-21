@@ -58,5 +58,11 @@
         "text": "**✨ Mostrar códigos de prescripción** \nLa pantalla para códigos de lote y únicos ha sido rediseñada para un uso más intuitivo. \n \n **❤️ Favoritos de farmacia** \nLos favoritos de farmacia ahora funcionan de manera más confiable y son compatibles con VoiceOver. \n \n **♿ Accesibilidad** \nVoiceOver y la navegación del teclado se han mejorado, los botones, el texto y los campos de entrada son más fáciles de identificar, y los elementos de la lista están estructurados de forma más lógica. La fuente agrandada ahora funciona en todas las pantallas de la aplicación. Los videos animados se reproducen solo una vez para ayudar a los usuarios con discapacidades cognitivas.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Detalles mejorados de la farmacia** \nLas farmacias ahora pueden agregar servicios como vacunas y características en el sitio como acceso sin barreras. Las farmacias se pueden filtrar según esta nueva información. \n \n **✨ Búsqueda de farmacias mejorada** \nLas farmacias usadas recientemente y las farmacias favoritas ahora están separadas más claramente. Los filtros se han mejorado. \n \n **✅ Identificación de salud para personas con seguro alternativo** \nLas personas que no están cubiertas por un seguro de salud público o privado ahora también pueden iniciar sesión usando su Identificación de salud. \n \n **♿ Accesibilidad** \nLos filtros ahora tienen mayor contraste y su estado es más fácil de identificar. La declaración de accesibilidad se ha actualizado y ampliado para incluir una sección que documenta el historial de cambios. Algunos botones se han ajustado para una mejor visibilidad.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

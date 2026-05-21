@@ -119,10 +119,10 @@ packages:
     path: ./
   Nimble:
     url: https://github.com/Quick/Nimble
-    majorVersion: 13.0.0
+    majorVersion: 14.0.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
-    majorVersion: 1.16.2
+    majorVersion: 1.19.2
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806

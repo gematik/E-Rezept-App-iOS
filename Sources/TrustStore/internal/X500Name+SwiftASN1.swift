@@ -32,7 +32,7 @@ struct X500Name {
 }
 
 struct X500RelativeDistinguishedName {
-    // let attributeType: not encoded since we don't need it for our purpose
+    /// let attributeType: not encoded since we don't need it for our purpose
     let value: ASN1UTF8String
 }
 
@@ -110,7 +110,7 @@ extension X500RelativeDistinguishedName: DERImplicitlyTaggable {
 extension X509 {
     func issuerCn() throws -> String {
         guard
-            let issuerX500PrincipalDEREncoded = self.issuerX500PrincipalDEREncoded(),
+            let issuerX500PrincipalDEREncoded = issuerX500PrincipalDEREncoded(),
             let x500Name = try? X500Name(derEncoded: issuerX500PrincipalDEREncoded.bytes)
         else {
             throw TrustStoreError.malformedCertificate
@@ -121,7 +121,7 @@ extension X509 {
 
     func subjectCN() throws -> String {
         guard
-            let subjectX500PrincipalDEREncoded = self.subjectX500PrincipalDEREncoded(),
+            let subjectX500PrincipalDEREncoded = subjectX500PrincipalDEREncoded(),
             let x500Name = try? X500Name(derEncoded: subjectX500PrincipalDEREncoded.bytes)
         else {
             throw TrustStoreError.malformedCertificate

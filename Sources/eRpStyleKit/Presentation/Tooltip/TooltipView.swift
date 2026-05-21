@@ -66,12 +66,12 @@ struct TooltipView<Content: View>: View {
                     Rectangle()
                         .fill(.clear)
                         .onChange(of: tooltipId.description) { _, _ in
-                            self.width = ownSizeProxy.size.width
-                            self.height = ownSizeProxy.size.height
+                            width = ownSizeProxy.size.width
+                            height = ownSizeProxy.size.height
                         }
                         .onAppear {
-                            self.width = ownSizeProxy.size.width
-                            self.height = ownSizeProxy.size.height
+                            width = ownSizeProxy.size.width
+                            height = ownSizeProxy.size.height
                         }
                 }
             )

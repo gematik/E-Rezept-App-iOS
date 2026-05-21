@@ -51,11 +51,10 @@ extension DefaultErxTaskCoreDataStore {
     public func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
         coreDataCrudable.save(mergePolicy: .mergeByPropertyObjectTrump) { moc in
             _ = medicationDispenses.map { medicationDispense -> ErxTaskMedicationDispenseEntity in
-                let medicationDispenseEntity = ErxTaskMedicationDispenseEntity.from(
+                return ErxTaskMedicationDispenseEntity.from(
                     medicationDispense: medicationDispense,
                     in: moc
                 )
-                return medicationDispenseEntity
             }
         }
     }

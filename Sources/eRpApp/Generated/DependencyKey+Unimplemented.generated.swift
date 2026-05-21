@@ -630,7 +630,7 @@ struct UnimplementedSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvid
     func createPairingSession() throws -> PairingSession {
         fatalError("createPairingSession has not been implemented")
     }
-    func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
+    func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: IDPX509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
         fatalError("signPairingSession(_:with:certificate:) has not been implemented")
     }
     func abort(pairingSession: PairingSession) throws -> Void {
@@ -858,11 +858,6 @@ struct UnimplementedUserProfileService: UserProfileService {
 struct UnimplementedUserSession: UserSession {
     init() {}
 
-    var isAuthenticated: AnyPublisher<Bool, UserSessionError> {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
     var ordersRepository: OrdersRepository {
         get { fatalError("") }
         set(value) { fatalError("") }
@@ -874,11 +869,6 @@ struct UnimplementedUserSession: UserSession {
     }
 
     var shipmentInfoDataStore: ShipmentInfoDataStore {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
-    var updateChecker: UpdateChecker {
         get { fatalError("") }
         set(value) { fatalError("") }
     }
@@ -919,16 +909,6 @@ struct UnimplementedUserSession: UserSession {
     }
 
     var trustStoreSession: TrustStoreSession {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
-    var appSecurityManager: AppSecurityManager {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
-    var deviceSecurityManager: DeviceSecurityManager {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

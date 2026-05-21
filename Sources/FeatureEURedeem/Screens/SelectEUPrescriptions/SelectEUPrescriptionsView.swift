@@ -38,7 +38,7 @@ public struct SelectEUPrescriptionsView: View {
             }, header: {
                 patientHeader
             })
-                .headerProminence(.increased)
+            .headerProminence(.increased)
         }
         .task {
             await store.send(.task).finish()
@@ -72,7 +72,7 @@ public struct SelectEUPrescriptionsView: View {
                 store.send(.togglePrescription(prescription))
             } label: {
                 HStack(alignment: .center, spacing: 16) {
-                    if prescription.isEURedeemable {
+                    if prescription.irredeemableReason == nil {
                         SelectionCheckmark(isSelected: prescription.isSetEURedeemableByPatient)
                     } else {
                         Image(systemName: SFSymbolName.crossIconPlain)
@@ -89,8 +89,8 @@ public struct SelectEUPrescriptionsView: View {
                             Text(L10n.euredeemPrscSelectionTxtRedeemUntil(
                                 expiresOn
                             ))
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                         } else if let reason = prescription.irredeemableReason {
                             Text(reason)
                                 .font(.subheadline)
@@ -102,6 +102,8 @@ public struct SelectEUPrescriptionsView: View {
                 }
             }
             .buttonStyle(.plain)
+            .accessibilityAddTraits(.isToggle)
+            .accessibilityAddTraits(prescription.isSetEURedeemableByPatient ? [.isSelected] : [])
         }
     }
 }

@@ -178,7 +178,7 @@ struct PharmacyRedeemDomain {
         Scope(state: \State.serviceOptionState, action: \.serviceOption) {
             ServiceOptionDomain()
         }
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -283,28 +283,28 @@ struct PharmacyRedeemDomain {
             return .run { [
                 orderRequests = state.orders,
                 serviceOption = state.serviceOption,
-                profileId = state.profileId,
+                profileId = state.profileId
             ] send in
-            // swiftlint:enable closure_parameter_position
-            do {
-                switch serviceOption {
-                case .avs:
-                    let orderResponses = try await redeemOrderService.redeemViaAVS(orderRequests, profileId)
-                    await send(.redeemReceived(.success(orderResponses)))
-                case .erxTaskRepository, .erxTaskRepositoryAvailable:
-                    let orderResponses = try await redeemOrderService
-                        .redeemViaErxTaskRepository(orderRequests, profileId)
-                    await send(.redeemReceived(.success(orderResponses)))
-                case .noService, .none:
-                    break
+                // swiftlint:enable closure_parameter_position
+                do {
+                    switch serviceOption {
+                    case .avs:
+                        let orderResponses = try await redeemOrderService.redeemViaAVS(orderRequests, profileId)
+                        await send(.redeemReceived(.success(orderResponses)))
+                    case .erxTaskRepository, .erxTaskRepositoryAvailable:
+                        let orderResponses = try await redeemOrderService
+                            .redeemViaErxTaskRepository(orderRequests, profileId)
+                        await send(.redeemReceived(.success(orderResponses)))
+                    case .noService, .none:
+                        break
+                    }
+                } catch RedeemServiceError.noTokenAvailable,
+                    RedeemOrderServiceError.redeem(.noTokenAvailable) {
+                    await send(.showCardWall)
+                } catch let RedeemOrderServiceError.redeem(error),
+                            let error as RedeemServiceError {
+                    await send(.redeemReceived(.failure(error)))
                 }
-            } catch RedeemServiceError.noTokenAvailable,
-                RedeemOrderServiceError.redeem(.noTokenAvailable) {
-                await send(.showCardWall)
-            } catch let RedeemOrderServiceError.redeem(error),
-                        let error as RedeemServiceError {
-                await send(.redeemReceived(.failure(error)))
-            }
             }
         case let .redeemReceived(.success(orderResponses)):
             guard let redeemOption = state.serviceOptionState.selectedOption,
@@ -488,7 +488,7 @@ extension PharmacyRedeemDomain {
 
 extension ErxPatient {
     func shipmentInfo(with identifier: UUID = UUID()) -> ShipmentInfo {
-        guard let address = address else {
+        guard let address else {
             return ShipmentInfo(name: name)
         }
         var street: String?

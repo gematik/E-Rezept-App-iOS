@@ -105,16 +105,16 @@ public struct Address: Codable, Equatable {
 
     public func asArray() -> [String] {
         var address = [String]()
-        if let street = street {
+        if let street {
             address.append(street)
         }
-        if let detail = detail {
+        if let detail {
             address.append(detail)
         }
-        if let zip = zip {
+        if let zip {
             address.append(zip)
         }
-        if let city = city {
+        if let city {
             address.append(city)
         }
         return address
@@ -124,11 +124,11 @@ public struct Address: Codable, Equatable {
 extension ErxTaskOrder {
     @CodedError("208")
     public enum Error: Swift.Error {
-        @ErrorCode("01")
         /// Unable to construct communication request
+        @ErrorCode("01")
         case unableToConstructCommunicationRequest
-        @ErrorCode("02")
         /// Invalid ErxTaskOrder though previous validation checks have been passed
+        @ErrorCode("02")
         case invalidErxTaskOrderInput(String)
     }
 }

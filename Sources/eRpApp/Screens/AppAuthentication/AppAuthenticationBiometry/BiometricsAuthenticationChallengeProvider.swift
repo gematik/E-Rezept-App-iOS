@@ -44,7 +44,7 @@ enum AuthenticationChallengeProviderError: Swift.Error, LocalizedError, Equatabl
     var errorDescription: String? {
         switch self {
         case let .cannotEvaluatePolicy(error):
-            guard let error = error else {
+            guard let error else {
                 return L10n.authTxtBiometricsFailedDefault.text
             }
             if LAError.Code(rawValue: error.code) == LAError.biometryLockout {
@@ -53,7 +53,7 @@ enum AuthenticationChallengeProviderError: Swift.Error, LocalizedError, Equatabl
                 return error.localizedDescription
             }
         case let .failedEvaluatingPolicy(error):
-            guard let error = error else {
+            guard let error else {
                 return L10n.authTxtBiometricsFailedDefault.text
             }
             switch LAError.Code(rawValue: error.code) {

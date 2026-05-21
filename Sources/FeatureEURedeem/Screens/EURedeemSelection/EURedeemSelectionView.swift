@@ -43,6 +43,7 @@ public struct EURedeemSelectionView: View {
                     Colors.primary100
                     // Replace with actual illustration asset
                     Image(asset: Asset.EUReedem.banner)
+                        .accessibilityLabel(L10n.euredeemSelectionBannerVoice.text)
                         .frame(width: 120, height: 120)
                         .foregroundColor(.yellow)
                 }
@@ -54,6 +55,7 @@ public struct EURedeemSelectionView: View {
                         .font(.title)
                         .bold()
                         .padding(.top, 8)
+                        .accessibilityAddTraits(.isHeader)
 
                     UIKitTextView(
                         attributedString: attributedSubtitle,
@@ -61,7 +63,9 @@ public struct EURedeemSelectionView: View {
                         font: .preferredFont(forTextStyle: .body),
                         foregroundColor: .label
                     ) { _ in
-                        store.send(.delegate(.selectInstructionButtonTapped))
+                        store
+                            .send(.delegate(.selectInstructionButtonTapped(countryCode: store.selectedCountry?
+                                    .countryCode)))
                     }
                     .frame(height: calculatedHeight)
                 }
@@ -82,21 +86,22 @@ public struct EURedeemSelectionView: View {
                 GreyDivider()
 
                 Button(
-                    action: { store.send(.delegate(.redeemButtonTapped)) },
+                    action: { store.send(.redeemButtonTapped) },
                     label: { Text(L10n.euredeemSelectionBtnRedeem) }
                 )
-                .buttonStyle(.primary(isEnabled: !store.isDisabled, width: .wideHugging))
-                .disabled(store.isDisabled)
+                .buttonStyle(.primaryHugging)
                 .padding(.horizontal)
                 .padding(.top, 4)
                 .padding(.bottom)
             }
         }
         .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-        .sheet(item: $store.scope(state: \.destination?.consent, action: \.destination.consent)) { store in
+        .navigationDestination(item: $store.scope(
+            state: \.destination?.consent,
+            action: \.destination.consent
+        )) { store in
             ConsentView(store: store)
         }
-        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         .fullScreenCover(
             item: $store.scope(
                 state: \.destination?.cardWall,
@@ -114,7 +119,7 @@ public struct EURedeemSelectionView: View {
                 }, label: {
                     Text(L10n.euredeemSelectionBtnClose)
                 })
-                    .accessibility(identifier: "euredeem_selection_close_button")
+                .accessibility(identifier: "euredeem_selection_close_button")
             }
         }
         .toolbarBackground(.visible)
@@ -134,24 +139,22 @@ public struct EURedeemSelectionView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            if store.prescriptions.isEmpty {
+                            if store.selectedPrescriptions.isEmpty {
                                 Text(L10n.euredeemSelectionPrescriptionTitleNone)
                                     .font(.body)
-                                    .foregroundColor(.red)
+                                    .foregroundStyle(
+                                        store.validation == .emptyPrescription
+                                            ? Colors.red700 : Colors.systemLabel
+                                    )
                             } else {
-                                if store.selectedPrescriptions.isEmpty {
-                                    Text(L10n.euredeemSelectionPrescriptionTitleNone)
+                                Text(L10n.euredeemSelectionPrescriptionTitle)
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                                // Show selected prescriptions
+                                ForEach(store.selectedPrescriptions) { prescription in
+                                    Text(prescription.name)
                                         .font(.body)
-                                } else {
-                                    Text(L10n.euredeemSelectionPrescriptionTitle)
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                    // Show selected prescriptions
-                                    ForEach(store.selectedPrescriptions) { prescription in
-                                        Text(prescription.name)
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                    }
+                                        .foregroundColor(Colors.systemLabel)
                                 }
                             }
                         }
@@ -165,8 +168,8 @@ public struct EURedeemSelectionView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(
-                                store.prescriptions.isEmpty
-                                    ? Color.red : Color.gray.opacity(0.3),
+                                store.validation == .emptyPrescription
+                                    ? Colors.red700 : Color.gray.opacity(0.3),
                                 lineWidth: 1
                             )
                     )
@@ -174,10 +177,10 @@ public struct EURedeemSelectionView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
 
-                if store.prescriptions.isEmpty {
+                if store.validation == .emptyPrescription {
                     Text(L10n.euredeemSelectionPrescriptionCaptionNone)
                         .font(.caption)
-                        .foregroundColor(.red)
+                        .foregroundColor(Colors.red700)
                         .padding(.leading)
                         .padding(.top, 8)
                 }
@@ -189,40 +192,63 @@ public struct EURedeemSelectionView: View {
         @Bindable var store: StoreOf<EURedeemSelectionDomain>
 
         var body: some View {
-            Button(
-                action: { store.send(.delegate(.selectCountryButtonTapped)) },
-                label: {
-                    HStack {
-                        if let country = store.selectedCountry {
-                            Text(country.flag)
-                                .font(.largeTitle)
+            VStack(alignment: .leading, spacing: 0) {
+                Button(
+                    action: { store.send(.delegate(.selectCountryButtonTapped)) },
+                    label: {
+                        HStack {
+                            if let country = store.selectedCountry {
+                                Text(country.flag)
+                                    .font(.largeTitle)
+                                    .accessibilityHidden(true)
 
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(L10n.euredeemSelectionCountryTitle)
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                Text(store.selectedCountry?.name ?? "")
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(L10n.euredeemSelectionCountryTitle)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                    Text(store.selectedCountry?.displayName ?? "")
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                }
+                            } else {
+                                let euCountry = Country(id: "EU", name: "European Union", telematikId: "")
+                                Text(euCountry.flag)
+                                    .font(.largeTitle)
+                                    .accessibilityHidden(true)
+
+                                Text(L10n.euredeemSelectionTxtNoCountry)
                                     .font(.body)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(
+                                        store.validation == .emptyCountry
+                                            ? Colors.red700 : Colors.systemLabel
+                                    )
                             }
-                        } else {
-                            let euCountry = Country(id: "EU", name: "European Union", telematikId: "")
-                            Text(euCountry.flag)
-                                .font(.largeTitle)
-                            Text(L10n.euredeemSelectionTxtNoCountry)
-                                .font(.body)
-                                .foregroundColor(.primary)
+                            Spacer()
+                            Image(systemName: SFSymbolName.chevronForward)
+                                .foregroundColor(.gray)
                         }
-                        Spacer()
-                        Image(systemName: SFSymbolName.chevronForward)
-                            .foregroundColor(.gray)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(
+                                    store.validation == .emptyCountry
+                                        ? Colors.red700 : Color.gray.opacity(0.3),
+                                    lineWidth: 1
+                                )
+                        )
+                        .contentShape(Rectangle())
                     }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.3), lineWidth: 1))
-                    .contentShape(Rectangle())
+                )
+                .buttonStyle(PlainButtonStyle())
+
+                if store.validation == .emptyCountry {
+                    Text(L10n.euredeemSelectionCountryCaptionNone)
+                        .font(.caption)
+                        .foregroundColor(Colors.red700)
+                        .padding(.leading)
+                        .padding(.top, 8)
                 }
-            )
-            .buttonStyle(PlainButtonStyle())
+            }
         }
     }
 

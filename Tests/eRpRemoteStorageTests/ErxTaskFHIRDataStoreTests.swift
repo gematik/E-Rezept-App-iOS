@@ -69,7 +69,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         sut.fetchTask(by: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", accessCode: nil)
             .test(expectations: { erxTask in
-                guard let erxTask = erxTask else {
+                guard let erxTask else {
                     fail("erxTask is expected to not be nil")
                     return
                 }
@@ -244,7 +244,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 counter += 1
                 // Note: response is not validated for test
                 return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         sut.redeem(order: shipmentOrder)
             .test { error in
@@ -268,7 +268,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 counter += 1
                 // Note: response is not validated for test
                 return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         sut.redeem(order: deliveryOrder)
             .test { error in
@@ -292,7 +292,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 counter += 1
                 // Note: response is not validated for test
                 return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         sut.redeem(order: onPremiseOrder)
             .test { error in
@@ -312,7 +312,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && hasBody(expectedShipmentRequestBody)) { _ in
                 counter += 1
                 return HTTPStubsResponse(error: expectedError)
-        }
+            }
 
         sut.redeem(order: shipmentOrder)
             .test { error in
@@ -337,7 +337,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 counter += 1
                 // Note: response is not validated for test
                 return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
-        }
+            }
 
         sut.listAllCommunications(after: nil, for: .reply)
             .test { error in
@@ -360,7 +360,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isMethodGET()) { _ in
                 counter += 1
                 return HTTPStubsResponse(error: expectedError)
-        }
+            }
 
         sut.listAllCommunications(after: nil, for: .reply)
             .test { error in
@@ -384,7 +384,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isPath("/MedicationDispense")) { _ in
                 counter += 1
                 return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
-        }
+            }
 
         sut.listMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
@@ -407,7 +407,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isMethodGET()) { _ in
                 counter += 1
                 return HTTPStubsResponse(error: expectedError)
-        }
+            }
 
         sut.listMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
@@ -419,7 +419,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             }
     }
 
-    func testDeleteChargeItemSuccess() throws {
+    func testDeleteChargeItemSuccess() {
         let emptyResponse = load(
             resource: "emptyResponse",
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
@@ -428,7 +428,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         stub(condition: pathStartsWith("/ChargeItem")
             && isMethodDELETE()) { _ in
                 fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
-        }
+            }
         let chargeItem = ErxChargeItem(
             identifier: "200.000.001.206.112.29",
             fhirData: Data("FHIRData".utf8),
@@ -446,7 +446,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isMethodDELETE()) { _ in
                 let error = URLError(URLError.Code(rawValue: -1))
                 return HTTPStubsResponse(error: error)
-        }
+            }
 
         let chargeItem = ErxChargeItem(
             identifier: "200.000.001.206.112.29",
@@ -476,7 +476,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isMethodGET()) { _ in
                 counter += 1
                 return fixture(filePath: consentResponse, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         sut.fetchConsents()
             .test { error in
@@ -497,7 +497,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isMethodGET()) { _ in
                 counter += 1
                 return HTTPStubsResponse(error: expectedError)
-        }
+            }
 
         sut.fetchConsents()
             .test { error in
@@ -519,7 +519,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && isPath("/Consent")
             && isMethodDELETE()) { _ in
                 fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
-        }
+            }
 
         sut.revokeConsent(.chargcons)
             .test(expectations: { response in
@@ -539,7 +539,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 fixture(filePath: errorResponse,
                         status: Int32(HTTPStatusCode.badRequest.rawValue),
                         headers: ["Accept": "application/fhir+json"])
-        }
+            }
 
         sut.revokeConsent(.chargcons)
             .test(failure: { error in
@@ -563,7 +563,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             && hasBody(expectedChargeConsentRequestBody)) { _ in
                 counter += 1
                 return fixture(filePath: grantConsentResponse, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         sut.grantConsent(chargeConsent)
             .test { error in
@@ -586,7 +586,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 fixture(filePath: errorResponse,
                         status: Int32(HTTPStatusCode.badRequest.rawValue),
                         headers: ["Accept": "application/fhir+json"])
-        }
+            }
 
         sut.grantConsent(chargeConsent)
             .test(failure: { error in

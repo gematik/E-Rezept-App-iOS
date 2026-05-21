@@ -71,7 +71,7 @@ final class MultiplePrescriptionExtensionTests: XCTestCase {
     }
 
     private func multiplePrescription(startDate: String?) -> MultiplePrescription {
-        guard let startDate = startDate else {
+        guard let startDate else {
             XCTFail("No valid start date defined")
             return MultiplePrescription()
         }

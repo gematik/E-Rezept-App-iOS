@@ -73,7 +73,7 @@ public struct EURedeemDomain {
         Scope(state: \.selection, action: \.selection) {
             EURedeemSelectionDomain()
         }
-        Reduce(self.core)
+        Reduce(core)
             .forEach(\.path, action: \.path)
     }
 
@@ -85,7 +85,7 @@ public struct EURedeemDomain {
             case .selectInstructionButtonTapped:
                 state.path.append(.instructions(.init()))
                 return .none
-            case .redeemButtonTapped:
+            case .redeemPrescriptions:
                 state.path.append(.instructions(.init()))
                 return .none
             case .selectCountryButtonTapped:
@@ -98,7 +98,7 @@ public struct EURedeemDomain {
                     )
                 ))
                 return .none
-            case .close:
+            case .close, .back:
                 return .none
             case .unlockCardClose:
                 return .none

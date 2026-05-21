@@ -37,7 +37,9 @@ struct RedeemMethodsDomain {
 
         var isEURedeemable: Bool {
             @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
-            return euRedeemPrescriptionsFeature && prescriptions.contains(where: \.erxTask.isEURedeemable)
+            @Shared(.isDemoMode) var isDemoMode: Bool
+            return (isDemoMode || euRedeemPrescriptionsFeature) && // silent preview for demo mode
+                prescriptions.contains(where: \.erxTask.isEURedeemable)
         }
     }
 

@@ -396,7 +396,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
     }
 
-    func testGeneratingShipmentInfoFromErxTask() async {
+    func testGeneratingShipmentInfoFromErxTask() {
         let erxTask = ErxTask.Fixtures.erxTask1
         let identifier = UUID()
 
@@ -414,11 +414,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
     func testRedeemNoPrescriptionsSelected() async {
         var inputTasks: [Prescription]!
-        withDependencies({ dependencies in
+        withDependencies { dependencies in
             dependencies.date = .constant(Date())
-        }, operation: {
+        } operation: {
             inputTasks = Prescription.Fixtures.prescriptions
-        })
+        }
 
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
@@ -455,13 +455,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
 }
 
 extension OrderRequest {
-    static var fixture: OrderRequest = {
-        OrderRequest(
-            redeemType: .shipment,
-            flowType: "160",
-            taskID: "task_id_0",
-            accessCode: "access_code_0",
-            telematikId: "k123456789"
-        )
-    }()
+    static var fixture: OrderRequest = .init(
+        redeemType: .shipment,
+        flowType: "160",
+        taskID: "task_id_0",
+        accessCode: "access_code_0",
+        telematikId: "k123456789"
+    )
 }

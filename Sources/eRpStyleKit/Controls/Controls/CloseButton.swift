@@ -92,8 +92,8 @@ public struct CloseButton: View {
             hierbei nicht tätig werden und können nicht in den Einlösungsprozess \
             eingreifen.
             """)
-                .font(.body)
-                .foregroundColor(.secondary)
+            .font(.body)
+            .foregroundColor(.secondary)
         }
         .padding(.horizontal, 16)
 

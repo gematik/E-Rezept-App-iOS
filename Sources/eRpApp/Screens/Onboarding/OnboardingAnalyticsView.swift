@@ -89,11 +89,11 @@ struct OnboardingAnalyticsView: View {
                     .padding(.horizontal, 64)
                     .padding(.vertical)
             })
-                .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnAllow)
-                .font(Font.body.weight(.semibold))
-                .foregroundColor(Colors.systemColorWhite)
-                .background(Colors.primary700)
-                .cornerRadius(16)
+            .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnAllow)
+            .font(Font.body.weight(.semibold))
+            .foregroundColor(Colors.systemColorWhite)
+            .background(Colors.primary700)
+            .cornerRadius(16)
 
             // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
             Button(action: {
@@ -103,11 +103,11 @@ struct OnboardingAnalyticsView: View {
                     .padding(.horizontal, 71)
                     .padding(.vertical)
             })
-                .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnDeny)
-                .font(Font.body.weight(.semibold))
-                .foregroundColor(Colors.systemColorWhite)
-                .background(Colors.primary700)
-                .cornerRadius(16)
+            .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnDeny)
+            .font(Font.body.weight(.semibold))
+            .foregroundColor(Colors.systemColorWhite)
+            .background(Colors.primary700)
+            .cornerRadius(16)
         }
         .padding()
     }

@@ -29,6 +29,10 @@ import HTTPClient
 public struct FHIRClientServiceFactory: Sendable {
     public var client: @Sendable () async throws -> FHIRClient
     public var erpClient: @Sendable () -> FHIRClient = { { fatalError("Unimplemented") }() }
+    /// Returns a FHIRClient configured for the given profile, independent of the currently selected profile.
+    public var erpClientForProfile: @Sendable (_ profileId: UUID) -> FHIRClient = { _ in
+        { fatalError("Unimplemented") }()
+    }
 }
 
 extension FHIRClientServiceFactory: TestDependencyKey {

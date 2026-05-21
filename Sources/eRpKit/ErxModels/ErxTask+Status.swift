@@ -70,20 +70,20 @@ extension ErxTask {
             case "sent": self = .computed(status: .sent)
             case "waiting": self = .computed(status: .waiting)
             case "dispensed": self = .computed(status: .dispensed)
-            /// The task is ready to be acted upon and action is sought.
+            // The task is ready to be acted upon and action is sought.
             case "requested", "undefined: requested": self = .undefined(status: "requested")
-            /// A potential performer has claimed ownership of the task and is evaluating whether to perform it.
+            // A potential performer has claimed ownership of the task and is evaluating whether to perform it.
             case "received", "undefined: received": self = .undefined(status: "received")
-            /// The potential performer has agreed to execute the task but has not yet started work.
+            // The potential performer has agreed to execute the task but has not yet started work.
             case "accepted", "undefined: accepted": self = .undefined(status: "accepted")
-            /// The potential performer who claimed ownership of the task has decided
-            /// not to execute it prior to performing any action.
+            // The potential performer who claimed ownership of the task has decided
+            // not to execute it prior to performing any action.
             case "rejected", "undefined: rejected": self = .undefined(status: "rejected")
-            /// The task has been started but work has been paused.
+            // The task has been started but work has been paused.
             case "on-hold", "undefined: on-hold": self = .undefined(status: "on-hold")
-            /// The task was attempted but could not be completed due to some error.
+            // The task was attempted but could not be completed due to some error.
             case "failed", "undefined: failed": self = .undefined(status: "failed")
-            /// The task should never have existed and is retained only because of the possibility it may have used.
+            // The task should never have existed and is retained only because of the possibility it may have used.
             case "entered-in-error", "undefined: entered-in-error": self = .undefined(status: "entered-in-error")
             default:
                 if rawValue.hasPrefix(Self.errorPrefix) {

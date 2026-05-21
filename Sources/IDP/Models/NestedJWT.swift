@@ -24,7 +24,7 @@ import Foundation
 
 /// Payload used for the JWE encryption
 public struct NestedJWT: Claims, Codable {
-    // the nested jwt
+    /// the nested jwt
     let njwt: String
 
     /// Initialize payload

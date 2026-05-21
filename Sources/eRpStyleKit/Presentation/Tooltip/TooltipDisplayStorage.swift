@@ -59,7 +59,7 @@ extension TooltipDisplayStorage {
 }
 
 private struct TooltipDisplayStorageKey: EnvironmentKey {
-    // change to `.test()` to enforce Tooltips every time
+    /// change to `.test()` to enforce Tooltips every time
     static let defaultValue: TooltipDisplayStorage = .live()
 }
 

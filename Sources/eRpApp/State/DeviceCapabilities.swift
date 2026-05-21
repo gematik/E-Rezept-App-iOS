@@ -33,20 +33,16 @@ protocol DeviceCapabilities: AnyObject {
 }
 
 class RealDeviceCapabilities: DeviceCapabilities {
-    lazy var isNFCReady: Bool = {
-        NFCNDEFReaderSession.readingAvailable
-    }()
+    lazy var isNFCReady: Bool = NFCNDEFReaderSession.readingAvailable
 
-    lazy var isMinimumOS14: Bool = {
-        ProcessInfo().operatingSystemVersion.majorVersion >= 14
-    }()
+    lazy var isMinimumOS14: Bool = ProcessInfo().operatingSystemVersion.majorVersion >= 14
 }
 
 class DebugDeviceCapabilities: DeviceCapabilities {
     var isNFCReady: Bool
     var isMinimumOS14: Bool
 
-    internal init(isNFCReady: Bool, isMinimumOS14: Bool) {
+    init(isNFCReady: Bool, isMinimumOS14: Bool) {
         self.isNFCReady = isNFCReady
         self.isMinimumOS14 = isMinimumOS14
     }

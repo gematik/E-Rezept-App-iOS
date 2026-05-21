@@ -56,7 +56,7 @@ struct DebugLogDomain {
     }
 
     var body: some ReducerOf<DebugLogDomain> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 }

@@ -890,7 +890,7 @@ final class CodedErrorMacroTests: XCTestCase {
         #endif
     }
 
-    // Test to verify that modern @ErrorCode syntax doesn't produce warnings
+    /// Test to verify that modern @ErrorCode syntax doesn't produce warnings
     func testCodedErrorMacroModernSyntaxNoWarnings() throws {
         #if canImport(CodedErrorMacros)
         assertMacro {
@@ -936,7 +936,7 @@ final class CodedErrorMacroTests: XCTestCase {
         #endif
     }
 
-    // Test for comment syntax modernization suggestion with various comment formats
+    /// Test for comment syntax modernization suggestion with various comment formats
     func testCodedErrorMacroCommentSyntaxVariations() throws {
         #if canImport(CodedErrorMacros)
         assertMacro {

@@ -24,7 +24,7 @@ import Foundation
 
 extension String {
     func acronym() -> String {
-        let components = self.components(separatedBy: .whitespaces)
+        let components = components(separatedBy: .whitespaces)
 
         if components.count > 1 {
             return String(components.first?.capitalized.prefix(1) ?? "") +

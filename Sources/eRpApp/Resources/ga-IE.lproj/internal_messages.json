@@ -58,5 +58,11 @@
         "text": "**✨ Taispeáin cóid oideas** \nTá an scáileán le haghaidh cóid bhaisce agus aonair athdheartha le haghaidh úsáide níos iomasaí. \n \n **❤️ Rogha na gCógaslann** \nOibríonn rogha na gcógaslann níos iontaofa anois agus tá siad comhoiriúnach le VoiceOver. \n \n **♿ Inrochtaineacht** \nTá feabhas tagtha ar VoiceOver agus ar nascleanúint an mhéarchláir, tá cnaipí, téacs agus réimsí ionchuir níos inaitheanta, agus tá struchtúr níos loighciúla ar mhíreanna liosta. Oibríonn cló méadaithe anois ar gach scáileán aip. Ní sheinneann físeáin bheoite ach uair amháin chun tacú le húsáideoirí a bhfuil lagú cognaíoch orthu.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Sonraí Feabhsaithe Cógaslainne** \nIs féidir le cógaslanna seirbhísí a chur leis anois amhail vacsaíní agus gnéithe ar an láthair amhail rochtain gan bhacainní. Is féidir cógaslanna a scagadh bunaithe ar an bhfaisnéis nua seo. \n \n **✨ Cuardach Feabhsaithe Cógaslainne** \nTá cógaslanna a úsáideadh le déanaí agus cógaslanna is fearr leat scartha níos soiléire anois. Tá feabhas curtha ar na scagairí. \n \n **✅ Aitheantas Sláinte do Dhaoine Aonair a bhfuil Árachas Malartach acu** \nIs féidir le daoine nach bhfuil clúdaithe ag árachas sláinte reachtúil ná príobháideach logáil isteach anois freisin ag baint úsáide as a n-Aitheantas Sláinte. \n \n **♿ Inrochtaineacht** \nTá codarsnacht níos airde ag na scagairí anois, agus is furasta a stádas a aithint. Tá an ráiteas inrochtaineachta nuashonraithe agus leathnaithe chun cuid a áireamh a dhoiciméadaíonn stair na n-athruithe. Tá roinnt cnaipí coigeartaithe chun infheictheacht fheabhsaithe.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

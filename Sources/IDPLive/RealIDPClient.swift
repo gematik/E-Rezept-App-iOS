@@ -522,7 +522,7 @@ extension RealIDPClient {
     // [REQ:gemSpec_IDP_Frontend:A_19937#2,A_20605] Decoding server errors
     private static func responseError(for body: Data) -> IDPError {
         guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-            return Self.fallbackServerResponse
+            return fallbackServerResponse
         }
         return IDPError.serverError(responseError)
     }

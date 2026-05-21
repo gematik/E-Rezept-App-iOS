@@ -27,7 +27,7 @@ import ModelsR4
 import Nimble
 import XCTest
 
-// FHIR GEM ERPCHRG tests for consents in Version 1.0.0
+/// FHIR GEM ERPCHRG tests for consents in Version 1.0.0
 final class FHIR_GEM_ERPCHRG_v_1_0_0_ConsentTests: XCTestCase {
     func testParsingConsent_ChargCons() throws {
         guard let consent = try decode(resource: "GEM_ERPCHRG_PR_Consent.json")

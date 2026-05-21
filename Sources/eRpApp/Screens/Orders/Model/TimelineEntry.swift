@@ -435,7 +435,7 @@ extension TimelineEntry {
     }
 
     func dateToString(date: Date?) -> String? {
-        guard let date = date else { return nil }
+        guard let date else { return nil }
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssxxx"
         return formatter.string(from: date)

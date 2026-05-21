@@ -33,10 +33,6 @@ struct OrdersView: View {
     // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
     @Dependency(\.uiDateFormatter) var uiDateFormatter
 
-    init(store: StoreOf<OrdersDomain>) {
-        self.store = store
-    }
-
     var body: some View {
         NavigationStack {
             VStack {

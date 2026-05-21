@@ -35,7 +35,7 @@ public class JWTSignerMock: JWTSigner {
         signMessageDataDataCallsCount > 0
     }
 
-    public var signMessageDataDataReceivedMessage: (Data)?
+    public var signMessageDataDataReceivedMessage: Data?
     public var signMessageDataDataReceivedInvocations: [Data] = []
     public var signMessageDataDataReturnValue: Data!
     public var signMessageDataDataClosure: ((Data) async throws -> Data)?
@@ -47,7 +47,7 @@ public class JWTSignerMock: JWTSigner {
         if let error = signMessageDataDataThrowableError {
             throw error
         }
-        if let signMessageDataDataClosure = signMessageDataDataClosure {
+        if let signMessageDataDataClosure {
             return try await signMessageDataDataClosure(message)
         } else {
             return signMessageDataDataReturnValue

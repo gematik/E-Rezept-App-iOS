@@ -37,7 +37,7 @@ public struct RegistrationData: Claims, Codable {
         registrationDataVersion = "1.0"
     }
 
-    // Certificate of the eGK
+    /// Certificate of the eGK
     public let authCert: String
     // JWT
     public let signedParingData: String

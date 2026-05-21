@@ -44,7 +44,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(of: sut, as: snapshotModi())
     }
 
@@ -141,7 +141,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(of: sut, as: snapshotModi())
     }
 }

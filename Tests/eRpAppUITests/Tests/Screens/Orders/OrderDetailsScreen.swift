@@ -28,10 +28,6 @@ import XCTest
 struct OrderDetailsScreen: Screen {
     let app: XCUIApplication
 
-    init(app: XCUIApplication) {
-        self.app = app
-    }
-
     func tapOpenPharmacyDetails(fileID: String = #fileID, file: String = #filePath,
                                 line: UInt = #line) -> PharmacyDetailsScreen {
         container(by: A11y.orderDetail.message.msgTxtTitle, fileID: fileID, file: file, line: line)

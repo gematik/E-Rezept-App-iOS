@@ -30,7 +30,7 @@ import XCTest
 
 class JWEKDFTests: XCTestCase {
     func testPremadeJWE() throws {
-        let publicKey = try! BrainpoolP256r1.KeyExchange.PublicKey(x962: Data(
+        let publicKey = try BrainpoolP256r1.KeyExchange.PublicKey(x962: Data(
             hex: "0440ba49fcba45c7eeb2261b1be0ebc7c14d6484b9ef8a23b060ebe67f97252bbc987ba49df364a0c9926f2b6de1baf46068a13a2c5c9812b2f3451f48b75719ee" // swiftlint:disable:this line_length
         ))
 

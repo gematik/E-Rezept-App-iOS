@@ -25,22 +25,6 @@ import Foundation
 
 /// TrustStore storage protocol
 public protocol TrustStoreStorage {
-    /// Retrieve a previously saved TrustStore CertList
-    var certList: AnyPublisher<CertList?, Never> { get }
-
-    /// Set and save the TrustStore CertList
-    ///
-    /// - Parameter certList: CertList of certificates to save. Pass in nil to unset.
-    func set(certList: CertList?)
-
-    /// Retrieve a previously saved OCSPList
-    var ocspList: AnyPublisher<OCSPList?, Never> { get }
-
-    /// Set and save the TrustStore OCSPList
-    ///
-    /// - Parameter ocspList: OCSPList to save. Pass in nil to unset.
-    func set(ocspList: OCSPList?)
-
     /// Retrieve the previously saved PKICertificates
     func getPKICertificates() -> PKICertificates?
 
@@ -74,101 +58,13 @@ public protocol TrustStoreStorage {
 }
 
 public class TrustStoreFileStorage: TrustStoreStorage {
-    let certListFilePath: URL
-    let ocspListFilePath: URL
     let pkiCertificatesFilePath: URL
     let vauCertificateFilePath: URL
     let writingOptions: Data.WritingOptions = [.atomicWrite, .completeFileProtectionUnlessOpen]
 
     public init(trustStoreStorageBaseFilePath: URL) {
-        certListFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStoreCertList")
-        ocspListFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStoreOCSPList")
         pkiCertificatesFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStorePKICertificates")
         vauCertificateFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("vauCertificate")
-    }
-
-    public var certList: AnyPublisher<CertList?, Never> {
-        retrieveCertList()
-    }
-
-    public func set(certList: CertList?) {
-        let success: Bool
-        do {
-            if let certList = certList {
-                let writeResult = try Self.jsonEncoder.encode(certList)
-                    .save(to: certListFilePath, options: writingOptions)
-                switch writeResult {
-                case .success: success = true
-                case .failure: success = false
-                }
-            } else {
-                try FileManager.default.removeItem(at: certListFilePath)
-                success = true
-            }
-        } catch {
-            success = false
-        }
-        if success {
-            certListPassthrough.send(certList)
-        }
-    }
-
-    private let certListPassthrough = PassthroughSubject<CertList?, Never>()
-
-    private func retrieveCertList() -> AnyPublisher<CertList?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<CertList?, Never> in
-            guard let self = self,
-                  let certListData = try? Data(contentsOf: self.certListFilePath),
-                  let certList = try? Self.jsonDecoder.decode(CertList.self, from: certListData)
-            else {
-                return Just(nil).eraseToAnyPublisher()
-            }
-            return Just(certList).eraseToAnyPublisher()
-        }
-        .merge(with: certListPassthrough)
-        .eraseToAnyPublisher()
-    }
-
-    public var ocspList: AnyPublisher<OCSPList?, Never> {
-        retrieveOCSPList()
-    }
-
-    public func set(ocspList: OCSPList?) {
-        let success: Bool
-        do {
-            if let ocspList = ocspList {
-                let writeResult = try Self.jsonEncoder.encode(ocspList)
-                    .save(to: ocspListFilePath, options: writingOptions)
-                switch writeResult {
-                case .success: success = true
-                case .failure: success = false
-                }
-            } else {
-                try FileManager.default.removeItem(at: ocspListFilePath)
-                success = true
-            }
-        } catch {
-            success = false
-        }
-        if success {
-            ocspListPassthrough.send(ocspList)
-        }
-    }
-
-    private let ocspListPassthrough = PassthroughSubject<OCSPList?, Never>()
-
-    private func retrieveOCSPList() -> AnyPublisher<OCSPList?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<OCSPList?, Never> in
-            guard let self = self,
-                  let data = try? Data(contentsOf: self.ocspListFilePath),
-                  let ocspList = try? Self.jsonDecoder.decode(OCSPList.self, from: data)
-            else {
-                return Just(nil).eraseToAnyPublisher()
-            }
-            return Just(ocspList).eraseToAnyPublisher()
-        }
-        .merge(with: ocspListPassthrough)
-        .eraseToAnyPublisher()
     }
 
     public func getPKICertificates() -> PKICertificates? {

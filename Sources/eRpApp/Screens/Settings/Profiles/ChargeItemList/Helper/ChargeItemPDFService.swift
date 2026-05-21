@@ -307,7 +307,7 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
     }
 
     func medicationText(for medication: ErxMedication?, request: ErxMedicationRequest) -> String {
-        guard let medication = medication,
+        guard let medication,
               let profile = medication.profile else {
             return ""
         }
@@ -434,7 +434,7 @@ extension DavInvoice.ChargeableItem {
         let text: String
         let col2 = pzn ?? hmrn ?? ta1 ?? ""
 
-        if let pzn = self.pzn,
+        if let pzn,
            pzn == medication?.pzn {
             text = "wie verordnet"
         } else {

@@ -29,10 +29,6 @@ import SwiftUI
 struct PharmacyContactView: View {
     @Bindable var store: StoreOf<PharmacyContactDomain>
 
-    init(store: StoreOf<PharmacyContactDomain>) {
-        self.store = store
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {

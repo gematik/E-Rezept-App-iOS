@@ -91,7 +91,6 @@ extension ModelsR4.Bundle {
         if
             let medications = entry?.compactMap({ $0.resource?.get(if: Medication.self) }),
             let resource = medications.first(where: { medication in
-
                 guard let medicationId = medication.id?.value?.string else { return false }
                 return reference.contains(medicationId)
 

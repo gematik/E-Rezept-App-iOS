@@ -20,26 +20,38 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import eRpResources
 import Nimble
 import XCTest
 
 @MainActor
-struct PharmacyFilterScreen<Previous>: Screen where Previous: Screen {
+struct PharmacyFilterScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
 
     func tapFilterOption(_ filterName: String, file _: StaticString = #file, line _: UInt = #line) {
         app.switches.element(matching: .init(format: "label == %@", "\(filterName)")).tap()
     }
 
+    func tapResetFilters(file _: StaticString = #file, line _: UInt = #line) {
+        app.buttons.element(matching: .init(format: "label CONTAINS %@", "Zurücksetzen")).tap()
+    }
+
+    func tapExplainToggle(file _: StaticString = #file, line _: UInt = #line) {
+        // The toggle label alternates between "Erklären" and "Nicht erklären"
+        let toggle = app.buttons.element(matching: .init(
+            format: "label == %@ OR label == %@", "Erklären", "Nicht erklären"
+        ))
+        toggle.tap()
+    }
+
+    func tapServiceOption(_ serviceName: String, file _: StaticString = #file, line _: UInt = #line) {
+        app.switches.element(matching: .init(format: "label CONTAINS %@", serviceName)).tap()
+    }
+
     @discardableResult
     func closeFilter(file _: StaticString = #file, line _: UInt = #line) -> Previous {
-        app.scrollViews.firstMatch.swipeDown(velocity: 2000.0)
+        app.buttons[A11y.pharmacySearchFilter.psfBtnClose].tap()
         return previous
     }
 }
