@@ -17,7 +17,7 @@
         </div>
 
         <div class="header">
-            <h1>E-Rezept iOS - Error Details<br /><sub>Generated on 2026-02-24 15:11:34</sub></h1>
+            <h1>E-Rezept iOS - Error Details<br /><sub>Generated on 2026-04-16 16:40:34</sub></h1>
             <p>This documentation provides detailed information about all error enums and their cases defined in the Swift codebase.</p>
             <p>It is meant to assist support and development teams in understanding and handling errors effectively.</p>
             <p>For any questions or contributions, please contact the development team.</p>
@@ -61,27 +61,27 @@
                             <tr>
                                 <td><span class="case-id">i-54001</span></td>
                                 <td><span class="case-name">network</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case of HTTP/Connection error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-54002</span></td>
                                 <td><span class="case-name">invalidAVSMessageInput</span></td>
-                                <td><em>No description</em></td>
+                                <td>When failed to create an AVSMessage</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-54003</span></td>
                                 <td><span class="case-name">invalidX509Input</span></td>
-                                <td><em>No description</em></td>
+                                <td>When an X509 certificate was of unexpected format</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-54004</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>Conversion error when trying to cast to `AVSError` but error type was different</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-54005</span></td>
                                 <td><span class="case-name">`internal`</span></td>
-                                <td><em>No description</em></td>
+                                <td>Internal error</td>
                             </tr>
                         </tbody>
                     </table>
@@ -156,22 +156,22 @@
                             <tr>
                                 <td><span class="case-id">i-30101</span></td>
                                 <td><span class="case-name">network</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case of HTTP/Connection error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-30102</span></td>
                                 <td><span class="case-name">decoding</span></td>
-                                <td><em>No description</em></td>
+                                <td>Message failed to decode/parse</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-30103</span></td>
                                 <td><span class="case-name">invalidAssetLink</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the asset link from bfarm endpoint is invalid</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-30104</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>Other error cases</td>
                             </tr>
                         </tbody>
                     </table>
@@ -286,7 +286,8 @@ Error cases when using the `FHIRClient`
                             <tr>
                                 <td><span class="case-id">i-52004</span></td>
                                 <td><span class="case-name">inconsistentResponse</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the server returned a successful response with inconsistent response data.
+E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-52005</span></td>
@@ -335,22 +336,22 @@ Error cases when using the `FHIRClient`
                             <tr>
                                 <td><span class="case-id">i-30001</span></td>
                                 <td><span class="case-name">network</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case of HTTP/Connection error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-30002</span></td>
                                 <td><span class="case-name">tokenUnavailable</span></td>
-                                <td><em>No description</em></td>
+                                <td>When a token is being requested, but none can be found</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-30003</span></td>
                                 <td><span class="case-name">decoding</span></td>
-                                <td><em>No description</em></td>
+                                <td>Message failed to decode/parse</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-30004</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>Other error cases</td>
                             </tr>
                         </tbody>
                     </table>
@@ -519,27 +520,28 @@ Error cases when using the `FHIRClient`
                             <tr>
                                 <td><span class="case-id">i-01001</span></td>
                                 <td><span class="case-name">idpError</span></td>
-                                <td><em>No description</em></td>
+                                <td>`IDPError` thrown within the `CardWallReadCardDomain`</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01002</span></td>
                                 <td><span class="case-name">inputError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Possible user input errors thrown within the `CardWallReadCardDomain`</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01003</span></td>
                                 <td><span class="case-name">signChallengeError</span></td>
-                                <td><em>No description</em></td>
+                                <td>NFC signature errors thrown within the `CardWallReadCardDomain`</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01004</span></td>
                                 <td><span class="case-name">biometrieError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Error that can occur during authentication with biometry</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01005</span></td>
                                 <td><span class="case-name">profileValidation</span></td>
-                                <td><em>No description</em></td>
+                                <td>Error when `Profile` validation with the given authentication fails.
+Error is produces within the `IDPError.unspecified` error before saving the IDPToken</td>
                             </tr>
                         </tbody>
                     </table>
@@ -585,12 +587,12 @@ User input error
                             <tr>
                                 <td><span class="case-id">i-01101</span></td>
                                 <td><span class="case-name">missingPIN</span></td>
-                                <td><em>No description</em></td>
+                                <td>User input for PIN is incorrect</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01102</span></td>
                                 <td><span class="case-name">missingCAN</span></td>
-                                <td><em>No description</em></td>
+                                <td>User input for CAN is incorrect</td>
                             </tr>
                         </tbody>
                     </table>
@@ -924,32 +926,32 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-04701</span></td>
                                 <td><span class="case-name">eRxRepository</span></td>
-                                <td><em>No description</em></td>
+                                <td>When redeeming a task via Fachdienst</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-04702</span></td>
                                 <td><span class="case-name">localStoreError</span></td>
-                                <td><em>No description</em></td>
+                                <td>When persisting/extracting information from the store went wrong</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-04703</span></td>
                                 <td><span class="case-name">euCodeGeneration</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the eu accessCode generation fails</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-04704</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>When error conversion into `EuRedeemServiceError` fails</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-04705</span></td>
                                 <td><span class="case-name">noTokenAvailable</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the user has no valid token available while trying to redeem via Fachdienst</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-04706</span></td>
                                 <td><span class="case-name">loginHandler</span></td>
-                                <td><em>No description</em></td>
+                                <td>When receiving an error while doing a login</td>
                             </tr>
                         </tbody>
                     </table>
@@ -992,32 +994,32 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-53001</span></td>
                                 <td><span class="case-name">internalError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Internal error in the request/chain handling</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-53002</span></td>
                                 <td><span class="case-name">httpError</span></td>
-                                <td><em>No description</em></td>
+                                <td>The server responded with an error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-53003</span></td>
                                 <td><span class="case-name">networkError</span></td>
-                                <td><em>No description</em></td>
+                                <td>The connection to the server has gone bad</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-53004</span></td>
                                 <td><span class="case-name">authentication</span></td>
-                                <td><em>No description</em></td>
+                                <td>Authentication error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-53005</span></td>
                                 <td><span class="case-name">vauError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Error emitted by the VAU client</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-53006</span></td>
                                 <td><span class="case-name">unknown</span></td>
-                                <td><em>No description</em></td>
+                                <td>Unclassified error</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1051,72 +1053,72 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-10001</span></td>
                                 <td><span class="case-name">network</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case of HTTP/Connection error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10002</span></td>
                                 <td><span class="case-name">validation</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case a response (or request) could not be (cryptographically) verified</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10003</span></td>
                                 <td><span class="case-name">tokenUnavailable</span></td>
-                                <td><em>No description</em></td>
+                                <td>When a token is being requested, but none can be found</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10004</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>Other error cases</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10005</span></td>
                                 <td><span class="case-name">decoding</span></td>
-                                <td><em>No description</em></td>
+                                <td>Message failed to decode/parse</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10006</span></td>
                                 <td><span class="case-name">noCertificateFound</span></td>
-                                <td><em>No description</em></td>
+                                <td>When failed to extract a X.509 certificate from the DiscoveryDocument</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10007</span></td>
                                 <td><span class="case-name">invalidDiscoveryDocument</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the discovery document has expired or the trust anchors could not be verified</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10008</span></td>
                                 <td><span class="case-name">invalidStateParameter</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the state parameter received from the server is not equal to the one sent</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10009</span></td>
                                 <td><span class="case-name">invalidNonce</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the nonce received from the server is not equal to the one sent</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10010</span></td>
                                 <td><span class="case-name">unsupported</span></td>
-                                <td><em>No description</em></td>
+                                <td>When a method/algorithm is unsupported</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10011</span></td>
                                 <td><span class="case-name">encryption</span></td>
-                                <td><em>No description</em></td>
+                                <td>When encryption fails</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10012</span></td>
                                 <td><span class="case-name">decryption</span></td>
-                                <td><em>No description</em></td>
+                                <td>When decryption fails</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10013</span></td>
                                 <td><span class="case-name">`internal`</span></td>
-                                <td><em>No description</em></td>
+                                <td>Internal error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10014</span></td>
                                 <td><span class="case-name">trustStore</span></td>
-                                <td><em>No description</em></td>
+                                <td>Issues related to Building or Verifying the trust store</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10015</span></td>
@@ -1131,22 +1133,22 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-10017</span></td>
                                 <td><span class="case-name">serverError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Server responded with an error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10018</span></td>
                                 <td><span class="case-name">biometrics</span></td>
-                                <td><em>No description</em></td>
+                                <td>Any biometrics related error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10019</span></td>
                                 <td><span class="case-name">extAuthOriginalRequestMissing</span></td>
-                                <td><em>No description</em></td>
+                                <td>External authentication failed due to missing or invalid original request</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-10020</span></td>
                                 <td><span class="case-name">notAvailableInDemoMode</span></td>
-                                <td><em>No description</em></td>
+                                <td>Not implemented as the conforming instance is meant for demo purpose only</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1980,42 +1982,42 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-56001</span></td>
                                 <td><span class="case-name">network</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case of HTTP/Connection error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56002</span></td>
                                 <td><span class="case-name">noCertificateFound</span></td>
-                                <td><em>No description</em></td>
+                                <td>When failed to extract a certificate from the CertList</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56003</span></td>
                                 <td><span class="case-name">invalidOCSPResponse</span></td>
-                                <td><em>No description</em></td>
+                                <td>When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56004</span></td>
                                 <td><span class="case-name">eeCertificateOCSPStatusVerification</span></td>
-                                <td><em>No description</em></td>
+                                <td>When one (or more) end entity certificate cannot be status verified by given OCSP responses</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56005</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>Other error cases</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56006</span></td>
                                 <td><span class="case-name">`internal`</span></td>
-                                <td><em>No description</em></td>
+                                <td>Internal error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56007</span></td>
                                 <td><span class="case-name">noValidVauCertificateAvailable</span></td>
-                                <td><em>No description</em></td>
+                                <td>When no valid VAU certificate can be provided by the system at the moment</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-56008</span></td>
                                 <td><span class="case-name">malformedCertificate</span></td>
-                                <td><em>No description</em></td>
+                                <td>When a certificate is of unexpected (e.g. not parsable) format</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2135,32 +2137,32 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-55001</span></td>
                                 <td><span class="case-name">network</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case of HTTP/Connection error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-55002</span></td>
                                 <td><span class="case-name">certificateDecoding</span></td>
-                                <td><em>No description</em></td>
+                                <td>When failed to extract a X.509 VAU certificate information</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-55003</span></td>
                                 <td><span class="case-name">internalCryptoError</span></td>
-                                <td><em>No description</em></td>
+                                <td>When internal cryptographic operations fail</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-55004</span></td>
                                 <td><span class="case-name">responseValidation</span></td>
-                                <td><em>No description</em></td>
+                                <td>In case a response (or request) could not be (cryptographically) verified</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-55005</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>Other error cases</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-55006</span></td>
                                 <td><span class="case-name">internalError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Internal error</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2426,12 +2428,13 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-01401</span></td>
                                 <td><span class="case-name">idpError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Underlying `IDPError` for the external authentication agains `URL`</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01402</span></td>
                                 <td><span class="case-name">profileValidation</span></td>
-                                <td><em>No description</em></td>
+                                <td>Error when `Profile` validation with the given authentication fails.
+Error is produces within the `IDPError.unspecified` error before saving the IDPToken</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2482,12 +2485,12 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-01503</span></td>
                                 <td><span class="case-name">importDuplicate</span></td>
-                                <td><em>No description</em></td>
+                                <td>Import of shared Task failed due to being a duplicate already existing within the app</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-01504</span></td>
                                 <td><span class="case-name">repositoryError</span></td>
-                                <td><em>No description</em></td>
+                                <td>Saving or retrieving data failed</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2823,37 +2826,37 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-02401</span></td>
                                 <td><span class="case-name">eRxRepository</span></td>
-                                <td><em>No description</em></td>
+                                <td>When redeeming a task via Fachdienst</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02402</span></td>
                                 <td><span class="case-name">avs</span></td>
-                                <td><em>No description</em></td>
+                                <td>When redeeming a task via AVS</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02403</span></td>
                                 <td><span class="case-name">internalError</span></td>
-                                <td><em>No description</em></td>
+                                <td>When an internal error occurs which most likely is a programming error</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02404</span></td>
                                 <td><span class="case-name">unspecified</span></td>
-                                <td><em>No description</em></td>
+                                <td>When error conversion into `RedeemServiceError` fails</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02405</span></td>
                                 <td><span class="case-name">noTokenAvailable</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the user has no valid token available while trying to redeem via Fachdienst</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02406</span></td>
                                 <td><span class="case-name">loginHandler</span></td>
-                                <td><em>No description</em></td>
+                                <td>When receiving an error while doing a login</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02407</span></td>
                                 <td><span class="case-name">prescriptionAlreadyRedeemed</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the prescription has already been redeemed</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2896,42 +2899,42 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-02501</span></td>
                                 <td><span class="case-name">missingAVSEndpoint</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the AVS endpoint for the selected redeem option is missing</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02502</span></td>
                                 <td><span class="case-name">missingAVSCertificate</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the required AVS certificates for redeeming via AVS are missing</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02503</span></td>
                                 <td><span class="case-name">missingTelematikId</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the Telematik-ID of the pharmacy to redeem in is missing</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02504</span></td>
                                 <td><span class="case-name">conversionVersionNumber</span></td>
-                                <td><em>No description</em></td>
+                                <td>When converting AVS Version number</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02505</span></td>
                                 <td><span class="case-name">idMissmatch</span></td>
-                                <td><em>No description</em></td>
+                                <td>When no order can be found to the received response</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02506</span></td>
                                 <td><span class="case-name">noService</span></td>
-                                <td><em>No description</em></td>
+                                <td>When no service can be found for the selected pharmacy</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02507</span></td>
                                 <td><span class="case-name">unexpectedHTTPStatusCode</span></td>
-                                <td><em>No description</em></td>
+                                <td>When the status code is not in [200..&lt;300] but the service did not return an error beforehand</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-02508</span></td>
                                 <td><span class="case-name">localStoreError</span></td>
-                                <td><em>No description</em></td>
+                                <td>When persisting/extracting information from the store went wrong</td>
                             </tr>
                         </tbody>
                     </table>
@@ -3001,7 +3004,8 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-02607</span></td>
                                 <td><span class="case-name">nfcHealthCardSession</span></td>
-                                <td><em>No description</em></td>
+                                <td>Any error regarding the communication with the NFC health card itself
+or sending/receiving data (operation execution)</td>
                             </tr>
                         </tbody>
                     </table>
@@ -3873,12 +3877,12 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-20201</span></td>
                                 <td><span class="case-name">stringEncoding</span></td>
-                                <td><em>No description</em></td>
+                                <td>Generic error while encoding the string.</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-20202</span></td>
                                 <td><span class="case-name">missingAccessCode</span></td>
-                                <td><em>No description</em></td>
+                                <td>Access code is missing</td>
                             </tr>
                         </tbody>
                     </table>
@@ -3912,12 +3916,12 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-20601</span></td>
                                 <td><span class="case-name">unableToConstructConsentRequest</span></td>
-                                <td><em>No description</em></td>
+                                <td>Unable to construct consent request</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-20602</span></td>
                                 <td><span class="case-name">invalidErxConsentInput</span></td>
-                                <td><em>No description</em></td>
+                                <td>Invalid ErxConsent input</td>
                             </tr>
                         </tbody>
                     </table>
@@ -4010,7 +4014,7 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-20901</span></td>
                                 <td><span class="case-name">unableToConstructInputPatch</span></td>
-                                <td><em>No description</em></td>
+                                <td>Unable to construct task input patch request</td>
                             </tr>
                         </tbody>
                     </table>
@@ -4044,12 +4048,12 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-20801</span></td>
                                 <td><span class="case-name">unableToConstructCommunicationRequest</span></td>
-                                <td><em>No description</em></td>
+                                <td>Unable to construct communication request</td>
                             </tr>
                             <tr>
                                 <td><span class="case-id">i-20802</span></td>
                                 <td><span class="case-name">invalidErxTaskOrderInput</span></td>
-                                <td><em>No description</em></td>
+                                <td>Invalid ErxTaskOrder though previous validation checks have been passed</td>
                             </tr>
                         </tbody>
                     </table>
@@ -4129,7 +4133,7 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-20901</span></td>
                                 <td><span class="case-name">unableToConstructEuAccessCodeRequest</span></td>
-                                <td><em>No description</em></td>
+                                <td>Unable to construct euAccessCode request</td>
                             </tr>
                         </tbody>
                     </table>

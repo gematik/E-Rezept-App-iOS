@@ -3,7 +3,7 @@
     "total_files": 75,
     "total_enums": 88,
     "total_cases": 360,
-    "generated_at": "2026-02-24T15:11:33+01:00"
+    "generated_at": "2026-04-16T16:40:28+02:00"
   },
   "errors": [
     {
@@ -18,35 +18,35 @@
           "full_id": "54001",
           "name": "network",
           "qualified_name": "AVSError.network",
-          "documentation": ""
+          "documentation": "In case of HTTP/Connection error"
         },
         {
           "code": "02",
           "full_id": "54002",
           "name": "invalidAVSMessageInput",
           "qualified_name": "AVSError.invalidAVSMessageInput",
-          "documentation": ""
+          "documentation": "When failed to create an AVSMessage"
         },
         {
           "code": "03",
           "full_id": "54003",
           "name": "invalidX509Input",
           "qualified_name": "AVSError.invalidX509Input",
-          "documentation": ""
+          "documentation": "When an X509 certificate was of unexpected format"
         },
         {
           "code": "04",
           "full_id": "54004",
           "name": "unspecified",
           "qualified_name": "AVSError.unspecified",
-          "documentation": ""
+          "documentation": "Conversion error when trying to cast to `AVSError` but error type was different"
         },
         {
           "code": "05",
           "full_id": "54005",
           "name": "`internal`",
           "qualified_name": "AVSError.`internal`",
-          "documentation": ""
+          "documentation": "Internal error"
         }
       ]
     },
@@ -78,28 +78,28 @@
           "full_id": "30101",
           "name": "network",
           "qualified_name": "BfArMError.network",
-          "documentation": ""
+          "documentation": "In case of HTTP/Connection error"
         },
         {
           "code": "02",
           "full_id": "30102",
           "name": "decoding",
           "qualified_name": "BfArMError.decoding",
-          "documentation": ""
+          "documentation": "Message failed to decode/parse"
         },
         {
           "code": "03",
           "full_id": "30103",
           "name": "invalidAssetLink",
           "qualified_name": "BfArMError.invalidAssetLink",
-          "documentation": ""
+          "documentation": "When the asset link from bfarm endpoint is invalid"
         },
         {
           "code": "04",
           "full_id": "30104",
           "name": "unspecified",
           "qualified_name": "BfArMError.unspecified",
-          "documentation": ""
+          "documentation": "Other error cases"
         }
       ]
     },
@@ -173,7 +173,7 @@
           "full_id": "52004",
           "name": "inconsistentResponse",
           "qualified_name": "FHIRClient.Error.inconsistentResponse",
-          "documentation": ""
+          "documentation": "When the server returned a successful response with inconsistent response data.\nE.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead."
         },
         {
           "code": "05",
@@ -210,28 +210,28 @@
           "full_id": "30001",
           "name": "network",
           "qualified_name": "FHIRVZDError.network",
-          "documentation": ""
+          "documentation": "In case of HTTP/Connection error"
         },
         {
           "code": "02",
           "full_id": "30002",
           "name": "tokenUnavailable",
           "qualified_name": "FHIRVZDError.tokenUnavailable",
-          "documentation": ""
+          "documentation": "When a token is being requested, but none can be found"
         },
         {
           "code": "03",
           "full_id": "30003",
           "name": "decoding",
           "qualified_name": "FHIRVZDError.decoding",
-          "documentation": ""
+          "documentation": "Message failed to decode/parse"
         },
         {
           "code": "04",
           "full_id": "30004",
           "name": "unspecified",
           "qualified_name": "FHIRVZDError.unspecified",
-          "documentation": ""
+          "documentation": "Other error cases"
         }
       ]
     },
@@ -316,35 +316,35 @@
           "full_id": "01001",
           "name": "idpError",
           "qualified_name": "CardWallReadCardDomain.State.Error.idpError",
-          "documentation": ""
+          "documentation": "`IDPError` thrown within the `CardWallReadCardDomain`"
         },
         {
           "code": "02",
           "full_id": "01002",
           "name": "inputError",
           "qualified_name": "CardWallReadCardDomain.State.Error.inputError",
-          "documentation": ""
+          "documentation": "Possible user input errors thrown within the `CardWallReadCardDomain`"
         },
         {
           "code": "03",
           "full_id": "01003",
           "name": "signChallengeError",
           "qualified_name": "CardWallReadCardDomain.State.Error.signChallengeError",
-          "documentation": ""
+          "documentation": "NFC signature errors thrown within the `CardWallReadCardDomain`"
         },
         {
           "code": "04",
           "full_id": "01004",
           "name": "biometrieError",
           "qualified_name": "CardWallReadCardDomain.State.Error.biometrieError",
-          "documentation": ""
+          "documentation": "Error that can occur during authentication with biometry"
         },
         {
           "code": "05",
           "full_id": "01005",
           "name": "profileValidation",
           "qualified_name": "CardWallReadCardDomain.State.Error.profileValidation",
-          "documentation": ""
+          "documentation": "Error when `Profile` validation with the given authentication fails.\nError is produces within the `IDPError.unspecified` error before saving the IDPToken"
         }
       ]
     },
@@ -360,14 +360,14 @@
           "full_id": "01101",
           "name": "missingPIN",
           "qualified_name": "Error.InputError.missingPIN",
-          "documentation": ""
+          "documentation": "User input for PIN is incorrect"
         },
         {
           "code": "02",
           "full_id": "01102",
           "name": "missingCAN",
           "qualified_name": "Error.InputError.missingCAN",
-          "documentation": ""
+          "documentation": "User input for CAN is incorrect"
         }
       ]
     },
@@ -624,42 +624,42 @@
           "full_id": "04701",
           "name": "eRxRepository",
           "qualified_name": "EuRedeemServiceError.eRxRepository",
-          "documentation": ""
+          "documentation": "When redeeming a task via Fachdienst"
         },
         {
           "code": "02",
           "full_id": "04702",
           "name": "localStoreError",
           "qualified_name": "EuRedeemServiceError.localStoreError",
-          "documentation": ""
+          "documentation": "When persisting/extracting information from the store went wrong"
         },
         {
           "code": "03",
           "full_id": "04703",
           "name": "euCodeGeneration",
           "qualified_name": "EuRedeemServiceError.euCodeGeneration",
-          "documentation": ""
+          "documentation": "When the eu accessCode generation fails"
         },
         {
           "code": "04",
           "full_id": "04704",
           "name": "unspecified",
           "qualified_name": "EuRedeemServiceError.unspecified",
-          "documentation": ""
+          "documentation": "When error conversion into `EuRedeemServiceError` fails"
         },
         {
           "code": "05",
           "full_id": "04705",
           "name": "noTokenAvailable",
           "qualified_name": "EuRedeemServiceError.noTokenAvailable",
-          "documentation": ""
+          "documentation": "When the user has no valid token available while trying to redeem via Fachdienst"
         },
         {
           "code": "06",
           "full_id": "04706",
           "name": "loginHandler",
           "qualified_name": "EuRedeemServiceError.loginHandler",
-          "documentation": ""
+          "documentation": "When receiving an error while doing a login"
         }
       ]
     },
@@ -675,42 +675,42 @@
           "full_id": "53001",
           "name": "internalError",
           "qualified_name": "HTTPClientError.internalError",
-          "documentation": ""
+          "documentation": "Internal error in the request/chain handling"
         },
         {
           "code": "02",
           "full_id": "53002",
           "name": "httpError",
           "qualified_name": "HTTPClientError.httpError",
-          "documentation": ""
+          "documentation": "The server responded with an error"
         },
         {
           "code": "03",
           "full_id": "53003",
           "name": "networkError",
           "qualified_name": "HTTPClientError.networkError",
-          "documentation": ""
+          "documentation": "The connection to the server has gone bad"
         },
         {
           "code": "04",
           "full_id": "53004",
           "name": "authentication",
           "qualified_name": "HTTPClientError.authentication",
-          "documentation": ""
+          "documentation": "Authentication error"
         },
         {
           "code": "05",
           "full_id": "53005",
           "name": "vauError",
           "qualified_name": "HTTPClientError.vauError",
-          "documentation": ""
+          "documentation": "Error emitted by the VAU client"
         },
         {
           "code": "06",
           "full_id": "53006",
           "name": "unknown",
           "qualified_name": "HTTPClientError.unknown",
-          "documentation": ""
+          "documentation": "Unclassified error"
         }
       ]
     },
@@ -726,98 +726,98 @@
           "full_id": "10001",
           "name": "network",
           "qualified_name": "IDPError.network",
-          "documentation": ""
+          "documentation": "In case of HTTP/Connection error"
         },
         {
           "code": "02",
           "full_id": "10002",
           "name": "validation",
           "qualified_name": "IDPError.validation",
-          "documentation": ""
+          "documentation": "In case a response (or request) could not be (cryptographically) verified"
         },
         {
           "code": "03",
           "full_id": "10003",
           "name": "tokenUnavailable",
           "qualified_name": "IDPError.tokenUnavailable",
-          "documentation": ""
+          "documentation": "When a token is being requested, but none can be found"
         },
         {
           "code": "04",
           "full_id": "10004",
           "name": "unspecified",
           "qualified_name": "IDPError.unspecified",
-          "documentation": ""
+          "documentation": "Other error cases"
         },
         {
           "code": "05",
           "full_id": "10005",
           "name": "decoding",
           "qualified_name": "IDPError.decoding",
-          "documentation": ""
+          "documentation": "Message failed to decode/parse"
         },
         {
           "code": "06",
           "full_id": "10006",
           "name": "noCertificateFound",
           "qualified_name": "IDPError.noCertificateFound",
-          "documentation": ""
+          "documentation": "When failed to extract a X.509 certificate from the DiscoveryDocument"
         },
         {
           "code": "07",
           "full_id": "10007",
           "name": "invalidDiscoveryDocument",
           "qualified_name": "IDPError.invalidDiscoveryDocument",
-          "documentation": ""
+          "documentation": "When the discovery document has expired or the trust anchors could not be verified"
         },
         {
           "code": "08",
           "full_id": "10008",
           "name": "invalidStateParameter",
           "qualified_name": "IDPError.invalidStateParameter",
-          "documentation": ""
+          "documentation": "When the state parameter received from the server is not equal to the one sent"
         },
         {
           "code": "09",
           "full_id": "10009",
           "name": "invalidNonce",
           "qualified_name": "IDPError.invalidNonce",
-          "documentation": ""
+          "documentation": "When the nonce received from the server is not equal to the one sent"
         },
         {
           "code": "10",
           "full_id": "10010",
           "name": "unsupported",
           "qualified_name": "IDPError.unsupported",
-          "documentation": ""
+          "documentation": "When a method/algorithm is unsupported"
         },
         {
           "code": "11",
           "full_id": "10011",
           "name": "encryption",
           "qualified_name": "IDPError.encryption",
-          "documentation": ""
+          "documentation": "When encryption fails"
         },
         {
           "code": "12",
           "full_id": "10012",
           "name": "decryption",
           "qualified_name": "IDPError.decryption",
-          "documentation": ""
+          "documentation": "When decryption fails"
         },
         {
           "code": "13",
           "full_id": "10013",
           "name": "`internal`",
           "qualified_name": "IDPError.`internal`",
-          "documentation": ""
+          "documentation": "Internal error"
         },
         {
           "code": "14",
           "full_id": "10014",
           "name": "trustStore",
           "qualified_name": "IDPError.trustStore",
-          "documentation": ""
+          "documentation": "Issues related to Building or Verifying the trust store"
         },
         {
           "code": "15",
@@ -838,28 +838,28 @@
           "full_id": "10017",
           "name": "serverError",
           "qualified_name": "IDPError.serverError",
-          "documentation": ""
+          "documentation": "Server responded with an error"
         },
         {
           "code": "18",
           "full_id": "10018",
           "name": "biometrics",
           "qualified_name": "IDPError.biometrics",
-          "documentation": ""
+          "documentation": "Any biometrics related error"
         },
         {
           "code": "19",
           "full_id": "10019",
           "name": "extAuthOriginalRequestMissing",
           "qualified_name": "IDPError.extAuthOriginalRequestMissing",
-          "documentation": ""
+          "documentation": "External authentication failed due to missing or invalid original request"
         },
         {
           "code": "20",
           "full_id": "10020",
           "name": "notAvailableInDemoMode",
           "qualified_name": "IDPError.notAvailableInDemoMode",
-          "documentation": ""
+          "documentation": "Not implemented as the conforming instance is meant for demo purpose only"
         }
       ]
     },
@@ -1566,56 +1566,56 @@
           "full_id": "56001",
           "name": "network",
           "qualified_name": "TrustStoreError.network",
-          "documentation": ""
+          "documentation": "In case of HTTP/Connection error"
         },
         {
           "code": "02",
           "full_id": "56002",
           "name": "noCertificateFound",
           "qualified_name": "TrustStoreError.noCertificateFound",
-          "documentation": ""
+          "documentation": "When failed to extract a certificate from the CertList"
         },
         {
           "code": "03",
           "full_id": "56003",
           "name": "invalidOCSPResponse",
           "qualified_name": "TrustStoreError.invalidOCSPResponse",
-          "documentation": ""
+          "documentation": "When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions"
         },
         {
           "code": "04",
           "full_id": "56004",
           "name": "eeCertificateOCSPStatusVerification",
           "qualified_name": "TrustStoreError.eeCertificateOCSPStatusVerification",
-          "documentation": ""
+          "documentation": "When one (or more) end entity certificate cannot be status verified by given OCSP responses"
         },
         {
           "code": "05",
           "full_id": "56005",
           "name": "unspecified",
           "qualified_name": "TrustStoreError.unspecified",
-          "documentation": ""
+          "documentation": "Other error cases"
         },
         {
           "code": "06",
           "full_id": "56006",
           "name": "`internal`",
           "qualified_name": "TrustStoreError.`internal`",
-          "documentation": ""
+          "documentation": "Internal error"
         },
         {
           "code": "07",
           "full_id": "56007",
           "name": "noValidVauCertificateAvailable",
           "qualified_name": "TrustStoreError.noValidVauCertificateAvailable",
-          "documentation": ""
+          "documentation": "When no valid VAU certificate can be provided by the system at the moment"
         },
         {
           "code": "08",
           "full_id": "56008",
           "name": "malformedCertificate",
           "qualified_name": "TrustStoreError.malformedCertificate",
-          "documentation": ""
+          "documentation": "When a certificate is of unexpected (e.g. not parsable) format"
         }
       ]
     },
@@ -1710,42 +1710,42 @@
           "full_id": "55001",
           "name": "network",
           "qualified_name": "VAUError.network",
-          "documentation": ""
+          "documentation": "In case of HTTP/Connection error"
         },
         {
           "code": "02",
           "full_id": "55002",
           "name": "certificateDecoding",
           "qualified_name": "VAUError.certificateDecoding",
-          "documentation": ""
+          "documentation": "When failed to extract a X.509 VAU certificate information"
         },
         {
           "code": "03",
           "full_id": "55003",
           "name": "internalCryptoError",
           "qualified_name": "VAUError.internalCryptoError",
-          "documentation": ""
+          "documentation": "When internal cryptographic operations fail"
         },
         {
           "code": "04",
           "full_id": "55004",
           "name": "responseValidation",
           "qualified_name": "VAUError.responseValidation",
-          "documentation": ""
+          "documentation": "In case a response (or request) could not be (cryptographically) verified"
         },
         {
           "code": "05",
           "full_id": "55005",
           "name": "unspecified",
           "qualified_name": "VAUError.unspecified",
-          "documentation": ""
+          "documentation": "Other error cases"
         },
         {
           "code": "06",
           "full_id": "55006",
           "name": "internalError",
           "qualified_name": "VAUError.internalError",
-          "documentation": ""
+          "documentation": "Internal error"
         }
       ]
     },
@@ -1897,14 +1897,14 @@
           "full_id": "01401",
           "name": "idpError",
           "qualified_name": "ExtAuthPendingDomain.Error.idpError",
-          "documentation": ""
+          "documentation": "Underlying `IDPError` for the external authentication agains `URL`"
         },
         {
           "code": "02",
           "full_id": "01402",
           "name": "profileValidation",
           "qualified_name": "ExtAuthPendingDomain.Error.profileValidation",
-          "documentation": ""
+          "documentation": "Error when `Profile` validation with the given authentication fails.\nError is produces within the `IDPError.unspecified` error before saving the IDPToken"
         }
       ]
     },
@@ -1934,14 +1934,14 @@
           "full_id": "01503",
           "name": "importDuplicate",
           "qualified_name": "MainDomain.Error.importDuplicate",
-          "documentation": ""
+          "documentation": "Import of shared Task failed due to being a duplicate already existing within the app"
         },
         {
           "code": "04",
           "full_id": "01504",
           "name": "repositoryError",
           "qualified_name": "MainDomain.Error.repositoryError",
-          "documentation": ""
+          "documentation": "Saving or retrieving data failed"
         }
       ]
     },
@@ -2118,49 +2118,49 @@
           "full_id": "02401",
           "name": "eRxRepository",
           "qualified_name": "RedeemServiceError.eRxRepository",
-          "documentation": ""
+          "documentation": "When redeeming a task via Fachdienst"
         },
         {
           "code": "02",
           "full_id": "02402",
           "name": "avs",
           "qualified_name": "RedeemServiceError.avs",
-          "documentation": ""
+          "documentation": "When redeeming a task via AVS"
         },
         {
           "code": "03",
           "full_id": "02403",
           "name": "internalError",
           "qualified_name": "RedeemServiceError.internalError",
-          "documentation": ""
+          "documentation": "When an internal error occurs which most likely is a programming error"
         },
         {
           "code": "04",
           "full_id": "02404",
           "name": "unspecified",
           "qualified_name": "RedeemServiceError.unspecified",
-          "documentation": ""
+          "documentation": "When error conversion into `RedeemServiceError` fails"
         },
         {
           "code": "05",
           "full_id": "02405",
           "name": "noTokenAvailable",
           "qualified_name": "RedeemServiceError.noTokenAvailable",
-          "documentation": ""
+          "documentation": "When the user has no valid token available while trying to redeem via Fachdienst"
         },
         {
           "code": "06",
           "full_id": "02406",
           "name": "loginHandler",
           "qualified_name": "RedeemServiceError.loginHandler",
-          "documentation": ""
+          "documentation": "When receiving an error while doing a login"
         },
         {
           "code": "07",
           "full_id": "02407",
           "name": "prescriptionAlreadyRedeemed",
           "qualified_name": "RedeemServiceError.prescriptionAlreadyRedeemed",
-          "documentation": ""
+          "documentation": "When the prescription has already been redeemed"
         }
       ]
     },
@@ -2176,56 +2176,56 @@
           "full_id": "02501",
           "name": "missingAVSEndpoint",
           "qualified_name": "RedeemServiceError.InternalError.missingAVSEndpoint",
-          "documentation": ""
+          "documentation": "When the AVS endpoint for the selected redeem option is missing"
         },
         {
           "code": "02",
           "full_id": "02502",
           "name": "missingAVSCertificate",
           "qualified_name": "RedeemServiceError.InternalError.missingAVSCertificate",
-          "documentation": ""
+          "documentation": "When the required AVS certificates for redeeming via AVS are missing"
         },
         {
           "code": "03",
           "full_id": "02503",
           "name": "missingTelematikId",
           "qualified_name": "RedeemServiceError.InternalError.missingTelematikId",
-          "documentation": ""
+          "documentation": "When the Telematik-ID of the pharmacy to redeem in is missing"
         },
         {
           "code": "04",
           "full_id": "02504",
           "name": "conversionVersionNumber",
           "qualified_name": "RedeemServiceError.InternalError.conversionVersionNumber",
-          "documentation": ""
+          "documentation": "When converting AVS Version number"
         },
         {
           "code": "05",
           "full_id": "02505",
           "name": "idMissmatch",
           "qualified_name": "RedeemServiceError.InternalError.idMissmatch",
-          "documentation": ""
+          "documentation": "When no order can be found to the received response"
         },
         {
           "code": "06",
           "full_id": "02506",
           "name": "noService",
           "qualified_name": "RedeemServiceError.InternalError.noService",
-          "documentation": ""
+          "documentation": "When no service can be found for the selected pharmacy"
         },
         {
           "code": "07",
           "full_id": "02507",
           "name": "unexpectedHTTPStatusCode",
           "qualified_name": "RedeemServiceError.InternalError.unexpectedHTTPStatusCode",
-          "documentation": ""
+          "documentation": "When the status code is not in [200..<300] but the service did not return an error beforehand"
         },
         {
           "code": "08",
           "full_id": "02508",
           "name": "localStoreError",
           "qualified_name": "RedeemServiceError.InternalError.localStoreError",
-          "documentation": ""
+          "documentation": "When persisting/extracting information from the store went wrong"
         }
       ]
     },
@@ -2283,7 +2283,7 @@
           "full_id": "02607",
           "name": "nfcHealthCardSession",
           "qualified_name": "NFCHealthCardPasswordControllerError.nfcHealthCardSession",
-          "documentation": ""
+          "documentation": "Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)"
         }
       ]
     },
@@ -2823,14 +2823,14 @@
           "full_id": "20201",
           "name": "stringEncoding",
           "qualified_name": "DefaultDataMatrixStringEncoderError.stringEncoding",
-          "documentation": ""
+          "documentation": "Generic error while encoding the string."
         },
         {
           "code": "02",
           "full_id": "20202",
           "name": "missingAccessCode",
           "qualified_name": "DefaultDataMatrixStringEncoderError.missingAccessCode",
-          "documentation": ""
+          "documentation": "Access code is missing"
         }
       ]
     },
@@ -2846,14 +2846,14 @@
           "full_id": "20601",
           "name": "unableToConstructConsentRequest",
           "qualified_name": "ErxConsent.Error.unableToConstructConsentRequest",
-          "documentation": ""
+          "documentation": "Unable to construct consent request"
         },
         {
           "code": "02",
           "full_id": "20602",
           "name": "invalidErxConsentInput",
           "qualified_name": "ErxConsent.Error.invalidErxConsentInput",
-          "documentation": ""
+          "documentation": "Invalid ErxConsent input"
         }
       ]
     },
@@ -2920,7 +2920,7 @@
           "full_id": "20901",
           "name": "unableToConstructInputPatch",
           "qualified_name": "ErxTask.Error.unableToConstructInputPatch",
-          "documentation": ""
+          "documentation": "Unable to construct task input patch request"
         }
       ]
     },
@@ -2936,14 +2936,14 @@
           "full_id": "20801",
           "name": "unableToConstructCommunicationRequest",
           "qualified_name": "ErxTaskOrder.Error.unableToConstructCommunicationRequest",
-          "documentation": ""
+          "documentation": "Unable to construct communication request"
         },
         {
           "code": "02",
           "full_id": "20802",
           "name": "invalidErxTaskOrderInput",
           "qualified_name": "ErxTaskOrder.Error.invalidErxTaskOrderInput",
-          "documentation": ""
+          "documentation": "Invalid ErxTaskOrder though previous validation checks have been passed"
         }
       ]
     },
@@ -2982,7 +2982,7 @@
           "full_id": "20901",
           "name": "unableToConstructEuAccessCodeRequest",
           "qualified_name": "EuAccessCode.Error.unableToConstructEuAccessCodeRequest",
-          "documentation": ""
+          "documentation": "Unable to construct euAccessCode request"
         }
       ]
     },
