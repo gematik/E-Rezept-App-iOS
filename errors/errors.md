@@ -1,6 +1,6 @@
 # Swift Error Documentation
 
-Generated on: 2026-02-24 15:11:34
+Generated on: 2026-04-16 16:40:34
 
 ## Summary
 
@@ -111,11 +111,11 @@ Generated on: 2026-02-24 15:11:34
 
 | ID | Case | Description |
 |---|---|---|
-| `54001` | `network` | No description |
-| `54002` | `invalidAVSMessageInput` | No description |
-| `54003` | `invalidX509Input` | No description |
-| `54004` | `unspecified` | No description |
-| `54005` | ``internal`` | No description |
+| `54001` | `network` | In case of HTTP/Connection error |
+| `54002` | `invalidAVSMessageInput` | When failed to create an AVSMessage |
+| `54003` | `invalidX509Input` | When an X509 certificate was of unexpected format |
+| `54004` | `unspecified` | Conversion error when trying to cast to `AVSError` but error type was different |
+| `54005` | ``internal`` | Internal error |
 
 ### Related Errors
 
@@ -148,10 +148,10 @@ Generated on: 2026-02-24 15:11:34
 
 | ID | Case | Description |
 |---|---|---|
-| `30101` | `network` | No description |
-| `30102` | `decoding` | No description |
-| `30103` | `invalidAssetLink` | No description |
-| `30104` | `unspecified` | No description |
+| `30101` | `network` | In case of HTTP/Connection error |
+| `30102` | `decoding` | Message failed to decode/parse |
+| `30103` | `invalidAssetLink` | When the asset link from bfarm endpoint is invalid |
+| `30104` | `unspecified` | Other error cases |
 
 ### Related Errors
 
@@ -198,7 +198,7 @@ Error cases when using the `FHIRClient`
 | ID | Case | Description |
 |---|---|---|
 | `52001` | `internalError` | No description |
-| `52004` | `inconsistentResponse` | No description |
+| `52004` | `inconsistentResponse` | When the server returned a successful response with inconsistent response data. E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead. |
 | `52005` | `decoding` | No description |
 | `52006` | `unknown` | No description |
 | `52007` | `http` | No description |
@@ -215,10 +215,10 @@ Error cases when using the `FHIRClient`
 
 | ID | Case | Description |
 |---|---|---|
-| `30001` | `network` | No description |
-| `30002` | `tokenUnavailable` | No description |
-| `30003` | `decoding` | No description |
-| `30004` | `unspecified` | No description |
+| `30001` | `network` | In case of HTTP/Connection error |
+| `30002` | `tokenUnavailable` | When a token is being requested, but none can be found |
+| `30003` | `decoding` | Message failed to decode/parse |
+| `30004` | `unspecified` | Other error cases |
 
 ### Related Errors
 
@@ -289,11 +289,11 @@ Error cases when using the `FHIRClient`
 
 | ID | Case | Description |
 |---|---|---|
-| `01001` | `idpError` | No description |
-| `01002` | `inputError` | No description |
-| `01003` | `signChallengeError` | No description |
-| `01004` | `biometrieError` | No description |
-| `01005` | `profileValidation` | No description |
+| `01001` | `idpError` | `IDPError` thrown within the `CardWallReadCardDomain` |
+| `01002` | `inputError` | Possible user input errors thrown within the `CardWallReadCardDomain` |
+| `01003` | `signChallengeError` | NFC signature errors thrown within the `CardWallReadCardDomain` |
+| `01004` | `biometrieError` | Error that can occur during authentication with biometry |
+| `01005` | `profileValidation` | Error when `Profile` validation with the given authentication fails. Error is produces within the `IDPError.unspecified` error before saving the IDPToken |
 
 ### Related Errors
 
@@ -317,8 +317,8 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `01101` | `missingPIN` | No description |
-| `01102` | `missingCAN` | No description |
+| `01101` | `missingPIN` | User input for PIN is incorrect |
+| `01102` | `missingCAN` | User input for CAN is incorrect |
 
 ---
 
@@ -435,12 +435,12 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `04701` | `eRxRepository` | No description |
-| `04702` | `localStoreError` | No description |
-| `04703` | `euCodeGeneration` | No description |
-| `04704` | `unspecified` | No description |
-| `04705` | `noTokenAvailable` | No description |
-| `04706` | `loginHandler` | No description |
+| `04701` | `eRxRepository` | When redeeming a task via Fachdienst |
+| `04702` | `localStoreError` | When persisting/extracting information from the store went wrong |
+| `04703` | `euCodeGeneration` | When the eu accessCode generation fails |
+| `04704` | `unspecified` | When error conversion into `EuRedeemServiceError` fails |
+| `04705` | `noTokenAvailable` | When the user has no valid token available while trying to redeem via Fachdienst |
+| `04706` | `loginHandler` | When receiving an error while doing a login |
 
 ### Related Errors
 
@@ -461,12 +461,12 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `53001` | `internalError` | No description |
-| `53002` | `httpError` | No description |
-| `53003` | `networkError` | No description |
-| `53004` | `authentication` | No description |
-| `53005` | `vauError` | No description |
-| `53006` | `unknown` | No description |
+| `53001` | `internalError` | Internal error in the request/chain handling |
+| `53002` | `httpError` | The server responded with an error |
+| `53003` | `networkError` | The connection to the server has gone bad |
+| `53004` | `authentication` | Authentication error |
+| `53005` | `vauError` | Error emitted by the VAU client |
+| `53006` | `unknown` | Unclassified error |
 
 ---
 
@@ -480,26 +480,26 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `10001` | `network` | No description |
-| `10002` | `validation` | No description |
-| `10003` | `tokenUnavailable` | No description |
-| `10004` | `unspecified` | No description |
-| `10005` | `decoding` | No description |
-| `10006` | `noCertificateFound` | No description |
-| `10007` | `invalidDiscoveryDocument` | No description |
-| `10008` | `invalidStateParameter` | No description |
-| `10009` | `invalidNonce` | No description |
-| `10010` | `unsupported` | No description |
-| `10011` | `encryption` | No description |
-| `10012` | `decryption` | No description |
-| `10013` | ``internal`` | No description |
-| `10014` | `trustStore` | No description |
+| `10001` | `network` | In case of HTTP/Connection error |
+| `10002` | `validation` | In case a response (or request) could not be (cryptographically) verified |
+| `10003` | `tokenUnavailable` | When a token is being requested, but none can be found |
+| `10004` | `unspecified` | Other error cases |
+| `10005` | `decoding` | Message failed to decode/parse |
+| `10006` | `noCertificateFound` | When failed to extract a X.509 certificate from the DiscoveryDocument |
+| `10007` | `invalidDiscoveryDocument` | When the discovery document has expired or the trust anchors could not be verified |
+| `10008` | `invalidStateParameter` | When the state parameter received from the server is not equal to the one sent |
+| `10009` | `invalidNonce` | When the nonce received from the server is not equal to the one sent |
+| `10010` | `unsupported` | When a method/algorithm is unsupported |
+| `10011` | `encryption` | When encryption fails |
+| `10012` | `decryption` | When decryption fails |
+| `10013` | ``internal`` | Internal error |
+| `10014` | `trustStore` | Issues related to Building or Verifying the trust store |
 | `10015` | `pairing` | No description |
 | `10016` | `invalidSignature` | No description |
-| `10017` | `serverError` | No description |
-| `10018` | `biometrics` | No description |
-| `10019` | `extAuthOriginalRequestMissing` | No description |
-| `10020` | `notAvailableInDemoMode` | No description |
+| `10017` | `serverError` | Server responded with an error |
+| `10018` | `biometrics` | Any biometrics related error |
+| `10019` | `extAuthOriginalRequestMissing` | External authentication failed due to missing or invalid original request |
+| `10020` | `notAvailableInDemoMode` | Not implemented as the conforming instance is meant for demo purpose only |
 
 ### Related Errors
 
@@ -773,14 +773,14 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `56001` | `network` | No description |
-| `56002` | `noCertificateFound` | No description |
-| `56003` | `invalidOCSPResponse` | No description |
-| `56004` | `eeCertificateOCSPStatusVerification` | No description |
-| `56005` | `unspecified` | No description |
-| `56006` | ``internal`` | No description |
-| `56007` | `noValidVauCertificateAvailable` | No description |
-| `56008` | `malformedCertificate` | No description |
+| `56001` | `network` | In case of HTTP/Connection error |
+| `56002` | `noCertificateFound` | When failed to extract a certificate from the CertList |
+| `56003` | `invalidOCSPResponse` | When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions |
+| `56004` | `eeCertificateOCSPStatusVerification` | When one (or more) end entity certificate cannot be status verified by given OCSP responses |
+| `56005` | `unspecified` | Other error cases |
+| `56006` | ``internal`` | Internal error |
+| `56007` | `noValidVauCertificateAvailable` | When no valid VAU certificate can be provided by the system at the moment |
+| `56008` | `malformedCertificate` | When a certificate is of unexpected (e.g. not parsable) format |
 
 ### Related Errors
 
@@ -822,12 +822,12 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `55001` | `network` | No description |
-| `55002` | `certificateDecoding` | No description |
-| `55003` | `internalCryptoError` | No description |
-| `55004` | `responseValidation` | No description |
-| `55005` | `unspecified` | No description |
-| `55006` | `internalError` | No description |
+| `55001` | `network` | In case of HTTP/Connection error |
+| `55002` | `certificateDecoding` | When failed to extract a X.509 VAU certificate information |
+| `55003` | `internalCryptoError` | When internal cryptographic operations fail |
+| `55004` | `responseValidation` | In case a response (or request) could not be (cryptographically) verified |
+| `55005` | `unspecified` | Other error cases |
+| `55006` | `internalError` | Internal error |
 
 ### Related Errors
 
@@ -935,8 +935,8 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `01401` | `idpError` | No description |
-| `01402` | `profileValidation` | No description |
+| `01401` | `idpError` | Underlying `IDPError` for the external authentication agains `URL` |
+| `01402` | `profileValidation` | Error when `Profile` validation with the given authentication fails. Error is produces within the `IDPError.unspecified` error before saving the IDPToken |
 
 ### Related Errors
 
@@ -957,8 +957,8 @@ User input error
 |---|---|---|
 | `01501` | `localStoreError` | No description |
 | `01502` | `userSessionError` | No description |
-| `01503` | `importDuplicate` | No description |
-| `01504` | `repositoryError` | No description |
+| `01503` | `importDuplicate` | Import of shared Task failed due to being a duplicate already existing within the app |
+| `01504` | `repositoryError` | Saving or retrieving data failed |
 
 ### Related Errors
 
@@ -1098,13 +1098,13 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `02401` | `eRxRepository` | No description |
-| `02402` | `avs` | No description |
-| `02403` | `internalError` | No description |
-| `02404` | `unspecified` | No description |
-| `02405` | `noTokenAvailable` | No description |
-| `02406` | `loginHandler` | No description |
-| `02407` | `prescriptionAlreadyRedeemed` | No description |
+| `02401` | `eRxRepository` | When redeeming a task via Fachdienst |
+| `02402` | `avs` | When redeeming a task via AVS |
+| `02403` | `internalError` | When an internal error occurs which most likely is a programming error |
+| `02404` | `unspecified` | When error conversion into `RedeemServiceError` fails |
+| `02405` | `noTokenAvailable` | When the user has no valid token available while trying to redeem via Fachdienst |
+| `02406` | `loginHandler` | When receiving an error while doing a login |
+| `02407` | `prescriptionAlreadyRedeemed` | When the prescription has already been redeemed |
 
 ### Related Errors
 
@@ -1125,14 +1125,14 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `02501` | `missingAVSEndpoint` | No description |
-| `02502` | `missingAVSCertificate` | No description |
-| `02503` | `missingTelematikId` | No description |
-| `02504` | `conversionVersionNumber` | No description |
-| `02505` | `idMissmatch` | No description |
-| `02506` | `noService` | No description |
-| `02507` | `unexpectedHTTPStatusCode` | No description |
-| `02508` | `localStoreError` | No description |
+| `02501` | `missingAVSEndpoint` | When the AVS endpoint for the selected redeem option is missing |
+| `02502` | `missingAVSCertificate` | When the required AVS certificates for redeeming via AVS are missing |
+| `02503` | `missingTelematikId` | When the Telematik-ID of the pharmacy to redeem in is missing |
+| `02504` | `conversionVersionNumber` | When converting AVS Version number |
+| `02505` | `idMissmatch` | When no order can be found to the received response |
+| `02506` | `noService` | When no service can be found for the selected pharmacy |
+| `02507` | `unexpectedHTTPStatusCode` | When the status code is not in [200..<300] but the service did not return an error beforehand |
+| `02508` | `localStoreError` | When persisting/extracting information from the store went wrong |
 
 ### Related Errors
 
@@ -1156,7 +1156,7 @@ User input error
 | `02604` | `wrongCan` | No description |
 | `02605` | `changeReferenceData` | No description |
 | `02606` | `couldNotInitializeSession` | No description |
-| `02607` | `nfcHealthCardSession` | No description |
+| `02607` | `nfcHealthCardSession` | Any error regarding the communication with the NFC health card itself or sending/receiving data (operation execution) |
 
 ---
 
@@ -1502,8 +1502,8 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `20201` | `stringEncoding` | No description |
-| `20202` | `missingAccessCode` | No description |
+| `20201` | `stringEncoding` | Generic error while encoding the string. |
+| `20202` | `missingAccessCode` | Access code is missing |
 
 ---
 
@@ -1517,8 +1517,8 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `20601` | `unableToConstructConsentRequest` | No description |
-| `20602` | `invalidErxConsentInput` | No description |
+| `20601` | `unableToConstructConsentRequest` | Unable to construct consent request |
+| `20602` | `invalidErxConsentInput` | Invalid ErxConsent input |
 
 ---
 
@@ -1551,7 +1551,7 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `20901` | `unableToConstructInputPatch` | No description |
+| `20901` | `unableToConstructInputPatch` | Unable to construct task input patch request |
 
 ---
 
@@ -1565,8 +1565,8 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `20801` | `unableToConstructCommunicationRequest` | No description |
-| `20802` | `invalidErxTaskOrderInput` | No description |
+| `20801` | `unableToConstructCommunicationRequest` | Unable to construct communication request |
+| `20802` | `invalidErxTaskOrderInput` | Invalid ErxTaskOrder though previous validation checks have been passed |
 
 ---
 
@@ -1600,7 +1600,7 @@ User input error
 
 | ID | Case | Description |
 |---|---|---|
-| `20901` | `unableToConstructEuAccessCodeRequest` | No description |
+| `20901` | `unableToConstructEuAccessCodeRequest` | Unable to construct euAccessCode request |
 
 ---
 

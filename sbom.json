@@ -1,13 +1,12 @@
 
- ERROR   Unspecified Error (SNYK-CLI-0000)
-         The encountered error only provides basic information, please take a look at   
-         the given details. If they do not help to resolve the issue, consider          
-         debugging or consulting support.                                               
+ ERROR   Authentication error (SNYK-0005)
+         Authentication credentials not recognized, or user access is not provisioned.  
+         Revise credentials and try again, or request access from your Snyk             
+         administrator.                                                                 
                                                                                         
-           Snyk failed to infer an organization ID. Please make sure to authenticate    
-           using `snyk auth`. Should the issue persist, explicitly set an organization  
-           ID via the `--org` flag.                                                     
+           Use `snyk auth` to authenticate.                                             
 
-Docs:    https://docs.snyk.io/scan-with-snyk/error-catalog#snyk-cli-0000 
-                                                                         
-ID:      urn:snyk:interaction:4d73b313-946e-4dd9-8685-6797ffc1c510 
+Status:  401 Unauthorized 
+Docs:    https://docs.snyk.io/scan-with-snyk/error-catalog#snyk-0005 
+                                                                     
+ID:      urn:snyk:interaction:cc36e4f2-182e-4601-8465-e1a45c6d8600 
