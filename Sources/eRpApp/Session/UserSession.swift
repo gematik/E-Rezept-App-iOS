@@ -44,18 +44,12 @@ enum UserSessionError: Error, Equatable {
 /// An instance of `UserSession` holds all stores used by the app that need to be changeable per profile and demo user
 /// sourcery: StreamWrapped
 protocol UserSession {
-    /// Last authentication state of the app. This value should not get stale as it should inform on the latest state.
-    var isAuthenticated: AnyPublisher<Bool, UserSessionError> { get }
-
     var ordersRepository: OrdersRepository { get }
 
     var profileDataStore: ProfileDataStore { get }
 
     /// Access to the store of `ShipmentInfo` objects
     var shipmentInfoDataStore: ShipmentInfoDataStore { get }
-
-    /// Check for forced app updates
-    var updateChecker: UpdateChecker { get }
 
     /// The UserDefaults repository for this session
     var localUserStore: UserDataStore { get }
@@ -78,12 +72,6 @@ protocol UserSession {
     var vauStorage: VAUStorage { get }
 
     var trustStoreSession: TrustStoreSession { get }
-
-    /// Affected manager when app (start) is secured by password usage
-    var appSecurityManager: AppSecurityManager { get }
-
-    // Manager that gathering information about device security and the user's acknowledgement thereof
-    var deviceSecurityManager: DeviceSecurityManager { get }
 
     var profileId: UUID { get }
 

@@ -78,8 +78,8 @@ struct InsuranceDrawerView: View {
                         .foregroundColor(Colors.primary700)
                         .fontWeight(.semibold)
                 })
-                    .buttonStyle(.secondary)
-                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnPkvUser)
+                .buttonStyle(.secondary)
+                .accessibility(identifier: A11y.welcomedrawer.wlcdBtnPkvUser)
 
                 Button(action: {
                     federalInsuredAction()
@@ -91,9 +91,9 @@ struct InsuranceDrawerView: View {
                     }
                     .labelStyle(.trailingIcon)
                 })
-                    .buttonStyle(.tertiary)
-                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
-                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnFederalkvUser)
+                .buttonStyle(.tertiary)
+                .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
+                .accessibility(identifier: A11y.welcomedrawer.wlcdBtnFederalkvUser)
             }
         }
         .frame(maxWidth: .infinity)

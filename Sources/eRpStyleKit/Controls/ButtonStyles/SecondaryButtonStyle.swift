@@ -70,7 +70,9 @@ extension ButtonStyle where Self == SecondaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.secondary)`` modifier.
-    public static var secondary: SecondaryButtonStyle { SecondaryButtonStyle(enabled: true) }
+    public static var secondary: SecondaryButtonStyle {
+        SecondaryButtonStyle(enabled: true)
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///
@@ -134,7 +136,9 @@ extension ButtonStyle where Self == SecondarySmallButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.secondarySmall)`` modifier.
-    public static var secondarySmall: SecondarySmallButtonStyle { SecondarySmallButtonStyle(enabled: true) }
+    public static var secondarySmall: SecondarySmallButtonStyle {
+        SecondarySmallButtonStyle(enabled: true)
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///
@@ -194,7 +198,9 @@ extension ButtonStyle where Self == SecondaryAltButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.secondary)`` modifier.
-    public static var secondaryAlt: SecondaryAltButtonStyle { SecondaryAltButtonStyle() }
+    public static var secondaryAlt: SecondaryAltButtonStyle {
+        SecondaryAltButtonStyle()
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///

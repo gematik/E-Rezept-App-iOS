@@ -99,7 +99,7 @@ public struct CardWallLoginOptionDomain {
     public var body: some Reducer<State, Action> {
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 

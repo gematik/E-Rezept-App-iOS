@@ -68,7 +68,7 @@ final class AppMigrationDomainTests: XCTestCase {
 
     typealias TestStore = TestStoreOf<AppMigrationDomain>
 
-//    let testScheduler = DispatchQueue.test
+    ///    let testScheduler = DispatchQueue.test
     private func testStore(with state: AppMigrationDomain.State = .init(migration: .none)) -> TestStore {
         TestStore(initialState: state) {
             AppMigrationDomain(
@@ -88,7 +88,7 @@ final class AppMigrationDomainTests: XCTestCase {
     }
 
     private func loadFactory() -> CoreDataControllerFactory {
-        let databaseFile = self.databaseFile!
+        let databaseFile = databaseFile!
         guard let factory = coreDataFactory else {
             let factory: CoreDataControllerFactory = .init(databaseUrl: { databaseFile }) {
                 @Shared(.coreDataController) var coreDataController

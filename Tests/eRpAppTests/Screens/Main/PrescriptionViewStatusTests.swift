@@ -64,15 +64,13 @@ final class PrescriptionViewStatusTests: XCTestCase {
         )
     }
 
-    let medication: ErxMedication = {
-        ErxMedication(
-            name: "Yucca filamentosa",
-            pzn: "06876511",
-            amount: .init(numerator: .init(value: "12")),
-            dosageForm: "FDA",
-            normSizeCode: "N2"
-        )
-    }()
+    let medication: ErxMedication = .init(
+        name: "Yucca filamentosa",
+        pzn: "06876511",
+        amount: .init(numerator: .init(value: "12")),
+        dosageForm: "FDA",
+        normSizeCode: "N2"
+    )
 
     func medicationDispense(with date: String?) -> ErxMedicationDispense {
         ErxMedicationDispense(

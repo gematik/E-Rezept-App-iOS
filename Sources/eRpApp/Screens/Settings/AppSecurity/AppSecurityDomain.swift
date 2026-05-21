@@ -73,7 +73,7 @@ struct AppSecurityDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 

@@ -32,7 +32,7 @@ struct EUPrescriptionPreview: App {
             EURedeemView(store: StoreOf<EURedeemDomain>(initialState: .init()) {
                 EURedeemDomain()
             })
-                .tint(Colors.primary700)
+            .tint(Colors.primary700)
         }
     }
 }

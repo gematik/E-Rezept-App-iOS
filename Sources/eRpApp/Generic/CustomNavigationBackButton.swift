@@ -29,7 +29,7 @@ struct CustomNavigationBackButton: View {
 
     var body: some View {
         Button(action: {
-            self.presentationMode.wrappedValue.dismiss()
+            presentationMode.wrappedValue.dismiss()
         }, label: {
             HStack {
                 Image(systemName: SFSymbolName.back).padding(0)
@@ -38,7 +38,7 @@ struct CustomNavigationBackButton: View {
                     .font(.body)
                     .foregroundColor(Colors.primary700)
                     .padding(0)
-            }.hidden(!self.presentationMode.wrappedValue.isPresented)
+            }.hidden(!presentationMode.wrappedValue.isPresented)
         })
     }
 }

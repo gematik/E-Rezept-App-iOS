@@ -42,7 +42,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
     var idpMock: TestUtils.IDPSessionMock!
     let idpError = IDPError.network(error: HTTPClientError.networkError("generic network error"))
-    lazy var testProfile = { Profile(name: "TestProfile") }()
+    lazy var testProfile = Profile(name: "TestProfile")
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
 
     let challenge = try! IDPChallengeSession(
@@ -57,14 +57,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
     let networkScheduler = DispatchQueue.test
     let uiScheduler = DispatchQueue.test
 
-    lazy var schedulers: Schedulers = {
-        Schedulers(
-            uiScheduler: self.uiScheduler.eraseToAnyScheduler(),
-            networkScheduler: networkScheduler.eraseToAnyScheduler(),
-            ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
-            computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
-        )
-    }()
+    lazy var schedulers: Schedulers = .init(
+        uiScheduler: self.uiScheduler.eraseToAnyScheduler(),
+        networkScheduler: networkScheduler.eraseToAnyScheduler(),
+        ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
+        computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
+    )
 
     override func setUp() {
         super.setUp()
@@ -77,12 +75,10 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
     var sut: CardWallReadCardDomain.State!
 
-    lazy var signedChallenge: SignedChallenge = {
-        try! SignedChallenge(
-            originalChallenge: self.challenge,
-            signedChallenge: JWT(header: JWT.Header(), payload: IDPChallengeResponse(njwt: "original-challenge"))
-        )
-    }()
+    lazy var signedChallenge: SignedChallenge = try! SignedChallenge(
+        originalChallenge: self.challenge,
+        signedChallenge: JWT(header: JWT.Header(), payload: IDPChallengeResponse(njwt: "original-challenge"))
+    )
 
     func testStore(
         initialState: CardWallReadCardDomain.State,
@@ -153,8 +149,8 @@ final class CardWallReadCardDomainTests: XCTestCase {
                    pin: "123456",
                    loginOption: .withoutBiometry,
                    output: .idle)) { dependencies in
-                dependencies.secureUserDataStoreClient.can = { _ in Just("123456").eraseToAnyPublisher() }
-                dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpMock }
+            dependencies.secureUserDataStoreClient.can = { _ in Just("123456").eraseToAnyPublisher() }
+            dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpMock }
         }
 
         await sut.send(.signChallenge)
@@ -171,7 +167,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             .response(.state(.signingChallenge(.error(error))))) { state in
                 state.output = .signingChallenge(.error(error))
                 state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
-        }
+            }
     }
 
     func testSigningStates_HappyPath() async {
@@ -235,7 +231,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             .response(.state(.signingChallenge(.error(.signChallengeError(pinError)))))) { state in
                 state.output = .signingChallenge(.error(.signChallengeError(pinError)))
                 state.destination = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError)))
-        }
+            }
     }
 
     func testSigningStates_CanError() async {

@@ -34,6 +34,23 @@ public struct CountrySelectionDomain {
         case locationManager
     }
 
+    enum CurrentRegion {
+        case germany
+        case europeanUnion(countryName: String)
+        case international(countryName: String)
+
+        var locationSearchEmpty: String {
+            switch self {
+            case .germany:
+                return L10n.euredeemCountrySelectionTxtLocationEmptyGermany.text
+            case let .europeanUnion(countryName: name):
+                return L10n.euredeemCountrySelectionTxtLocationEmptyEu(name, name).text
+            case let .international(countryName: name):
+                return L10n.euredeemCountrySelectionTxtLocationEmptyInternational(name, name).text
+            }
+        }
+    }
+
     /// State for country selection
     @ObservableState
     public struct State: Equatable {
@@ -52,6 +69,20 @@ public struct CountrySelectionDomain {
         var locationFilterIsEnabled: Bool = false
 
         var isCountryLoading: Bool = true
+
+        var currentRegion: CurrentRegion? {
+            if isoCountryCode == "DE" {
+                return .germany
+            }
+            if let isoCountryCode, Country.europeanCountryCodes.contains(isoCountryCode),
+               let name = Locale.current.localizedString(forRegionCode: isoCountryCode) {
+                return .europeanUnion(countryName: name)
+            }
+            if let isoCountryCode, let name = Locale.current.localizedString(forRegionCode: isoCountryCode) {
+                return .international(countryName: name)
+            }
+            return nil
+        }
 
         public init(
             countries: [Country] = [],
@@ -109,7 +140,7 @@ public struct CountrySelectionDomain {
     public var body: some Reducer<State, Action> {
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -162,7 +193,10 @@ public struct CountrySelectionDomain {
                 state.locationFilterIsEnabled = false
                 state.filteredCountries = state.countries
             } else {
-                state.filteredCountries = state.countries.filter { $0.name.contains(state.searchText) }
+                state.filteredCountries = state.countries.filter {
+                    let name = $0.displayName ?? $0.name
+                    return name.contains(state.searchText)
+                }
             }
             return .none
         case .toggleLocation:
@@ -234,20 +268,25 @@ extension CountrySelectionDomain {
         return .response(.isoCountryCodeReceived(geoLocation?.first?.isoCountryCode))
     }
 
-    static var locationPermissionAlertState: ErpAlertState<Destination.Alert> = {
-        .init(
-            title: L10n.phaSearchTxtLocationAlertTitle,
-            actions: {
-                ButtonState(role: .cancel, action: .close) {
-                    .init(L10n.alertBtnOk)
-                }
-                ButtonState(action: .openAppSpecificSettings) {
-                    .init(L10n.stgTxtTitle)
-                }
-            },
-            message: L10n.phaSearchTxtLocationAlertMessage
-        )
-    }()
+    static var locationPermissionAlertState: ErpAlertState<Destination.Alert> = .init(
+        title: L10n.phaSearchTxtLocationAlertTitle,
+        actions: {
+            ButtonState(role: .cancel, action: .close) {
+                .init(L10n.alertBtnOk)
+            }
+            ButtonState(action: .openAppSpecificSettings) {
+                .init(L10n.stgTxtTitle)
+            }
+        },
+        message: L10n.phaSearchTxtLocationAlertMessage
+    )
+}
+
+extension Country {
+    var displayName: String? {
+        guard let countryCode else { return nil }
+        return Locale.current.localizedString(forRegionCode: countryCode)
+    }
 }
 
 extension CountrySelectionDomain.Destination.State: Equatable {}

@@ -43,7 +43,7 @@ extension NSManagedObjectContext.FetchRequestPublisher: Publisher {
     typealias Output = [Entity]
     typealias Failure = Error
 
-    func receive<S>(subscriber: S) where S: Subscriber, Failure == S.Failure, Output == S.Input {
+    func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
         let subscription = Inner<S>(
             fetchRequest: fetchRequest,
             context: managedObjectContext,
@@ -66,7 +66,7 @@ extension NSManagedObjectContext.FetchRequestPublisher {
         private var downstream: Downstream?
 
         private let lock = NSLock()
-        // This lock can only be held for the duration of downstream callouts
+        /// This lock can only be held for the duration of downstream callouts
         private let downstreamLock = NSRecursiveLock()
 
         init(
@@ -100,7 +100,7 @@ extension NSManagedObjectContext.FetchRequestPublisher {
 
         func controllerDidChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
             let fetchedObjects = fetchedResultsController?.fetchedObjects ?? []
-            guard let downstream = self.downstream else { return }
+            guard let downstream else { return }
             lock.lock()
             if demand > 0 {
                 demand -= 1
@@ -121,7 +121,7 @@ extension NSManagedObjectContext.FetchRequestPublisher {
         }
 
         func request(_ requestDemand: Subscribers.Demand) {
-            guard let downstream = self.downstream else { return }
+            guard let downstream else { return }
             lock.lock()
             demand += requestDemand
             if demand > 0, let lastFetchedObjects = last {

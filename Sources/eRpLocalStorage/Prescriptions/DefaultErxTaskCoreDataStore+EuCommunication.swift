@@ -83,7 +83,7 @@ extension DefaultErxTaskCoreDataStore {
             )
             subPredicates.append(profilePredicate)
         }
-        if let countryCode = countryCode {
+        if let countryCode {
             let countryPredicate = NSPredicate(
                 format: "(%K == %@) OR (%K == %@)",
                 argumentArray: [

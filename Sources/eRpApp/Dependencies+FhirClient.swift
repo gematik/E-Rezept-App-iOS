@@ -35,36 +35,16 @@ import VAUClient
 
 extension FHIRClientServiceFactory: DependencyKey {
     public static var liveValue: FHIRClientServiceFactory = {
-        let erpClient: LockIsolated<[String: FHIRClient]> = LockIsolated([:])
+        let erpClientCache: LockIsolated<[String: FHIRClient]> = LockIsolated([:])
 
-        return .init {
+        let buildErpClient: @Sendable (_ profileId: UUID) -> FHIRClient = { profileId in
             @Dependency(\.userDataStore.appConfiguration) var appConfiguration
-
-            let interceptors: [Interceptor] = [
-                AdditionalHeaderInterceptor(additionalHeader: appConfiguration.fhirVzdAdditionalHeader),
-                LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
-                DebugLiveLogger.LogInterceptor(),
-            ]
-
-            // Remote FHIR data source configuration
-            let fhirVZDHttpClient: HTTPClient = DefaultHTTPClient(
-                urlSessionConfiguration: .ephemeral,
-                interceptors: interceptors
-            )
-
-            return FHIRClient(
-                server: appConfiguration.fhirVzd,
-                httpClient: fhirVZDHttpClient
-            )
-        } erpClient: {
-            @Dependency(\.userDataStore.appConfiguration) var appConfiguration
-            @Shared(.selectedProfileId) var selectedProfileId: UUID
 
             // Unique config name per profile configuration combination, workaround until IDPSession is using ne storage
             // dependency
-            let configName = appConfiguration.name + "-\(selectedProfileId)"
+            let configName = appConfiguration.name + "-\(profileId)"
 
-            let client = erpClient.withValue { $0[configName] }
+            let client = erpClientCache.withValue { $0[configName] }
             if let client {
                 return client
             }
@@ -99,7 +79,7 @@ extension FHIRClientServiceFactory: DependencyKey {
             let secureUserStore: SecureUserDataStore = {
                 @Dependency(\.schedulers) var schedulers
 
-                return KeychainStorage(profileId: selectedProfileId, schedulers: schedulers)
+                return KeychainStorage(profileId: profileId, schedulers: schedulers)
             }()
 
             let idpHttpClient: HTTPClient = {
@@ -185,9 +165,35 @@ extension FHIRClientServiceFactory: DependencyKey {
                 server: appConfiguration.base,
                 httpClient: httpClient
             )
-            erpClient.withValue { $0[configName] = fhirClient }
+            erpClientCache.withValue { $0[configName] = fhirClient }
 
             return fhirClient
+        }
+
+        return .init {
+            @Dependency(\.userDataStore.appConfiguration) var appConfiguration
+
+            let interceptors: [Interceptor] = [
+                AdditionalHeaderInterceptor(additionalHeader: appConfiguration.fhirVzdAdditionalHeader),
+                LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
+                DebugLiveLogger.LogInterceptor(),
+            ]
+
+            // Remote FHIR data source configuration
+            let fhirVZDHttpClient: HTTPClient = DefaultHTTPClient(
+                urlSessionConfiguration: .ephemeral,
+                interceptors: interceptors
+            )
+
+            return FHIRClient(
+                server: appConfiguration.fhirVzd,
+                httpClient: fhirVZDHttpClient
+            )
+        } erpClient: {
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
+            return buildErpClient(selectedProfileId)
+        } erpClientForProfile: { profileId in
+            buildErpClient(profileId)
         }
     }()
 }

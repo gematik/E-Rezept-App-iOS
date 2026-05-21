@@ -31,7 +31,10 @@ struct EuOrder: Identifiable, Equatable {
     static let unknownCountryCode = "unknownCountryCode"
 
     let orderId: String
-    var id: String { orderId }
+    var id: String {
+        orderId
+    }
+
     let countryCode: String
     let communications: IdentifiedArrayOf<EuCommunication>
     let erxTasks: [ErxTask] // Task events are missing, related tasks + task events
@@ -43,7 +46,7 @@ struct EuOrder: Identifiable, Equatable {
         orderId: String,
         communications: IdentifiedArrayOf<EuCommunication>,
         countryCode: String,
-        erxTasks: [ErxTask],
+        erxTasks: [ErxTask]
     ) {
         self.orderId = orderId
         self.erxTasks = erxTasks

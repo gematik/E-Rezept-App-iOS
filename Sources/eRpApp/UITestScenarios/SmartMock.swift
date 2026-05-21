@@ -33,7 +33,7 @@ struct CodableMock: Codable {
     let jsonData: Data
     let name: String
 
-    init<T>(_ name: String, _ mock: T) throws where T: Codable {
+    init(_ name: String, _ mock: some Codable) throws {
         self.name = name
         jsonData = try JSONEncoder().encode(mock)
     }

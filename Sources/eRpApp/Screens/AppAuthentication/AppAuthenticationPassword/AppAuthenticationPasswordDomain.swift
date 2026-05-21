@@ -80,7 +80,7 @@ struct AppAuthenticationPasswordDomain {
     @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
     }
 
     // swiftlint:disable:next cyclomatic_complexity
@@ -100,7 +100,7 @@ struct AppAuthenticationPasswordDomain {
             if delay > 0 {
                 // Start a timer that fires after the delay
                 return .run { send in
-                    for await _ in self.clock.timer(interval: .seconds(1)) {
+                    for await _ in clock.timer(interval: .seconds(1)) {
                         await send(.passwordDelayTimerTick)
                     }
                 }
@@ -117,13 +117,11 @@ struct AppAuthenticationPasswordDomain {
         case let .setPassword(password):
             state.password = password
             return .none
-
         case .loginButtonTapped:
             guard let success = try? appSecurityManager.matches(password: state.password) else {
                 return Effect.send(.passwordVerificationReceived(false))
             }
             return Effect.send(.passwordVerificationReceived(success))
-
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn
             if isLoggedIn {
@@ -143,8 +141,6 @@ struct AppAuthenticationPasswordDomain {
         }
     }
 }
-
-extension AppAuthenticationPasswordDomain {}
 
 extension AppAuthenticationPasswordDomain {
     enum Dummies {

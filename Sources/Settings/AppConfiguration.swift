@@ -53,7 +53,7 @@ extension AppConfiguration.Environment {
 
 /// Actual AppConfiguration for all backend services
 public struct AppConfiguration: Equatable, Sendable {
-    internal init?(
+    init?(
         name: String,
         trustAnchor: TrustAnchor,
         idp: Server?,
@@ -412,7 +412,7 @@ extension UserDataStore {
     /// The current app configuration as a publisher.
     public var configuration: AnyPublisher<AppConfiguration, Never> {
         serverEnvironmentConfiguration.map { name in
-            guard let name = name,
+            guard let name,
                   let configuration = configurations[name] else {
                 return defaultConfiguration
             }

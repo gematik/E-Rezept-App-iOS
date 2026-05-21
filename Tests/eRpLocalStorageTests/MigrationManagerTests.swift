@@ -85,51 +85,45 @@ final class MigrationManagerTests: XCTestCase {
         return factory
     }
 
-    lazy var tasksForPatientAnna: [ErxTask] = {
-        [
-            ErxTask.Dummies.erxTask(
-                id: "100.200.300.400.500",
-                authoredOn: "2021-03-10T10:55:04+02:00",
-                practitioner: ErxTask.Dummies.demoPractitionerStorchhausen,
-                patient: ErxTask.Dummies.demoPatientAnna,
-                organisation: ErxTask.Dummies.demoOrganizationStorchhausen
-            ),
-            ErxTask.Dummies.erxTask(
-                id: "100.200.300.400.501",
-                authoredOn: "2021-03-11T10:55:04+02:00",
-                practitioner: ErxTask.Dummies.demoPractitionerTodgluecklich,
-                patient: ErxTask.Dummies.demoPatientAnna,
-                organisation: ErxTask.Dummies.demoOrganizationTodgluecklich
-            ),
-        ]
-    }()
+    lazy var tasksForPatientAnna: [ErxTask] = [
+        ErxTask.Dummies.erxTask(
+            id: "100.200.300.400.500",
+            authoredOn: "2021-03-10T10:55:04+02:00",
+            practitioner: ErxTask.Dummies.demoPractitionerStorchhausen,
+            patient: ErxTask.Dummies.demoPatientAnna,
+            organisation: ErxTask.Dummies.demoOrganizationStorchhausen
+        ),
+        ErxTask.Dummies.erxTask(
+            id: "100.200.300.400.501",
+            authoredOn: "2021-03-11T10:55:04+02:00",
+            practitioner: ErxTask.Dummies.demoPractitionerTodgluecklich,
+            patient: ErxTask.Dummies.demoPatientAnna,
+            organisation: ErxTask.Dummies.demoOrganizationTodgluecklich
+        ),
+    ]
 
-    lazy var tasksForPatientLudger: [ErxTask] = {
-        [
-            ErxTask.Dummies.erxTask(
-                id: "200.300.400.500.600",
-                authoredOn: "2021-03-12T10:55:04+02:00",
-                practitioner: ErxTask.Dummies.demoPractitionerTodgluecklich,
-                patient: ErxTask.Dummies.demoPatientLudger,
-                organisation: ErxTask.Dummies.demoOrganizationTodgluecklich
-            ),
-            ErxTask.Dummies.erxTask(
-                id: "200.300.400.500.601",
-                authoredOn: "2021-03-13T10:55:04+02:00",
-                practitioner: ErxTask.Dummies.demoPractitionerTodgluecklich,
-                patient: ErxTask.Dummies.demoPatientLudger,
-                organisation: ErxTask.Dummies.demoOrganizationTodgluecklich
-            ),
-        ]
-    }()
+    lazy var tasksForPatientLudger: [ErxTask] = [
+        ErxTask.Dummies.erxTask(
+            id: "200.300.400.500.600",
+            authoredOn: "2021-03-12T10:55:04+02:00",
+            practitioner: ErxTask.Dummies.demoPractitionerTodgluecklich,
+            patient: ErxTask.Dummies.demoPatientLudger,
+            organisation: ErxTask.Dummies.demoOrganizationTodgluecklich
+        ),
+        ErxTask.Dummies.erxTask(
+            id: "200.300.400.500.601",
+            authoredOn: "2021-03-13T10:55:04+02:00",
+            practitioner: ErxTask.Dummies.demoPractitionerTodgluecklich,
+            patient: ErxTask.Dummies.demoPatientLudger,
+            organisation: ErxTask.Dummies.demoOrganizationTodgluecklich
+        ),
+    ]
 
-    lazy var scannedTask: ErxTask = {
-        ErxTask.Dummies.scannedTask(
-            id: "123.456.789.111",
-            authoredOn: "2021-03-15T10:55:04+02:00",
-            accessCode: "asdfasref1241z344hjegdba8a23827349bi"
-        )
-    }()
+    lazy var scannedTask: ErxTask = .Dummies.scannedTask(
+        id: "123.456.789.111",
+        authoredOn: "2021-03-15T10:55:04+02:00",
+        accessCode: "asdfasref1241z344hjegdba8a23827349bi"
+    )
 
     let foregroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
     let backgroundQueue: AnySchedulerOf<DispatchQueue> = .global()
@@ -228,7 +222,7 @@ final class MigrationManagerTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testModel4MigrationWithoutExistingTasks() throws {
+    func testModel4MigrationWithoutExistingTasks() {
         let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let sut = MigrationManager(
@@ -353,7 +347,7 @@ final class MigrationManagerTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testMigrationFromVersion4ToVersion5WithoutAuditEvents() throws {
+    func testMigrationFromVersion4ToVersion5WithoutAuditEvents() {
         let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let sut = MigrationManager(
@@ -383,7 +377,7 @@ final class MigrationManagerTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testMigrationFromVersion4ToVersion5WithAuditEvents() throws {
+    func testMigrationFromVersion4ToVersion5WithAuditEvents() {
         let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
@@ -499,7 +493,7 @@ final class MigrationManagerTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testMigrationFromVersion6ToVersion7OnboardingDate() throws {
+    func testMigrationFromVersion6ToVersion7OnboardingDate() {
         let userDataStore = UserDataStoreMock()
         let factory = loadFactory()
         let erxTaskStore = DefaultErxTaskCoreDataStore(coreDataControllerFactory: factory,
@@ -543,7 +537,7 @@ final class MigrationManagerTests: XCTestCase {
 }
 
 extension ErxTask {
-    // Removes AuditEvents and  lastModified of ErxTask and sets insuranceId of Patient to nil
+    /// Removes AuditEvents and  lastModified of ErxTask and sets insuranceId of Patient to nil
     func modifyAsExpected() -> ErxTask {
         let patient = ErxPatient(
             name: patient?.name,

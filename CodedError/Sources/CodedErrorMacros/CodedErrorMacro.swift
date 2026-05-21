@@ -333,11 +333,9 @@ public struct CodedErrorMacro: ExtensionMacro {
         var newAttributes = Array(caseDecl.attributes)
         newAttributes.append(.attribute(errorCodeAttribute.with(\.trailingTrivia, .newline)))
 
-        let newCaseDecl = caseDecl
+        return caseDecl
             .with(\.attributes, AttributeListSyntax(newAttributes))
             .with(\.leadingTrivia, cleanTrivia)
-
-        return newCaseDecl
     }
 
     private static func removeSourceryComment(from trivia: Trivia) -> Trivia {

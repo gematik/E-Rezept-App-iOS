@@ -38,7 +38,7 @@ import XCTest
 
 final class AVSRedeemServiceTests: XCTestCase {
     @MainActor
-    func testRedeemViaAVSResponses_Success() async throws {
+    func testRedeemViaAVSResponses_Success() async {
         // given
         let mockAVSService = AVSSessionCustomMock()
         mockAVSService
@@ -95,7 +95,7 @@ final class AVSRedeemServiceTests: XCTestCase {
     }
 
     @MainActor
-    func testRedeemViaAVSResponses_PartialSuccess() async throws {
+    func testRedeemViaAVSResponses_PartialSuccess() async {
         let mockAVSService = AVSSessionCustomMock()
         // given
         mockAVSService
@@ -159,7 +159,7 @@ final class AVSRedeemServiceTests: XCTestCase {
     }
 
     @MainActor
-    func testRedeemViaAVSResponses_All_Fail() async throws {
+    func testRedeemViaAVSResponses_All_Fail() async {
         let userDefaults = UserDefaultsStore(userDefaults: .standard)
         let mockAVSService = AVSSessionCustomMock()
         let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
@@ -223,7 +223,7 @@ final class AVSRedeemServiceTests: XCTestCase {
     }
 
     @MainActor
-    func testRedeemViaAVSResponses_SetupFailure() async throws {
+    func testRedeemViaAVSResponses_SetupFailure() async {
         let mockAVSService = AVSSessionCustomMock()
         let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
         mockAVSTransactionDataStore.saveAvsTransactionsReturnValue = Just([AVSTransaction.Fixtures.transaction1])
@@ -255,7 +255,7 @@ final class AVSRedeemServiceTests: XCTestCase {
     }
 
     @MainActor
-    func testGroupedOrdersHaveSameRedeemDateAndGroupRedemptionID() async throws {
+    func testGroupedOrdersHaveSameRedeemDateAndGroupRedemptionID() async {
         // given
         let mockAVSService = AVSSessionCustomMock()
         mockAVSService
@@ -304,38 +304,38 @@ final class AVSRedeemServiceTests: XCTestCase {
     }
 }
 
-// swiftlint:disable lower_acl_than_parent large_tuple line_length discouraged_optional_collection
+// swiftlint:disable large_tuple line_length discouraged_optional_collection
 private class AVSSessionCustomMock: AVSSession {
-    public init() {}
+    init() {}
 
     // MARK: - redeem
 
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseThrowableError: (
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseThrowableError: (
         any Error
     )?
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount = 0
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCalled: Bool {
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount = 0
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCalled: Bool {
         redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount > 0
     }
 
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedArguments: (
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedArguments: (
         message: AVSMessage,
         endpoint: AVSEndpoint,
         recipients: [X509]
     )?
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedInvocations: [
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedInvocations: [
         (message: AVSMessage,
          endpoint: AVSEndpoint, recipients: [X509])
     ] = []
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReturnValue: AVSSessionResponse!
-    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure: ((
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReturnValue: AVSSessionResponse!
+    @MainActor var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure: ((
         AVSMessage,
         AVSEndpoint,
         [X509]
     ) async throws -> AVSSessionResponse)?
 
-    public func redeem(message: AVSMessage, endpoint: AVSEndpoint,
-                       recipients: [X509]) async throws -> AVSSessionResponse {
+    func redeem(message: AVSMessage, endpoint: AVSEndpoint,
+                recipients: [X509]) async throws -> AVSSessionResponse {
         await MainActor.run {
             redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount += 1
         }
@@ -450,4 +450,4 @@ private final class AVSTransactionDataStoreCustomMock: AVSTransactionDataStore {
     }
 }
 
-// swiftlint:enable lower_acl_than_parent large_tuple line_length discouraged_optional_collection
+// swiftlint:enable large_tuple line_length discouraged_optional_collection

@@ -110,7 +110,7 @@ final class FHIRDateFormatterTests: XCTestCase {
         expect(dataString) == expectedOutputDateString
     }
 
-    func testYearMonthDayTimeMilliSecondsFormatWithDefaultTimeZone() {
+    func testYearMonthDayTimeMilliSecondsFormatWithDefaultTimeZone() throws {
         // given
         let inputDateString = "2021-07-21T19:13:17.805+00:00"
         let expectedOutputDateString = "2021-07-21T19:13:17.805Z" // large 'Z' indicates time zone is in UTC (aka 00:00)
@@ -126,7 +126,7 @@ final class FHIRDateFormatterTests: XCTestCase {
         let sut = FHIRDateFormatter.shared
 
         // when
-        let date = sut.date(from: inputDateString, format: .yearMonthDayTimeMilliSeconds)!
+        let date = try XCTUnwrap(sut.date(from: inputDateString, format: .yearMonthDayTimeMilliSeconds))
         let dataString = sut.string(from: date, format: .yearMonthDayTimeMilliSeconds)
 
         // then

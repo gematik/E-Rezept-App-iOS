@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskIngredientEntity {
     convenience init?(ingredient: ErxMedication.Ingredient?,
                       in context: NSManagedObjectContext) {
-        guard let ingredient = ingredient else { return nil }
+        guard let ingredient else { return nil }
 
         self.init(context: context)
 
@@ -40,7 +40,7 @@ extension ErxTaskIngredientEntity {
 
 extension ErxMedication.Ingredient {
     init?(entity: ErxTaskIngredientEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
         self.init(
             text: entity.text,
             number: entity.number,

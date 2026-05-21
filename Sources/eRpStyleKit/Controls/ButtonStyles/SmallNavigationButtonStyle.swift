@@ -27,7 +27,9 @@ extension ButtonStyle where Self == NavigationButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View/buttonStyle(_:)`` modifier.
-    public static var simpleNavigation: NavigationButtonStyle { NavigationButtonStyle() }
+    public static var simpleNavigation: NavigationButtonStyle {
+        NavigationButtonStyle()
+    }
 }
 
 public struct SmallNavigationButtonStyle: ButtonStyle {

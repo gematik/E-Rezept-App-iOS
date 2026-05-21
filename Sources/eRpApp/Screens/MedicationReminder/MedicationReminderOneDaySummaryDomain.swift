@@ -90,7 +90,6 @@ struct MedicationReminderOneDaySummaryDomain {
 
                 state.medicationSchedules = IdentifiedArray(uniqueElements: schedulesSorted)
                 return .none
-
             case .goToMedicationReminderListButtonTapped:
                 return .run { _ in
                     await dismiss()

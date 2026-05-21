@@ -73,6 +73,8 @@ extension ModelsR4.Bundle {
             throw HealthcareServiceBundleParsingError.parseError("Could not parse telematikID from organization.")
         }
 
+        let physicalFeatures = healthcareService.physicalFeatures
+
         let telecom = PharmacyLocation.Telecom(
             phone: healthcareService.phone,
             fax: healthcareService.fax,
@@ -105,6 +107,8 @@ extension ModelsR4.Bundle {
             address: address,
             telecom: telecom,
             hoursOfOperation: healthcareService.hoursOfOperations,
+            physicalFeatures: physicalFeatures,
+            specialities: healthcareService.specialities,
             specialClosingHours: healthcareService.specialClosing,
             emergencyServiceHours: healthcareService.specialOpening
         )
@@ -340,27 +344,26 @@ extension ModelsR4.HealthcareService {
     var specialOpening: [PharmacyLocation.SpecialOperationHours] {
         var hours: [PharmacyLocation.SpecialOperationHours] = []
         availableTime?.forEach { availableTime in
-            availableTime.extensions(for: FHIRDirectory.Key.specialOpeningTimes)
-                .forEach { ext in
-                    ext.extension?.forEach { specialClosing in
-                        if case let .period(period) = specialClosing.value {
-                            let pharmacyEm = PharmacyLocation.SpecialOperationHours(
-                                startDate: period.start?.value?.description.replacingOccurrences(
-                                    of: "Z",
-                                    with: "+00:00"
-                                ),
-                                endDate: period.end?.value?.description.replacingOccurrences(of: "Z", with: "+00:00")
-                            )
-                            hours.append(pharmacyEm)
-                        }
+            for ext in availableTime.extensions(for: FHIRDirectory.Key.specialOpeningTimes) {
+                ext.extension?.forEach { specialClosing in
+                    if case let .period(period) = specialClosing.value {
+                        let pharmacyEm = PharmacyLocation.SpecialOperationHours(
+                            startDate: period.start?.value?.description.replacingOccurrences(
+                                of: "Z",
+                                with: "+00:00"
+                            ),
+                            endDate: period.end?.value?.description.replacingOccurrences(of: "Z", with: "+00:00")
+                        )
+                        hours.append(pharmacyEm)
                     }
                 }
+            }
         }
         return hours
     }
 
     var pharmacyTypes: [PharmacyLocation.PharmacyType] {
-        guard let specialty = specialty else {
+        guard let specialty else {
             return []
         }
         let allSpecialities = specialty.flatMap {
@@ -378,6 +381,54 @@ extension ModelsR4.HealthcareService {
         return allSpecialities.reduce(into: []) { partialResult, specialty in
             if !partialResult.contains(specialty) {
                 partialResult.append(specialty)
+            }
+        }
+    }
+
+    var specialities: [PharmacyLocation.Speciality] {
+        guard let specialty else {
+            return []
+        }
+        let allSpecialities = specialty.flatMap {
+            $0
+                .coding?
+                .filter { coding in
+                    let system = coding.system?.value?.url.absoluteString
+                    return system == FHIRDirectory.Key.CodeSystem.pharmacyHealthcareSpecialty ||
+                        system == FHIRDirectory.Key.CodeSystem.healthcareServiceSpecialty
+                } ?? []
+        }
+        .compactMap { coding -> PharmacyLocation.Speciality? in
+            guard let rawValue = coding.code?.value?.string
+            else { return nil }
+            return PharmacyLocation.Speciality(rawValue: rawValue)
+        }
+        return allSpecialities.reduce(into: []) { partialResult, speciality in
+            if !partialResult.contains(speciality) {
+                partialResult.append(speciality)
+            }
+        }
+    }
+
+    var physicalFeatures: [PharmacyLocation.PhysicalFeature] {
+        guard let characteristic else {
+            return []
+        }
+        let allFeatures = characteristic.flatMap {
+            $0
+                .coding?
+                .filter { coding in
+                    coding.system?.value?.url.absoluteString == FHIRDirectory.Key.CodeSystem.physicalFeatures
+                } ?? []
+        }
+        .compactMap { coding -> PharmacyLocation.PhysicalFeature? in
+            guard let rawValue = coding.code?.value?.string
+            else { return nil }
+            return PharmacyLocation.PhysicalFeature(rawValue: rawValue)
+        }
+        return allFeatures.reduce(into: []) { partialResult, feature in
+            if !partialResult.contains(feature) {
+                partialResult.append(feature)
             }
         }
     }

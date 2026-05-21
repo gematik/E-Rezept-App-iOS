@@ -138,8 +138,8 @@ struct PrescriptionDetailView: View {
                                 Text(L10n.prscDtlTxtAdditionalFee)
                             }
                         })
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnScannedPrescriptionInfo)
-                            .labeledContentStyle(.vertical(icon: SFSymbolName.info))
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnScannedPrescriptionInfo)
+                        .labeledContentStyle(.vertical(icon: SFSymbolName.info))
 
                         Button(
                             action: { store.send(.setNavigation(tag: .emergencyServiceFeeInfo)) },
@@ -181,8 +181,8 @@ struct PrescriptionDetailView: View {
                         Button(action: { store.send(.setNavigation(tag: .medication)) }, label: {
                             LabeledContent { Text(store.prescription.title) } label: { Text(L10n.prscDtlTxtMedication) }
                         })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedication)
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedication)
 
                         if let number = store.multiplePrescriptionNumber {
                             LabeledContent { Text(number) } label: { Text(L10n.prscDtlTxtMultiPrescription) }
@@ -192,8 +192,8 @@ struct PrescriptionDetailView: View {
                         Button(action: { store.send(.setNavigation(tag: .patient)) }, label: {
                             LabeledContent { Text(store.patientName) } label: { Text(L10n.prscDtlTxtInsuredPerson) }
                         })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInsuredPerson)
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInsuredPerson)
 
                         Button(action: { store.send(.setNavigation(tag: .practitioner)) }, label: {
                             LabeledContent {
@@ -202,22 +202,22 @@ struct PrescriptionDetailView: View {
                                 Text(L10n.prscDtlTxtPractitionerPerson)
                             }
                         })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
 
                     }, moreContent: {
                         Button(action: { store.send(.setNavigation(tag: .organization)) }, label: {
                             LabeledContent { Text(store.institutionName) } label: { Text(L10n.prscDtlTxtInstitution) }
                         })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInstitution)
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInstitution)
 
                         if let accidentReason = store.accidentReason {
                             Button(action: { store.send(.setNavigation(tag: .accidentInfo)) }, label: {
                                 LabeledContent { Text(accidentReason) } label: { Text(L10n.prscDtlTxtAccidentReason) }
                             })
-                                .buttonStyle(.navigation)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
                         }
 
                         LabeledContent {
@@ -274,8 +274,8 @@ struct PrescriptionDetailView: View {
                             SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
                                 .subTitleStyle(.navigation)
                         })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnTechnicalInformations)
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnTechnicalInformations)
                     }
                 ).sectionContainerStyle(.inline)
             }

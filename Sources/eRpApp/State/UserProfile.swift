@@ -26,21 +26,47 @@ import IDP
 import Settings
 
 struct UserProfile: ProfileCellModel, Equatable, Identifiable {
-    var id: UUID { profile.id }
+    var id: UUID {
+        profile.id
+    }
 
-    var name: String { profile.name }
+    var name: String {
+        profile.name
+    }
+
     let acronym: String
 
-    var fullName: String? { profile.fullName }
-    var insurance: String? { profile.insurance }
-    var insuranceId: String? { profile.insuranceId }
-    var insuranceIK: String? { profile.insuranceIK }
+    var fullName: String? {
+        profile.fullName
+    }
 
-    var image: ProfilePicture { profile.image.viewModelPicture }
-    var userImageData: Data? { profile.userImageData }
-    var color: ProfileColor { profile.color.viewModelColor }
+    var insurance: String? {
+        profile.insurance
+    }
 
-    var lastSuccessfulSync: Date? { profile.lastAuthenticated }
+    var insuranceId: String? {
+        profile.insuranceId
+    }
+
+    var insuranceIK: String? {
+        profile.insuranceIK
+    }
+
+    var image: ProfilePicture {
+        profile.image.viewModelPicture
+    }
+
+    var userImageData: Data? {
+        profile.userImageData
+    }
+
+    var color: ProfileColor {
+        profile.color.viewModelColor
+    }
+
+    var lastSuccessfulSync: Date? {
+        profile.lastAuthenticated
+    }
 
     let profile: Profile
     let connectionStatus: ProfileConnectionStatus

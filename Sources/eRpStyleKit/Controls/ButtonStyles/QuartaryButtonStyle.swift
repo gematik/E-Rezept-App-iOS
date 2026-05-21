@@ -54,7 +54,9 @@ extension ButtonStyle where Self == QuartaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.quartary)`` modifier.
-    public static var quartary: QuartaryButtonStyle { QuartaryButtonStyle() }
+    public static var quartary: QuartaryButtonStyle {
+        QuartaryButtonStyle()
+    }
 
     /// A button style that applies fg and bg color, as well as a border.
     ///

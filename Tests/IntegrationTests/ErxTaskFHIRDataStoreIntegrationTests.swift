@@ -60,20 +60,18 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
     }
 
     let memStorage = MemStorage()
-    lazy var trustStoreSession: TrustStoreSession = {
-        DefaultTrustStoreSession(
-            serverURL: environment.appConfiguration.erp,
-            trustAnchor: environment.appConfiguration.trustAnchor,
-            trustStoreStorage: memStorage,
-            httpClient: DefaultHTTPClient(
-                urlSessionConfiguration: .ephemeral,
-                interceptors: [
-                    AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
-                    LoggingInterceptor(log: .body),
-                ]
-            )
+    lazy var trustStoreSession: TrustStoreSession = DefaultTrustStoreSession(
+        serverURL: environment.appConfiguration.erp,
+        trustAnchor: environment.appConfiguration.trustAnchor,
+        trustStoreStorage: memStorage,
+        httpClient: DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: [
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
+                LoggingInterceptor(log: .body),
+            ]
         )
-    }()
+    )
 
     lazy var idpSession: IDPSession = {
         let schedulers = Schedulers(computeScheduler: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
@@ -127,14 +125,12 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         return ErxTaskFHIRDataStore(fhirClient: fhirClient)
     }()
 
-    lazy var vauSession: VAUSession = {
-        VAUSession(
-            vauServer: environment.appConfiguration.erp,
-            vauAccessTokenProvider: idpSession.asVAUAccessTokenProvider(),
-            vauStorage: memStorage,
-            trustStoreSession: trustStoreSession
-        )
-    }()
+    lazy var vauSession: VAUSession = .init(
+        vauServer: environment.appConfiguration.erp,
+        vauAccessTokenProvider: idpSession.asVAUAccessTokenProvider(),
+        vauStorage: memStorage,
+        trustStoreSession: trustStoreSession
+    )
 
     func testLoadingDataFromRemote() throws {
         guard let signer = environment.brainpool256r1Signer else {

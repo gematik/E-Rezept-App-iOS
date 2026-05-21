@@ -83,7 +83,7 @@ public class CoreDataController {
 
         var error: Error?
         container.loadPersistentStores { store, err in
-            if let err = err {
+            if let err {
                 /*
                  Typical reasons for an error here include:
                  * The parent directory does not exist, cannot be created, or disallows writing.
@@ -113,7 +113,7 @@ public class CoreDataController {
             // context's version by individual property, with the store's changes trumping the context's changes.
             container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
         }
-        if let error = error {
+        if let error {
             throw error
         }
         return container

@@ -94,7 +94,10 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     // MARK: gematik profiled FHIR resources
 
     /// Id of the task
-    public var id: String { identifier }
+    public var id: String {
+        identifier
+    }
+
     /// Identifier of the task
     public let identifier: String
     /// Status of the current task
@@ -157,7 +160,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     /// - Parameter redeemedOn: Date string when the `ErxTask` has been redeemed.
     ///                         Pass `nil` to reset the redeem status
     public mutating func update(with redeemedOn: String?) {
-        if let redeemedOn = redeemedOn {
+        if let redeemedOn {
             self.redeemedOn = redeemedOn
             status = .completed
         } else {
@@ -286,8 +289,8 @@ extension ErxTask {
 extension ErxTask {
     @CodedError("209")
     public enum Error: Swift.Error {
-        @ErrorCode("01")
         /// Unable to construct task input patch request
+        @ErrorCode("01")
         case unableToConstructInputPatch
     }
 }

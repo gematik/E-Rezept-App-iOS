@@ -40,15 +40,6 @@ final class RealTrustStoreClientTests: XCTestCase {
     let vauCertURL = URL(string: "http://vau.gematik/VAUCertificate")!
     let ocspResponseURL = URL(string: "http://vau.gematik/OCSPResponse")!
 
-    var certListPath: String {
-        guard let certListPath = Bundle.module
-            .path(forResource: "kompca10-vauref-idpsig3", ofType: "json", inDirectory: "Resources/CertList.bundle")
-        else {
-            fatalError("Could not load  discovery document")
-        }
-        return certListPath
-    }
-
     func testLoadPKICertificates() async throws {
         // given
         var counter = 0

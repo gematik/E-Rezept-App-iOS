@@ -144,7 +144,7 @@ struct UIDateFormatter {
                       formattingContext: RelativeDateTimeFormatter.Context = .beginningOfSentence) -> String? {
         @Dependency(\.date) var dateGenerator
         relativeTimeFormatter.formattingContext = formattingContext
-        guard let date = date else { return nil }
+        guard let date else { return nil }
         return relativeTimeFormatter.localizedString(for: date, relativeTo: dateGenerator())
     }
 

@@ -25,7 +25,7 @@
 import SnapshotTesting
 import SwiftUI
 
-struct Snapshot<Content>: View where Content: View {
+struct Snapshot<Content: View>: View {
     private let content: () -> Content
     @State private var image: Image?
     private let snapshotting: Snapshotting<AnyView, UIImage>
@@ -39,14 +39,14 @@ struct Snapshot<Content>: View where Content: View {
 
     var body: some View {
         ZStack {
-            self.image?
+            image?
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
         .onAppear {
-            self.snapshotting
-                .snapshot(AnyView(self.content()))
-                .run { self.image = Image(uiImage: $0) }
+            snapshotting
+                .snapshot(AnyView(content()))
+                .run { image = Image(uiImage: $0) }
         }
     }
 }
@@ -71,9 +71,9 @@ struct AppStorePreview<SnapshotContent: View>: View {
     var body: some View {
         ZStack {
             Group {
-                Snapshot(self.snapshotting) {
+                Snapshot(snapshotting) {
                     ZStack(alignment: .top) {
-                        self.snapshotContent()
+                        snapshotContent()
 
                         StatusBar()
                     }
@@ -84,7 +84,7 @@ struct AppStorePreview<SnapshotContent: View>: View {
             .background(Color.black)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(self.backgroundColor.ignoresSafeArea())
+        .background(backgroundColor.ignoresSafeArea())
         .ignoresSafeArea()
     }
 }
@@ -100,7 +100,7 @@ struct StatusBar: View {
                 Text("\(Image(systemName: "wifi")) \(Image(systemName: "battery.100"))")
             }
             .font(Font.system(size: 14).monospacedDigit().bold())
-            .foregroundColor(self.colorScheme == .dark ? .white : .black)
+            .foregroundColor(colorScheme == .dark ? .white : .black)
             .padding(.top, 2)
             .padding(.leading, 6)
             .padding(.trailing, 3)

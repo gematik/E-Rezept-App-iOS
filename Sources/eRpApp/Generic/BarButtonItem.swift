@@ -59,6 +59,6 @@ class BarButtonItem: UIBarButtonItem {
     required init?(coder: NSCoder) {
         triggerAction = {}
         super.init(coder: coder)
-        assert(false, "This class is not meant to be used with serialization. Use `UIBarButtonItem` instead.")
+        assertionFailure("This class is not meant to be used with serialization. Use `UIBarButtonItem` instead.")
     }
 }

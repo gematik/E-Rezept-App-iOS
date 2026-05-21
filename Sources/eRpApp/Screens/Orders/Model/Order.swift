@@ -28,7 +28,10 @@ import Pharmacy
 struct Order: Identifiable, Equatable {
     static let unknownOrderId = "unknown"
     let orderId: String
-    var id: String { orderId }
+    var id: String {
+        orderId
+    }
+
     let communications: IdentifiedArrayOf<ErxTask.Communication>
     let chargeItems: IdentifiedArrayOf<ErxChargeItem>
     let pharmacy: PharmacyLocation?

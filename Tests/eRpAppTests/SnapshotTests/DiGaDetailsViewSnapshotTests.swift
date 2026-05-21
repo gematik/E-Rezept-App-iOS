@@ -155,8 +155,8 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
                     profile: UserProfile.Dummies.profileA,
                     selectedView: .details
                 )) {
-                EmptyReducer()
-            })
+                    EmptyReducer()
+                })
         }
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
@@ -249,8 +249,8 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
                     profile: UserProfile.Dummies.profileA,
                     selectedView: .details
                 )) {
-                EmptyReducer()
-            })
+                    EmptyReducer()
+                })
         }
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -273,8 +273,8 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
                     profile: UserProfile.Dummies.profileA,
                     selectedView: .details
                 )) {
-                EmptyReducer()
-            })
+                    EmptyReducer()
+                })
         }
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())

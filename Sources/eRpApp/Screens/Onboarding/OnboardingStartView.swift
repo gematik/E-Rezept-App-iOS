@@ -73,8 +73,8 @@ struct OnboardingStartView: View {
                         .accessibility(hint: Text(L10n.onbBtnStart))
                         .accessibility(label: Text(L10n.onbBtnStart))
                 })
-                    .buttonStyle(.primaryHugging)
-                    .padding(.bottom, 32)
+                .buttonStyle(.primaryHugging)
+                .padding(.bottom, 32)
 
                 Spacer()
             }

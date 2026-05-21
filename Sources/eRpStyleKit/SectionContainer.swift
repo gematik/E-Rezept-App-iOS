@@ -28,9 +28,9 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
     var header: () -> Header?
     var footer: () -> Footer?
 
-    internal init(@ViewBuilder header: @escaping () -> Header? = { nil },
-                  @ViewBuilder footer: @escaping () -> Footer? = { nil },
-                  @ViewBuilder modifiedContent: @escaping () -> Content) {
+    init(@ViewBuilder header: @escaping () -> Header? = { nil },
+         @ViewBuilder footer: @escaping () -> Footer? = { nil },
+         @ViewBuilder modifiedContent: @escaping () -> Content) {
         self.header = header
         content = modifiedContent()
         self.footer = footer
@@ -888,7 +888,7 @@ struct SectionContainer_Preview: PreviewProvider {
                         Button(action: {}, label: {
                             Label("Used for navigation", systemImage: "qrcode")
                         })
-                            .buttonStyle(DetailNavigationButtonStyle())
+                        .buttonStyle(DetailNavigationButtonStyle())
 
                         Toggle(isOn: .constant(true)) {
                             Label("Simple Toggle", systemImage: "qrcode")

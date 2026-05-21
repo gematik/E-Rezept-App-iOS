@@ -86,9 +86,9 @@ struct DetailNavigationLabelStyle: LabelStyle {
         }, icon: {
             configuration.icon
         })
-            .labelStyle(SectionContainerLabelStyle())
-            .subTitleStyle(.navigation(minChevronSpacing: minChevronSpacing))
-            .keyValuePairStyle(PlainKeyValuePairStyle())
+        .labelStyle(SectionContainerLabelStyle())
+        .subTitleStyle(.navigation(minChevronSpacing: minChevronSpacing))
+        .keyValuePairStyle(PlainKeyValuePairStyle())
     }
 }
 
@@ -176,7 +176,9 @@ extension ButtonStyle where Self == DetailNavigationButtonStyle {
     /// the ``View/buttonStyle(_:)`` modifier.
     ///
     /// - Warning: Attention: This style only works within **`SectionContainer`s**
-    public static var navigation: DetailNavigationButtonStyle { DetailNavigationButtonStyle() }
+    public static var navigation: DetailNavigationButtonStyle {
+        DetailNavigationButtonStyle()
+    }
 
     /// A button style that applies a navigation chevron and optionally skips the divider.
     ///
@@ -203,7 +205,7 @@ struct DetailNavigationButtonStyle_Preview: PreviewProvider {
                                 .bottomDivider()
                                 .padding(.leading)
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
 
                         Button(action: {}, label: {
                             Label(title: {
@@ -215,17 +217,17 @@ struct DetailNavigationButtonStyle_Preview: PreviewProvider {
                                 }
                             }, icon: {})
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
 
                         Button(action: {}, label: {
                             Label(title: { Text("Simple Label without icon") }, icon: {})
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
 
                         Button(action: {}, label: {
                             Label("Simple Label", systemImage: "qrcode")
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
 
                         Button(action: {}, label: {
                             Label(title: {
@@ -239,7 +241,7 @@ struct DetailNavigationButtonStyle_Preview: PreviewProvider {
                                 Image(systemName: "qrcode")
                             })
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
 
                         Toggle(isOn: .constant(true)) {
                             Label {
@@ -269,13 +271,13 @@ struct DetailNavigationButtonStyle_Preview: PreviewProvider {
                         Button(action: {}, label: {
                             SubTitle(title: "Here", description: "everything is optional", details: "some details")
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
 
                         Button(action: {}, label: {
                             SubTitle(title: "Here", description: "everything is optional", details: "some details")
                                 .subTitleStyle(.info)
                         })
-                            .buttonStyle(.navigation)
+                        .buttonStyle(.navigation)
                     })
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

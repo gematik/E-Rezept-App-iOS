@@ -69,13 +69,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     private lazy var migrationCoordinator = MigrationCoordinator(userDataStore: userDataStore)
 
-    // Timer that counts down until the app will be locked
+    /// Timer that counts down until the app will be locked
     var appLockTimer: Timer?
 
-    // For delaying the universal link after the authentication dialog has been shown.
+    /// For delaying the universal link after the authentication dialog has been shown.
     var universalLinkAfterAuthentication: URL?
 
-    // For delaying the universal link after the authentication dialog has been shown.
+    /// For delaying the universal link after the authentication dialog has been shown.
     var willPresentAppAuthenticationDialog = false
 
     private struct MigrationCoordinator {
@@ -137,7 +137,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         if migrationCoordinator.shouldMigrateDatabase {
             migrationCoordinator.isMigrating = true
             presentAppMigrationDomain { [weak self, weak scene] in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.migrationCoordinator.isMigrating = false
                 self.mainWindow?.rootViewController = UIHostingController(
                     rootView: AppStartView(store: self.routerStore.wrappedStore).prepareUITestsEnvironment()
@@ -224,7 +224,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             initialState: AppAuthenticationDomain.State()
         ) {
             AppAuthenticationDomain { [weak self, weak scene] in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.mainWindow?.accessibilityElementsHidden = false
                 self.mainWindow?.makeKeyAndVisible()
                 // background color is lost after window switch, reset it to black
@@ -282,7 +282,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     #endif
 
     private func addBlurOverlayToWindow() {
-        guard let mainWindow = mainWindow else { return }
+        guard let mainWindow else { return }
         blurEffectView.frame = mainWindow.frame
         mainWindow.addSubview(blurEffectView)
     }
@@ -291,16 +291,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         blurEffectView.removeFromSuperview()
     }
 
-    lazy var blurEffectView: UIView = {
-        UIVisualEffectView(effect: UIBlurEffect(style: .regular))
-    }()
+    lazy var blurEffectView: UIView = UIVisualEffectView(effect: UIBlurEffect(style: .regular))
 }
 
 import Combine
 
 extension SceneDelegate {
-    // The app needs at least one `Profile` in order to function correctly. If there is no Profile we assume
-    // that the app is in the initial state for which also the `UserDataStore` should be in initial state
+    /// The app needs at least one `Profile` in order to function correctly. If there is no Profile we assume
+    /// that the app is in the initial state for which also the `UserDataStore` should be in initial state
     func sanitizeDatabases(store: ProfileCoreDataStore) throws {
         let hasProfile = (try? store.hasProfile()) ?? false
         if !hasProfile {

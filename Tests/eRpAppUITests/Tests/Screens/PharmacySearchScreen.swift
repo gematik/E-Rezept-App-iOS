@@ -91,4 +91,22 @@ struct PharmacySearchScreen: Screen {
 
         return RedeemSelectionScreen(app: app)
     }
+
+    func tapQuickFilterDelivery(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        switches(by: A11y.pharmacySearchStart.phaSearchBtnQuickFilterDelivery, fileID: fileID, file: file, line: line)
+            .tap()
+    }
+
+    func tapTopBarFilterChip(
+        _ name: String,
+        fileID _: String = #fileID,
+        file _: String = #filePath,
+        line _: UInt = #line
+    ) {
+        app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: name)
+            .element
+            .tap()
+    }
 }

@@ -58,5 +58,11 @@
         "text": "**✨ Pokaż kody recept** \nEkran kodów partii i pojedynczych został przeprojektowany, aby zapewnić bardziej intuicyjną obsługę. \n \n **❤️ Ulubione Apteki** \nUlubione Apteki działają teraz bardziej niezawodnie i są kompatybilne z VoiceOver. \n \n **♿ Ułatwienia dostępu** \nUlepszono nawigację VoiceOver i klawiaturą, przyciski, tekst i pola wprowadzania danych są łatwiejsze do zidentyfikowania, a elementy listy są bardziej logicznie ustrukturyzowane. Powiększona czcionka działa teraz na wszystkich ekranach aplikacji. Animowane filmy są odtwarzane tylko raz, aby ułatwić użytkownikom z upośledzeniem funkcji poznawczych.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Ulepszone szczegóły apteki** \nApteki mogą teraz dodawać usługi takie jak szczepienia i funkcje na miejscu, takie jak dostęp bez barier. Apteki można filtrować na podstawie tych nowych informacji. \n \n **✨ Ulepszone wyszukiwanie aptek** \nOstatnio używane apteki i ulubione apteki są teraz wyraźniej oddzielone. Filtry zostały ulepszone. \n \n **✅ Identyfikator zdrowotny dla osób z ubezpieczeniem alternatywnym** \nOsoby, które nie są objęte ustawowym lub prywatnym ubezpieczeniem zdrowotnym, mogą teraz również logować się za pomocą swojego identyfikatora zdrowotnego. \n \n **♿ Dostępność** \nFiltry mają teraz wyższy kontrast, a ich status jest łatwiejszy do zidentyfikowania. Oświadczenie o dostępności zostało zaktualizowane i rozszerzone o sekcję dokumentującą historię zmian. Niektóre przyciski zostały dostosowane w celu poprawy widoczności.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

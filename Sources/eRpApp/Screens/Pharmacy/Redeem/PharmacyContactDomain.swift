@@ -190,20 +190,6 @@ struct PharmacyContactDomain {
                          mail: mail.isEmpty ? nil : mail,
                          deliveryInfo: deliveryInfo.isEmpty ? nil : deliveryInfo)
         }
-
-        static func ==(
-            lhs: PharmacyContactDomain.ContactInfo,
-            rhs: PharmacyContactDomain.ContactInfo
-        ) -> Bool {
-            lhs.identifier == rhs.identifier &&
-                lhs.name == rhs.name &&
-                lhs.street == rhs.street &&
-                lhs.zip == rhs.zip &&
-                lhs.city == rhs.city &&
-                lhs.phone == rhs.phone &&
-                lhs.mail == rhs.mail &&
-                lhs.deliveryInfo == rhs.deliveryInfo
-        }
     }
 }
 

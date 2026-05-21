@@ -100,7 +100,7 @@ struct PharmacySearchDomain {
             @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
             return euRedeemPrescriptionsFeature
                 && isoCountryCode != "DE"
-                && EUCountry.europeanCountryCodes.contains(isoCountryCode ?? "")
+                && Country.europeanCountryCodes.contains(isoCountryCode ?? "")
                 && lastSearchCriteria?.filter.contains { $0 == .currentLocation } == true
         }
 
@@ -153,15 +153,15 @@ struct PharmacySearchDomain {
         func asSearchCriteria() -> SearchCriteria {
             .init(
                 searchTerm: searchText,
-                // When adding an location to request, near me filter is used
-                // This prevents sending an location when near me filter is not used
+                // When adding a location to the request, near me filter is used
+                // This prevents sending a location when near me filter is not used
                 location: pharmacyFilterOptions.contains(.currentLocation) ? currentLocation : nil,
                 filter: pharmacyFilterOptions
             )
         }
 
         var searchCriteriaChanged: Bool {
-            if let lastSearchCriteria = lastSearchCriteria {
+            if let lastSearchCriteria {
                 return !SearchCriteria.isEqualOrVerySimilar(lhs: lastSearchCriteria, rhs: asSearchCriteria())
             }
             return false
@@ -182,7 +182,7 @@ struct PharmacySearchDomain {
         case mapSetUp
         case mapSetUpReceived(Location?)
         case showMap
-        // Pharmacy details
+        /// Pharmacy details
         case showDetails(PharmacyLocationViewModel)
         // Filter
         case showPharmacyFilter
@@ -210,7 +210,10 @@ struct PharmacySearchDomain {
 
         @CasePathable
         enum Response: Equatable {
-            case pharmaciesReceived(Result<[PharmacyLocationViewModel], PharmacyRepositoryError>)
+            case pharmaciesReceived(
+                Result<[PharmacyLocationViewModel], PharmacyRepositoryError>,
+                lastUsedIDs: Set<String> = []
+            )
             case loadLocalPharmaciesReceived(Result<[PharmacyLocationViewModel], PharmacyRepositoryError>)
             case loadAndNavigateToPharmacyReceived(Result<PharmacyLocation, PharmacyRepositoryError>)
             case isoCountryCodeReceived(String?)
@@ -226,7 +229,7 @@ struct PharmacySearchDomain {
     @Dependency(\.searchHistory) var searchHistory: SearchHistory
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
-    // Control the current time for opening/closing determination. When not set current device time is used.
+    /// Control the current time for opening/closing determination. When not set current device time is used.
     let referenceDateForOpenHours: Date?
 
     init(referenceDateForOpenHours: Date? = nil) {
@@ -236,7 +239,7 @@ struct PharmacySearchDomain {
     var body: some Reducer<State, Action> {
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -259,10 +262,10 @@ struct PharmacySearchDomain {
             guard state.destination == nil else { return .none }
 
             return .run { send in
-                await send(.mapSetUpReceived(await locationManager.location()))
+                await send(.mapSetUpReceived(locationManager.location()))
             }
         case let .mapSetUpReceived(location):
-            guard let location = location else {
+            guard let location else {
                 state.mapLocation = MKCoordinateRegion.gematikHQRegion
                 return .none
             }
@@ -352,7 +355,16 @@ struct PharmacySearchDomain {
                 .publisher { state.$pharmacyFilterOptions.publisher.dropFirst().map(Action.quickSearch) },
                 .run { [currentLocation = state.currentLocation] send in
                     do {
-                        let response = try await pharmacyRepository.loadLocalCount(5).map { pharmacy in
+                        // Load all local pharmacies (favorites + recently used)
+                        // If at least one favorite exists, show all favorites;
+                        // otherwise fall back to the last 5 recently used pharmacies
+                        let allLocal = try await pharmacyRepository.loadLocalCount(nil)
+                        let favorites = allLocal.filter(\.isFavorite)
+
+                        let selectedPharmacies = favorites.isEmpty
+                            ? Array(allLocal.prefix(5))
+                            : favorites
+                        let response = selectedPharmacies.map { pharmacy in
                             PharmacyLocationViewModel(
                                 pharmacy: pharmacy,
                                 referenceLocation: currentLocation,
@@ -405,12 +417,15 @@ struct PharmacySearchDomain {
             let searchCriteria = state.asSearchCriteria()
             state.lastSearchCriteria = searchCriteria
             return searchPharmacies(searchCriteria)
-        case let .response(.pharmaciesReceived(result)):
+        case let .response(.pharmaciesReceived(result, lastUsedIDs)):
             switch result {
             case let .success(pharmacies):
                 // [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
                 state.pharmacies = pharmacies
-                    .filter(by: state.pharmacyFilterOptions)
+                    .filter(
+                        by: state.pharmacyFilterOptions,
+                        lastUsedIDs: lastUsedIDs
+                    )
 
                 // sort pharmacies for distance if available
                 if state.pharmacies.first?.distanceInM != nil {
@@ -422,7 +437,6 @@ struct PharmacySearchDomain {
                 state.searchState = .error
             }
             return .none
-
         case let .loadAndNavigateToPharmacy(pharmacyLocation):
             state.searchState = .startView(loading: true)
             state.selectedPharmacy = pharmacyLocation
@@ -618,7 +632,7 @@ struct PharmacySearchDomain {
                 let pharmacy = try await pharmacyRepository.loadCached(identifier)
 
                 let value: Result<PharmacyLocation, PharmacyRepositoryError>
-                if let pharmacy = pharmacy {
+                if let pharmacy {
                     value = .success(pharmacy)
                 } else {
                     value = .failure(.remote(.notFound))
@@ -644,17 +658,6 @@ struct PharmacySearchDomain {
     }
 }
 
-// Will be moved to FeatureEURedeem.Country
-enum EUCountry {
-    static let europeanCountryCodes: Set<String> = [
-        "DE", "FR", "IT", "ES", "PL", "SE", "NO", "CH", "AT", "NL", "BE",
-        "CZ", "DK", "FI", "GR", "HU", "IE", "PT", "RO", "SK", "SI", "HR",
-        "BG", "EE", "LV", "LT", "LU", "MT", "CY", "IS", "LI", "MC", "SM",
-        "VA", "UK", "RU", "UA", "BY", "MD", "AL", "BA", "MK", "RS", "ME",
-        "XK", "TR",
-    ]
-}
-
 extension URLComponents {
     /// Parses a urls fragment with the GET parameters syntax.
     ///
@@ -663,7 +666,7 @@ extension URLComponents {
     /// entry
     /// - Returns: A dictionary with key value pairs for all parameters.
     func fragmentAsQueryItems() -> [String: String] {
-        guard let fragment = fragment else { return [:] }
+        guard let fragment else { return [:] }
         let fragmentPairs: [(String, String)] = fragment
             .components(separatedBy: "&")
             .compactMap { value -> (String, String)? in
@@ -694,6 +697,7 @@ extension PharmacySearchDomain {
            let longitude = searchCriteria.location?.coordinate.longitude {
             position = Position(lat: latitude, lon: longitude)
         }
+
         return .run { [searchCriteria = searchCriteria, position = position] send in
             do {
                 let pharmacies = try await pharmacyRepository.searchRemote(
@@ -701,6 +705,14 @@ extension PharmacySearchDomain {
                     position,
                     searchCriteria.filter.asPharmacyRepositoryFilters
                 )
+
+                // If the 'last used' filter is active, load local pharmacies to get the set of
+                // telematikIDs that have been used before and cross-reference with server results.
+                var lastUsedIDs: Set<String> = []
+                if searchCriteria.filter.contains(.lastUsed) {
+                    let allLocal = try await pharmacyRepository.loadLocalCount(nil)
+                    lastUsedIDs = Set(allLocal.filter { $0.lastUsed != nil }.map(\.telematikID))
+                }
 
                 let viewModels = await MainActor.run {
                     pharmacies
@@ -713,9 +725,12 @@ extension PharmacySearchDomain {
                             )
                         }
                 }
-                await send(.response(.pharmaciesReceived(.success(viewModels))))
+                await send(.response(.pharmaciesReceived(
+                    .success(viewModels),
+                    lastUsedIDs: lastUsedIDs
+                )))
             } catch let error as PharmacyRepositoryError {
-                await send(.response(.pharmaciesReceived(.failure(error))))
+                await send(.response(.pharmaciesReceived(.failure(error), lastUsedIDs: [])))
             }
         }
     }
@@ -735,7 +750,7 @@ extension PharmacySearchDomain {
     /// This function calculates the span needed to display up to the seventh (or last) pharmacy on the Map.
     func calculateSpan(pharmacies: [PharmacyLocationViewModel],
                        currentLocation: CLLocationCoordinate2D) -> MKCoordinateSpan {
-        /// First filtering and sorting all pharmacies by distance from the current Location
+        // First filtering and sorting all pharmacies by distance from the current Location
         let filteredAndSorted = pharmacies.sorted { first, second in
             guard let first = first.distanceInM else {
                 return second.distanceInM != nil
@@ -753,8 +768,8 @@ extension PharmacySearchDomain {
 
         let seventhOrLast = min(filteredAndSorted.count, 7)
         if let seventhLocation = filteredAndSorted[seventhOrLast - 1].position?.coordinate {
-            /// Now calculating lat/long - delta by subtracting the seventhLocation from the currentLocation
-            /// and multiplying by 2 for adjusting the zoom level
+            // Now calculating lat/long - delta by subtracting the seventhLocation from the currentLocation
+            // and multiplying by 2 for adjusting the zoom level
             let latitudeDelta = 2 * abs(currentLocation.latitude - seventhLocation.latitude)
             let longitudeDelta = 2 * abs(currentLocation.longitude - seventhLocation.longitude)
             return MKCoordinateSpan(

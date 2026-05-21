@@ -194,10 +194,7 @@ extension NFCSignatureProviderTests {
             signedChallenge: try! JWT(from: "eyAiYWxnIjogIm5vbmUiIH0.eyJwYXlsb2FkIjoidGV4dCJ9")
         )
 
-        static let x509: X509 = {
-            let x509 = try! X509(der: x509Data)
-            return x509
-        }()
+        static let x509: X509 = try! X509(der: x509Data)
 
         static let x509Data: Data = {
             let base64 =

@@ -46,7 +46,10 @@ public struct ErxSparseChargeItem: Identifiable, Hashable, Codable {
     // MARK: Meta Information
 
     /// Id of the consent
-    public var id: String { identifier }
+    public var id: String {
+        identifier
+    }
+
     /// Identifier of the charge item
     public let identifier: String
     /// Identifier of the related ErxTask

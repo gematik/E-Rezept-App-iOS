@@ -291,8 +291,8 @@ extension SettingsView {
                     }, label: {
                         Label(L10n.stgBtnDeviceSecurity, systemImage: SFSymbolName.iPhonelocked)
                     })
-                        .accessibility(identifier: A11y.settings.security.stgBtnDeviceSecurity)
-                        .buttonStyle(.navigation)
+                    .accessibility(identifier: A11y.settings.security.stgBtnDeviceSecurity)
+                    .buttonStyle(.navigation)
                 }
             )
         }

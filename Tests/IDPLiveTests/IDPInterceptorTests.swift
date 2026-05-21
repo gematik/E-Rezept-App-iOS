@@ -34,14 +34,11 @@ import XCTest
 let token = "test-token"
 
 final class IDPInterceptorTests: XCTestCase {
-    let trustStoreSessionMock: TrustStoreSessionMock = {
-        let mock = TrustStoreSessionMock()
-        return mock
-    }()
+    let trustStoreSessionMock: TrustStoreSessionMock = .init()
 
     let extAuthRequestStorageMock = ExtAuthRequestStorageMock()
 
-    func testInterceptAddsAuthorizationHeader() async {
+    func testInterceptAddsAuthorizationHeader() async throws {
         let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
@@ -50,7 +47,7 @@ final class IDPInterceptorTests: XCTestCase {
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: "http://www.url.com")))
         let chain = PassThroughChain(request: request)
 
         let sut = IDPInterceptor(session: session)
@@ -59,7 +56,7 @@ final class IDPInterceptorTests: XCTestCase {
         expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
     }
 
-    func testInterceptWithoutTokenFailsWithTokenUnavailable() {
+    func testInterceptWithoutTokenFailsWithTokenUnavailable() throws {
         let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
@@ -68,7 +65,7 @@ final class IDPInterceptorTests: XCTestCase {
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: "http://www.url.com")))
         let chain = PassThroughChain(request: request)
 
         let sut = IDPInterceptor(session: session)
@@ -87,7 +84,7 @@ final class IDPInterceptorTests: XCTestCase {
         }
     }
 
-    func testCallWith401UnauthorizedResponseInvalidatesAccessToken() async {
+    func testCallWith401UnauthorizedResponseInvalidatesAccessToken() async throws {
         let idpClientMock = MockIDPClient()
         let storage = MemStorage(accessToken: token)
         let session = DefaultIDPSession(
@@ -97,7 +94,7 @@ final class IDPInterceptorTests: XCTestCase {
             trustStoreSession: trustStoreSessionMock,
             extAuthRequestStorage: extAuthRequestStorageMock
         )
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: "http://www.url.com")))
         let chain = PassThroughChain(request: request)
         let sut = IDPInterceptor(session: session)
 

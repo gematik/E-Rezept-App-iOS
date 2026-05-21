@@ -28,10 +28,6 @@ import SwiftUI
 struct AppMigrationView: View {
     @Bindable var store: StoreOf<AppMigrationDomain>
 
-    init(store: StoreOf<AppMigrationDomain>) {
-        self.store = store
-    }
-
     var body: some View {
         HStack {
             if store.migration == .inProgress {

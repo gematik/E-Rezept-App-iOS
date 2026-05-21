@@ -47,7 +47,7 @@ public class IDPInterceptor: Interceptor {
         do {
             // Obtain (auto-refreshed) access token
             let token = try await session.autoRefreshedToken.async()
-            guard let token = token else {
+            guard let token else {
                 throw IDPError.tokenUnavailable
             }
             // [REQ:gemSpec_IDP_Frontend:A_20602#2,A_21325#1] Setup `Authorization-Header`.

@@ -37,6 +37,7 @@ import Profiles
 import TrustStore
 import VAUClient
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension SearchHistory {}
 extension ActivityIndicating {}
@@ -77,3 +78,4 @@ extension InternalCommunicationProtocol {}
 extension ErxLocalDataStore {}
 extension ErxRemoteDataStore {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

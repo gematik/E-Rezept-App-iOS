@@ -50,7 +50,7 @@ public class FileVAUStorage: VAUStorage {
     public func set(userPseudonym: String?) {
         let success: Bool
         do {
-            if let userPseudonym = userPseudonym {
+            if let userPseudonym {
                 let writeResult = try Self.jsonEncoder.encode(userPseudonym)
                     .save(to: userPseudonymFilePath, options: writingOptions)
                 switch writeResult {
@@ -71,7 +71,7 @@ public class FileVAUStorage: VAUStorage {
 
     private func retrieveUserPseudonym() -> AnyPublisher<String?, Never> {
         Deferred { [weak self] () -> AnyPublisher<String?, Never> in
-            guard let self = self,
+            guard let self,
                   let userPseudonymData = try? Data(contentsOf: self.userPseudonymFilePath),
                   let userPseudonym = try? Self.jsonDecoder.decode(String.self, from: userPseudonymData)
             else {

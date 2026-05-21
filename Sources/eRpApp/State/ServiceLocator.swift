@@ -36,7 +36,7 @@ class ServiceLocator {
 }
 
 class ServiceLocatorDebugAccess {
-    internal init(serviceLocator: ServiceLocator) {
+    init(serviceLocator: ServiceLocator) {
         self.serviceLocator = serviceLocator
     }
 

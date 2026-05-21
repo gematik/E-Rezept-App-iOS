@@ -57,7 +57,7 @@ final class DefaultOrdersRepositoryTests: XCTestCase {
         }
     }
 
-    func testLoadAllOrdersWithPharmacyRepositoryError() async throws {
+    func testLoadAllOrdersWithPharmacyRepositoryError() async {
         let communications = ErxTask.Communication.Fixtures.allOrderId1Communications
         let chargeItem = ErxChargeItem.Fixtures.chargeItemWithFHIRData
 
@@ -80,7 +80,7 @@ final class DefaultOrdersRepositoryTests: XCTestCase {
         }
     }
 
-    func testLoadAllOrdersWithErxRepositoryError() async throws {
+    func testLoadAllOrdersWithErxRepositoryError() async {
         let sut = DefaultOrdersRepository()
         let expectedError = ["i-03701", "i-20001", "i-20301"]
 
@@ -98,8 +98,8 @@ final class DefaultOrdersRepositoryTests: XCTestCase {
         }
     }
 
-    // Test the grouping of orders with two different order ids produces two groups
-    // where the order of communications is as expected
+    /// Test the grouping of orders with two different order ids produces two groups
+    /// where the order of communications is as expected
     func testLoadAllOrdersWithCommunicationsFromTwoOrdersWithPharmacies() async throws {
         let communicationsOrder1 = ErxTask.Communication.Fixtures.allOrderId1Communications
         let communicationsOrder2 = ErxTask.Communication.Fixtures.allOrderId2Communications

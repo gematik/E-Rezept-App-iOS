@@ -93,13 +93,13 @@ public struct CardWallIntroductionView: View {
                                     }
                                     .padding()
                                 })
-                                    .buttonStyle(DefaultButtonStyle())
-                                    .background(Colors.systemBackgroundTertiary)
-                                    .border(store.isNFCReady ? Colors.primary : Colors.separator,
-                                            width: store.isNFCReady ? 2.0 : 0.5,
-                                            cornerRadius: 16)
-                                    .padding(.bottom)
-                                    .disabled(!store.isNFCReady)
+                                .buttonStyle(DefaultButtonStyle())
+                                .background(Colors.systemBackgroundTertiary)
+                                .border(store.isNFCReady ? Colors.primary : Colors.separator,
+                                        width: store.isNFCReady ? 2.0 : 0.5,
+                                        cornerRadius: 16)
+                                .padding(.bottom)
+                                .disabled(!store.isNFCReady)
                             }
 
                             if let entry = store.entry {
@@ -129,11 +129,11 @@ public struct CardWallIntroductionView: View {
                                                 .padding(8)
                                         }.padding()
                                     })
-                                        .buttonStyle(DefaultButtonStyle())
-                                        .background(Colors.systemBackgroundTertiary)
-                                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                                        .padding(.bottom)
-                                        .opacity(store.loading ? 0.4 : 1)
+                                    .buttonStyle(DefaultButtonStyle())
+                                    .background(Colors.systemBackgroundTertiary)
+                                    .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                                    .padding(.bottom)
+                                    .opacity(store.loading ? 0.4 : 1)
 
                                     if store.loading {
                                         ProgressView()
@@ -141,7 +141,7 @@ public struct CardWallIntroductionView: View {
                                             .padding(.bottom)
                                     }
                                 }
-                            } else if store.insuranceType != .federalKV {
+                            } else {
                                 // [REQ:BSI-eRp-ePA:O.Auth_4#2] Button the user may use to start login via gID
                                 Button(action: {
                                     store.send(.extAuthTapped)
@@ -168,9 +168,9 @@ public struct CardWallIntroductionView: View {
                                     }
                                     .padding()
                                 })
-                                    .buttonStyle(DefaultButtonStyle())
-                                    .background(Colors.systemBackgroundTertiary)
-                                    .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                                .buttonStyle(DefaultButtonStyle())
+                                .background(Colors.systemBackgroundTertiary)
+                                .border(Colors.separator, width: 0.5, cornerRadius: 16)
                             }
                         }
                         .padding()
@@ -190,25 +190,25 @@ public struct CardWallIntroductionView: View {
                             }, label: {
                                 Label(L10n.cdwBtnIntroFootnote, systemImage: SFSymbolName.arrowForward)
                             })
-                                .buttonStyle(.tertiary)
-                                .labelStyle(.trailingIcon)
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .padding()
-                                .foregroundColor(Colors.primary)
-                                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
-                                .fullScreenCover(
-                                    item: $store.scope(state: \.destination?.egk, action: \.destination.egk),
-                                    onDismiss: {
-                                        store.send(.resetNavigation)
-                                    },
-                                    content: { store in
-                                        NavigationStack {
-                                            OrderHealthCardListView(store: store)
-                                        }
-                                        .tint(Colors.primary700)
-                                        .navigationViewStyle(StackNavigationViewStyle())
+                            .buttonStyle(.tertiary)
+                            .labelStyle(.trailingIcon)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding()
+                            .foregroundColor(Colors.primary)
+                            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
+                            .fullScreenCover(
+                                item: $store.scope(state: \.destination?.egk, action: \.destination.egk),
+                                onDismiss: {
+                                    store.send(.resetNavigation)
+                                },
+                                content: { store in
+                                    NavigationStack {
+                                        OrderHealthCardListView(store: store)
                                     }
-                                )
+                                    .tint(Colors.primary700)
+                                    .navigationViewStyle(StackNavigationViewStyle())
+                                }
+                            )
                         }
                     }
                 }

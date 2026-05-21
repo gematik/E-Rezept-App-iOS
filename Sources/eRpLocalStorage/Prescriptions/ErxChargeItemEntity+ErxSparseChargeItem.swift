@@ -86,7 +86,7 @@ extension ErxSparseChargeItem {
         entity: ErxChargeItemEntity?,
         decoder: JSONDecoder = JSONDecoder()
     ) {
-        guard let entity = entity,
+        guard let entity,
               let identifier = entity.identifier,
               let fhirData = entity.fhirData else {
             return nil

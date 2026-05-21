@@ -30,7 +30,7 @@ private let defaultPrecision: Float = 1
 private let defaultPerceptualPrecision: Float = 1
 
 extension XCTestCase {
-    func snapshotModi<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
+    func snapshotModi<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "light": .image(
                 precision: defaultPrecision,
@@ -87,7 +87,7 @@ struct OffsetPreview: View {
     }
 
     var body: some View {
-        Snapshot(self.snapshotting) {
+        Snapshot(snapshotting) {
             NavigationStack {
                 Text("*")
                     .navigationTitle("⚕︎ Redeem")
@@ -97,7 +97,7 @@ struct OffsetPreview: View {
     }
 }
 
-struct Snapshot<Content>: View where Content: View {
+struct Snapshot<Content: View>: View {
     private let content: () -> Content
     @State private var image: Image?
     private let snapshotting: Snapshotting<AnyView, UIImage>
@@ -111,14 +111,14 @@ struct Snapshot<Content>: View where Content: View {
 
     var body: some View {
         ZStack {
-            self.image?
+            image?
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
         .onAppear {
-            self.snapshotting
-                .snapshot(AnyView(self.content()))
-                .run { self.image = Image(uiImage: $0) }
+            snapshotting
+                .snapshot(AnyView(content()))
+                .run { image = Image(uiImage: $0) }
         }
     }
 }

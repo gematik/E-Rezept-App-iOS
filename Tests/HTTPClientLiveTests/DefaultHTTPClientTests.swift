@@ -41,7 +41,7 @@ final class DefaultHTTPClientTests: XCTestCase {
         }
 
         let baseURL = "http://\(host)\(path)"
-        let request = URLRequest(url: URL(string: baseURL)!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: baseURL)))
 
         var counter = 0
         stub(condition: isHost(host) && isPath(path) && isMethodGET() && !hasHeaderNamed("Authorization")) { _ in
@@ -67,7 +67,7 @@ final class DefaultHTTPClientTests: XCTestCase {
         }
 
         let baseURL = "http://\(host)\(path)"
-        let request = URLRequest(url: URL(string: baseURL)!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: baseURL)))
 
         var counter = 0
         stub(condition: isHost(host) && isPath(alternatePath) && isMethodGET()) { _ in
@@ -96,7 +96,7 @@ final class DefaultHTTPClientTests: XCTestCase {
         }
 
         let baseURL = "http://\(host)\(path)"
-        let request = URLRequest(url: URL(string: baseURL)!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: baseURL)))
 
         var counter = 0
         stub(condition: isHost(host) && isPath(alternatePath) && isMethodGET()) { _ in
@@ -125,7 +125,7 @@ final class DefaultHTTPClientTests: XCTestCase {
         }
 
         let baseURL = "http://\(host)\(path)"
-        let request = URLRequest(url: URL(string: baseURL)!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: baseURL)))
         let redirectURL = "http://redirect.me/path/file.txt"
 
         var counter = 0
@@ -150,7 +150,7 @@ final class DefaultHTTPClientTests: XCTestCase {
             .send(request: request)
         expect(response.url?.absoluteString) == redirectURL
         expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
-        expect(try! url.readFileContents()) == body
+        expect(try url.readFileContents()) == body
         expect(counter) == 2
     }
 
@@ -164,7 +164,7 @@ final class DefaultHTTPClientTests: XCTestCase {
         }
 
         let baseURL = "http://\(host)\(path)"
-        let request = URLRequest(url: URL(string: baseURL)!)
+        let request = try URLRequest(url: XCTUnwrap(URL(string: baseURL)))
         let redirectURL = "http://redirect.me/path/file.txt"
 
         var counter = 0

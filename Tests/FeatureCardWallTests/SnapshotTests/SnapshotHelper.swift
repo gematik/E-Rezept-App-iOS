@@ -37,7 +37,7 @@ extension ViewImageConfig {
 }
 
 extension XCTestCase {
-    func figmaReference<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
+    func figmaReference<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "light": .image(
                 precision: defaultPrecision,
@@ -51,7 +51,7 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModi<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
+    func snapshotModi<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "light": .image(
                 precision: defaultPrecision,
@@ -75,7 +75,7 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModiContentSizeXL<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
+    func snapshotModiContentSizeXL<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "accessibilityXL": .image(
                 precision: defaultPrecision,
@@ -85,8 +85,7 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModiCurrentDevice<T>() -> [String: Snapshotting<T, UIImage>]
-        where T: SwiftUI.View {
+    func snapshotModiCurrentDevice<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "iPhoneXsMax.light":
                 .image(
@@ -115,8 +114,7 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModiOnDevices<T>() -> [String: Snapshotting<T, UIImage>]
-        where T: SwiftUI.View {
+    func snapshotModiOnDevices<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "iPhoneSe.light":
                 .image(
@@ -149,8 +147,7 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModiOnDevicesWithAccessibility<T>() -> [String: Snapshotting<T, UIImage>]
-        where T: SwiftUI.View {
+    func snapshotModiOnDevicesWithAccessibility<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "iPhoneX.light.xs":
                 .image(
@@ -162,8 +159,7 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModiOnDevicesWithAccessibilityXL<T>() -> [String: Snapshotting<T, UIImage>]
-        where T: SwiftUI.View {
+    func snapshotModiOnDevicesWithAccessibilityXL<T: SwiftUI.View>() -> [String: Snapshotting<T, UIImage>] {
         [
             "iPhoneX.light.xl":
                 .image(
@@ -175,8 +171,10 @@ extension XCTestCase {
         ]
     }
 
-    func snapshotModiOnDevicesWithTheming<T>(mode: UIUserInterfaceStyle = .dark) -> [String: Snapshotting<T, UIImage>]
-        where T: SwiftUI.View {
+    func snapshotModiOnDevicesWithTheming<T: SwiftUI.View>(mode: UIUserInterfaceStyle = .dark) -> [String: Snapshotting<
+        T,
+        UIImage
+    >] {
         [
             "iPhoneX.\(mode == .dark ? "dark" : "light")":
                 .image(
@@ -234,7 +232,7 @@ struct OffsetPreview: View {
     }
 
     var body: some View {
-        Snapshot(self.snapshotting) {
+        Snapshot(snapshotting) {
             NavigationStack {
                 Text("*")
                     .navigationTitle("⚕︎ Redeem")
@@ -244,7 +242,7 @@ struct OffsetPreview: View {
     }
 }
 
-struct Snapshot<Content>: View where Content: View {
+struct Snapshot<Content: View>: View {
     private let content: () -> Content
     @State private var image: Image?
     private let snapshotting: Snapshotting<AnyView, UIImage>
@@ -258,14 +256,14 @@ struct Snapshot<Content>: View where Content: View {
 
     var body: some View {
         ZStack {
-            self.image?
+            image?
                 .resizable()
                 .aspectRatio(contentMode: .fit)
         }
         .onAppear {
-            self.snapshotting
-                .snapshot(AnyView(self.content()))
-                .run { self.image = Image(uiImage: $0) }
+            snapshotting
+                .snapshot(AnyView(content()))
+                .run { image = Image(uiImage: $0) }
         }
     }
 }

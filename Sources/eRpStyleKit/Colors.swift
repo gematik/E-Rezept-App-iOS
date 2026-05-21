@@ -47,7 +47,7 @@ public enum Colors {
 extension Colors {
     public static let gifBackground = Color(.gifBackground)
     public static let tabViewToolBarBackground: Color = Asset.Colors.tabViewToolBarBackground.swiftUIColor
-    // disabled
+    /// disabled
     public static let disabled: Color = Asset.Colors.disabled.swiftUIColor
     // primary == blue
     public static let primary900 = Color(.primary900)

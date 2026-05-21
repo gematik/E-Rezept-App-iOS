@@ -80,7 +80,7 @@ struct HealthCardPasswordPinDomain {
     }
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -93,6 +93,7 @@ struct HealthCardPasswordPinDomain {
             }
             state.pin1 = pin1
             return .none
+
         case let .updatePin2(pin2):
             if pin2.count > 8 {
                 state.destination = .pinAlert(AlertStates.pinTooLong)
@@ -138,6 +139,7 @@ struct HealthCardPasswordPinDomain {
             case .navigateToPukScreen:
                 return Effect.send(.delegate(.navigateToPukScreen))
             }
+
         case .destination,
              .delegate:
             return .none

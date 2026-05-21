@@ -97,13 +97,13 @@ final class ScannerDomainTests: XCTestCase {
         }
     }
 
-    func testScanUniversalLink() async {
+    func testScanUniversalLink() async throws {
         let mockRouter = RoutingMock()
         let store = testStore { dependencies in
             dependencies.router = mockRouter
         }
 
-        let url = URL(string: "https://erezept.gematik.de/pharmacies/#tiid=123")!
+        let url = try XCTUnwrap(URL(string: "https://erezept.gematik.de/pharmacies/#tiid=123"))
 
         expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(0))
         await store.send(.analyse(scanOutput: [.text(url.absoluteString)])) {
@@ -114,13 +114,13 @@ final class ScannerDomainTests: XCTestCase {
         expect(mockRouter.routeToEndpointEndpointVoidReceivedEndpoint).to(equal(.universalLink(url)))
     }
 
-    func testScanForeignUrlIsIgnored() async {
+    func testScanForeignUrlIsIgnored() async throws {
         let mockRouter = RoutingMock()
         let store = testStore { dependencies in
             dependencies.router = mockRouter
         }
 
-        let foreignUrl = URL(string: "https://example.com/some-page")!
+        let foreignUrl = try XCTUnwrap(URL(string: "https://example.com/some-page"))
 
         expect(mockRouter.routeToEndpointEndpointVoidCallsCount).to(equal(0))
         expect(self.isDismissInvoked.value).to(beFalse())
@@ -133,12 +133,12 @@ final class ScannerDomainTests: XCTestCase {
         expect(self.isDismissInvoked.value).to(beFalse())
     }
 
-    func testScanSupportedUniversalLinks() async {
-        let supportedUrls: [URL] = [
-            URL(string: "https://erezept.gematik.de/extauth")!,
-            URL(string: "https://erezept.gematik.de/pharmacies/index.html")!,
-            URL(string: "https://erezept.gematik.de/pharmacies")!,
-            URL(string: "https://erezept.gematik.de/prescription")!,
+    func testScanSupportedUniversalLinks() async throws {
+        let supportedUrls: [URL] = try [
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/extauth")),
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/pharmacies/index.html")),
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/pharmacies")),
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/prescription")),
         ]
 
         for url in supportedUrls {
@@ -161,12 +161,12 @@ final class ScannerDomainTests: XCTestCase {
         }
     }
 
-    func testScanUnsupportedUniversalLinkPathsAreIgnored() async {
-        let unsupportedUrls: [URL] = [
-            URL(string: "https://erezept.gematik.de/unknown")!,
-            URL(string: "https://erezept.gematik.de/some/other/path")!,
-            URL(string: "https://example.org/pharmacies")!, // wrong domain but correct path
-            URL(string: "https://erezept.gematik.de/")!, // root path
+    func testScanUnsupportedUniversalLinkPathsAreIgnored() async throws {
+        let unsupportedUrls: [URL] = try [
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/unknown")),
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/some/other/path")),
+            XCTUnwrap(URL(string: "https://example.org/pharmacies")), // wrong domain but correct path
+            XCTUnwrap(URL(string: "https://erezept.gematik.de/")), // root path
         ]
 
         for url in unsupportedUrls {
@@ -321,7 +321,7 @@ final class ScannerDomainTests: XCTestCase {
         }
     }
 
-    func testScanStateToBeSuccessWhenScanningCodesWhereOneIsAlreadyInStore() async {
+    func testScanStateToBeSuccessWhenScanningCodesWhereOneIsAlreadyInStore() async throws {
         // scan output with one task already saved in store and new tasks
         let scanOutput = ScanOutput.text(
             """
@@ -330,13 +330,13 @@ final class ScannerDomainTests: XCTestCase {
                  "Task/4713/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"]}
             """
         )
-        let oldScan = try! ScannedErxTask(
+        let oldScan = try ScannedErxTask(
             taskString: "Task/0390f983-1e67-11b2-8555-63bf44e44fb8/$accept?ac=e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"
         )
-        let newScan1 = try! ScannedErxTask(
+        let newScan1 = try ScannedErxTask(
             taskString: "Task/4711/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
         )
-        let newScan2 = try! ScannedErxTask(
+        let newScan2 = try ScannedErxTask(
             taskString: "Task/4713/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
         )
         let expectedScanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .value([newScan1, newScan2])
@@ -369,7 +369,7 @@ final class ScannerDomainTests: XCTestCase {
         }
     }
 
-    func testScanStateToBeSuccessWhenScanningCodesWhereOneWasAlreadyScanned() async {
+    func testScanStateToBeSuccessWhenScanningCodesWhereOneWasAlreadyScanned() async throws {
         // scan output with one task already saved in store and new tasks
         let scanOutput = ScanOutput.text(
             """
@@ -378,10 +378,10 @@ final class ScannerDomainTests: XCTestCase {
             	 "Task/4712/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"]}
             """
         )
-        let newScan1 = try! ScannedErxTask(
+        let newScan1 = try ScannedErxTask(
             taskString: "Task/4710/$accept?ac=e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"
         )
-        let newScan2 = try! ScannedErxTask(
+        let newScan2 = try ScannedErxTask(
             taskString: "Task/4712/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
         )
         let expectedScanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .value([newScan1, newScan2])

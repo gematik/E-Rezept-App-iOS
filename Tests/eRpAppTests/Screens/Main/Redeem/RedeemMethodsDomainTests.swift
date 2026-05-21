@@ -97,27 +97,25 @@ final class RedeemMethodsDomainTests: XCTestCase {
         )
     }
 
-    lazy var scannedTask: ErxTask = {
-        .init(
-            identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
-            status: .ready,
-            flowType: .pharmacyOnly,
-            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
-            fullUrl: nil,
-            authoredOn: TestDate.createFormattedDate(.yesterday),
-            redeemedOn: nil,
-            source: .scanner
-        )
-    }()
+    lazy var scannedTask: ErxTask = .init(
+        identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
+        status: .ready,
+        flowType: .pharmacyOnly,
+        accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+        fullUrl: nil,
+        authoredOn: TestDate.createFormattedDate(.yesterday),
+        redeemedOn: nil,
+        source: .scanner
+    )
 
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         return TestStore(initialState: RedeemMethodsDomain
             .State(prescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady])) {
                 RedeemMethodsDomain()
-        } withDependencies: { dependencies in
-            dependencies.schedulers = schedulers
-        }
+            } withDependencies: { dependencies in
+                dependencies.schedulers = schedulers
+            }
     }
 
     /// Tests to open the redeem matrix code view

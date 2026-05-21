@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpStyleKit
 import FeatureEURedeem
 import Perception
@@ -46,7 +47,6 @@ struct PharmacySearchView: View {
                 case .startView:
                     ScrollView {
                         PharmacySearchStartView(store: store)
-                            .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
                     }
                 case .searchResultEmpty:
                     VStack {
@@ -55,7 +55,6 @@ struct PharmacySearchView: View {
                         }, removeFilter: { option in
                             store.send(.removeFilterOption(option.element), animation: .default)
                         }, elements: filter)
-                            .padding(.horizontal)
                             .transition(.move(edge: .top).combined(with: .opacity))
 
                         if store.isEURedeemable, !store.hideEURedeemHint {
@@ -71,8 +70,17 @@ struct PharmacySearchView: View {
                             .padding(.horizontal, 30)
                     }
                 case .error:
-                    ErrorView { store.send(.performSearch) }
-                        .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
+                    VStack {
+                        PharmacyFilterBar(openFiltersAction: {
+                            store.send(.showPharmacyFilter, animation: .default)
+                        }, removeFilter: { option in
+                            store.send(.removeFilterOption(option.element), animation: .default)
+                        }, elements: filter)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+
+                        ErrorView { store.send(.performSearch) }
+                            .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
+                    }
                 case .searchRunning,
                      .searchResultOk:
                     ZStack(alignment: .bottomTrailing) {
@@ -85,7 +93,6 @@ struct PharmacySearchView: View {
                                     animation: .default
                                 )
                             }, elements: filter)
-                                .padding(.horizontal)
                                 .transition(.move(edge: .top)
                                     .combined(with: .opacity))
                         }, content: {
@@ -186,7 +193,7 @@ struct PharmacySearchView: View {
         @Bindable var store: StoreOf<PharmacySearchDomain>
 
         struct Suggestion: View {
-            internal init(_ text: String) {
+            init(_ text: String) {
                 self.text = text
             }
 
@@ -248,7 +255,7 @@ extension View {
         ) { store in
             PharmacyDetailView(store: store)
         }
-        .smallSheet(store.scope(
+        .fullScreenCover(item: store.scope(
             state: \.destination?.pharmacyFilter,
             action: \.destination.pharmacyFilter
         )) { store in
@@ -410,12 +417,45 @@ struct PharmacySearchView_Previews: PreviewProvider {
             PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
         }
         .tint(Colors.primary700)
+        .previewDisplayName("Start View (no local pharmacies)")
+
+        NavigationStack {
+            PharmacySearchView(
+                store: PharmacySearchDomain.Dummies.storeOf(
+                    PharmacySearchDomain.Dummies.stateStartViewWithFavorites
+                )
+            )
+        }
+        .tint(Colors.primary700)
+        .previewDisplayName("With Favorites")
+
+        NavigationStack {
+            PharmacySearchView(
+                store: PharmacySearchDomain.Dummies.storeOf(
+                    PharmacySearchDomain.Dummies.stateStartViewWithRecentlyUsed
+                )
+            )
+        }
+        .tint(Colors.primary700)
+        .previewDisplayName("With Recently Used (no favorites)")
+
+        NavigationStack {
+            PharmacySearchView(
+                store: PharmacySearchDomain.Dummies.storeOf(
+                    PharmacySearchDomain.Dummies.stateStartViewLoading
+                )
+            )
+        }
+        .tint(Colors.primary700)
+        .previewDisplayName("Loading")
 
         NavigationStack {
             PharmacySearchView(
                 store: PharmacySearchDomain.Dummies.storeOf(PharmacySearchDomain.Dummies.stateSearchResultOk)
             )
         }
+        .tint(Colors.primary700)
         .preferredColorScheme(.dark)
+        .previewDisplayName("Search Results (dark)")
     }
 }

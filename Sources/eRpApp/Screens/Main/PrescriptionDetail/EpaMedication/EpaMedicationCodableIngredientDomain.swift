@@ -37,11 +37,17 @@ struct EpaMedicationCodableIngredientDomain {
             item.text ?? item.displayName ?? L10n.prscFdTxtNa.text
         }
 
-        var strengthText: String { strength?.strengthDescription ?? L10n.prscFdTxtNa.text }
+        var strengthText: String {
+            strength?.strengthDescription ?? L10n.prscFdTxtNa.text
+        }
 
-        var form: String { darreichungsForm ?? L10n.prscFdTxtNa.text }
+        var form: String {
+            darreichungsForm ?? L10n.prscFdTxtNa.text
+        }
 
-        var number: String { item.idCode ?? L10n.prscFdTxtNa.text }
+        var number: String {
+            item.idCode ?? L10n.prscFdTxtNa.text
+        }
     }
 
     enum Action: Equatable {}

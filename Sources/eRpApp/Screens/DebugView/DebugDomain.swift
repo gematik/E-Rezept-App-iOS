@@ -70,7 +70,9 @@ struct DebugDomain {
         var accessCodeText: String = ""
         var lastIDPToken: IDPToken?
         var profile: Profile?
-        var hidePkvConsentDrawerOnMainView: Bool { profile?.hidePkvConsentDrawerOnMainView ?? false }
+        var hidePkvConsentDrawerOnMainView: Bool {
+            profile?.hidePkvConsentDrawerOnMainView ?? false
+        }
 
         var fakeTaskStatus = String(ErxTask.minTimeIntervalForCompletion)
 
@@ -119,7 +121,7 @@ struct DebugDomain {
         case markCommunicationsAsRead
         case deleteSSOToken
         case falsifySSOToken
-        case resetOcspAndCertListButtonTapped
+        case resetTrustStoreButtonTapped
         case isAuthenticatedReceived(Bool?)
         case logoutButtonTapped
         case invalidateAccessToken
@@ -222,7 +224,7 @@ struct DebugDomain {
             userSession.secureUserStore.set(keyIdentifier: nil)
             userSession.secureUserStore.set(certificate: nil)
             return .none
-        case .resetOcspAndCertListButtonTapped:
+        case .resetTrustStoreButtonTapped:
             userSession.trustStoreSession.reset()
             return .none
         case .binding(\.useDebugDeviceCapabilities):
@@ -265,7 +267,6 @@ struct DebugDomain {
             }
             userSession.secureUserStore.set(token: nil)
             return .none
-
         case let .loadAllLocalTasksReceived(result):
             switch result {
             case let .success(tasks):
@@ -331,7 +332,7 @@ struct DebugDomain {
                 }
             }
         case let .deleteAllTasksReceived(localizedError):
-            if let localizedError = localizedError {
+            if let localizedError {
                 state.alertText = localizedError
             } else {
                 state.alertText = "Did delete all tasks!"
@@ -367,7 +368,6 @@ struct DebugDomain {
                 loadAllLocalTasks(),
                 onReceiveHideOnboarding(),
                 onReceiveHideCardWallIntro(),
-                onReceiveIsAuthenticated(),
                 onReceiveToken(),
                 onReceiveConfigurationName(for: state.availableEnvironments),
                 onReceiveCurrentProfile()
@@ -420,7 +420,7 @@ struct DebugDomain {
 
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
         #else
         EmptyReducer()
         #endif
@@ -492,18 +492,6 @@ extension DebugDomain {
         )
     }
 
-    func onReceiveIsAuthenticated() -> Effect<DebugDomain.Action> {
-        .publisher(
-            userSession.isAuthenticated
-                .receive(on: schedulers.main)
-                .map(DebugDomain.Action.isAuthenticatedReceived)
-                .catch { _ in
-                    Just(DebugDomain.Action.isAuthenticatedReceived(nil))
-                }
-                .eraseToAnyPublisher
-        )
-    }
-
     func onReceiveToken() -> Effect<DebugDomain.Action> {
         .publisher(
             userSession.idpSession.autoRefreshedToken
@@ -545,7 +533,7 @@ extension DebugDomain {
     }
 
     func setProfileInsuranceTypeToPKV(profileId: UUID) -> Effect<DebugDomain.Action> {
-        let userProfileService = self.userProfileService
+        let userProfileService = userProfileService
 
         return .run { _ in
             _ = try await userProfileService
@@ -558,7 +546,7 @@ extension DebugDomain {
     }
 
     func setHidePkvConsentDrawerOnMainView(to value: Bool, profileId: UUID) -> Effect<DebugDomain.Action> {
-        let userProfileService = self.userProfileService
+        let userProfileService = userProfileService
 
         return .run { _ in
             _ = try await userProfileService

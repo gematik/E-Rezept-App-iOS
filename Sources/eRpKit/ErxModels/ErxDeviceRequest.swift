@@ -61,7 +61,7 @@ public struct ErxDeviceRequest: Equatable, Hashable, Codable, Sendable {
     /// Information about the DiGa that are saved local
     public var diGaInfo: DiGaInfo?
 
-    // This code system http://hl7.org/fhir/request-status defines the following codes:
+    /// This code system http://hl7.org/fhir/request-status defines the following codes:
     public enum DeviceRequestStatus: String, Equatable, Codable, Sendable {
         /// request has been created but is not yet complete or ready for action.
         case draft

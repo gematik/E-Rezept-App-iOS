@@ -140,7 +140,7 @@ struct DebugLogView: View {
         .sheet(item: $store
             .scope(state: \.destination?.share,
                    action: \.destination.share)) { store in
-                ShareViewController(store: store)
+            ShareViewController(store: store)
         }
         .navigationTitle("Log")
         .toolbar {

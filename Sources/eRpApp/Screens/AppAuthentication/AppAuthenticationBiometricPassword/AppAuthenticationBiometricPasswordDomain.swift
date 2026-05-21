@@ -102,7 +102,7 @@ struct AppAuthenticationBiometricPasswordDomain {
     @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -164,7 +164,7 @@ struct AppAuthenticationBiometricPasswordDomain {
             state.passwordDelay = delay
             if delay > 0 {
                 return .run { send in
-                    for await _ in self.clock.timer(interval: .seconds(1)) {
+                    for await _ in clock.timer(interval: .seconds(1)) {
                         await send(.passwordDelayTimerTick)
                     }
                 }

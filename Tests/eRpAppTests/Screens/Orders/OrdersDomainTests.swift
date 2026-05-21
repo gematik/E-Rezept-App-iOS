@@ -264,7 +264,7 @@ final class OrdersDomainTests: XCTestCase {
         await task.cancel()
     }
 
-    func testSelectOrder() async {
+    func testSelectOrder() async throws {
         let orderId = "orderId"
         let expected = Order(
             orderId: orderId,
@@ -273,7 +273,7 @@ final class OrdersDomainTests: XCTestCase {
         )
         let store = testStore(for: IdentifiedArray(uniqueElements: [.order(expected)]))
 
-        await store.send(.didSelect(communicationOnPremise.orderId!)) { state in
+        try await store.send(.didSelect(XCTUnwrap(communicationOnPremise.orderId))) { state in
             state.destination = .orderDetail(.init(communicationMessage: Shared(value: .order(expected))))
         }
     }

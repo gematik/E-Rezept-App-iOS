@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# scripts/update-lockfiles: Updates lockfiles for ruby (Gemfile.lock) and SPM dependencies (Package.resolved).
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+echo "==> Resolving Homebrew dependencies..."
+if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ]; then
+  hash brew 2>/dev/null && brew bundle check >/dev/null 2>&1  || brew bundle
+fi
+
+echo "==> Resolving Ruby dependencies..."
+if [ -f "Gemfile" ]; then
+  # running bundle install resolves and updates Gemfile.lock based on Gemfile changes
+  bundle install
+fi
+
+echo "==> Resolving Xcode SPM dependencies..."
+xcodebuild -resolvePackageDependencies -project eRp-App.xcodeproj -scheme eRpApp || true
+
+echo "==> Resolving standalone SPM dependencies..."
+swift package resolve || true
+
+echo "==> Done updating lockfiles."

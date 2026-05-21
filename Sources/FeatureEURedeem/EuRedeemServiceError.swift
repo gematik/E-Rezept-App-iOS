@@ -29,23 +29,23 @@ import Foundation
 
 @CodedError("047")
 public enum EuRedeemServiceError: Swift.Error, Equatable, LocalizedError {
-    @ErrorCode("01")
     /// When redeeming a task via Fachdienst
+    @ErrorCode("01")
     case eRxRepository(ErxRepositoryError)
-    @ErrorCode("02")
     /// When persisting/extracting information from the store went wrong
+    @ErrorCode("02")
     case localStoreError(LocalStoreError)
-    @ErrorCode("03")
     /// When the eu accessCode generation fails
+    @ErrorCode("03")
     case euCodeGeneration(EuCodeGenerationError)
-    @ErrorCode("04")
     /// When error conversion into `EuRedeemServiceError` fails
+    @ErrorCode("04")
     case unspecified(error: Swift.Error)
-    @ErrorCode("05")
     /// When the user has no valid token available while trying to redeem via Fachdienst
+    @ErrorCode("05")
     case noTokenAvailable
-    @ErrorCode("06")
     /// When receiving an error while doing a login
+    @ErrorCode("06")
     case loginHandler(error: LoginHandlerError)
 
     public static func ==(lhs: EuRedeemServiceError, rhs: EuRedeemServiceError) -> Bool {

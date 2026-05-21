@@ -56,7 +56,7 @@ class DemoShipmentInfoStore: ShipmentInfoDataStore {
         selectedShipmentInfoId
             .setFailureType(to: LocalStoreError.self)
             .flatMap { [weak self] selectedShipmentId -> AnyPublisher<ShipmentInfo?, LocalStoreError> in
-                guard let self = self,
+                guard let self,
                       let identifier = selectedShipmentId else {
                     return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
                 }
@@ -88,7 +88,7 @@ class DemoShipmentInfoStore: ShipmentInfoDataStore {
             }
             return shipment
         }
-        guard let updatedShipmentInfo = updatedShipmentInfo else {
+        guard let updatedShipmentInfo else {
             return Fail(error: LocalStoreError.write(error: ShipmentInfoCoreDataStore.Error.internalError))
                 .eraseToAnyPublisher()
         }

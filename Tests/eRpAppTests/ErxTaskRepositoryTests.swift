@@ -101,7 +101,7 @@ final class ErxTaskRepositoryTests: XCTestCase {
 
             expect(mockLocalDataStore
                 .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorCallsCount)
-                            .to(equal(3))
+                .to(equal(3))
             expect(mockLocalDataStore
                 .saveTasksErxTaskInProfileIdUUIDUpdateProfileLastAuthenticatedBoolAnyPublisherBoolLocalStoreErrorReceivedInvocations
                 .count).to(equal(3))
@@ -525,8 +525,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
                     content: [ErxTask(identifier: task.identifier, status: .cancelled, flowType: .pharmacyOnly)],
                     next: nil
                 ))
-                    .setFailureType(to: RemoteStoreError.self)
-                    .eraseToAnyPublisher()
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
             }
 
         mockRemoteDataStore
@@ -536,7 +536,7 @@ final class ErxTaskRepositoryTests: XCTestCase {
                     content: [task],
                     next: nil
                 ))
-                    .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             }
 
         mockLocalDataStore.fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskLocalStoreErrorClosure = { _, _ in

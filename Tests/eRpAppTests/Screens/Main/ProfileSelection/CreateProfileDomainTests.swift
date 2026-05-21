@@ -54,7 +54,7 @@ final class CreateProfileDomainTests: XCTestCase {
         }
     }
 
-    func testSavingProfileWithValidName() async {
+    func testSavingProfileWithValidName() async throws {
         let validName = "Niklas"
         let sut = testStore(
             for: CreateProfileDomain.State(
@@ -73,8 +73,8 @@ final class CreateProfileDomainTests: XCTestCase {
         expect(self.mockUserProfileService.saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorCalled)
             .to(beTrue())
 
-        let savedProfile = mockUserProfileService
-            .saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorReceivedProfiles!.first!
+        let savedProfile = try XCTUnwrap(mockUserProfileService
+            .saveProfilesProfileAnyPublisherBoolUserProfileServiceErrorReceivedProfiles?.first)
         mockUserProfileService.setSelectedProfileIdUUIDVoidClosure = { profileId in
             expect(profileId) == savedProfile.id
         }

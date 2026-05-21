@@ -56,7 +56,7 @@ extension ErxTaskDeviceRequestEntity {
 extension ErxDeviceRequest {
     init?(entity: ErxTaskDeviceRequestEntity?,
           decoder: JSONDecoder = JSONDecoder()) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         let status = try? decoder.decode(DeviceRequestStatus.self, from: entity.status ?? Data())
         let intent = try? decoder.decode(ErxDeviceRequest.DeviceRequestIntent.self, from: entity.intent ?? Data())

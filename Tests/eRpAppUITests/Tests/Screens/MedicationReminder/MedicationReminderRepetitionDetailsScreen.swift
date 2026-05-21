@@ -25,14 +25,9 @@ import Nimble
 import XCTest
 
 @MainActor
-struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previous: Screen {
+struct MedicationReminderRepetitionDetailsScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
 
     func infiniteCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         button(by: A11y.medicationReminder.medReminderBtnRepetitionInfinite, fileID: fileID, file: file, line: line)

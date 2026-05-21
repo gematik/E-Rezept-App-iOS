@@ -124,7 +124,7 @@ struct ChargeItemView: View {
                             Text(L10n.stgBtnChargeItemAlterViaApp)
                                 .foregroundColor(Colors.primary700)
                         })
-                            .disabled(true)
+                        .disabled(true)
 
                     } label: {
                         Text(L10n.stgTxtChargeItemAlterTitle)

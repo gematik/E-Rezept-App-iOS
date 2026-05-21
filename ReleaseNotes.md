@@ -1,22 +1,49 @@
+# Release 1.37.0
+
+### Features (3 changes)
+
+- Add gID support for federal KV
+- Filter for on-site characteristics in PharmacySearch
+- Add display of physical features and (Pharmacy)HealthCareServiceSpecialities
+
+### Bug fixes (4 changes)
+
+- Fix pharmacy filter bar for iOS 26 and up
+- Fix Certificate rollover rendering the application unable to login for up to 24h
+- When nearMe filter is active then apply remaining filters locally to...
+- Fix PKV/GKV Drawer not closeable if quickly changing screens
+
+### Internal changes (3 changes)
+
+- Add text to speech for EU redeem code view
+- Change EU redeem UI to match figma design
+- Change EU redeem consent in settings and redeem flow
+
+### changed (5 changes)
+
+- New URL for Barrierefreiheitserklärung
+- Redesign PharmacySearchStartView
+- Show all favorite pharmacies in PharmarcyStartView
+- Redesign PharmacySearch FilterChips
+- Redesign prescription tile in Redeem view
+
 # Release 1.36.0
 
 ### Features (2 changes)
 
-- [Add EuRedeemService and EuAccessCodeGenerator Dependency]
-- [Add EU Redeem consent for redeeming flow and settings]
+- Add EuRedeemService and EuAccessCodeGenerator Dependency
+- Add EU Redeem consent for redeeming flow and settings
 
-### Bug fixes (5 changes)
+### Bug fixes (3 changes)
 
-- [Fix various accessibilty issues]
-- [Fix various accessibility issues]
-- [Fix various accessibility issues]
-- [Fix pharmacies remain on SearchOverview even when not a favourite anymore]
-- [Fix Messages button badge counter not incremented]
+- Fix various accessibility issues
+- Fix pharmacies remain on SearchOverview even when not a favourite anymore
+- Fix Messages button badge counter not incremented
 
 ### Internal changes (2 changes)
 
-- [Add request to mark task EU redeemable]
-- [Fix Demo Mode to use DemoErxTaskRepository]
+- Add request to mark task EU redeemable
+- Fix Demo Mode to use DemoErxTaskRepository
 
 # Release 1.35.0
 

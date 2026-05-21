@@ -24,14 +24,9 @@ import eRpResources
 import XCTest
 
 @MainActor
-struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
+struct PrescriptionDetailsScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
 
     func medicationReminderCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         button(by: A11y.prescriptionDetails.prscDtlBtnMedicationReminder, fileID: fileID, file: file, line: line)

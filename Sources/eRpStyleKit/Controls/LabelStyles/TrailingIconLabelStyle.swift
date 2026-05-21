@@ -37,7 +37,9 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``Label/labelStyle(_:)`` modifier.
-    public static var trailingIcon: TrailingIconLabelStyle { TrailingIconLabelStyle() }
+    public static var trailingIcon: TrailingIconLabelStyle {
+        TrailingIconLabelStyle()
+    }
 }
 
 struct TrailingIconLabelStyle_Preview: PreviewProvider {

@@ -39,20 +39,12 @@ extension UserMode: UserSession {
         }
     }
 
-    var isAuthenticated: AnyPublisher<Bool, UserSessionError> {
-        sessionContainer.isAuthenticated
-    }
-
     var ordersRepository: OrdersRepository {
         sessionContainer.ordersRepository
     }
 
     var profileDataStore: ProfileDataStore {
         sessionContainer.profileDataStore
-    }
-
-    var updateChecker: UpdateChecker {
-        sessionContainer.updateChecker
     }
 
     var localUserStore: UserDataStore {
@@ -89,14 +81,6 @@ extension UserMode: UserSession {
 
     var trustStoreSession: TrustStoreSession {
         sessionContainer.trustStoreSession
-    }
-
-    var appSecurityManager: AppSecurityManager {
-        sessionContainer.appSecurityManager
-    }
-
-    var deviceSecurityManager: DeviceSecurityManager {
-        sessionContainer.deviceSecurityManager
     }
 
     var profileId: UUID {

@@ -99,7 +99,7 @@ struct AuditEventsDomain {
     var currentLanguageCode = Locale.current.language.languageCode?.identifier ?? "de"
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -196,7 +196,7 @@ struct AuditEventsDomain {
     }
 }
 
-extension Collection where Element == ErxAuditEvent {
+extension Collection<ErxAuditEvent> {
     func asAuditEventStates(
         dateFormatter: DateFormatter,
         fhirDateFormatter: FHIRDateFormatter

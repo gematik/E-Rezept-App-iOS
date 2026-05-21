@@ -74,7 +74,7 @@ extension EuCommunicationEntity {
 extension EuCommunication {
     init?(entity: EuCommunicationEntity?,
           decoder: JSONDecoder = JSONDecoder()) {
-        guard let entity = entity,
+        guard let entity,
               let identifier = entity.identifier else {
             return nil
         }

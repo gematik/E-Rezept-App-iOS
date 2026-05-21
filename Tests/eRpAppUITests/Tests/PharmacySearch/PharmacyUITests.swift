@@ -47,7 +47,8 @@ final class PharmacyUITests: XCTestCase {
         _ = app.wait(for: .runningForeground, timeout: 10.0)
 
         // Interact somehow with the app, to trigger the registered `addUIInterruptionMonitor`
-        // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos swiftlint:disable:this line_length
+        // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos
+        // swiftlint:disable:this line_length
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.01)).tap()
     }
 
@@ -89,6 +90,80 @@ final class PharmacyUITests: XCTestCase {
     }
 
     @MainActor
+    func assertFilterOptionExists(
+        _ filterLabel: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let option = app.switches.element(matching: .init(format: "label == %@", filterLabel))
+        XCTAssertTrue(
+            option.waitForExistence(timeout: 2),
+            "Expected filter option '\(filterLabel)' to be present in the filter view",
+            file: file,
+            line: line
+        )
+        option.tap()
+        XCTAssertEqual(
+            option.value as? String,
+            "1",
+            "Expected filter option '\(filterLabel)' to be selected after tapping",
+            file: file,
+            line: line
+        )
+    }
+
+    @MainActor
+    func assertServiceFilterOptionExists(
+        _ serviceLabel: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let option = app.switches.element(matching: .init(format: "label CONTAINS %@", serviceLabel))
+        XCTAssertTrue(
+            option.waitForExistence(timeout: 2),
+            "Expected service filter option '\(serviceLabel)' to be present in the filter view",
+            file: file,
+            line: line
+        )
+        option.tap()
+        XCTAssertTrue(
+            option.waitForExistence(timeout: 2),
+            "Expected service filter option '\(serviceLabel)' to still exist after tapping",
+            file: file,
+            line: line
+        )
+    }
+
+    @MainActor
+    func assertFilterChipExists(
+        _ chipIdentifier: String,
+        shouldExist: Bool = true,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let chip = app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: chipIdentifier)
+            .element
+
+        if shouldExist {
+            XCTAssertTrue(
+                chip.waitForExistence(timeout: 2),
+                "Expected filter chip with identifier '\(chipIdentifier)' to exist",
+                file: file,
+                line: line
+            )
+        } else {
+            XCTAssertTrue(
+                chip.waitForNonExistence(timeout: 2),
+                "Expected filter chip with identifier '\(chipIdentifier)' to not exist",
+                file: file,
+                line: line
+            )
+        }
+    }
+
+    @MainActor
     func testPharmacyServiceButtons() async throws {
         app.buttons.element(matching: .init(format: "label == %@", "Apothekensuche")).tap()
         app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
@@ -113,7 +188,7 @@ final class PharmacyUITests: XCTestCase {
     }
 
     @MainActor
-    func testSwitchToMap() throws {
+    func testSwitchToMap() {
         app.buttons.element(matching: .init(format: "label == %@", "Apothekensuche")).tap()
         app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
         app.typeText("A")
@@ -130,7 +205,22 @@ final class PharmacyUITests: XCTestCase {
     }
 
     @MainActor
-    func testSearchFilter() throws {
+    func testStartViewQuickFilter() {
+        let pharmacySearchScreen = TabBarScreen(app: app).tapPharmacySearchTab()
+
+        // Tap the "Botendienst" quick filter chip on the search start view
+        pharmacySearchScreen.tapQuickFilterDelivery()
+
+        // Result list should appear and contain at least one pharmacy entry
+        assertPharmacyServices(pharmacyName: "ZoTI_06_TEST-ONLY", services: [.deliveryViaLogin])
+        assertPharmacyServices(
+            pharmacyName: "ZoTI_12_TEST-ONLY",
+            services: [.shipmentViaLogin, .deliveryViaLogin, .pickupViaLogin]
+        )
+    }
+
+    @MainActor
+    func testSearchFilter() {
         let tabBar = TabBarScreen(app: app)
 
         let resultScreen = tabBar.tapPharmacySearchTab()
@@ -141,14 +231,40 @@ final class PharmacyUITests: XCTestCase {
 
         let filterScreen = resultScreen.tapFilter()
 
+        // Check that all expected filter options are present
+        // Preferences
+        assertFilterOptionExists("Aktuell geöffnet")
+        // assertFilterOptionExists("In meiner Nähe")
+        assertFilterOptionExists("Zuletzt genutzt")
+        // Redeem method
+        assertFilterOptionExists("Abholung")
+        assertFilterOptionExists("Botendienst")
+        assertFilterOptionExists("Versand")
+        // Physical features
+        assertFilterOptionExists("ÖPNV in der Nähe")
+        assertFilterOptionExists("Parkmöglichkeit")
+        assertFilterOptionExists("Barrierefreier Zugang")
+        assertFilterOptionExists("Abholautomat")
+        // Services
+        assertServiceFilterOptionExists("Allergietest erwerben")
+        assertServiceFilterOptionExists("Beratung bei Organtransplantation")
+        assertServiceFilterOptionExists("Beratung bei Polymedikation")
+        assertServiceFilterOptionExists("Betreuung oraler Krebstherapie")
+        assertServiceFilterOptionExists("Bluthochdruck kontrollieren")
+        assertServiceFilterOptionExists("Impfen lassen")
+        assertServiceFilterOptionExists("Inhalationsschulung")
+        assertServiceFilterOptionExists("Körperwerte messen")
+        assertServiceFilterOptionExists("Reisemedizinberatung")
+        assertServiceFilterOptionExists("Sterilherstellung")
+
+        // All options have been tapped above -> reset before the specific filter scenario below
+        filterScreen.tapResetFilters()
+
         filterScreen.tapFilterOption("Versand")
 
         filterScreen.closeFilter()
 
-        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
-            .children(matching: .button)
-            .matching(identifier: "shipment")
-            .element.exists)
+        assertFilterChipExists("shipment")
 
         let redeemSearchScreen = tabBar.tapPrescriptionsTab()
             .tapRedeem()
@@ -159,26 +275,32 @@ final class PharmacyUITests: XCTestCase {
         app.typeText("A")
         XCUIApplication().keyboards.buttons["Suchen"].tap()
 
-        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
-            .children(matching: .button)
-            .matching(identifier: "shipment")
-            .element.exists)
+        assertFilterChipExists("shipment")
+        assertFilterChipExists("delivery", shouldExist: false)
 
         let filterScreen2 = redeemSearchScreen.tapFilter()
 
         filterScreen2.tapFilterOption("Botendienst")
 
-        filterScreen.closeFilter()
+        filterScreen2.closeFilter()
 
-        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
-            .children(matching: .button)
-            .matching(identifier: "delivery")
-            .element.exists)
+        assertFilterChipExists("shipment")
+        assertFilterChipExists("delivery")
+        assertFilterChipExists("pickupAutomat", shouldExist: false)
 
-        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
-            .children(matching: .button)
-            .matching(identifier: "shipment")
-            .element.exists)
+        app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
+        app.typeText("A")
+        XCUIApplication().keyboards.buttons["Suchen"].tap()
+
+        let filterScreen3 = redeemSearchScreen.tapFilter()
+
+        filterScreen3.tapFilterOption("Abholautomat")
+
+        filterScreen3.closeFilter()
+
+        assertFilterChipExists("shipment")
+        assertFilterChipExists("delivery")
+        assertFilterChipExists("pickupAutomat")
 
         redeemSearchScreen.tapSearchCancelButton()
         redeemSearchScreen.tapCancelButton()
@@ -186,15 +308,53 @@ final class PharmacyUITests: XCTestCase {
         tabBar.tapPharmacySearchTab()
 
         // Check for filter Botendienst & Open + neue Suche
-        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
-            .children(matching: .button)
-            .matching(identifier: "shipment")
-            .element.exists)
+        assertFilterChipExists("shipment")
+        assertFilterChipExists("delivery")
+        assertFilterChipExists("pickupAutomat")
 
-        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
-            .children(matching: .button)
-            .matching(identifier: "delivery")
-            .element.exists)
+        // Tap the shipment chip to remove it
+        resultScreen.tapTopBarFilterChip("shipment")
+
+        assertFilterChipExists("shipment", shouldExist: false)
+        assertFilterChipExists("delivery")
+        assertFilterChipExists("pickupAutomat")
+
+        // Open filter view and reset all filters
+        let filterScreen4 = resultScreen.tapFilter()
+
+        filterScreen4.tapResetFilters()
+
+        filterScreen4.closeFilter()
+
+        // All filter chips should be gone after reset
+        assertFilterChipExists("shipment", shouldExist: false)
+        assertFilterChipExists("delivery", shouldExist: false)
+        assertFilterChipExists("pickupAutomat", shouldExist: false)
+
+        assertFilterChipExists("allergyTest", shouldExist: false)
+
+        // Open filter view again for service section tests
+        let filterScreen5 = resultScreen.tapFilter()
+
+        // Tap "Erklären" — descriptions should become visible
+        filterScreen5.tapExplainToggle()
+        XCTAssertTrue(app.buttons
+            .element(matching: .init(format: "label == %@", "Nicht erklären"))
+            .waitForExistence(timeout: 2))
+
+        // Tap "Nicht erklären" — descriptions should hide again
+        filterScreen5.tapExplainToggle()
+        XCTAssertTrue(app.buttons
+            .element(matching: .init(format: "label == %@", "Erklären"))
+            .waitForExistence(timeout: 2))
+
+        // Select "Allergietest erwerben" service
+        filterScreen5.tapServiceOption("Allergietest erwerben")
+
+        filterScreen5.closeFilter()
+
+        // Verify allergyTest chip appears in the filter list
+        assertFilterChipExists("allergyTest")
     }
 
     @MainActor
@@ -206,7 +366,7 @@ final class PharmacyUITests: XCTestCase {
             .pharmacyDetailsForPharmacy("ZoTI_07_TEST-ONLY")
             .tapRedeem(.shipmentViaLogin)
 
-        redeemScreen.addPrescriptionButton().tap()
+        redeemScreen.editPrescriptionButton().tap()
         app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].tap()
         app.buttons["Speichern"].tap()
 
@@ -230,7 +390,7 @@ final class PharmacyUITests: XCTestCase {
             .pharmacyDetailsForPharmacy("ZoTI_05_TEST-ONLY")
             .tapRedeem(.pickupViaLogin)
 
-        redeemScreen.addPrescriptionButton().tap()
+        redeemScreen.editPrescriptionButton().tap()
         app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].tap()
         app.buttons["Speichern"].tap()
 
@@ -248,7 +408,7 @@ final class PharmacyUITests: XCTestCase {
             .pharmacyDetailsForPharmacy("ZoTI_06_TEST-ONLY")
             .tapRedeem(.deliveryViaLogin)
 
-        redeemScreen.addPrescriptionButton().tap()
+        redeemScreen.editPrescriptionButton().tap()
         app.buttons["Adavomilproston, Noch 19 Tage einlösbar"].tap()
         app.buttons["Speichern"].tap()
 
@@ -261,6 +421,46 @@ final class PharmacyUITests: XCTestCase {
         try await redeemScreen
             .tapRedeem()
             .tapClose()
+    }
+
+    @MainActor
+    func testAllServicesAreShownOnPharmacyDetailView() {
+        let pharmacySearchScreen = TabBarScreen(app: app).tapPharmacySearchTab()
+        _ = pharmacySearchScreen.pharmacyDetailsForPharmacy("ZoTI_20_TEST-ONLY")
+
+        // Physical features ("Vor Ort" section)
+        let expectedPhysicalFeatures = [
+            "Parkmöglichkeit",
+            "ÖPNV in der Nähe",
+            "Barrierefreier Zugang",
+            "Abholautomat",
+        ]
+        for feature in expectedPhysicalFeatures {
+            XCTAssertTrue(
+                app.staticTexts[feature].waitForExistence(timeout: 2),
+                "Expected physical feature '\(feature)' to be visible on pharmacy detail"
+            )
+        }
+
+        // Specialities ("Services" section)
+        let expectedSpecialities = [
+            "Allergietest erwerben",
+            "Beratung bei Organtransplantation",
+            "Beratung bei Polymedikation",
+            "Betreuung oraler Krebstherapie",
+            "Bluthochdruck kontrollieren",
+            "Impfen lassen",
+            "Inhalationsschulung",
+            "Körperwerte messen",
+            "Reisemedizinberatung",
+            "Sterilherstellung",
+        ]
+        for speciality in expectedSpecialities {
+            XCTAssertTrue(
+                app.staticTexts[speciality].waitForExistence(timeout: 2),
+                "Expected speciality '\(speciality)' to be visible on pharmacy detail"
+            )
+        }
     }
 
     override func tearDown() {

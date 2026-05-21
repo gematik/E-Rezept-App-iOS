@@ -30,6 +30,7 @@ import Foundation
 import IDP // for generateSecureRandom
 import LocalAuthentication
 import Profiles
+import Sharing
 
 protocol AppSecurityManager {
     func save(password: String) throws -> Bool
@@ -281,7 +282,7 @@ enum AppSecurityManagerError: Error, Equatable {
     var errorDescription: String? {
         switch self {
         case let .localAuthenticationContext(error):
-            guard let error = error else { return nil }
+            guard let error else { return nil }
 
             if error.code == LAError.Code.biometryNotEnrolled.rawValue {
                 return L10n.authTxtBiometricsFailedNotEnrolled.text
@@ -297,7 +298,15 @@ enum AppSecurityManagerError: Error, Equatable {
 // MARK: TCA Dependency
 
 struct AppSecurityManagerDependency: DependencyKey {
-    static let liveValue: AppSecurityManager = DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
+    static let liveValue: AppSecurityManager = {
+        @Shared(.isDemoMode) var isDemoMode: Bool
+
+        if isDemoMode {
+            return DemoAppSecurityPasswordManager()
+        } else {
+            return DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
+        }
+    }()
 
     static let previewValue: AppSecurityManager = DemoAppSecurityPasswordManager()
 
@@ -328,7 +337,7 @@ struct DummyAppSecurityManager: AppSecurityManager {
     }
 
     var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {
-        return (options: underlyingOptions, error: underlyingError)
+        (options: underlyingOptions, error: underlyingError)
     }
 
     func save(password _: String) throws -> Bool {

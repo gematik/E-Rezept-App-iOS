@@ -74,7 +74,7 @@ public struct SearchBar: View {
                     // X button
                     if isEditing, !searchText.isEmpty {
                         Button(
-                            action: { self.searchText = "" },
+                            action: { searchText = "" },
                             label: {
                                 Image(systemName: SFSymbolName.xmarkCircleFill)
                                     .foregroundColor(Colors.systemGray)
@@ -94,8 +94,8 @@ public struct SearchBar: View {
                 Button(
                     action: {
                         withAnimation {
-                            self.isEditing = false
-                            self.searchText = ""
+                            isEditing = false
+                            searchText = ""
                         }
                         isEditing = false
                     },

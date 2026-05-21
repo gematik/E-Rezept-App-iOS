@@ -137,7 +137,9 @@ extension ButtonStyle where Self == PictureButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primary)`` modifier.
-    public static var picture: PictureButtonStyle { PictureButtonStyle() }
+    public static var picture: PictureButtonStyle {
+        PictureButtonStyle()
+    }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///

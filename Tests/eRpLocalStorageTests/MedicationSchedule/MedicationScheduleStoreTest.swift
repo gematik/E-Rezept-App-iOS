@@ -122,15 +122,15 @@ final class MedicationScheduleStoreTest: XCTestCase {
         let saveResult = try sut.save(medicationSchedules: initialSchedules)
         expect(saveResult).to(equal(initialSchedules))
 
-        let updatedTask1Schedule = MedicationSchedule(
-            start: "2021-06-11T10:55:06+02:00".date!,
-            end: "2021-07-10T10:55:06+02:00".date!,
+        let updatedTask1Schedule = try MedicationSchedule(
+            start: XCTUnwrap("2021-06-11T10:55:06+02:00".date),
+            end: XCTUnwrap("2021-07-10T10:55:06+02:00".date),
             title: "Test Schedule updated",
             dosageInstructions: "Two times a day",
             taskId: task1Schedule.taskId,
             isActive: true,
             entries: [
-                task1Schedule.entries.first!,
+                XCTUnwrap(task1Schedule.entries.first),
                 .init(hourComponent: 16, minuteComponent: 50, dosageForm: "Dosis", amount: "2"),
             ]
         )
@@ -184,7 +184,7 @@ final class MedicationScheduleStoreTest: XCTestCase {
         let saveResult = try sut.save(medicationSchedules: scheduleInStore)
         expect(saveResult).to(equal(scheduleInStore))
 
-        let entryId = task.medicationSchedule!.entries.first!.id
+        let entryId = try XCTUnwrap(task.medicationSchedule?.entries.first?.id)
         let resultByEntityId = try sut.fetch(byEntryId: entryId, dateProvider: { Date() })
 
         let expectedResult = MedicationScheduleFetchByEntryIdResponse(

@@ -26,20 +26,20 @@ import HTTPClient
 
 @CodedError("540")
 public enum AVSError: Swift.Error {
-    @ErrorCode("01")
     /// In case of HTTP/Connection error
+    @ErrorCode("01")
     case network(error: HTTPClientError)
-    @ErrorCode("02")
     /// When failed to create an AVSMessage
+    @ErrorCode("02")
     case invalidAVSMessageInput
-    @ErrorCode("03")
     /// When an X509 certificate was of unexpected format
+    @ErrorCode("03")
     case invalidX509Input
-    @ErrorCode("04")
     /// Conversion error when trying to cast to `AVSError` but error type was different
+    @ErrorCode("04")
     case unspecified(error: Swift.Error)
-    @ErrorCode("05")
     /// Internal error
+    @ErrorCode("05")
     case `internal`(error: InternalError)
 
     @CodedError("541")

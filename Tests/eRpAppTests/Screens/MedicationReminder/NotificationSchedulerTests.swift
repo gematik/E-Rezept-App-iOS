@@ -245,185 +245,171 @@ extension NotificationSchedulerTests {
         static let now = Date.now
         static let calendar = Calendar.current
         static let oneHourLater = now.addingTimeInterval(60)
-        static let medicationScheduleOneEntryAllWeekdays: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: now,
-                end: now,
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId1",
-                isActive: true,
-                weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "oneEntryFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourLater),
-                        minuteComponent: calendar.component(.minute, from: oneHourLater),
-                        dosageForm: "pill",
-                        amount: "1"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleOneEntryAllWeekdays: MedicationSchedule = .init(
+            id: UUID(),
+            start: now,
+            end: now,
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId1",
+            isActive: true,
+            weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "oneEntryFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourLater),
+                    minuteComponent: calendar.component(.minute, from: oneHourLater),
+                    dosageForm: "pill",
+                    amount: "1"
+                ),
+            ]
+        )
 
-        static let medicationScheduleOneEntryEndDistantFutureAllWeekdays: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: now,
-                end: Date.distantFuture,
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId1",
-                isActive: true,
-                weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "oneEntryFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourLater),
-                        minuteComponent: calendar.component(.minute, from: oneHourLater),
-                        dosageForm: "pill",
-                        amount: "1"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleOneEntryEndDistantFutureAllWeekdays: MedicationSchedule = .init(
+            id: UUID(),
+            start: now,
+            end: Date.distantFuture,
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId1",
+            isActive: true,
+            weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "oneEntryFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourLater),
+                    minuteComponent: calendar.component(.minute, from: oneHourLater),
+                    dosageForm: "pill",
+                    amount: "1"
+                ),
+            ]
+        )
 
         static let oneHourEarlier = now.addingTimeInterval(-60)
-        static let medicationScheduleOneEntryInThePastAllWeekdays: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: now,
-                end: now,
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId1",
-                isActive: true,
-                weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "oneEntryFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourEarlier),
-                        minuteComponent: calendar.component(.minute, from: oneHourEarlier),
-                        dosageForm: "pill",
-                        amount: "1"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleOneEntryInThePastAllWeekdays: MedicationSchedule = .init(
+            id: UUID(),
+            start: now,
+            end: now,
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId1",
+            isActive: true,
+            weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "oneEntryFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourEarlier),
+                    minuteComponent: calendar.component(.minute, from: oneHourEarlier),
+                    dosageForm: "pill",
+                    amount: "1"
+                ),
+            ]
+        )
 
         static let twoHoursLater = now.addingTimeInterval(60 * 2)
-        static let medicationScheduleTwoEntriesAllWeekdays: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: now,
-                end: now,
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId2",
-                isActive: true,
-                weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "twoEntriesFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourLater),
-                        minuteComponent: calendar.component(.minute, from: oneHourLater),
-                        dosageForm: "pill",
-                        amount: "1"
-                    ),
-                    .init(
-                        id: UUID(),
-                        title: "twoEntriesSecondEntry",
-                        hourComponent: calendar.component(.hour, from: twoHoursLater),
-                        minuteComponent: calendar.component(.minute, from: twoHoursLater),
-                        dosageForm: "pill",
-                        amount: "2"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleTwoEntriesAllWeekdays: MedicationSchedule = .init(
+            id: UUID(),
+            start: now,
+            end: now,
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId2",
+            isActive: true,
+            weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "twoEntriesFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourLater),
+                    minuteComponent: calendar.component(.minute, from: oneHourLater),
+                    dosageForm: "pill",
+                    amount: "1"
+                ),
+                .init(
+                    id: UUID(),
+                    title: "twoEntriesSecondEntry",
+                    hourComponent: calendar.component(.hour, from: twoHoursLater),
+                    minuteComponent: calendar.component(.minute, from: twoHoursLater),
+                    dosageForm: "pill",
+                    amount: "2"
+                ),
+            ]
+        )
 
-        static let medicationScheduleTwoEntriesEndsInTwoDaysAllWeekdays: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: now,
-                end: now.advanced(by: 60 * 60 * 24),
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId2",
-                isActive: true,
-                weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "twoEntriesFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourLater),
-                        minuteComponent: calendar.component(.minute, from: oneHourLater),
-                        dosageForm: "pill",
-                        amount: "1"
-                    ),
-                    .init(
-                        id: UUID(),
-                        title: "twoEntriesSecondEntry",
-                        hourComponent: calendar.component(.hour, from: twoHoursLater),
-                        minuteComponent: calendar.component(.minute, from: twoHoursLater),
-                        dosageForm: "pill",
-                        amount: "2"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleTwoEntriesEndsInTwoDaysAllWeekdays: MedicationSchedule = .init(
+            id: UUID(),
+            start: now,
+            end: now.advanced(by: 60 * 60 * 24),
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId2",
+            isActive: true,
+            weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "twoEntriesFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourLater),
+                    minuteComponent: calendar.component(.minute, from: oneHourLater),
+                    dosageForm: "pill",
+                    amount: "1"
+                ),
+                .init(
+                    id: UUID(),
+                    title: "twoEntriesSecondEntry",
+                    hourComponent: calendar.component(.hour, from: twoHoursLater),
+                    minuteComponent: calendar.component(.minute, from: twoHoursLater),
+                    dosageForm: "pill",
+                    amount: "2"
+                ),
+            ]
+        )
 
-        static let medicationScheduleInactiveAllWeekdays: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: now,
-                end: now,
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId3",
-                isActive: false,
-                weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "oneEntryFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourLater),
-                        minuteComponent: calendar.component(.minute, from: oneHourLater),
-                        dosageForm: "pill",
-                        amount: "3"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleInactiveAllWeekdays: MedicationSchedule = .init(
+            id: UUID(),
+            start: now,
+            end: now,
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId3",
+            isActive: false,
+            weekdays: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "oneEntryFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourLater),
+                    minuteComponent: calendar.component(.minute, from: oneHourLater),
+                    dosageForm: "pill",
+                    amount: "3"
+                ),
+            ]
+        )
 
         static let fixedData = Date(timeIntervalSinceReferenceDate: 766_565_081) // 2025-04-17 06:44:24 UTC
-        static let medicationScheduleEndsInTwoWeeksMondaysOnly: MedicationSchedule = {
-            MedicationSchedule(
-                id: UUID(),
-                start: Self.fixedData,
-                end: Self.fixedData.advanced(by: 60 * 60 * 24 * 15),
-                title: "",
-                dosageInstructions: "",
-                taskId: "taskId4",
-                isActive: true,
-                weekdays: [.monday],
-                entries: [
-                    .init(
-                        id: UUID(),
-                        title: "oneEntryFirstEntry",
-                        hourComponent: calendar.component(.hour, from: oneHourLater),
-                        minuteComponent: calendar.component(.minute, from: oneHourLater),
-                        dosageForm: "pill",
-                        amount: "3"
-                    ),
-                ]
-            )
-        }()
+        static let medicationScheduleEndsInTwoWeeksMondaysOnly: MedicationSchedule = .init(
+            id: UUID(),
+            start: Self.fixedData,
+            end: Self.fixedData.advanced(by: 60 * 60 * 24 * 15),
+            title: "",
+            dosageInstructions: "",
+            taskId: "taskId4",
+            isActive: true,
+            weekdays: [.monday],
+            entries: [
+                .init(
+                    id: UUID(),
+                    title: "oneEntryFirstEntry",
+                    hourComponent: calendar.component(.hour, from: oneHourLater),
+                    minuteComponent: calendar.component(.minute, from: oneHourLater),
+                    dosageForm: "pill",
+                    amount: "3"
+                ),
+            ]
+        )
     }
 
     private static func roundDownToMinute(_ date: Date) -> Date {

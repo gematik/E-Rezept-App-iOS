@@ -126,7 +126,8 @@ extension Reducer {
             scenario = nil
         }
 
-        return transformDependency(\.self) { dependencies in
+        // swiftformat:disable:next redundantSelf
+        return self.transformDependency(\.self) { dependencies in
             guard scenario != nil || isRecording else { return }
 
             dependencies.userDataStore = SmartMocks.shared.smartMockUserDataStore(scenario, isRecording)
@@ -185,7 +186,7 @@ struct UITestLoginHandler: LoginHandler {
     }
 }
 
-// Keep static instances of SmartMocks to avoid multiple creations while reducers are called multiple times
+/// Keep static instances of SmartMocks to avoid multiple creations while reducers are called multiple times
 struct SmartMocks {
     @Dependency(\.smartMockRegister) var smartMockRegister: SmartMockRegister
     static var shared = SmartMocks()
@@ -388,7 +389,7 @@ struct ScenarioLoader {
         )
     }
 
-    private func loadMockData<T>(scenarioUrl: URL, with name: String) -> T? where T: Codable {
+    private func loadMockData<T: Codable>(scenarioUrl: URL, with name: String) -> T? {
         let filePath = scenarioUrl.appendingPathComponent("\(name).json", isDirectory: false)
         guard FileManager.default.fileExists(atPath: filePath.path),
               let jsonData = try? Data(contentsOf: filePath).applyingDynamicReplacements(scenarioUrl) else {
@@ -421,7 +422,7 @@ struct ScenarioLoader {
 }
 
 extension Data {
-    // This method loads a JSON file and expands all template variables and file references.
+    /// This method loads a JSON file and expands all template variables and file references.
     func applyingDynamicReplacements(_ baseUrl: URL) -> Data {
         // Expand file references
         let expandedFileReferences = expandFileReferences(baseUrl)
@@ -440,7 +441,7 @@ extension Data {
     }
 }
 
-// Load the corresponding json file into a json object and return the element the given keypath.
+/// Load the corresponding json file into a json object and return the element the given keypath.
 func jsonFile(from filePath: URL, at keyPath: String) -> [String: Any] {
     guard FileManager.default.fileExists(atPath: filePath.path),
           let jsonData = try? Data(contentsOf: filePath) else {
@@ -462,7 +463,7 @@ func jsonFile(from filePath: URL, at keyPath: String) -> [String: Any] {
     return result
 }
 
-extension Dictionary where Self.Key == String, Self.Value == Any {
+extension [String: Any] {
     mutating func expandFileReferences(_ baseUrl: URL) {
         traverse { dictionary in
             dictionary.performFileReplacements(baseUrl)
@@ -519,7 +520,7 @@ extension Dictionary where Self.Key == String, Self.Value == Any {
     }
 }
 
-extension Array where Element == Any {
+extension [Any] {
     mutating func traverse(_ alterDictionary: (inout [String: Any]) -> Void) {
         for index in 0 ..< count {
             if let dictionary = self[index] as? [String: Any] {
@@ -535,13 +536,13 @@ extension Array where Element == Any {
 }
 
 extension Data {
-    // This extension method expands file references in the JSON data. It replaces all objects with occurrences of the
-    // `_FILE` key with the corresponding file content. The value of the `_FILE` key must be a string with the format
-    // `<filename>#<keypath>`. The `<filename>` is the name of the file to load and the `<keypath>` is the path to the
-    // object within the JSON file. The method returns the expanded JSON data.
-    // Another key named `_REPLACE` can be used to replace placeholders in the JSON file. The value of the `_REPLACE`
-    // key is a dictionary with the format `<find>: <replace>`. The method replaces all occurrences of `<find>` with
-    // `<replace>` in the JSON file.
+    /// This extension method expands file references in the JSON data. It replaces all objects with occurrences of the
+    /// `_FILE` key with the corresponding file content. The value of the `_FILE` key must be a string with the format
+    /// `<filename>#<keypath>`. The `<filename>` is the name of the file to load and the `<keypath>` is the path to the
+    /// object within the JSON file. The method returns the expanded JSON data.
+    /// Another key named `_REPLACE` can be used to replace placeholders in the JSON file. The value of the `_REPLACE`
+    /// key is a dictionary with the format `<find>: <replace>`. The method replaces all occurrences of `<find>` with
+    /// `<replace>` in the JSON file.
     func expandFileReferences(_ baseUrl: URL) -> Data {
         guard var json = try? JSONSerialization.jsonObject(with: self, options: []) else {
             return self
@@ -567,8 +568,9 @@ extension Data {
 }
 
 extension String {
-    // This extension method applies UUID replacements to the string using a specific pattern. The pattern is defined as
-    // "{{UUID}}". It replaces each occurrenc of the pattern with a new UUID string.
+    /// This extension method applies UUID replacements to the string using a specific pattern.
+    /// The pattern is defined as "{{UUID}}".
+    /// It replaces each occurrenc of the pattern with a new UUID string.
     func applyingUUIDReplacements() -> String {
         let pattern = #"\{\{UUID\}\}"#
 

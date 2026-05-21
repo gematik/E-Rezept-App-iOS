@@ -33,9 +33,17 @@ public protocol Claims: Codable {
 
 extension Claims {
     /// Expires
-    public var exp: Date? { nil }
+    public var exp: Date? {
+        nil
+    }
+
     /// Issued at
-    public var iat: Date? { nil }
+    public var iat: Date? {
+        nil
+    }
+
     /// not before
-    public var nbf: Date? { nil }
+    public var nbf: Date? {
+        nil
+    }
 }

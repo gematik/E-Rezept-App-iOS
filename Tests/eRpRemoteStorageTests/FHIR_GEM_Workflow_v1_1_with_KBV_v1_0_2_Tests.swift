@@ -27,7 +27,7 @@ import ModelsR4
 import Nimble
 import XCTest
 
-// FHIRBundle tests with different workflow and kbv versions
+/// FHIRBundle tests with different workflow and kbv versions
 final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
     /// FHIRBundle test with
     /// - workflow bundle version: 1.0.0 and

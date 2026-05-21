@@ -24,14 +24,9 @@ import eRpResources
 import XCTest
 
 @MainActor
-struct DiGaDetailsScreen<Previous>: Screen where Previous: Screen {
+struct DiGaDetailsScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
 
     func mainButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         button(by: A11y.diga.detail.digaDtlBtnMainAction, fileID: fileID, file: file, line: line)

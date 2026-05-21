@@ -97,7 +97,7 @@ struct PrescriptionArchiveDomain {
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 

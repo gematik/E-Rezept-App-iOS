@@ -39,7 +39,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     @Published private var tokenState: IDPToken?
     @Published private var accessTokenState: String?
 
-    internal var keychainHelper: KeychainAccessHelper = SystemKeychainAccessHelper()
+    var keychainHelper: KeychainAccessHelper = SystemKeychainAccessHelper()
 
     private let profileId: UUID
 
@@ -96,7 +96,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     func set(can: String?) {
         let success: Bool
         do {
-            if let can = can {
+            if let can {
                 // tag::KeychainStorageIdentifierExample3[]
                 success = try keychainHelper.setGenericPassword(can, for: egkPasswordIdentifier)
                 // end::KeychainStorageIdentifierExample3[]
@@ -142,7 +142,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         // [REQ:gemSpec_IDP_Frontend:A_21328#3] KeychainStorage implementation
         let success: Bool
         do {
-            if let token = token,
+            if let token,
                let tokenData = try? JSONEncoder().encode(token) {
                 success = try keychainHelper.setGenericPassword(tokenData, for: idpTokenIdentifier)
             } else {
@@ -183,7 +183,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     func set(discovery document: DiscoveryDocument?) {
         let success: Bool
         do {
-            if let document = document {
+            if let document {
                 let archiver = NSKeyedArchiver(requiringSecureCoding: true)
                 archiver.outputFormat = .binary
                 try archiver.encodeEncodable(document, forKey: NSKeyedArchiveRootObjectKey)
@@ -201,8 +201,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         }
     }
 
-    private func retrieveCertificate() -> AnyPublisher<X509?, Never> {
-        Deferred { [keychainHelper, egkAuthCertIdentifier] () -> AnyPublisher<X509?, Never> in
+    private func retrieveCertificate() -> AnyPublisher<IDPX509?, Never> {
+        Deferred { [keychainHelper, egkAuthCertIdentifier] () -> AnyPublisher<IDPX509?, Never> in
             guard let derBytes = try? keychainHelper.genericPasswordData(for: egkAuthCertIdentifier),
                   let certificate = try? X509(der: derBytes)
             else {
@@ -214,11 +214,11 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         .eraseToAnyPublisher()
     }
 
-    var certificate: AnyPublisher<X509?, Never> {
+    var certificate: AnyPublisher<IDPX509?, Never> {
         retrieveCertificate()
     }
 
-    func set(certificate: X509?) {
+    func set(certificate: IDPX509?) {
         if let derBytes = certificate?.derBytes {
             // [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
             _ = try? keychainHelper.setGenericPassword(derBytes, for: egkAuthCertIdentifier)
@@ -236,7 +236,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         .eraseToAnyPublisher()
     }
 
-    // idp pairing identifier for registered device
+    /// idp pairing identifier for registered device
     var keyIdentifier: AnyPublisher<Data?, Never> {
         retrieveKeyIdentifier()
     }
@@ -246,7 +246,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     func set(keyIdentifier: Data?) {
         let success: Bool
         do {
-            if let keyIdentifier = keyIdentifier {
+            if let keyIdentifier {
                 // [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
                 success = try keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
             } else {

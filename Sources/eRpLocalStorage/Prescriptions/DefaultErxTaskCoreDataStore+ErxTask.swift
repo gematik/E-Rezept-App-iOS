@@ -36,7 +36,7 @@ extension DefaultErxTaskCoreDataStore {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
         var subPredicates = [NSPredicate]()
         subPredicates.append(NSPredicate(format: "%K == %@", #keyPath(ErxTaskEntity.identifier), taskID))
-        if let accessCode = accessCode {
+        if let accessCode {
             let predicate = NSPredicate(
                 format: "%K == %@",
                 #keyPath(ErxTaskEntity.accessCode),
@@ -128,11 +128,11 @@ extension DefaultErxTaskCoreDataStore {
             return true
         }
         .flatMap { [weak self] _ -> AnyPublisher<Bool, LocalStoreError> in
-            guard let self = self else {
+            guard let self else {
                 return Just(false).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             }
             return coreDataCrudable.save(mergePolicy: .mergeByPropertyObjectTrump) { [weak self] moc -> Bool in
-                guard let self = self else { return false }
+                guard let self else { return false }
                 let profileEntity = self.fetchProfile(profileId, in: moc)
 
                 if updateProfileLastAuthenticated {
@@ -165,7 +165,7 @@ extension DefaultErxTaskCoreDataStore {
                         taskEntity.addToMedicationDispenses($0)
                     }
 
-                    if let profileEntity = profileEntity {
+                    if let profileEntity {
                         if profileEntity.insuranceId == nil || task.patient?.insuranceId == nil {
                             taskEntity.profile = profileEntity
                         } else if profileEntity.insuranceId == task.patient?.insuranceId {

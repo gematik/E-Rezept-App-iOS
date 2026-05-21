@@ -49,13 +49,11 @@ final class ErxTaskTests: XCTestCase {
         moc = container.viewContext
     }
 
-    lazy var loadedTask: ErxTask = {
-        ErxTask(identifier: "id_1",
-                status: .ready,
-                flowType: ErxTask.FlowType.pharmacyOnly,
-                lastModified: "2021-07-10T10:55:04+02:00",
-                source: .server)
-    }()
+    lazy var loadedTask: ErxTask = .init(identifier: "id_1",
+                                         status: .ready,
+                                         flowType: ErxTask.FlowType.pharmacyOnly,
+                                         lastModified: "2021-07-10T10:55:04+02:00",
+                                         source: .server)
 
     func testInitFromErxTaskEntitySettingCorrectStatus() throws {
         let redemption = Date()
@@ -134,13 +132,11 @@ final class ErxTaskTests: XCTestCase {
         expect(sut.status).to(equal(.ready))
     }
 
-    lazy var scannedTask: ErxTask = {
-        ErxTask(identifier: "id_1",
-                status: .ready,
-                flowType: ErxTask.FlowType.pharmacyOnly,
-                lastModified: "2021-07-10T10:55:04+02:00",
-                source: .scanner)
-    }()
+    lazy var scannedTask: ErxTask = .init(identifier: "id_1",
+                                          status: .ready,
+                                          flowType: ErxTask.FlowType.pharmacyOnly,
+                                          lastModified: "2021-07-10T10:55:04+02:00",
+                                          source: .scanner)
 
     func testInitFromErxTaskEntitySettingCorrectStatusForScannedTasks() throws {
         let redemption = Date()

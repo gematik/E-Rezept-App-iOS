@@ -56,8 +56,11 @@ public struct CountrySelectionView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(L10n.euredeemCountrySelectionTitle)
                         .font(.title3.bold())
+                        .foregroundStyle(Colors.systemLabel)
+                        .accessibilityAddTraits(.isHeader)
                     Text(L10n.euredeemCountrySelectionSubtitle)
                         .font(.subheadline)
+                        .foregroundStyle(Colors.systemLabelSecondary)
                         .padding(.bottom, 8)
 
                     SearchBar(
@@ -86,21 +89,36 @@ public struct CountrySelectionView: View {
                 }
                 .padding(.horizontal)
 
-                List {
-                    ForEach(store.filteredCountries) { country in
-                        Button {
-                            store.send(.selectCountry(country))
-                        } label: {
-                            HStack {
-                                Text(country.flag)
-                                    .font(.title)
-                                Text(country.name)
+                if store.locationFilterIsEnabled, store.filteredCountries.isEmpty {
+                    VStack {
+                        Spacer()
+                        Text(store.currentRegion?.locationSearchEmpty
+                            ?? L10n.euredeemCountrySelectionTxtLocationEmpty.text)
+                            .font(.subheadline)
+                            .foregroundStyle(Colors.systemLabelSecondary)
+                            .multilineTextAlignment(.center)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 24)
+                } else {
+                    List {
+                        ForEach(store.filteredCountries) { country in
+                            Button {
+                                store.send(.selectCountry(country))
+                            } label: {
+                                HStack {
+                                    Text(country.flag)
+                                        .font(.title)
+                                        .foregroundStyle(Colors.systemLabel)
+                                        .accessibilityHidden(true)
+                                    Text(country.displayName ?? country.name)
+                                }
+                                .alignmentGuide(.listRowSeparatorLeading) { $0[.listRowSeparatorLeading] + 40 }
                             }
-                            .alignmentGuide(.listRowSeparatorLeading) { $0[.listRowSeparatorLeading] + 40 }
                         }
                     }
+                    .listStyle(PlainListStyle())
                 }
-                .listStyle(PlainListStyle())
             }
         }
         .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))

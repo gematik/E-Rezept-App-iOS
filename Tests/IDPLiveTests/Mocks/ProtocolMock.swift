@@ -24,7 +24,9 @@
 import IDP
 import TrustStore
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension TrustStoreSession {}
 extension ExtAuthRequestStorage {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

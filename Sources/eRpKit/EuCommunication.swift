@@ -51,7 +51,7 @@ public struct EuCommunication: Identifiable, Hashable, Codable, Sendable {
         isRead: Bool = false,
         euAccessCode: EuAccessCode? = nil,
         profileId: UUID? = nil,
-        countryCode: String? = nil,
+        countryCode: String? = nil
 
     ) {
         self.id = id
@@ -75,7 +75,7 @@ public struct EuCommunication: Identifiable, Hashable, Codable, Sendable {
         case unknown
     }
 
-    // The message header is based on the event origion for deletion event
+    /// The message header is based on the event origion for deletion event
     public enum DeletionOriginEvent: Sendable, Codable, Equatable, Hashable {
         case created
         case refreshed

@@ -24,6 +24,7 @@ import CodedError
 import eRpKit
 import Foundation
 import ModelsR4
+
 // swiftlint:disable file_length
 @CodedError("580")
 public enum RemoteStorageBundleParsingError: Swift.Error {
@@ -33,7 +34,7 @@ public enum RemoteStorageBundleParsingError: Swift.Error {
 
 extension ModelsR4.Bundle {
     func parseErxTasksContainer() throws -> PagedContent<[ErxTask]> {
-        PagedContent(content: try parseErxTasksFromContainer(), next: parseNext())
+        try PagedContent(content: parseErxTasksFromContainer(), next: parseNext())
     }
 
     /// Parse and extract all found ErxTasks from `Self`
@@ -253,7 +254,7 @@ extension ModelsR4.Bundle {
 
     func findResource<Resource: ModelsR4.Resource>(for metaProfile: String?,
                                                    type _: Resource.Type) -> Resource? {
-        guard let metaProfile = metaProfile else { return nil }
+        guard let metaProfile else { return nil }
         // try finding it by identifier
         if let bundle = entry?.compactMap({ $0.resource?.get(if: Resource.self) }),
            let resource = bundle.first(where: { bundleEntry in
@@ -502,7 +503,7 @@ extension ModelsR4.Bundle {
         .joined(separator: ",")
     }
 
-    // DiGa
+    /// DiGa
     var deviceRequest: ModelsR4.DeviceRequest? {
         entry?.lazy.compactMap {
             $0.resource?.get(if: ModelsR4.DeviceRequest.self)
@@ -542,7 +543,7 @@ extension ModelsR4.TaskInput {
     }
 }
 
-extension Sequence where Element == ModelsR4.TaskInput {
+extension Sequence<ModelsR4.TaskInput> {
     var firstPatientReceipt: ModelsR4.TaskInput? {
         first { inputType in
             inputType.isPatientReceiptDocumentType
@@ -550,7 +551,7 @@ extension Sequence where Element == ModelsR4.TaskInput {
     }
 }
 
-extension Sequence where Element == ModelsR4.PractitionerQualification {
+extension Sequence<ModelsR4.PractitionerQualification> {
     var qualificationText: String? {
         first { $0.code.text != nil }?.code.text?.value?.string
     }

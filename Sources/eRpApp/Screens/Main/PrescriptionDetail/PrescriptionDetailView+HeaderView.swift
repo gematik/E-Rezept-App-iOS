@@ -45,7 +45,7 @@ extension PrescriptionDetailView {
                         .focused($focus, equals: .medicationName)
                         .bind(
                             $store.focus.sending(\.setFocus),
-                            to: self.$focus
+                            to: $focus
                         )
 
                         Button {
@@ -164,7 +164,7 @@ extension PrescriptionDetailView {
                     .smallSheet($store
                         .scope(state: \.destination?.substitutionInfo,
                                action: \.destination.substitutionInfo)) { store in
-                            PrescriptionDetailView.HeaderView.SubstitutionAllowedDrawerView(store: store)
+                        PrescriptionDetailView.HeaderView.SubstitutionAllowedDrawerView(store: store)
                     }
                     .accessibility(hidden: true)
 
@@ -181,7 +181,7 @@ extension PrescriptionDetailView {
                     .smallSheet($store
                         .scope(state: \.destination?.scannedPrescriptionInfo,
                                action: \.destination.scannedPrescriptionInfo)) { _ in
-                            ScannedPrescriptionInfoDrawerView(store: store)
+                        ScannedPrescriptionInfoDrawerView(store: store)
                     }
                     .accessibility(hidden: true)
 
@@ -190,7 +190,7 @@ extension PrescriptionDetailView {
                     .smallSheet($store
                         .scope(state: \.destination?.directAssignmentInfo,
                                action: \.destination.directAssignmentInfo)) { _ in
-                            DirectAssignmentDrawerView(store: store)
+                        DirectAssignmentDrawerView(store: store)
                     }
                     .accessibility(hidden: true)
             }

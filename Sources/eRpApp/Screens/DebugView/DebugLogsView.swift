@@ -79,7 +79,7 @@ struct DebugLogsView: View {
                     } label: {
                         LogHeader(log: log)
                     }
-                    .listRowBackground(self.background(for: log))
+                    .listRowBackground(background(for: log))
                 }
             }
         }
@@ -91,7 +91,7 @@ struct DebugLogsView: View {
         .sheet(item: $store
             .scope(state: \.destination?.share,
                    action: \.destination.share)) { store in
-                ShareViewController(store: store)
+            ShareViewController(store: store)
         }
         .onAppear {
             store.send(.loadLogs)

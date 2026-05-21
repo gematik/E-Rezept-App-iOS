@@ -143,7 +143,6 @@ struct RegisteredDevicesDomain {
                 state.content = .notLoaded
             }
             return .none
-
         case .loadDevices:
             let currentState = state.content[case: \State.Content.Cases.loaded] ?? []
             state.content = .loading(currentState)

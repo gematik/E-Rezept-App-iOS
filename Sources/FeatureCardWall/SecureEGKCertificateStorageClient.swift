@@ -91,7 +91,7 @@ extension SecureEGKCertificateStorageClient: DependencyKey {
                 .eraseToAnyPublisher()
             },
             setKeyIdentifier: { profileId, keyIdentifier in
-                if let keyIdentifier = keyIdentifier {
+                if let keyIdentifier {
                     _ = try keychainHelper.setGenericPassword(
                         keyIdentifier,
                         for: idpBiometricKeyIdentifier(for: profileId)

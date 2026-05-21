@@ -99,8 +99,8 @@ struct ReadCardHelpListView: View {
                                     }, label: {
                                         Label(L10n.cdwTxtRcListExtauthMore, systemImage: SFSymbolName.arrowForward)
                                     })
-                                        .labelStyle(.trailingIcon)
-                                        .buttonStyle(.tertiary)
+                                    .labelStyle(.trailingIcon)
+                                    .buttonStyle(.tertiary)
                                 }
                             }
                             .padding()

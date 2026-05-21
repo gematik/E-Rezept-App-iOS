@@ -38,7 +38,7 @@ struct DebugQRCodeExporter<ContentType: Codable>: View {
 
     var body: some View {
         ScrollView {
-            if let image = image {
+            if let image {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(1.0, contentMode: .fit)

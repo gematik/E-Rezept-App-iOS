@@ -53,7 +53,7 @@ public struct PKICertificates: Codable, Equatable {
 
         /// Initialize from json encoded data
         static func from(data: Data) throws -> Self {
-            try Self.jsonDecoder.decode(Base64.self, from: data)
+            try jsonDecoder.decode(Base64.self, from: data)
         }
 
         private static var jsonDecoder: JSONDecoder {

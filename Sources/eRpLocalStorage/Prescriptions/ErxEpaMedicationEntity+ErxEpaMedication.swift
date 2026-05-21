@@ -25,9 +25,9 @@ import eRpKit
 import ModelsR4
 
 extension ErxEpaMedicationEntity {
-    // Glue code to `vaccine: NSNumber` work around in `ErxEpaMedicationEntity`
-    // This is a workaround to store an optional boolean value in `ErxEpaMedicationEntity`
-    // (CoreData does not support optional boolean values (`@NSManaged does not))
+    /// Glue code to `vaccine: NSNumber` work around in `ErxEpaMedicationEntity`
+    /// This is a workaround to store an optional boolean value in `ErxEpaMedicationEntity`
+    /// (CoreData does not support optional boolean values (`@NSManaged does not))
     var isVaccine: Bool? {
         get {
             guard let vaccine else { return nil }
@@ -98,7 +98,7 @@ extension ErxEpaMedication {
         entity: ErxEpaMedicationEntity?,
         decoder: JSONDecoder = JSONDecoder()
     ) {
-        guard let entity = entity
+        guard let entity
         else { return nil }
 
         let epaMedicationType = try? decoder.decode(EpaMedicationType.self, from: entity.epaMedicationType ?? Data())

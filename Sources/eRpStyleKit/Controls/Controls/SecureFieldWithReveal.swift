@@ -78,10 +78,10 @@ public struct SecureFieldWithReveal: View {
             }, label: {
                 Image(systemName: showPassword ? SFSymbolName.eye : SFSymbolName.eyeSlash)
             })
-                .buttonStyle(PlainButtonStyle())
-                .foregroundColor(Colors.systemLabelSecondary)
-                .accessibilityValue(showPassword ? "show" : "hide") // for UITests only
-                .accessibility(hidden: true)
+            .buttonStyle(PlainButtonStyle())
+            .foregroundColor(Colors.systemLabelSecondary)
+            .accessibilityValue(showPassword ? "show" : "hide") // for UITests only
+            .accessibility(hidden: true)
         }
         .padding()
         .font(Font.body)

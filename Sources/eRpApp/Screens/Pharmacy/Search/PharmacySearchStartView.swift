@@ -25,20 +25,16 @@ import ComposableCoreLocation
 import eRpStyleKit
 import MapKit
 import Perception
+import Pharmacy
 import SwiftUI
 
 struct PharmacySearchStartView: View {
     @Bindable var store: StoreOf<PharmacySearchDomain>
 
-    static let height: CGFloat = {
-        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
-        // 193 is the standard height for the Mini-Map Display
-        193 * UIScreen.main.scale / UIScreen.main.nativeScale
-    }()
-
-    init(store: StoreOf<PharmacySearchDomain>) {
-        self.store = store
-    }
+    static let height: CGFloat = // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard
+        // vs. Zoomed
+        // 160 is the standard height for the Mini-Map Display
+        160 * UIScreen.main.scale / UIScreen.main.nativeScale
 
     var body: some View {
         SingleElementSectionContainer(
@@ -80,60 +76,53 @@ struct PharmacySearchStartView: View {
         )
         .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchMapSection)
 
-        SectionContainer(
-            header: {
-                Text(L10n.phaSearchTxtQuickFilterSectionTitle)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(L10n.phaSearchTxtQuickFilterPopularTitle)
+                    .font(.headline)
+                    .foregroundColor(Colors.systemLabel)
                     .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchTxtQuickFilterTitle)
                     .accessibilityAddTraits(.isHeader)
-            },
-            content: {
-                Button {
-                    store.send(
-                        .quickSearch(
-                            filters: [.open, .currentLocation]
-                        ), animation: .default
-                    )
-                } label: {
-                    Label(L10n.phaSearchTxtQuickFilterNearbyAndOpen, systemImage: SFSymbolName.location)
-                }
-                .buttonStyle(.navigation)
-                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterNearby)
 
-                Button {
-                    store.send(
-                        .quickSearch(
-                            filters: [.delivery]
-                        ), animation: .default
-                    )
-                } label: {
-                    Label(L10n.phaSearchTxtQuickFilterDelivery, systemImage: SFSymbolName.bicycle)
-                }
-                .buttonStyle(.navigation)
-                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterDelivery)
-
-                Button {
-                    store.send(
-                        .quickSearch(
-                            filters: [.shipment]
-                        ), animation: .default
-                    )
-                } label: {
-                    Label(L10n.phaSearchTxtQuickFilterShipment, systemImage: SFSymbolName.shippingbox)
-                }
-                .buttonStyle(.navigation)
-                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterShipment)
+                Spacer()
 
                 Button {
                     store.send(.showPharmacyFilter, animation: .default)
                 } label: {
-                    Label(L10n.phaSearchTxtQuickFilterOpenFilters, systemImage: SFSymbolName.sliderHorizontal3)
+                    Label(L10n.phaSearchBtnAllFilters, systemImage: SFSymbolName.sliderHorizontal3)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(Colors.primary700)
                 }
                 .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterOpen)
-                .buttonStyle(.navigation)
             }
-        )
-        .sectionContainerStyle(.bordered)
-        .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchQuickFilterSection)
+
+            PharmacySearchFlowLayout(spacing: 8) {
+                FilterChip(
+                    title: L10n.phaSearchTxtQuickFilterDelivery.key,
+                    isSelected: false
+                ) {
+                    store.send(.quickSearch(filters: [.delivery]), animation: .default)
+                }
+                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterDelivery)
+
+                FilterChip(
+                    title: L10n.phaSearchTxtQuickFilterShipment.key,
+                    isSelected: false
+                ) {
+                    store.send(.quickSearch(filters: [.shipment]), animation: .default)
+                }
+                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterShipment)
+
+                FilterChip(
+                    title: L10n.phaSearchTxtQuickFilterNearbyAndOpen.key,
+                    isSelected: false
+                ) {
+                    store.send(.quickSearch(filters: [.open, .currentLocation]), animation: .default)
+                }
+                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchBtnQuickFilterNearby)
+            }
+        }
+        .padding(.horizontal, 16)
 
         if !store.localPharmacies.isEmpty {
             SingleElementSectionContainer(
@@ -170,5 +159,53 @@ struct PharmacySearchStartView: View {
             .sectionContainerStyle(.bordered)
             .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchLocalPharmSection)
         }
+    }
+}
+
+struct PharmacySearchStartView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            ScrollView {
+                PharmacySearchStartView(
+                    store: PharmacySearchDomain.Dummies.storeOf(
+                        PharmacySearchDomain.Dummies.stateStartView
+                    )
+                )
+            }
+        }
+        .previewDisplayName("Start View (no local pharmacies)")
+
+        NavigationStack {
+            ScrollView {
+                PharmacySearchStartView(
+                    store: PharmacySearchDomain.Dummies.storeOf(
+                        PharmacySearchDomain.Dummies.stateStartViewWithFavorites
+                    )
+                )
+            }
+        }
+        .previewDisplayName("With Favorites")
+
+        NavigationStack {
+            ScrollView {
+                PharmacySearchStartView(
+                    store: PharmacySearchDomain.Dummies.storeOf(
+                        PharmacySearchDomain.Dummies.stateStartViewWithRecentlyUsed
+                    )
+                )
+            }
+        }
+        .previewDisplayName("With Recently Used (no favorites)")
+
+        NavigationStack {
+            ScrollView {
+                PharmacySearchStartView(
+                    store: PharmacySearchDomain.Dummies.storeOf(
+                        PharmacySearchDomain.Dummies.stateStartViewLoading
+                    )
+                )
+            }
+        }
+        .previewDisplayName("Loading")
     }
 }

@@ -529,7 +529,7 @@ class StreamWrappedSecureUserDataStore: SecureUserDataStore {
 	}
 
 	/// SecureEGKCertificateStorage
-	var certificate: AnyPublisher<X509?, Never> {
+	var certificate: AnyPublisher<IDPX509?, Never> {
 		return stream
 			.map { $0.certificate }
 			.switchToLatest()
@@ -541,7 +541,7 @@ class StreamWrappedSecureUserDataStore: SecureUserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
-	func set(certificate: X509?) -> Void {
+	func set(certificate: IDPX509?) -> Void {
         current.set(
 				certificate: certificate
             )
@@ -838,12 +838,6 @@ class StreamWrappedUserSession: UserSession {
 
 	}
 
-	var isAuthenticated: AnyPublisher<Bool, UserSessionError> {
-		return stream
-			.map { $0.isAuthenticated }
-			.switchToLatest()
-			.eraseToAnyPublisher()
-	}
 	var ordersRepository: OrdersRepository { current.ordersRepository }
 	lazy var profileDataStore: ProfileDataStore = {
 		StreamWrappedProfileDataStore(stream: stream.map{ $0.profileDataStore }.eraseToAnyPublisher(), current: current.profileDataStore )
@@ -851,7 +845,6 @@ class StreamWrappedUserSession: UserSession {
 	lazy var shipmentInfoDataStore: ShipmentInfoDataStore = {
 		StreamWrappedShipmentInfoDataStore(stream: stream.map{ $0.shipmentInfoDataStore }.eraseToAnyPublisher(), current: current.shipmentInfoDataStore )
 	}()
-	var updateChecker: UpdateChecker { current.updateChecker }
 	lazy var localUserStore: UserDataStore = {
 		StreamWrappedUserDataStore(stream: stream.map{ $0.localUserStore }.eraseToAnyPublisher(), current: current.localUserStore )
 	}()
@@ -870,8 +863,6 @@ class StreamWrappedUserSession: UserSession {
 	}()
 	var vauStorage: VAUStorage { current.vauStorage }
 	var trustStoreSession: TrustStoreSession { current.trustStoreSession }
-	var appSecurityManager: AppSecurityManager { current.appSecurityManager }
-	var deviceSecurityManager: DeviceSecurityManager { current.deviceSecurityManager }
 	var profileId: UUID { current.profileId }
 	var avsSession: AVSSession { current.avsSession }
 	lazy var avsTransactionDataStore: AVSTransactionDataStore = {

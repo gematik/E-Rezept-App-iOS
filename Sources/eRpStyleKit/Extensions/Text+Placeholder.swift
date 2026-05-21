@@ -24,7 +24,7 @@ import SwiftUI
 
 extension Text {
     /// Initializes a `Text` view with optional content or a `LocalizedStringKey` placeholder.
-    public init<S>(_ content: S?, placeholder: LocalizedStringKey) where S: StringProtocol {
+    public init(_ content: (some StringProtocol)?, placeholder: LocalizedStringKey) {
         if let text = content {
             self = Text(text)
         } else {
@@ -33,7 +33,7 @@ extension Text {
     }
 
     /// Initializes a `Text` view with optional content or a `StringAsset` placeholder.
-    public init<S>(_ text: S?, placeholder: StringAsset) where S: StringProtocol {
+    public init(_ text: (some StringProtocol)?, placeholder: StringAsset) {
         self.init(text, placeholder: placeholder.key)
     }
 }

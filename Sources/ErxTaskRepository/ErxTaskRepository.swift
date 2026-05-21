@@ -157,8 +157,9 @@ public struct ErxTaskRepository: Sendable {
     /// Loads All consents of a given profile
     /// Uses the request headers  ACCESS_TOKEN with the containing insurance id
     ///
+    /// - Parameter profileId: The profile whose FHIR session should be used for the request
     /// - Returns: A list of all loaded `ErxConsent` or throws a `ErxRepositoryError`
-    public var fetchConsents: @Sendable () async throws -> [ErxConsent]
+    public var fetchConsents: @Sendable (_ profileId: UUID) async throws -> [ErxConsent]
 
     /// Loads the `ErxChargeItem` by its id from disk
     /// - Parameters:
@@ -201,16 +202,19 @@ public struct ErxTaskRepository: Sendable {
 
     /// Send a grant consent request of  an `ErxConsent`
     ///
-    /// - Parameter consent: Consent that contains information about the type of consent
+    /// - Parameters:
+    ///   - consent: Consent that contains information about the type of consent
     ///                         and insurance id which the consent will be granted for
+    ///   - profileId: The profile whose FHIR session should be used for the request
     /// - Returns: The `ErxConsent` that was granted  or throws a `ErxRepositoryError`
-    public var grantConsent: @Sendable (_ consent: ErxConsent) async throws -> ErxConsent?
+    public var grantConsent: @Sendable (_ consent: ErxConsent, _ profileId: UUID) async throws -> ErxConsent?
 
     /// Delete an consent of `ErxConsent` to revoke it
     /// - Parameters:
     ///   - category: the `ErxConsent.Category`of the consent to be revoked
+    ///   - profileId: The profile whose FHIR session should be used for the request
     /// - Returns: `Void` if successful or throws a `ErxRepositoryError`
-    public var revokeConsent: @Sendable (_ category: ErxConsent.Category) async throws -> Void
+    public var revokeConsent: @Sendable (_ category: ErxConsent.Category, _ profileId: UUID) async throws -> Void
 
     public var loadRemoteEuAccessCode: @Sendable () async throws -> EuAccessCode?
 

@@ -92,7 +92,6 @@ struct AppStartDomain {
                         .map(AppStartDomain.Action.refreshOnboardingStateReceived)
                         .eraseToAnyPublisher
                 )
-
             case let .refreshOnboardingStateReceived(version):
                 if let version {
                     state.destination = .onboarding(OnboardingDomain.State(version: version))
@@ -183,7 +182,6 @@ struct AppStartDomain {
                     await send(.destination(.app(.setNavigation(.settings))))
                 }
             }
-
         case .scanner:
             return .run { send in
                 // reset destination of settings tab

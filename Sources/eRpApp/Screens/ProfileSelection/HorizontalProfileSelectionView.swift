@@ -53,12 +53,12 @@ struct HorizontalProfileSelectionView: View {
                 }, label: {
                     Image(systemName: SFSymbolName.personCirclePlus)
                 })
-                    .padding(.horizontal)
-                    .padding(.vertical, 5)
-                    .background(Colors.backgroundNeutral)
-                    .border(Colors.systemGray6, cornerRadius: 8)
-                    .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
-                    .accessibilityLabel(L10n.mainBtnAddProfile)
+                .padding(.horizontal)
+                .padding(.vertical, 5)
+                .background(Colors.backgroundNeutral)
+                .border(Colors.systemGray6, cornerRadius: 8)
+                .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
+                .accessibilityLabel(L10n.mainBtnAddProfile)
 
                 Spacer()
             }

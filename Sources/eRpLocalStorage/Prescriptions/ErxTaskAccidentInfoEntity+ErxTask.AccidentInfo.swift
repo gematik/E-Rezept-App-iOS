@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskAccidentInfoEntity {
     convenience init?(accident: AccidentInfo?,
                       in context: NSManagedObjectContext) {
-        guard let accident = accident else { return nil }
+        guard let accident else { return nil }
 
         self.init(context: context)
 
@@ -38,7 +38,7 @@ extension ErxTaskAccidentInfoEntity {
 
 extension AccidentInfo {
     init?(entity: ErxTaskAccidentInfoEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         var accidentType: AccidentInfo.AccidentType?
         if let type = entity.type {

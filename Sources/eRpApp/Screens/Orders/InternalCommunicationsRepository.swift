@@ -32,7 +32,7 @@ struct InternalCommunicationsRepository {
 // MARK: TCA Dependency
 
 extension InternalCommunicationsRepository: DependencyKey {
-    public static let liveValue = InternalCommunicationsRepository {
+    static let liveValue = InternalCommunicationsRepository {
         guard let url = Bundle.module.url(forResource: "internal_messages", withExtension: "json"),
               let data = try? Data(contentsOf: url) else {
             throw InternalCommunicationError.invalidURL

@@ -26,29 +26,29 @@ import HTTPClient
 
 @CodedError("560")
 public enum TrustStoreError: Swift.Error {
-    @ErrorCode("01")
     /// In case of HTTP/Connection error
+    @ErrorCode("01")
     case network(error: HTTPClientError)
-    @ErrorCode("02")
     /// When failed to extract a certificate from the CertList
+    @ErrorCode("02")
     case noCertificateFound
-    @ErrorCode("03")
     /// When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions
+    @ErrorCode("03")
     case invalidOCSPResponse
-    @ErrorCode("04")
     /// When one (or more) end entity certificate cannot be status verified by given OCSP responses
+    @ErrorCode("04")
     case eeCertificateOCSPStatusVerification
-    @ErrorCode("05")
     /// Other error cases
+    @ErrorCode("05")
     case unspecified(error: Swift.Error)
-    @ErrorCode("06")
     /// Internal error
+    @ErrorCode("06")
     case `internal`(error: InternalError)
-    @ErrorCode("07")
     /// When no valid VAU certificate can be provided by the system at the moment
+    @ErrorCode("07")
     case noValidVauCertificateAvailable
-    @ErrorCode("08")
     /// When a certificate is of unexpected (e.g. not parsable) format
+    @ErrorCode("08")
     case malformedCertificate
 
     @CodedError("561")

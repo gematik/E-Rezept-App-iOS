@@ -45,8 +45,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
     }
 
     func makeUIView(context _: Context) -> UIView {
-        let view = UIView()
-        return view
+        UIView()
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
@@ -62,7 +61,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
             // Create the UIViewController that will be presented by the UIButton
             let viewController = SmallSheetContainerViewController(
                 dismissBackgroundTap: {
-                    self.isPresented = false
+                    isPresented = false
                     onDismiss()
                 },
                 contentVC: hostingController
@@ -72,11 +71,15 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
             viewController.modalPresentationStyle = .custom
             viewController.transitioningDelegate = context.coordinator
 
+            // Cache the viewcontroller to present on, in case we need to dismiss while the parent swiftui structure is
+            // no longer present
+            context.coordinator.presentationViewController = uiView.window?.rootViewController?
+                .erp_leafPresentedViewController()
             // Present the viewController
-            uiView.window?.rootViewController?.erp_leafPresentedViewController().present(viewController, animated: true)
+            context.coordinator.presentationViewController?.present(viewController, animated: true)
         } else {
             // Dismiss the viewController
-            uiView.window?.rootViewController?.erp_leafPresentedViewController().dismiss(animated: true)
+            context.coordinator.presentationViewController?.dismiss(animated: true)
         }
     }
 
@@ -87,6 +90,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
     class Coordinator: NSObject, UIAdaptivePresentationControllerDelegate, UIViewControllerTransitioningDelegate {
         var presented = false
         var dismissViaSwiftUIEnvironment: () -> Void
+        weak var presentationViewController: UIViewController?
 
         init(presented: Bool = false, dismissViaSwiftUIEnvironment: @escaping () -> Void) {
             self.presented = presented
@@ -137,7 +141,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
                 delay: 0,
                 options: [.curveEaseInOut]
             ) {
-                if let contextVC = contextVC,
+                if let contextVC,
                    let height = contextVC.contentSize?.height {
                     view.frame = transitionContext.containerView.bounds.offsetBy(dx: 0, dy: height)
                 }
@@ -197,7 +201,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
 
 extension UIViewController {
     func erp_leafPresentedViewController() -> UIViewController {
-        guard let presentedViewController = presentedViewController else {
+        guard let presentedViewController else {
             return self
         }
         return presentedViewController

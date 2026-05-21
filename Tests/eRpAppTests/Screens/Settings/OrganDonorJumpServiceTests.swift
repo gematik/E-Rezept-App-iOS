@@ -70,7 +70,7 @@ final class OrganDonorJumpServiceTests: XCTestCase {
         let profile = Profile(name: "Bob", gIdEntry: nil)
         userSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        let expected = URL(string: "https://www.organspende-info.de/")!
+        let expected = try XCTUnwrap(URL(string: "https://www.organspende-info.de/"))
 
         try await withDependencies { dependencies in
             dependencies.userDataStore = userDataStore

@@ -41,7 +41,7 @@ final class StandardUserSessionTests: XCTestCase {
         return try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
     }
 
-    func testIDTokenValidator_ProfileNotInStore() throws {
+    func testIDTokenValidator_ProfileNotInStore() {
         let sut = MockUserSession()
         let profileIdNotInStore = UUID()
         sut.mockUserDataStore.underlyingSelectedProfileId = Just(profileIdNotInStore).eraseToAnyPublisher()
@@ -80,7 +80,7 @@ final class StandardUserSessionTests: XCTestCase {
         expect(expectedResult) == true
     }
 
-    func testIDTokenValidator_CreatesExpectedOutput() throws {
+    func testIDTokenValidator_CreatesExpectedOutput() {
         let currentProfile = Profile(name: "CurrentProfile", insuranceId: nil)
         let otherProfile = Profile(name: "OtherProfile")
 

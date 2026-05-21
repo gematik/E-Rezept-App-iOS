@@ -25,7 +25,7 @@ import Foundation
 import ModelsR4
 
 extension ModelsR4.MedicationRequest {
-    // emergencyServiceFee
+    /// emergencyServiceFee
     var noctuFeeWaiver: Bool {
         `extension`?.first {
             $0.url.value?.url.absoluteString == ErpPrescription.Key.MedicationRequest.noctuFeeWaiverKey

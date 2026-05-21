@@ -37,10 +37,16 @@ struct CreatePasswordView: View {
             if updatePassword {
                 SingleElementSectionContainer(
                     header: {
-                        SectionHeaderView(
-                            text: L10n.cpwTxtSectionUpdateTitle,
-                            a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
-                        ).padding(.bottom, 8)
+                        HStack {
+                            Text(L10n.cpwTxtSectionUpdateTitle)
+                                .font(.headline)
+                                .foregroundColor(Colors.systemLabel)
+                                .accessibilityIdentifier(A11y.settings.createPassword.cpwTxtSectionUpdateTitle)
+                                .accessibilityAddTraits(.isHeader)
+                                .padding([.top])
+                                .padding(.bottom, 8)
+                            Spacer()
+                        }
                     },
                     footer: {
                         if store.showOriginalPasswordWrong {
@@ -79,10 +85,16 @@ struct CreatePasswordView: View {
 
             SingleElementSectionContainer(
                 header: {
-                    SectionHeaderView(
-                        text: L10n.cpwTxtSectionTitle,
-                        a11y: A11y.settings.createPassword.cpwTxtSectionTitle
-                    ).padding(.bottom, 8)
+                    HStack {
+                        Text(L10n.cpwTxtSectionTitle)
+                            .font(.headline)
+                            .foregroundColor(Colors.systemLabel)
+                            .accessibilityIdentifier(A11y.settings.createPassword.cpwTxtSectionTitle)
+                            .accessibilityAddTraits(.isHeader)
+                            .padding([.top])
+                            .padding(.bottom, 8)
+                        Spacer()
+                    }
                 },
                 footer: {
                     VStack(spacing: 8) {
@@ -145,7 +157,7 @@ struct CreatePasswordView: View {
         }
     }
 
-    @ViewBuilder private func saveButtonAndError() -> some View {
+    private func saveButtonAndError() -> some View {
         Button {
             UIApplication.shared.dismissKeyboard()
             store.send(.saveButtonTapped)

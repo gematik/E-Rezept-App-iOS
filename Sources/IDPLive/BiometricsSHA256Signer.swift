@@ -62,7 +62,7 @@ public enum ConversionError: Swift.Error {
 }
 
 extension Data {
-    // From jose4j EcdsaUsingShaAlgorithm.java
+    /// From jose4j EcdsaUsingShaAlgorithm.java
     func derToConcat() throws -> Data {
         let wholeASN1 = try ASN1Decoder.decode(asn1: self)
         let sequence = try Array(from: wholeASN1)

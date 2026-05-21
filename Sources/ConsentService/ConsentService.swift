@@ -47,7 +47,7 @@ extension ConsentService {
         case granted // 200
         case notGranted // 200
 
-        // login handler
+        /// login handler
         case notAuthenticated
 
         case error(ConsentService.Error)
@@ -59,7 +59,7 @@ extension ConsentService {
         case success // 201
         case conflict // 409 the user's consent has already been given
 
-        // login handler
+        /// login handler
         case notAuthenticated
 
         case error(ConsentService.Error)

@@ -123,10 +123,10 @@ struct DefaultUserProfileService: UserProfileService {
     private let userSession: UserSession
     private let userSessionProvider: UserSessionProvider
 
-    internal init(profileDataStore: ProfileDataStore,
-                  profileOnlineChecker: ProfileOnlineChecker,
-                  userSession: UserSession,
-                  userSessionProvider: UserSessionProvider) {
+    init(profileDataStore: ProfileDataStore,
+         profileOnlineChecker: ProfileOnlineChecker,
+         userSession: UserSession,
+         userSessionProvider: UserSessionProvider) {
         self.profileDataStore = profileDataStore
         self.profileOnlineChecker = profileOnlineChecker
         self.userSession = userSession
@@ -206,10 +206,6 @@ struct DefaultProfileOnlineChecker: ProfileOnlineChecker {
         return userSessionProvider.userSession(for: profile.id).secureUserStore.token
     }
 }
-
-// MARK: TCA Dependency
-
-extension DefaultUserProfileService {}
 
 struct UserProfileServiceDependency: DependencyKey {
     static var live: DefaultUserProfileService {

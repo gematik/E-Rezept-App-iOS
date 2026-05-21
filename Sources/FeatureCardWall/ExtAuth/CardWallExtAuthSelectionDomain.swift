@@ -110,7 +110,7 @@ public struct CardWallExtAuthSelectionDomain {
 
     /// The reducer body that handles state transitions and effects
     public var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -134,7 +134,12 @@ public struct CardWallExtAuthSelectionDomain {
             )
         case let .response(.loadKKList(.success(result))):
             state.error = nil
-            let kkListFilteredForInsuranceType = result.apps.filter { $0.pkv == (state.insuranceType == .pKV) }
+            var kkListFilteredForInsuranceType = result.apps.filter { $0.pkv == (state.insuranceType == .pKV) }
+            if state.insuranceType == .federalKV {
+                kkListFilteredForInsuranceType = kkListFilteredForInsuranceType.filter {
+                    $0.name.localizedCaseInsensitiveContains(Profile.InsuranceType.federalKVAlias)
+                }
+            }
             state.kkList = KKAppDirectory(apps: kkListFilteredForInsuranceType)
             return .none
         case let .response(.loadKKList(.failure(error))):

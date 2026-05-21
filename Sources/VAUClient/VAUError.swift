@@ -26,23 +26,23 @@ import HTTPClient
 
 @CodedError("550")
 public enum VAUError: Swift.Error {
-    @ErrorCode("01")
     /// In case of HTTP/Connection error
+    @ErrorCode("01")
     case network(error: HTTPClientError)
-    @ErrorCode("02")
     /// When failed to extract a X.509 VAU certificate information
+    @ErrorCode("02")
     case certificateDecoding
-    @ErrorCode("03")
     /// When internal cryptographic operations fail
+    @ErrorCode("03")
     case internalCryptoError
-    @ErrorCode("04")
     /// In case a response (or request) could not be (cryptographically) verified
+    @ErrorCode("04")
     case responseValidation
-    @ErrorCode("05")
     /// Other error cases
+    @ErrorCode("05")
     case unspecified(error: Swift.Error)
-    @ErrorCode("06")
     /// Internal error
+    @ErrorCode("06")
     case internalError(String)
 }
 

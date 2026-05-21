@@ -132,7 +132,7 @@ struct PrescriptionDetailDomain {
     var body: some Reducer<State, Action> {
         BindingReducer()
 
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -345,7 +345,6 @@ struct PrescriptionDetailDomain {
             return .run { send in
                 await send(.chargeItemGrantConsent)
             }
-
         case .chargeItemGrantConsent:
             guard let profileId = state.profile?.id
             else { return .none }
@@ -641,7 +640,7 @@ extension ErxTask {
     }
 }
 
-extension Collection where Element == ErxTask {
+extension Collection<ErxTask> {
     func shareUrl() -> URL? {
         let shareTasks = map { SharedTask(with: $0).asString }.joined(separator: "&")
         guard let encoded = try? JSONEncoder().encode([shareTasks]),

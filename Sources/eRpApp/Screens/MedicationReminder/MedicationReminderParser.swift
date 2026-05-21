@@ -49,9 +49,7 @@ extension MedicationReminderParser {
             ?? erxTask.medication?.amount?.numerator.unit
             ?? L10n.medReminderTxtParserMedicationSchedulePlaceholderAmount.text
 
-        let dosageInstructions: String = {
-            erxTask.medicationRequest.dosageInstructions ?? L10n.prscFdTxtNa.text
-        }()
+        let dosageInstructions: String = erxTask.medicationRequest.dosageInstructions ?? L10n.prscFdTxtNa.text
 
         let medicationScheduleEntries: IdentifiedArrayOf<MedicationSchedule.Entry> = {
             if let dosageInstructions = erxTask.medicationRequest.dosageInstructions {
@@ -71,7 +69,7 @@ extension MedicationReminderParser {
             return []
         }()
 
-        let medicationSchedule = MedicationSchedule(
+        return MedicationSchedule(
             start: date.now,
             end: Date.distantFuture,
             title: title,
@@ -80,10 +78,9 @@ extension MedicationReminderParser {
             isActive: false,
             entries: medicationScheduleEntries
         )
-        return medicationSchedule
     }
 
-    // Transform strings like "1-0-0" or "1-0-0-0" or "1 x morgens" into an Instruction
+    /// Transform strings like "1-0-0" or "1-0-0-0" or "1 x morgens" into an Instruction
     static func parseFromDosageInstructions(_ dosageInstructions: String) -> [Instruction] {
         if #available(iOS 16.0, *) {
             // swiftlint:disable all
@@ -123,13 +120,13 @@ extension MedicationReminderParser {
         }
 
         enum Time {
-            // 1-0-0, 1-0-0-0
+            /// 1-0-0, 1-0-0-0
             case morning
-            // 0-1-0, 0-1-0-0
+            /// 0-1-0, 0-1-0-0
             case noon
-            // 0-0-1, 0-0-1-0
+            /// 0-0-1, 0-0-1-0
             case evening
-            // 0-0-0-1
+            /// 0-0-0-1
             case night
 
             var hourComponent: Int {

@@ -30,7 +30,7 @@ extension URLRequest {
     func encodeToRawString() throws -> String {
         var string = ""
         guard let method = httpMethod,
-              let url = url,
+              let url,
               let host = url.host
         else {
             throw VAUError.internalError("Could not encode URLRequest to raw string")

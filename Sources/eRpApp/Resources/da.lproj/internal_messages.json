@@ -58,5 +58,11 @@
         "text": "**✨ Vis receptkoder** \nSkærmen for batch- og enkeltkoder er blevet redesignet for mere intuitiv brug. \n \n **❤️ Apoteksfavoritter** \nApoteksfavoritter fungerer nu mere pålideligt og er kompatible med VoiceOver. \n \n **♿ Tilgængelighed** \nVoiceOver og tastaturnavigation er forbedret, knapper, tekst og inputfelter er lettere at identificere, og listeelementer er mere logisk struktureret. Forstørret skrifttype fungerer nu på alle appskærme. Animerede videoer afspilles kun én gang for at understøtte brugere med kognitive funktionsnedsættelser.",
         "timestamp": "2026-02-12T08:00:00.000Z",
         "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Forbedrede apoteksoplysninger** \nApoteker kan nu tilføje tjenester såsom vaccinationer og funktioner på stedet, såsom barrierefri adgang. Apoteker kan filtreres baseret på disse nye oplysninger. \n \n **✨ Forbedret apotekssøgning** \nNyligt brugte apoteker og foretrukne apoteker er nu mere tydeligt adskilt. Filtrene er blevet forbedret. \n \n **✅ Sundheds-ID for personer med alternativ forsikring** \nPersoner, der ikke er dækket af lovpligtig eller privat sundhedsforsikring, kan nu også logge ind med deres sundheds-ID. \n \n **♿ Tilgængelighed** \nFiltrene har nu højere kontrast, og deres status er lettere at identificere. Tilgængelighedserklæringen er blevet opdateret og udvidet til at omfatte et afsnit, der dokumenterer ændringshistorikken. Nogle knapper er blevet justeret for forbedret synlighed.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
     }
 ]

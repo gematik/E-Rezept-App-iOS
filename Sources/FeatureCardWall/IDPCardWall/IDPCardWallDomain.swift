@@ -78,7 +78,7 @@ public struct IDPCardWallDomain {
 
     /// The main body of the reducer
     public var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.subdomain, action: \.subdomain) {
                 Subdomain.body
             }

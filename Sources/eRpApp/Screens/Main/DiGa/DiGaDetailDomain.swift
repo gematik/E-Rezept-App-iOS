@@ -49,13 +49,13 @@ struct DiGaDetailDomain {
         var diGaInfo: DiGaInfo
         var bfarmDiGaDetails: BfArMDiGaDetails?
 
-        // stores the bfarmDiGaDetails in a displayable format
+        /// stores the bfarmDiGaDetails in a displayable format
         var bfArMDisplayInfo: BfArMDisplayInfo? {
             BfArMDisplayInfo(bfarmDiGaDetail: bfarmDiGaDetails)
         }
 
         var isAvailabeOniOS: Bool? {
-            guard let bfarmDiGaDetails = bfarmDiGaDetails else { return nil }
+            guard let bfarmDiGaDetails else { return nil }
             return bfarmDiGaDetails.supportedPlatforms.contains { $0.lowercased().contains("ios") }
         }
 
@@ -209,7 +209,7 @@ struct DiGaDetailDomain {
     @Dependency(\.bfArMSession) var bfArMSession: BfArMSession
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -391,7 +391,7 @@ struct DiGaDetailDomain {
                 return .none
             }
         case let .openLink(urlString):
-            guard let urlString = urlString,
+            guard let urlString,
                   let url = URL(string: urlString) else {
                 return .none
             }

@@ -23,6 +23,8 @@
 
 import IDP
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension ExtAuthRequestStorage {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

@@ -37,11 +37,11 @@ final class CameraViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     /// This will create a screen with a successfull scanned prescription
-    func testCameraView_Success() {
+    func testCameraView_Success() throws {
         let scannedString = """
         {"urls":["Task/4711/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"]}
         """
-        let scannedTasks = try! ScannedErxTask.from(tasks: scannedString)
+        let scannedTasks = try ScannedErxTask.from(tasks: scannedString)
         let expectedTaskBatches = Set([scannedTasks])
         let sut = ErxTaskScannerView(
             store: ScannerDomain.Dummies.store(

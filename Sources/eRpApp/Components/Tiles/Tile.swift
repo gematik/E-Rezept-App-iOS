@@ -35,12 +35,12 @@ struct Tile: View {
     var body: some View {
         HStack(spacing: 16) {
             HStack(alignment: .top, spacing: 0) {
-                if let iconSystemName = iconSystemName {
+                if let iconSystemName {
                     Image(systemName: iconSystemName)
                         .frame(minWidth: 24, minHeight: 24)
                         .foregroundColor(isDisabled ? Colors.systemLabelSecondary : Colors.primary500)
                         .font(Font.title3.bold())
-                } else if let iconName = iconName {
+                } else if let iconName {
                     Image(iconName)
                         .frame(minWidth: 24, minHeight: 24)
                         .foregroundColor(isDisabled ? Colors.systemLabelSecondary : Colors.primary500)
@@ -51,7 +51,7 @@ struct Tile: View {
                     Text(title, bundle: .module)
                         .font(Font.subheadline.weight(.semibold))
                         .foregroundColor(isDisabled ? Colors.systemLabelSecondary : Colors.systemLabel)
-                    if let description = description {
+                    if let description {
                         Text(description, bundle: .module)
                             .font(Font.subheadline)
                             .foregroundColor(Colors.systemLabelSecondary)

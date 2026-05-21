@@ -30,10 +30,8 @@ import XCTest
 
 final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
     func store(
-        with state: ChargeItemDomain.State = {
-            .init(profileId: DummyUserProfileService.dummyProfile.id,
-                  chargeItem: ErxChargeItem.Dummies.dummy)
-        }()
+        with state: ChargeItemDomain.State = .init(profileId: DummyUserProfileService.dummyProfile.id,
+                                                   chargeItem: ErxChargeItem.Dummies.dummy)
     ) -> StoreOf<ChargeItemDomain> {
         Store(initialState: state, reducer: EmptyReducer.init)
     }

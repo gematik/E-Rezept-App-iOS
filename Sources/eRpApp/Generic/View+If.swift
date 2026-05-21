@@ -23,7 +23,7 @@
 import SwiftUI
 
 extension View {
-    @ViewBuilder func `if`<IfContent: View>(_ value: Bool, modify: (Self) -> IfContent) -> some View {
+    @ViewBuilder func `if`(_ value: Bool, modify: (Self) -> some View) -> some View {
         if value {
             modify(self)
         } else {
@@ -31,8 +31,8 @@ extension View {
         }
     }
 
-    @ViewBuilder func ifLet<T, IfLetContent: View>(_ value: T?, modify: (Self, T) -> IfLetContent) -> some View {
-        if let value = value {
+    @ViewBuilder func ifLet<T>(_ value: T?, modify: (Self, T) -> some View) -> some View {
+        if let value {
             modify(self, value)
         } else {
             self

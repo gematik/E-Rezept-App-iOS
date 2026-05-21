@@ -64,7 +64,7 @@ public struct DiscoveryDocument: Codable {
         backing = try container.decode(JWT.self, forKey: .payload)
         payload = try backing.decodePayload(type: DiscoveryDocumentPayload.self)
         encryptionPublicKey = try BrainpoolP256r1.KeyExchange
-            .PublicKey(x962: try container.decode(Data.self, forKey: .encryptionPublicKey))
+            .PublicKey(x962: container.decode(Data.self, forKey: .encryptionPublicKey))
         signingCert = try X509(der: container.decode(Data.self, forKey: .tokenKey))
         guard let discHeaderX5C = backing.header.x5c?.first else {
             throw IDPError.noCertificateFound
@@ -87,7 +87,7 @@ public struct DiscoveryDocument: Codable {
 
     public init(jwt: JWT, encryptPuks: JWK, signingPuks: JWK, createdOn: Date = Date()) throws {
         backing = jwt
-        /// Get from every set the first key we encounter and use/set it accordingly
+        // Get from every set the first key we encounter and use/set it accordingly
         guard let signingX5C = signingPuks.x5c?.first else {
             throw IDPError.noCertificateFound
         }

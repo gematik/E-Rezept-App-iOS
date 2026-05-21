@@ -83,8 +83,8 @@ struct OnboardingLegalInfoView: View {
                     .accessibility(identifier: A11y.onboarding.legalInfo.onbBtnNext)
                     .accessibilityLabel(Text(L10n.onbBtnNextHint))
             })
-                .buttonStyle(.primaryHugging)
-                .padding(.top, 8)
+            .buttonStyle(.primaryHugging)
+            .padding(.top, 8)
         }
         .padding()
         .onAppear {

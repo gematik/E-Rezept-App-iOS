@@ -25,9 +25,11 @@ import eRpKit
 import Pharmacy
 import TrustStore
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension TrustStoreSession {}
 extension ErxLocalDataStore {}
 extension PharmacyLocalDataStore {}
 extension ProfileDataStore {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

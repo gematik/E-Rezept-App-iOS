@@ -87,7 +87,7 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
                         .first()
                         .mapError(RegisteredDevicesServiceError.idpError)
                         .flatMap { token -> AnyPublisher<PairingEntries, RegisteredDevicesServiceError> in
-                            guard let token = token else {
+                            guard let token else {
                                 return Fail(error: RegisteredDevicesServiceError.missingToken)
                                     .eraseToAnyPublisher()
                             }
@@ -107,7 +107,7 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
         let userSession = userSessionProvider.userSession(for: profileId)
         return userSession.secureUserStore.keyIdentifier.first()
             .map { identifier in
-                guard let identifier = identifier,
+                guard let identifier,
                       let base64Identifier = identifier.encodeBase64UrlSafe() else {
                     return nil
                 }
@@ -124,7 +124,7 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
             .mapError(RegisteredDevicesServiceError.idpError)
             .first()
             .flatMap { token -> AnyPublisher<Bool, RegisteredDevicesServiceError> in
-                guard let token = token else {
+                guard let token else {
                     return Fail(error: RegisteredDevicesServiceError.missingToken)
                         .eraseToAnyPublisher()
                 }

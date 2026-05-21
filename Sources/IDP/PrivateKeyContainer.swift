@@ -23,7 +23,6 @@
 import CodedError
 import Combine
 import Foundation
-import OpenSSL
 import Security
 
 /// Represents a (SecureEnclave) private key, namely `PrK_SE_AUT`, secured by iOS Biometrics.
@@ -150,7 +149,7 @@ public struct PrivateKeyContainer {
                                              // [REQ:BSI-eRp-ePA:O.Auth_5#2] Key invalidates on changes of registered
                                              // biometric features
                                              .biometryCurrentSet], &error) else {
-            guard let error = error else {
+            guard let error else {
                 throw Error.unknownError("Access Control creation failed")
             }
             throw Error.creationFromBiometrie(error.takeRetainedValue() as Swift.Error)
@@ -188,7 +187,7 @@ public struct PrivateKeyContainer {
                                             kSecAttrAccessibleWhenUnlocked,
                                             [.privateKeyUsage],
                                             &error) else {
-            guard let error = error else {
+            guard let error else {
                 throw Error.unknownError("Access Control creation failed")
             }
             throw Error.creationWithoutBiometrie(error.takeRetainedValue() as Swift.Error)
@@ -231,7 +230,7 @@ public struct PrivateKeyContainer {
                                                     &error) as Data? else {
             let error = error?.takeRetainedValue()
 
-            if let error = error,
+            if let error,
                CFErrorGetDomain(error) as String? == "com.apple.LocalAuthentication" {
                 throw Error.canceledByUser
             }

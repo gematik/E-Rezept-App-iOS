@@ -37,8 +37,10 @@ LocalizedError {
             switch error {
             case let .tagConnectionLost(readerError):
                 return readerError.localizedDescription
+
             case let .sessionTimeout(readerError):
                 return readerError.localizedDescription
+
             case let .sessionInvalidated(readerError):
                 return readerError.localizedDescription
 

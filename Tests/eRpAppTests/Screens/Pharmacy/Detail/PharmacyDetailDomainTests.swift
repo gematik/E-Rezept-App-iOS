@@ -85,51 +85,47 @@ class PharmacyDetailDomainTests: XCTestCase {
         )!
     )
 
-    lazy var allServicesPharmacy: PharmacyLocationViewModel = {
-        PharmacyLocationViewModel(
-            pharmacy: PharmacyLocation(
-                id: "id",
-                telematikID: "telematikID",
-                types: [.delivery, .mobl, .outpharm],
-                avsEndpoints: .init(
-                    onPremiseUrl: "some",
-                    shipmentUrl: "some",
-                    deliveryUrl: "some"
-                ),
-                avsCertificates: []
-            )
+    lazy var allServicesPharmacy: PharmacyLocationViewModel = .init(
+        pharmacy: PharmacyLocation(
+            id: "id",
+            telematikID: "telematikID",
+            types: [.delivery, .mobl, .outpharm],
+            avsEndpoints: .init(
+                onPremiseUrl: "some",
+                shipmentUrl: "some",
+                deliveryUrl: "some"
+            ),
+            avsCertificates: []
         )
-    }()
+    )
 
-    lazy var mixedServicesPharmacy: PharmacyLocationViewModel = {
-        PharmacyLocationViewModel(
-            pharmacy: PharmacyLocation(
-                id: "id",
-                telematikID: "telematikID",
-                types: [.delivery, .mobl, .outpharm],
-                avsEndpoints: .init(
-                    shipmentUrl: "some"
-                ),
-                avsCertificates: []
-            )
+    lazy var mixedServicesPharmacy: PharmacyLocationViewModel = .init(
+        pharmacy: PharmacyLocation(
+            id: "id",
+            telematikID: "telematikID",
+            types: [.delivery, .mobl, .outpharm],
+            avsEndpoints: .init(
+                shipmentUrl: "some"
+            ),
+            avsCertificates: []
         )
-    }()
+    )
 
-    lazy var noAVSServicesPharmacy: PharmacyLocationViewModel = {
-        PharmacyLocationViewModel(
-            pharmacy: PharmacyLocation(
-                id: "id",
-                telematikID: "telematikID",
-                types: [.delivery, .mobl, .outpharm],
-                avsEndpoints: nil,
-                avsCertificates: []
-            )
+    lazy var noAVSServicesPharmacy: PharmacyLocationViewModel = .init(
+        pharmacy: PharmacyLocation(
+            id: "id",
+            telematikID: "telematikID",
+            types: [.delivery, .mobl, .outpharm],
+            avsEndpoints: nil,
+            avsCertificates: []
         )
-    }()
+    )
 
-    lazy var noServicePharmacy: PharmacyLocationViewModel = {
-        .init(pharmacy: PharmacyLocation(id: "id", telematikID: "telematikID", types: []))
-    }()
+    lazy var noServicePharmacy: PharmacyLocationViewModel = .init(pharmacy: PharmacyLocation(
+        id: "id",
+        telematikID: "telematikID",
+        types: []
+    ))
 
     func testRedeemFlowWithAProfileThatHasInsuranceId() async {
         // Given a pharmacy with all avs and ErxTaskRepository services

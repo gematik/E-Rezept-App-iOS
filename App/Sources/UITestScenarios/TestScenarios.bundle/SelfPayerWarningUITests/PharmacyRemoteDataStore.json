@@ -45,7 +45,9 @@
                        "mobl"
                     ],
                     "status": "active",
-                    "name": "ZoTI_04_TEST-ONLY"
+                    "name": "ZoTI_04_TEST-ONLY",
+                    "physicalFeatures": [],
+                    "specialities": []
                 }
             ]
     },

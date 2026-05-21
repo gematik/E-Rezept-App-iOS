@@ -25,7 +25,9 @@ import eRpKit
 import OpenSSL
 import Pharmacy
 
+// swiftformat:disable emptyExtensions
 // sourcery:begin: AutoMockable
 extension PharmacyLocalDataStore {}
 extension PharmacyRemoteDataStore {}
 // sourcery:end
+// swiftformat:enable emptyExtensions

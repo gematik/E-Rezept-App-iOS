@@ -27,8 +27,8 @@ import TestUtils
 import XCTest
 
 final class ImageGeneratorTests: ERPSnapshotTestCase {
-    func testGeneratingDataMatrixCodeWithCaption() {
-        let matrixCodeImage = UIImage(asset: Asset.qrcode)!
+    func testGeneratingDataMatrixCodeWithCaption() throws {
+        let matrixCodeImage = try XCTUnwrap(UIImage(asset: Asset.qrcode))
         let sut = ImageGenerator.liveValue.addCaption(matrixCodeImage, "single code", "Medication Name")
 
         assertSnapshots(of: sut, as: [.image])

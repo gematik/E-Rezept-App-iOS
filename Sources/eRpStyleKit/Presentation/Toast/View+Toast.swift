@@ -34,7 +34,7 @@ extension View {
     ///   the toast to dismiss the toast.
     ///   - toast: The toast to show
     /// - Returns: The modified view.
-    @ViewBuilder public func toast(isPresented: Binding<Bool>, toast: Toast?) -> some View {
+    public func toast(isPresented: Binding<Bool>, toast: Toast?) -> some View {
         overlay {
             ToastContainerView(isPresented: isPresented.animation(.easeInOut), toast: toast)
         }
@@ -46,7 +46,7 @@ extension View {
     ///   the toast to dismiss the toast.
     ///   - toast: The toast to show
     /// - Returns: The modified view.
-    @ViewBuilder public func toast(toast: Binding<Toast?>) -> some View {
+    public func toast(toast: Binding<Toast?>) -> some View {
         overlay {
             ToastContainerView(
                 isPresented: .init(
@@ -204,7 +204,7 @@ struct Toast_PreviewProvider: PreviewProvider {
                 }
                 Button {
                     toast = Toast(style: .action("Toast with actions", Text("button title"), .module) {
-                        self.toast = nil
+                        toast = nil
                     })
                 } label: {
                     Text("Show Buttons")
@@ -221,7 +221,7 @@ struct Toast_PreviewProvider: PreviewProvider {
             .toast(
                 isPresented: Binding<Bool>(
                     get: {
-                        self.toast != nil
+                        toast != nil
                     },
                     set: { newValue in
                         if !newValue {

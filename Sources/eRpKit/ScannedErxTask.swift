@@ -32,19 +32,16 @@ public struct ScannedErxTask: Identifiable, Hashable {
     public let accessCode: String
 
     private static let taskIdPattern = "^Task\\/([A-Za-z0-9-.]{1,64})\\/"
-    private static let taskIdRegex = {
+    private static let taskIdRegex =
         try! NSRegularExpression(pattern: taskIdPattern) // swiftlint:disable:this force_try
-    }()
 
     private static let accessCodePattern = "([0-9a-fA-F]{64})$"
-    private static let accessCodeRegex = {
+    private static let accessCodeRegex =
         try! NSRegularExpression(pattern: accessCodePattern) // swiftlint:disable:this force_try
-    }()
 
     private static let taskStringPattern = "\(taskIdPattern)\\$accept\\?ac=\(accessCodePattern)"
-    private static let taskStringRegex = {
+    private static let taskStringRegex =
         try! NSRegularExpression(pattern: taskStringPattern) // swiftlint:disable:this force_try
-    }()
 
     init(id: String, accessCode: String) {
         self.id = id

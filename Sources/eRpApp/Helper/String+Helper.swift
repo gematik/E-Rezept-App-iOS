@@ -24,7 +24,7 @@ import Foundation
 
 extension String {
     func prefix(upTo key: String, isKeyIncluded: Bool = false) -> String {
-        guard let range = self.range(of: key) else { return self }
+        guard let range = range(of: key) else { return self }
         let endIndex = isKeyIncluded ? range.upperBound : range.lowerBound
         return String(self[..<endIndex])
     }
@@ -34,7 +34,7 @@ extension String {
     }
 
     func suffix(from key: String, isKeyIncluded: Bool = false) -> String {
-        guard let range = self.range(of: key) else { return self }
+        guard let range = range(of: key) else { return self }
         let startIndex = isKeyIncluded ? range.lowerBound : range.upperBound
         return String(self[startIndex...])
     }

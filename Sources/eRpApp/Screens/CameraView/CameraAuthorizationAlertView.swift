@@ -34,17 +34,17 @@ struct CameraAuthorizationAlertView: View {
                 isPresented: $viewModel.showAuthorizationAlert,
                 actions: {
                     Button(L10n.camPermDenyBtnCancel.text, role: .cancel) {
-                        self.presentationMode.wrappedValue.dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                     Button(L10n.camPermDenyBtnSettings) {
                         guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
                               UIApplication.shared.canOpenURL(settingsUrl) else {
-                            self.presentationMode.wrappedValue.dismiss()
+                            presentationMode.wrappedValue.dismiss()
                             return
                         }
 
                         UIApplication.shared.open(settingsUrl)
-                        self.presentationMode.wrappedValue.dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }
                 },
                 message: { Text(L10n.camPermDenyMessage) }

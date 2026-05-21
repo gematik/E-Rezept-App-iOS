@@ -31,10 +31,10 @@ final class DateExtensionTests: XCTestCase {
         return dateFormatter
     }()
 
-    func testDaysUntilWithDateInFuture() {
+    func testDaysUntilWithDateInFuture() throws {
         // given
-        let startDate = dateFormatter.date(from: "2017-01-01")!
-        let endDate = dateFormatter.date(from: "2018-01-01")!
+        let startDate = try XCTUnwrap(dateFormatter.date(from: "2017-01-01"))
+        let endDate = try XCTUnwrap(dateFormatter.date(from: "2018-01-01"))
 
         // when
         let sut = startDate.days(until: endDate)
@@ -43,10 +43,10 @@ final class DateExtensionTests: XCTestCase {
         expect(sut) == 365
     }
 
-    func testDaysUntilWithDateInPast() {
+    func testDaysUntilWithDateInPast() throws {
         // given
-        let startDate = dateFormatter.date(from: "2018-01-01")!
-        let endDate = dateFormatter.date(from: "2017-01-01")!
+        let startDate = try XCTUnwrap(dateFormatter.date(from: "2018-01-01"))
+        let endDate = try XCTUnwrap(dateFormatter.date(from: "2017-01-01"))
 
         // when
         let sut = startDate.days(until: endDate)
@@ -55,10 +55,10 @@ final class DateExtensionTests: XCTestCase {
         expect(sut) == -365
     }
 
-    func testDaysUntilWithEqualDates() {
+    func testDaysUntilWithEqualDates() throws {
         // given
-        let startDate = dateFormatter.date(from: "2018-01-01")!
-        let endDate = dateFormatter.date(from: "2018-01-01")!
+        let startDate = try XCTUnwrap(dateFormatter.date(from: "2018-01-01"))
+        let endDate = try XCTUnwrap(dateFormatter.date(from: "2018-01-01"))
 
         // when
         let sut = startDate.days(until: endDate)

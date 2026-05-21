@@ -172,7 +172,7 @@ struct AVSDebugView: View {
 
                         **Note: Certificates are stripped, to reduce QR-Code size.**
                         """)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     ) {
                         NavigationLink(destination: {
                             DebugQRCodeExporter(content: { () -> DebugPharmacy in

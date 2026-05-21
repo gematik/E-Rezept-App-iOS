@@ -114,7 +114,7 @@ extension ErxTaskRepository {
                 PagedContent(content: [], next: nil)
             }, loadRemoteChargeItems: { _ in
                 []
-            }, fetchConsents: {
+            }, fetchConsents: { _ in
                 []
             }, loadLocalChargeItem: { _, _ in
                 nil
@@ -123,9 +123,9 @@ extension ErxTaskRepository {
             }, saveChargeItems: { _, _ in
             }, deleteChargeItems: { _, _ in
             }, deleteLocalChargeItems: { _, _ in
-            }, grantConsent: { consent in
+            }, grantConsent: { consent, _ in
                 consent
-            }, revokeConsent: { _ in
+            }, revokeConsent: { _, _ in
             }, loadRemoteEuAccessCode: {
                 nil
             }, grantEuAccessPermission: { _ in

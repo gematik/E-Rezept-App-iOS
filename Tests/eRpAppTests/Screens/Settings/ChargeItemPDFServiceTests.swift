@@ -142,7 +142,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
         }
     }
 
-    func testGenerateChargeItemPDFName() throws {
+    func testGenerateChargeItemPDFName() {
         let sut = DefaultChargeItemPDFService()
 
         let result = sut.generateChargeItemPDFName(for: ErxChargeItem.Fixtures.chargeItemWithFHIRData)
@@ -993,7 +993,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
 }
 
 extension ErxChargeItem.Fixtures {
-    // non realistic chargeItem as low detail
+    /// non realistic chargeItem as low detail
     static let lowDetailChargeItem: ErxChargeItem = .init(
         identifier: "chargeItem_id_12",
         fhirData: Data("Some placeholder data".utf8),

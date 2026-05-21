@@ -52,7 +52,7 @@ struct RelativeTimerViewForToolbars: View {
 
     var body: some View {
         Group {
-            if let formattedString = formattedString {
+            if let formattedString {
                 Text(L10n.cpnTxtRelativeTimerViewLastUpdate(formattedString))
             } else {
                 ProgressView()
@@ -60,9 +60,9 @@ struct RelativeTimerViewForToolbars: View {
             }
         }.onReceive(timer) { _ in
             if date.timeIntervalSinceNow <= -59 {
-                self.formattedString = self.formatter.string(for: date)
+                formattedString = formatter.string(for: date)
             } else {
-                self.formattedString = L10n.cpnTxtRelativeTimerViewLastUpdateRecent.text
+                formattedString = L10n.cpnTxtRelativeTimerViewLastUpdateRecent.text
             }
         }
     }

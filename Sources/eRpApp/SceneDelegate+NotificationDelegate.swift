@@ -31,7 +31,7 @@ extension SceneDelegate {
             self.router = router
         }
 
-        // Dependencies framework is not setup for routing here!
+        /// Dependencies framework is not setup for routing here!
         var router: Routing
 
         @MainActor

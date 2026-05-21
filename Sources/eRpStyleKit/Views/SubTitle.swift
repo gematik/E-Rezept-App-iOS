@@ -277,7 +277,7 @@ public struct SubTitleViewModifier<Style: SubTitleStyle>: ViewModifier {
 
 extension View {
     /// Sets the style of SubTitle within this view to a SubTitlyStyle with a custom appearance.
-    public func subTitleStyle<Style: SubTitleStyle>(_ style: Style) -> some View {
+    public func subTitleStyle(_ style: some SubTitleStyle) -> some View {
         modifier(SubTitleViewModifier(style: style))
     }
 }
@@ -375,7 +375,7 @@ private struct ConcreteTypeErased<Base: SubTitleStyle>: TypeErasedBox {
 struct AnySubTitleStyle: SubTitleStyle {
     typealias Body = AnyView
     private let box: TypeErasedBox
-    init<T: SubTitleStyle>(style value: T) {
+    init(style value: some SubTitleStyle) {
         box = ConcreteTypeErased(baseProto: value)
     }
 

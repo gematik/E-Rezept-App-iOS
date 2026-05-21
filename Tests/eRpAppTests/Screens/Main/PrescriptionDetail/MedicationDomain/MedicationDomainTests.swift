@@ -41,8 +41,8 @@ final class MedicationDomainTests: XCTestCase {
         }
     }
 
-    func testShowIngredient() async {
-        let expectedIngredient = stateWithIngredientMedication.medication!.ingredients.first!
+    func testShowIngredient() async throws {
+        let expectedIngredient = try XCTUnwrap(stateWithIngredientMedication.medication?.ingredients.first)
         let sut = testStore()
 
         await sut.send(.showIngredient(expectedIngredient)) {

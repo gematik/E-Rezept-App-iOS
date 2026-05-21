@@ -29,10 +29,6 @@ import SwiftUI
 struct MedicationReminderListView: View {
     @Bindable var store: StoreOf<MedicationReminderListDomain>
 
-    init(store: StoreOf<MedicationReminderListDomain>) {
-        self.store = store
-    }
-
     var body: some View {
         VStack {
             if store.profileMedicationReminder.isEmpty ||
@@ -68,12 +64,12 @@ struct MedicationReminderListView: View {
                                         }
                                         .buttonStyle(.simpleNavigation)
                                         .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
-                                }
-                                .onDelete { indexSet in
-                                    store.send(.deleteFromProfileMedicationReminderList(
-                                        profileMedicationReminder.id, indexSet
-                                    ))
-                                }
+                                    }
+                                    .onDelete { indexSet in
+                                        store.send(.deleteFromProfileMedicationReminderList(
+                                            profileMedicationReminder.id, indexSet
+                                        ))
+                                    }
                             } header: {
                                 SectionHeaderView(profile: profileMedicationReminder.profile)
                                     .font(.headline)

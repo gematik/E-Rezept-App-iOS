@@ -68,7 +68,7 @@ extension ErxTaskOrder {
         let reference = Reference(reference: taskIdAndAccessCode.asFHIRStringPrimitive())
         let payloadString = payload?.asJsonString().asFHIRStringPrimitive()
         var payload: [CommunicationPayload]? // swiftlint:disable:this discouraged_optional_collection
-        if let payloadString = payloadString {
+        if let payloadString {
             payload = [CommunicationPayload(content: .string(payloadString))]
         }
         let telematikUri = Workflow.Key.telematikIdKeys[version]?.asFHIRURIPrimitive()

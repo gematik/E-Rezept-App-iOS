@@ -87,13 +87,13 @@ extension DavInvoice {
         public let zusatzattribut: Zusatzattribut?
 
         public enum Zusatzattribut: Hashable, Codable {
-            // Datum und Uhrzeit der Abgabe
+            /// Datum und Uhrzeit der Abgabe
             case notdienst(String)
-            // Freitextfeld
+            /// Freitextfeld
             case zusätzlicheAbgabeangaben(String)
-            // Spender-PZN
+            /// Spender-PZN
             case teilmengenabgabe(String)
-            // 1= Patientenwunsch, 2= Nicht-Verfügbarkeit, 3= dringender Fall, 4= sonstige Bedenken + ggf. Freitext
+            /// 1= Patientenwunsch, 2= Nicht-Verfügbarkeit, 3= dringender Fall, 4= sonstige Bedenken + ggf. Freitext
             case autidem(String)
         }
     }

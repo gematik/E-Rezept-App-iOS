@@ -36,50 +36,14 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         return dateFormatter
     }()
 
-    private lazy var certList: CertList = {
-        guard let url = Bundle.module
-            .url(
-                forResource: "kompca10-fd-enc-idp-sig1-idp-sig3",
-                withExtension: "json",
-                subdirectory: "Resources/CertList.bundle"
-            ),
-            let json = try? Data(contentsOf: url)
-        else {
-            fatalError("Could not load json")
-        }
-        return try! CertList.from(data: json)
-    }()
-
-    private lazy var ocspList: OCSPList = {
-        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
-                                          withExtension: "json",
-                                          subdirectory: "Resources/OCSPList.bundle"),
-            let json = try? Data(contentsOf: url)
-        else {
-            fatalError("Could not load json")
-        }
-        return try! OCSPList.from(data: json)
-    }()
-
-    private lazy var ocspList_NotVerifiableByTrustStore: OCSPList = {
-        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig",
-                                          withExtension: "json",
-                                          subdirectory: "Resources/OCSPList.bundle"),
-            let json = try? Data(contentsOf: url)
-        else {
-            fatalError("Could not load json")
-        }
-        return try! OCSPList.from(data: json)
-    }()
-
     func testLoadVauCertificate() async throws {
         // given
-        let serverURL = URL(string: "http://some-service.com/path")!
+        let serverURL = try XCTUnwrap(URL(string: "http://some-service.com/path"))
         let trustStoreClient = TrustStoreClientMock()
         let trustStoreStorage = TrustStoreStorageMock()
 
         // Some hours after the OCSPResponse's producedAt value 2024-10-28 09:45:17Z
-        var testDate = dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000")!
+        var testDate = try XCTUnwrap(dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000"))
 
         let dateProvider: TrustStoreTimeProvider = {
             testDate
@@ -144,12 +108,12 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // This test uses the MemStorage as TrustStoreStorage implementation to store the certificates' data
         // so only the TrustStoreClient is mocked.
         // given
-        let serverURL = URL(string: "http://some-service.com/path")!
+        let serverURL = try XCTUnwrap(URL(string: "http://some-service.com/path"))
         let trustStoreClient = TrustStoreClientMock()
         let trustStoreStorage = MemStorage()
 
         // Some hours after the OCSPResponse's producedAt value  UTC
-        var testDate = dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000")!
+        var testDate = try XCTUnwrap(dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000"))
 
         let dateProvider: TrustStoreTimeProvider = {
             testDate
@@ -204,13 +168,13 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // We simulate an outdated OCSP response (older than grace period) so that
         // loading the VAU certificate fails with 'invalidOCSPResponse'.
         // given
-        let serverURL = URL(string: "http://some-service.com/path")!
+        let serverURL = try XCTUnwrap(URL(string: "http://some-service.com/path"))
         let trustStoreClient = TrustStoreClientMock()
         let trustStoreStorage = MemStorage()
 
         // Choose a date far ( >12h ) after the OCSP response's producedAt timestamp (2024-10-28 09:45:17Z)
         // so that the response received from server is considered expired immediately.
-        let testDate = dateFormatter.date(from: "2024-10-29 23:00:00.0000+0000")!
+        let testDate = try XCTUnwrap(dateFormatter.date(from: "2024-10-29 23:00:00.0000+0000"))
         let dateProvider: TrustStoreTimeProvider = { testDate }
 
         let sut = DefaultTrustStoreSession(
@@ -238,12 +202,12 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
 
     func testValidateEeCertificate_usesLocalOcsp_whenFresh() async throws {
         // given
-        let serverURL = URL(string: "http://some-service.com/path")!
+        let serverURL = try XCTUnwrap(URL(string: "http://some-service.com/path"))
         let trustStoreClient = TrustStoreClientMock()
         let trustStoreStorage = TrustStoreStorageMock()
 
         // Set time a few hours after OCSP producedAt: 2024-10-28 09:45:17Z
-        let testDate = dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000")!
+        let testDate = try XCTUnwrap(dateFormatter.date(from: "2024-10-28 15:00:00.0000+0000"))
         let dateProvider: TrustStoreTimeProvider = { testDate }
 
         let sut = DefaultTrustStoreSession(
@@ -272,12 +236,12 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
 
     func testValidateEeCertificate_fetchesRemote_whenLocalOcspOutdated() async throws {
         // given
-        let serverURL = URL(string: "http://some-service.com/path")!
+        let serverURL = try XCTUnwrap(URL(string: "http://some-service.com/path"))
         let trustStoreClient = TrustStoreClientMock()
         let trustStoreStorage = TrustStoreStorageMock()
 
         // Advance beyond grace period so the local OCSP is considered stale
-        let testDate = dateFormatter.date(from: "2024-10-29 12:00:00.0000+0000")!
+        let testDate = try XCTUnwrap(dateFormatter.date(from: "2024-10-29 12:00:00.0000+0000"))
         let dateProvider: TrustStoreTimeProvider = { testDate }
 
         let sut = DefaultTrustStoreSession(

@@ -616,7 +616,7 @@ final class DiGaDetailDomainTests: XCTestCase {
     }
 
     @available(iOS 18.0, *)
-    func testOpenUrlBfarm() async {
+    func testOpenUrlBfarm() async throws {
         let openedURL = Mutex<URL?>(nil)
         let prescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest)
         let url = "https://www.das-e-rezept-fuer-deutschland.de"
@@ -631,7 +631,7 @@ final class DiGaDetailDomainTests: XCTestCase {
 
         await sut.send(.openLink(urlString: url))
 
-        expect(openedURL.withLock { $0 }).to(equal(URL(string: url)!))
+        expect(openedURL.withLock { $0 }).to(try equal(XCTUnwrap(URL(string: url))))
     }
 
     func testCopyRedeemCode() async {

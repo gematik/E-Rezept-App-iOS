@@ -80,7 +80,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-            .frame(width: 375, height: 2589, alignment: .top)
+        .frame(width: 375, height: 2589, alignment: .top)
 
         assertSnapshots(of: sut, as: figmaReference())
     }
@@ -109,7 +109,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-            .frame(width: 375, height: 2589, alignment: .top)
+        .frame(width: 375, height: 2589, alignment: .top)
 
         assertSnapshots(of: sut, as: figmaReference())
     }
@@ -124,7 +124,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-            .frame(width: 320, height: 2000)
+        .frame(width: 320, height: 2000)
 
         assertSnapshots(of: sut, as: snapshotModi())
     }
@@ -136,7 +136,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-            .frame(width: 320, height: 2000)
+        .frame(width: 320, height: 2000)
 
         assertSnapshots(of: sut, as: snapshotModi())
     }

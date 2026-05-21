@@ -207,7 +207,7 @@ struct PrescriptionDosageInstructionsDomain {
         init(dosageInstructions: String?) {
             title = L10n.prscDtlTxtDosageInstructions.text
 
-            guard let dosageInstructions = dosageInstructions, !dosageInstructions.isEmpty else {
+            guard let dosageInstructions, !dosageInstructions.isEmpty else {
                 description = L10n.prscDtlTxtMissingDosageInstructions.text
                 return
             }
@@ -305,7 +305,9 @@ struct TechnicalInformationsDomain {
 
     enum Action: Equatable {}
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
 }
 
 @Reducer
@@ -317,7 +319,9 @@ struct PatientDomain {
 
     enum Action: Equatable {}
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
 }
 
 @Reducer
@@ -329,7 +333,9 @@ struct PractitionerDomain {
 
     enum Action: Equatable {}
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
 }
 
 @Reducer
@@ -341,7 +347,9 @@ struct OrganizationDomain {
 
     enum Action: Equatable {}
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
 }
 
 @Reducer
@@ -353,7 +361,9 @@ struct AccidentInfoDomain {
 
     enum Action: Equatable {}
 
-    var body: some ReducerOf<Self> { EmptyReducer() }
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
 }
 
 extension PrescriptionDetailDomain.Destination.State: Equatable {}

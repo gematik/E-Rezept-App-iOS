@@ -218,7 +218,7 @@ extension DebugLiveLogger {
 
             share += "\n# RESPONSE:\n\n"
 
-            if let response = response {
+            if let response {
                 share += "STATUS: \(response.status.rawValue)\n"
 
                 let fields = response.response.allHeaderFields

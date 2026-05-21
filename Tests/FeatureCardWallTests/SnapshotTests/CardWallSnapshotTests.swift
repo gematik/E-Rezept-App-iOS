@@ -228,7 +228,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    lazy var testProfile = { Profile(name: "testProfile") }()
+    lazy var testProfile = Profile(name: "testProfile")
 
     private func readCardStore(for state: CardWallReadCardDomain.State) -> StoreOf<CardWallReadCardDomain> {
         Store(

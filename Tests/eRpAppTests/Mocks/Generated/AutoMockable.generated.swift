@@ -2654,23 +2654,23 @@ public class SecureEnclaveSignatureProviderMock: SecureEnclaveSignatureProvider 
 
     //MARK: - signPairingSession
 
-    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCallsCount = 0
-    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCalled: Bool {
-        return signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCallsCount > 0
+    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCallsCount = 0
+    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCalled: Bool {
+        return signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCallsCount > 0
     }
-    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedArguments: (pairingSession: PairingSession, signer: JWTSigner, certificate: X509)?
-    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedInvocations: [(pairingSession: PairingSession, signer: JWTSigner, certificate: X509)] = []
-    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReturnValue: AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError>!
-    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure: ((PairingSession, JWTSigner, X509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError>)?
+    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedArguments: (pairingSession: PairingSession, signer: JWTSigner, certificate: IDPX509)?
+    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedInvocations: [(pairingSession: PairingSession, signer: JWTSigner, certificate: IDPX509)] = []
+    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReturnValue: AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError>!
+    public var signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure: ((PairingSession, JWTSigner, IDPX509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError>)?
 
-    public func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
-        signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCallsCount += 1
-        signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedArguments = (pairingSession: pairingSession, signer: signer, certificate: certificate)
-        signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedInvocations.append((pairingSession: pairingSession, signer: signer, certificate: certificate))
-        if let signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure = signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure {
-            return signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure(pairingSession, signer, certificate)
+    public func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: IDPX509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
+        signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorCallsCount += 1
+        signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedArguments = (pairingSession: pairingSession, signer: signer, certificate: certificate)
+        signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReceivedInvocations.append((pairingSession: pairingSession, signer: signer, certificate: certificate))
+        if let signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure = signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure {
+            return signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorClosure(pairingSession, signer, certificate)
         } else {
-            return signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReturnValue
+            return signPairingSessionPairingSessionPairingSessionWithSignerJWTSignerCertificateIDPX509AnyPublisherRegistrationDataSecureEnclaveSignatureProviderErrorReturnValue
         }
     }
 
@@ -2738,11 +2738,11 @@ public class SecureUserDataStoreMock: SecureUserDataStore {
         set(value) { underlyingDiscoveryDocument = value }
     }
     public var underlyingDiscoveryDocument: (AnyPublisher<DiscoveryDocument?, Never>)!
-    public var certificate: AnyPublisher<X509?, Never> {
+    public var certificate: AnyPublisher<IDPX509?, Never> {
         get { return underlyingCertificate }
         set(value) { underlyingCertificate = value }
     }
-    public var underlyingCertificate: (AnyPublisher<X509?, Never>)!
+    public var underlyingCertificate: (AnyPublisher<IDPX509?, Never>)!
     public var keyIdentifier: AnyPublisher<Data?, Never> {
         get { return underlyingKeyIdentifier }
         set(value) { underlyingKeyIdentifier = value }
@@ -2816,19 +2816,19 @@ public class SecureUserDataStoreMock: SecureUserDataStore {
 
     //MARK: - set
 
-    public var setCertificateX509VoidCallsCount = 0
-    public var setCertificateX509VoidCalled: Bool {
-        return setCertificateX509VoidCallsCount > 0
+    public var setCertificateIDPX509VoidCallsCount = 0
+    public var setCertificateIDPX509VoidCalled: Bool {
+        return setCertificateIDPX509VoidCallsCount > 0
     }
-    public var setCertificateX509VoidReceivedCertificate: (X509)?
-    public var setCertificateX509VoidReceivedInvocations: [(X509)?] = []
-    public var setCertificateX509VoidClosure: ((X509?) -> Void)?
+    public var setCertificateIDPX509VoidReceivedCertificate: (IDPX509)?
+    public var setCertificateIDPX509VoidReceivedInvocations: [(IDPX509)?] = []
+    public var setCertificateIDPX509VoidClosure: ((IDPX509?) -> Void)?
 
-    public func set(certificate: X509?) {
-        setCertificateX509VoidCallsCount += 1
-        setCertificateX509VoidReceivedCertificate = certificate
-        setCertificateX509VoidReceivedInvocations.append(certificate)
-        setCertificateX509VoidClosure?(certificate)
+    public func set(certificate: IDPX509?) {
+        setCertificateIDPX509VoidCallsCount += 1
+        setCertificateIDPX509VoidReceivedCertificate = certificate
+        setCertificateIDPX509VoidReceivedInvocations.append(certificate)
+        setCertificateIDPX509VoidClosure?(certificate)
     }
 
     //MARK: - set

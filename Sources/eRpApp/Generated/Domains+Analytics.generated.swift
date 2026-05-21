@@ -382,8 +382,8 @@ extension EditProfileDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .insuranceDrawer:
                 return destination.analyticsName
-            case .euRedeemConsentDrawer:
-                return destination.analyticsName
+            case let .euRedeemConsent(state: state):
+                return state.routeName() ?? destination.analyticsName
             case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
@@ -1375,8 +1375,8 @@ extension EditProfileDomain.Destination.State {
                 return Analytics.Screens.cardWall.name
             case .insuranceDrawer:
                 return Analytics.Screens.profile_insuranceDrawer.name
-            case .euRedeemConsentDrawer:
-                return "euRedeemConsentDrawer"
+            case .euRedeemConsent:
+                return "euRedeemConsent"
             case .editProfilePicture:
                 return "editProfilePicture"
         }

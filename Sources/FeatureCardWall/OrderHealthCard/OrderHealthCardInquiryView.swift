@@ -90,11 +90,11 @@ struct OrderHealthCardInquiryView: View {
                             }
                             .padding()
                         })
-                            .accessibilityIdentifier(A11y.orderEGK.ogkBtnPinOnly)
-                            .buttonStyle(DefaultButtonStyle())
-                            .background(Colors.systemBackgroundTertiary)
-                            .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                            .padding()
+                        .accessibilityIdentifier(A11y.orderEGK.ogkBtnPinOnly)
+                        .buttonStyle(DefaultButtonStyle())
+                        .background(Colors.systemBackgroundTertiary)
+                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                        .padding()
 
                         Button(action: {
                             store.send(.setService(service: .healthCardAndPin))
@@ -115,11 +115,11 @@ struct OrderHealthCardInquiryView: View {
                             }
                             .padding()
                         })
-                            .accessibilityIdentifier(A11y.orderEGK.ogkBtnPinAndCard)
-                            .buttonStyle(DefaultButtonStyle())
-                            .background(Colors.systemBackgroundTertiary)
-                            .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                            .padding([.trailing, .leading, .bottom])
+                        .accessibilityIdentifier(A11y.orderEGK.ogkBtnPinAndCard)
+                        .buttonStyle(DefaultButtonStyle())
+                        .background(Colors.systemBackgroundTertiary)
+                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                        .padding([.trailing, .leading, .bottom])
                     }
                 }
             }

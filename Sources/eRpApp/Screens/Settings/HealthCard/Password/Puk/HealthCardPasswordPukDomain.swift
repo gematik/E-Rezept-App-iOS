@@ -63,7 +63,7 @@ struct HealthCardPasswordPukDomain {
     }
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -73,7 +73,6 @@ struct HealthCardPasswordPukDomain {
         case let .updatePuk(puk):
             state.puk = puk
             return .none
-
         case .advance:
             switch state.mode {
             case .forgotPin:

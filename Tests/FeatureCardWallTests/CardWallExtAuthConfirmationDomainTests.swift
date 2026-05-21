@@ -39,14 +39,12 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
     let networkScheduler = DispatchQueue.test
     let uiScheduler = DispatchQueue.test
 
-    lazy var schedulers: Schedulers = {
-        Schedulers(
-            uiScheduler: uiScheduler.eraseToAnyScheduler(),
-            networkScheduler: networkScheduler.eraseToAnyScheduler(),
-            ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
-            computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
-        )
-    }()
+    lazy var schedulers: Schedulers = .init(
+        uiScheduler: uiScheduler.eraseToAnyScheduler(),
+        networkScheduler: networkScheduler.eraseToAnyScheduler(),
+        ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
+        computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
+    )
 
     override func setUp() {
         super.setUp()
@@ -72,7 +70,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
     }
 
     @available(iOS 18.0, *)
-    func testConfirmationHappyPath() async {
+    func testConfirmationHappyPath() async throws {
         let openedURL = Mutex<URL?>(nil)
 
         let sut = testStore { dependencies in
@@ -83,7 +81,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
             dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
         }
 
-        let urlFixture = URL(string: "https://dummy.gematik.de")!
+        let urlFixture = try XCTUnwrap(URL(string: "https://dummy.gematik.de"))
 
         idpSessionMock.startExtAuth_Publisher = Just(urlFixture).setFailureType(to: IDPError.self).eraseToAnyPublisher()
 
@@ -118,7 +116,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         }
     }
 
-    func testConfirmationFailsOpenURLError() async {
+    func testConfirmationFailsOpenURLError() async throws {
         let sut = testStore(for: .init(
             profileId: UUID(),
             selectedKK: Self.testEntry,
@@ -129,7 +127,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
             dependencies.openURLHandler.canOpenURL = { _ in false }
         }
 
-        let urlFixture = URL(string: "https://dummy.gematik.de")!
+        let urlFixture = try XCTUnwrap(URL(string: "https://dummy.gematik.de"))
 
         await sut.send(.openURL(urlFixture))
         await uiScheduler.run()

@@ -24,19 +24,19 @@
 /// Add a new case every time you want to start a manual migration to a new `xcdatamodel`
 /// The `rawValue` represents the `xcdatamodel`version
 public enum ModelVersion: Int, Codable, CaseIterable {
-    // Introduces status to `ErxTask`
+    /// Introduces status to `ErxTask`
     case taskStatus = 3
-    // Introduces `Profile` entity
+    /// Introduces `Profile` entity
     case profiles = 4
-    // Introduces audit events in `EditProfileDomain`.
+    /// Introduces audit events in `EditProfileDomain`.
     case auditEventsInProfile = 5
-    // Introduces pKV profiles
+    /// Introduces pKV profiles
     case pKV = 6
-    // Introduces onboardingDate in userDataStore
+    /// Introduces onboardingDate in userDataStore
     case onboardingDate = 7
-    // Introduce displayName
+    /// Introduce displayName
     case displayName = 8
-    // Introduces whether the Profile's name should be automatically updated when user logs in next time
+    /// Introduces whether the Profile's name should be automatically updated when user logs in next time
     case shouldAutoUpdateNameAtNextLogin = 9
 
     /// Creates a `ModelVersion` of the next case related to self
@@ -55,6 +55,6 @@ public enum ModelVersion: Int, Codable, CaseIterable {
     }
 
     public static var latestVersion: ModelVersion {
-        Self.allCases.last! // swiftlint:disable:this force_unwrapping
+        allCases.last! // swiftlint:disable:this force_unwrapping
     }
 }

@@ -29,18 +29,32 @@ import Foundation
 /// Domain for handling user consent in EU redemption flow
 @Reducer
 public struct ConsentDomain {
+    /// Affects the available actions the user can perform
+    public enum ConsentType {
+        /// Consent was granted
+        case granted
+        /// Consent was reclaimed
+        case notGranted
+        /// Consent is unknown
+        case unknown
+    }
+
     /// State for consent screen
     @ObservableState
     public struct State: Equatable {
         /// Selected user profile ID
         public var profileID: UUID
+        /// Consent type
+        public var consentType: ConsentType
         /// Navigation destinations
         @Presents public var destination: Destination.State?
 
         public init(
-            profileID: UUID
+            profileID: UUID,
+            consentType: ConsentType = .unknown
         ) {
             self.profileID = profileID
+            self.consentType = consentType
         }
     }
 
@@ -72,6 +86,8 @@ public struct ConsentDomain {
         case consentDeclined
         /// Show CardWall when unauthenticated
         case showCardWall
+        /// Close Redeem Flow without consent
+        case close
     }
 
     /// Destination actions

@@ -30,7 +30,6 @@ import eRpRemoteStorage
 import FeatureCardWall
 import Foundation
 import IDP
-import OpenSSL
 import Pharmacy
 import TestUtils
 import TrustStore
@@ -42,7 +41,6 @@ class MockUserSession: UserSession {
     var mockIDPSession: IDPSessionMock
     var profileSecureDataWiper: ProfileSecureDataWiper
     var secureUserStore: SecureUserDataStore
-    var mockUpdateChecker: UpdateChecker
 
     var isLoggedIn: Bool
     var profileId: UUID
@@ -53,8 +51,7 @@ class MockUserSession: UserSession {
         prescriptionRepository: PrescriptionRepositoryMock = PrescriptionRepositoryMock(),
         idpSession: IDPSessionMock = IDPSessionMock(),
         secureUserStore: SecureUserDataStore = MockSecureUserStore(),
-        profileSecureDataWiper: ProfileSecureDataWiper = ProfileSecureDataWiperMock(),
-        mockUpdateChecker: UpdateChecker = UpdateChecker { false }
+        profileSecureDataWiper: ProfileSecureDataWiper = ProfileSecureDataWiperMock()
     ) {
         isLoggedIn = isAuthenticated
         self.profileId = profileId
@@ -62,12 +59,9 @@ class MockUserSession: UserSession {
         mockIDPSession = idpSession
         self.profileSecureDataWiper = profileSecureDataWiper
         self.secureUserStore = secureUserStore
-        self.mockUpdateChecker = mockUpdateChecker
     }
 
-    lazy var idpSession: IDPSession = {
-        mockIDPSession
-    }()
+    lazy var idpSession: IDPSession = mockIDPSession
 
     lazy var extAuthRequestStorageMock = ExtAuthRequestStorageMock()
 
@@ -75,21 +69,13 @@ class MockUserSession: UserSession {
         extAuthRequestStorageMock
     }
 
-    lazy var pairingIdpSession: IDPSession = {
-        mockIDPSession
-    }()
+    lazy var pairingIdpSession: IDPSession = mockIDPSession
 
-    lazy var vauStorage: VAUStorage = {
-        DemoVAUStorage()
-    }()
+    lazy var vauStorage: VAUStorage = DemoVAUStorage()
 
-    lazy var mockUserDataStore: UserDataStoreMock = {
-        UserDataStoreMock()
-    }()
+    lazy var mockUserDataStore: UserDataStoreMock = .init()
 
-    lazy var shipmentInfoDataStore: ShipmentInfoDataStore = {
-        ShipmentInfoDataStoreMock()
-    }()
+    lazy var shipmentInfoDataStore: ShipmentInfoDataStore = ShipmentInfoDataStoreMock()
 
     var localUserStore: UserDataStore {
         mockUserDataStore
@@ -105,29 +91,11 @@ class MockUserSession: UserSession {
 
     private var underlyingOrdersTaskRepository: OrdersRepository!
 
-    lazy var mockProfileDataStore: ProfileDataStoreMock = {
-        ProfileDataStoreMock()
-    }()
+    lazy var mockProfileDataStore: ProfileDataStoreMock = .init()
 
-    lazy var profileDataStore: ProfileDataStore = {
-        mockProfileDataStore
-    }()
+    lazy var profileDataStore: ProfileDataStore = mockProfileDataStore
 
-    var updateChecker: UpdateChecker {
-        mockUpdateChecker
-    }
-
-    lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
-        NFCHealthCardPasswordControllerMock()
-    }()
-
-    lazy var appSecurityManager: AppSecurityManager = {
-        AppSecurityManagerMock()
-    }()
-
-    private(set) lazy var deviceSecurityManager: DeviceSecurityManager = {
-        MockDeviceSecurityManager()
-    }()
+    lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = NFCHealthCardPasswordControllerMock()
 
     var profileReturnValue: AnyPublisher<Profile, LocalStoreError>!
 
@@ -135,33 +103,19 @@ class MockUserSession: UserSession {
         profileReturnValue
     }
 
-    lazy var avsSession: AVSSession = {
-        AVSSessionMock()
-    }()
+    lazy var avsSession: AVSSession = AVSSessionMock()
 
-    lazy var avsTransactionDataStore: AVSTransactionDataStore = {
-        AVSTransactionDataStoreMock()
-    }()
+    lazy var avsTransactionDataStore: AVSTransactionDataStore = AVSTransactionDataStoreMock()
 
-    lazy var activityIndicating: ActivityIndicating = {
-        ActivityIndicatingMock()
-    }()
+    lazy var activityIndicating: ActivityIndicating = ActivityIndicatingMock()
 
-    lazy var prescriptionRepository: PrescriptionRepository = {
-        mockPrescriptionRepository
-    }()
+    lazy var prescriptionRepository: PrescriptionRepository = mockPrescriptionRepository
 
-    lazy var idpSessionLoginHandler: LoginHandler = {
-        LoginHandlerMock()
-    }()
+    lazy var idpSessionLoginHandler: LoginHandler = LoginHandlerMock()
 
-    lazy var pairingIdpSessionLoginHandler: LoginHandler = {
-        LoginHandlerMock()
-    }()
+    lazy var pairingIdpSessionLoginHandler: LoginHandler = LoginHandlerMock()
 
-    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
-        SecureEnclaveSignatureProviderMock()
-    }()
+    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = SecureEnclaveSignatureProviderMock()
 
     var bfarmSession: BfArMSession = .init(fetchBfArMInfo: { _ in nil }, fetchCachedImage: { _ in nil })
 }
@@ -215,10 +169,10 @@ class MockSecureUserStore: SecureUserDataStore {
         setAccessTokenCalledCount += 1
     }
 
-    var certificate: AnyPublisher<X509?, Never> = Just(nil).eraseToAnyPublisher()
+    var certificate: AnyPublisher<IDPX509?, Never> = Just(nil).eraseToAnyPublisher()
 
     var setCertificateCalledCount = 0
-    func set(certificate _: X509?) {
+    func set(certificate _: IDPX509?) {
         setCertificateCalledCount += 1
     }
 
@@ -300,14 +254,14 @@ class FakeErxTaskRepository {
     }
 
     func save(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
-        erxTasks.forEach { task in
+        for task in erxTasks {
             store[task.identifier] = task
         }
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func delete(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
-        erxTasks.forEach { task in
+        for task in erxTasks {
             store.removeValue(forKey: task.identifier)
         }
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
@@ -366,7 +320,7 @@ class FakeErxTaskRepository {
 
     func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
         fetchConsentsCallsCount += 1
-        if let fetchConsentsClosure = fetchConsentsClosure {
+        if let fetchConsentsClosure {
             return fetchConsentsClosure()
         } else {
             return fetchConsentsReturnValue
@@ -389,7 +343,7 @@ class FakeErxTaskRepository {
         grantConsentCallsCount += 1
         grantConsentReceivedConsent = consent
         grantConsentReceivedInvocations.append(consent)
-        if let grantConsentClosure = grantConsentClosure {
+        if let grantConsentClosure {
             return grantConsentClosure(consent)
         } else {
             return grantConsentReturnValue
@@ -412,7 +366,7 @@ class FakeErxTaskRepository {
         revokeConsentCallsCount += 1
         revokeConsentReceivedCategory = category
         revokeConsentReceivedInvocations.append(category)
-        if let revokeConsentClosure = revokeConsentClosure {
+        if let revokeConsentClosure {
             return revokeConsentClosure(category)
         } else {
             return revokeConsentReturnValue
@@ -439,30 +393,27 @@ class FakeErxTaskRepository {
     }
 
     func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
-        chargeItems.forEach { item in
+        for item in chargeItems {
             chargeItemStore.removeValue(forKey: item.identifier)
         }
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func deleteLocal(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
-        chargeItems.forEach { item in
+        for item in chargeItems {
             chargeItemStore.removeValue(forKey: item.identifier)
         }
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    static let chargeItemsStore: [String: ErxSparseChargeItem] = {
-        [
-            "1": ErxSparseChargeItem(
-                identifier: "1390f983-1e67-11b2-8555-63bf44001234",
-                taskId: "task id",
-                fhirData: Data("afasf".utf8),
-                enteredDate: "2022-11-22T14:07:47.809+00:00"
-            ),
-        ]
-
-    }()
+    static let chargeItemsStore: [String: ErxSparseChargeItem] = [
+        "1": ErxSparseChargeItem(
+            identifier: "1390f983-1e67-11b2-8555-63bf44001234",
+            taskId: "task id",
+            fhirData: Data("afasf".utf8),
+            enteredDate: "2022-11-22T14:07:47.809+00:00"
+        ),
+    ]
 
     // MARK: - ErxDeviceRequest.DiGaInfo
 

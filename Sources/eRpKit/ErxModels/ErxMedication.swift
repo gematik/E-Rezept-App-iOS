@@ -92,15 +92,15 @@ public struct ErxMedication: Hashable, Codable, Sendable {
 
     /// Category of a drug
     public enum DrugCategory: String, Equatable, Codable, Sendable {
-        // Arznei- und Verbandmittel "00"
+        /// Arznei- und Verbandmittel "00"
         case avm = "00"
-        // Betaeubungsmittel "01"
+        /// Betaeubungsmittel "01"
         case btm = "01"
-        // Arzneimittelverschreibungsverordnung "02"
+        /// Arzneimittelverschreibungsverordnung "02"
         case amvv = "02"
-        // Sonstiges
+        /// Sonstiges
         case other = "03"
-        // Unknown category when there was a different category
+        /// Unknown category when there was a different category
         case unknown
     }
 
@@ -151,7 +151,7 @@ public struct ErxMedication: Hashable, Codable, Sendable {
         public let denominator: Quantity?
 
         public var description: String {
-            guard let denominator = denominator, denominator.value != "1" else {
+            guard let denominator, denominator.value != "1" else {
                 return "\(numerator.description)"
             }
             return "\(numerator.description) / \(denominator.description)"
@@ -169,7 +169,7 @@ public struct ErxMedication: Hashable, Codable, Sendable {
         public let unit: String?
 
         public var description: String {
-            guard let unit = unit else {
+            guard let unit else {
                 return value
             }
             return "\(value) \(unit)"
@@ -180,7 +180,7 @@ public struct ErxMedication: Hashable, Codable, Sendable {
 extension ErxMedication {
     /// Name of the medication or its ingredients
     public var displayName: String? {
-        if let name = name {
+        if let name {
             return name
         } else {
             let joinedText = ingredients.compactMap(\.text).joined(separator: ", ")

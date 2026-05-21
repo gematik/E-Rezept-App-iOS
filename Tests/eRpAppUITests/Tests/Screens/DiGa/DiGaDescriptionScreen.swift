@@ -27,10 +27,6 @@ import XCTest
 struct DiGaDescriptionScreen: Screen {
     let app: XCUIApplication
 
-    init(app: XCUIApplication) {
-        self.app = app
-    }
-
     func tapBackButton(fileID _: String = #fileID, file _: String = #filePath,
                        line _: UInt = #line) {
         app.navigationBars.buttons.element(boundBy: 0).tap()

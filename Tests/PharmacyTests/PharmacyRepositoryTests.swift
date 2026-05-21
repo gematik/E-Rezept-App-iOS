@@ -166,8 +166,8 @@ final class PharmacyRepositoryTests: XCTestCase {
         }
     }
 
-    // Tests that loadLocalCount only returns pharmacies that are favorites OR have been recently used.
-    // Pharmacies that are neither should be filtered out.
+    /// Tests that loadLocalCount only returns pharmacies that are favorites OR have been recently used.
+    /// Pharmacies that are neither should be filtered out.
     func testLoadLocalCount_filtersFavoritesAndRecentlyUsed() async throws {
         let mockLocalDataStore = PharmacyLocalDataStoreMock()
 
@@ -194,7 +194,7 @@ final class PharmacyRepositoryTests: XCTestCase {
         expect(result.map(\.id)).notTo(contain("neither-1"))
     }
 
-    // Tests that a pharmacy with both isFavorite=true AND lastUsed set is included
+    /// Tests that a pharmacy with both isFavorite=true AND lastUsed set is included
     func testLoadLocalCount_includesPharmacyWithBothFavoriteAndUsed() async throws {
         let mockLocalDataStore = PharmacyLocalDataStoreMock()
 
@@ -226,8 +226,8 @@ final class PharmacyRepositoryTests: XCTestCase {
         expect(result.first?.id).to(equal("both-1"))
     }
 
-    // Tests that when all pharmacies are neither favorites nor recently used,
-    // the result is empty
+    /// Tests that when all pharmacies are neither favorites nor recently used,
+    /// the result is empty
     func testLoadLocalCount_returnsEmptyWhenNoFavoritesOrRecentlyUsed() async throws {
         let mockLocalDataStore = PharmacyLocalDataStoreMock()
 
@@ -271,7 +271,7 @@ extension PharmacyRepositoryTests {
             hoursOfOperation: []
         )
 
-        // equal telematic id
+        /// equal telematic id
         static let storedPharmacy2 = PharmacyLocation(
             id: "345",
             status: .active,
@@ -286,7 +286,7 @@ extension PharmacyRepositoryTests {
             hoursOfOperation: []
         )
 
-        // Pharmacy that is a favorite (should be included in filtered results)
+        /// Pharmacy that is a favorite (should be included in filtered results)
         static let pharmacyFavorite = PharmacyLocation(
             id: "fav-1",
             status: .active,
@@ -297,7 +297,7 @@ extension PharmacyRepositoryTests {
             hoursOfOperation: []
         )
 
-        // Pharmacy that was recently used (should be included in filtered results)
+        /// Pharmacy that was recently used (should be included in filtered results)
         static let pharmacyRecentlyUsed = PharmacyLocation(
             id: "used-1",
             status: .active,
@@ -309,7 +309,7 @@ extension PharmacyRepositoryTests {
             hoursOfOperation: []
         )
 
-        // Pharmacy that is neither favorite nor recently used (should be filtered out)
+        /// Pharmacy that is neither favorite nor recently used (should be filtered out)
         static let pharmacyNeitherFavoriteNorUsed = PharmacyLocation(
             id: "neither-1",
             status: .active,

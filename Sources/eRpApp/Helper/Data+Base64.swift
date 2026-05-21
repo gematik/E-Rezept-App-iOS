@@ -23,8 +23,8 @@
 import Foundation
 
 extension Data {
-    // Note: Data.base64EncodedString() returns an honest string.
-    // We only return Optional<Data> because of (de-)"casting" to Data and have to handle it on the caller side.
+    /// Note: Data.base64EncodedString() returns an honest string.
+    /// We only return Optional<Data> because of (de-)"casting" to Data and have to handle it on the caller side.
     func encodeBase64UrlSafe() -> Data? {
         base64EncodedString()
             .replacingOccurrences(of: "+", with: "-")

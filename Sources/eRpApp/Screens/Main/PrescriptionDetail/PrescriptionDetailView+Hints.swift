@@ -36,8 +36,8 @@ extension PrescriptionDetailView {
                     }, label: {
                         Text(L10n.prscDtlBtnPkvInvoice)
                     })
-                        .buttonStyle(.primaryHuggingNarrowly)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPkvInvoice)
+                    .buttonStyle(.primaryHuggingNarrowly)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPkvInvoice)
                 } else {
                     switch store.chargeItemConsentState {
                     case .granted:

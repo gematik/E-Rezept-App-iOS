@@ -46,7 +46,7 @@ extension DiGaInfoEntity {
 extension DiGaInfo {
     init?(entity: DiGaInfoEntity?,
           decoder: JSONDecoder = JSONDecoder()) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         let diGaState = try? decoder.decode(DiGaInfo.DiGaState.self, from: entity.state ?? Data())
 

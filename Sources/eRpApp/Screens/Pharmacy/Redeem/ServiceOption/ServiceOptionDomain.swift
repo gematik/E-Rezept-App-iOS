@@ -50,7 +50,7 @@ struct ServiceOptionDomain {
     }
 
     var body: some ReducerOf<Self> {
-        Reduce(self.core)
+        Reduce(core)
     }
 
     func core(into state: inout State, action: Action) -> Effect<Action> {

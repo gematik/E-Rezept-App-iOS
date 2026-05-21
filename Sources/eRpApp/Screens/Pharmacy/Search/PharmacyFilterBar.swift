@@ -33,7 +33,9 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
     var elements: [Filter]
 
     struct Filter: Identifiable {
-        var id: FilterType.ID { element.id }
+        var id: FilterType.ID {
+            element.id
+        }
 
         let element: FilterType
         let key: LocalizedStringKey
@@ -44,33 +46,41 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 Button(action: openFiltersAction) {
-                    Label(title: {
-                        Text(L10n.phaSearchBtnFilterTitle)
-                    }, icon: {
+                    HStack(spacing: 4) {
                         Image(systemName: SFSymbolName.filter)
-                    })
-                        .padding(EdgeInsets(top: 7, leading: 8, bottom: 7, trailing: 8))
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(Colors.primary)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
+                            .font(.footnote)
+
+                        Text(L10n.phaSearchBtnFilterTitle)
+                            .font(.subheadline)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .background(Colors.systemBackground)
+                    .clipShape(Capsule())
+                    .overlay(
+                        Capsule()
+                            .stroke(Colors.systemLabelSecondary, lineWidth: 1)
+                    )
                 }
                 .accessibility(identifier: A11y.pharmacySearch.phaFilterOpenFilter)
 
-                if elements.isEmpty {
-                    Spacer()
-                } else {
-                    ForEach(elements) { element in
-                        FilterElement(key: element.key) {
-                            removeFilter(element)
-                        }
-                        .accessibility(identifier: element.accessibilityIdentifier)
+                ForEach(elements) { element in
+                    FilterChip(
+                        title: element.key,
+                        style: .dismissible
+                    ) {
+                        removeFilter(element)
                     }
-                    .accessibilityElement(children: .contain)
-                    .accessibility(identifier: A11y.pharmacySearch.phaFilterFilterList)
+                    .accessibility(identifier: element.accessibilityIdentifier)
                 }
+                .accessibilityElement(children: .contain)
+                .accessibility(identifier: A11y.pharmacySearch.phaFilterFilterList)
             }
-            .padding(.vertical, 8)
+            .padding(8)
+            .background(Colors.systemBackground)
+            .clipShape(Capsule())
+            .padding(.horizontal)
         }
         .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { scrollView in
             scrollView.clipsToBounds = false
@@ -78,29 +88,6 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
         }
         .accessibility(identifier: A11y.pharmacySearch.phaFilterBar)
         .tint(Colors.primary)
-    }
-
-    struct FilterElement: View {
-        let key: LocalizedStringKey
-        let pressedAction: () -> Void
-
-        var body: some View {
-            Button(action: pressedAction) {
-                HStack {
-                    Text(key, bundle: .module)
-                }
-
-                Image(systemName: SFSymbolName.crossIconFill)
-                    .foregroundColor(Colors.systemLabelSecondary)
-            }
-            .accessibilityValue(Text(L10n.phaSearchBtnFilterValueActive))
-            .accessibilityHint(Text(L10n.phaSearchBtnFilterActionDescription))
-            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 8))
-            .background(Color(.systemGray6))
-            .cornerRadius(8)
-            .foregroundColor(Colors.systemLabel)
-            .font(.subheadline)
-        }
     }
 }
 

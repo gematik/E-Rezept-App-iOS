@@ -298,11 +298,12 @@ final class EditProfileDomainTests: XCTestCase {
 
     func testListenerUpdatesSetTokenAndProfile() async {
         let sut = testStore(for: Fixtures.profileA)
+        sut.dependencies.consentService = .previewValue
 
         let fetchProfileByPublisher: AnyPublisher<Profile?, LocalStoreError> = Just(Fixtures
             .erxProfileWithTokenAndDetails)
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
         mockProfileDataStore
             .fetchProfileByIdentifierProfileIDAnyPublisherProfileLocalStoreErrorReturnValue =
             fetchProfileByPublisher
@@ -336,6 +337,10 @@ final class EditProfileDomainTests: XCTestCase {
             $0.insuranceId = Fixtures.erxProfileWithTokenAndDetails.insuranceId
             $0.insurance = Fixtures.erxProfileWithTokenAndDetails.insurance
             $0.fullName = Fixtures.erxProfileWithTokenAndDetails.fullName
+        }
+
+        await sut.receive(.response(.euConsentCheckReceived(.success(.granted)))) {
+            $0.euRedeemConsentCheck = .granted
         }
 
         expect(self.mockUserSessionProvider.userSessionForUuidUUIDUserSessionCalled).to(beTrue())

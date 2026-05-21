@@ -97,7 +97,7 @@ final class ConcurrentCombineTests: XCTestCase {
         expect(runSuccess) == true
     }
 
-    func testConcurrentToPublisher() throws {
+    func testConcurrentToPublisher() {
         func fetchWeatherHistory() async -> [Int] {
             let task = Task.detached {
                 (1 ... 10).map { _ in Int.random(in: -10 ... 30) }
@@ -126,7 +126,7 @@ final class ConcurrentCombineTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testConcurrentToPublisher_withEscapedDependencies() throws {
+    func testConcurrentToPublisher_withEscapedDependencies() {
         func fetchWeatherHistory(dateGenerator: DateGenerator) async -> Date {
             let task = Task.detached {
                 dateGenerator()

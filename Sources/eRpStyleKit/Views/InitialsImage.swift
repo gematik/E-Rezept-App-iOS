@@ -58,7 +58,7 @@ public struct InitialsImage: View {
             .fill(backgroundColor)
             .overlay(
                 Circle()
-                    .strokeBorder(self.borderColor ?? .clear, lineWidth: borderColor != nil ? 2 : 0)
+                    .strokeBorder(borderColor ?? .clear, lineWidth: borderColor != nil ? 2 : 0)
             )
             .overlay(
                 Text(text)
@@ -75,7 +75,7 @@ public struct InitialsImage: View {
         let statusColor: Color?
 
         var body: some View {
-            if let statusColor = statusColor {
+            if let statusColor {
                 Circle()
                     .fill(Color(.systemBackground))
                     .frame(width: 12, height: 12)
@@ -93,7 +93,7 @@ struct InitialsImage_Preview: PreviewProvider {
             InitialsImage(backgroundColor: Color.red, text: "AB")
 
             InitialsImage(
-                backgroundColor: Color.green,
+                backgroundColor: Colors.secondary700,
                 text: "AB",
                 statusColor: Color.red,
                 borderColor: Color.blue,

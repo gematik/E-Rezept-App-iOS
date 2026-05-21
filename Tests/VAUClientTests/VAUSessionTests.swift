@@ -32,8 +32,8 @@ import XCTest
 final class VAUSessionTests: XCTestCase {
     func testSessionRetainsCurrentUserPseudonym() async throws {
         // given
-        let url = URL(string: "http://some-service.com")!
-        let request = URLRequest(url: URL(string: "http://www.url.com")!)
+        let url = try XCTUnwrap(URL(string: "http://some-service.com"))
+        let request = try URLRequest(url: XCTUnwrap(URL(string: "http://www.url.com")))
         let chain = PassThroughChain(request: request)
 
         let vauAccessTokenProvider = VAUAccessTokenProviderMock()
@@ -72,12 +72,12 @@ final class VAUSessionTests: XCTestCase {
 
         // Mock first response containing a new user pseudonym for further use
         let userPseudonymHeaders1 = ["userpseudonym": "pseudo1"]
-        let response1 = HTTPURLResponse(
+        let response1 = try XCTUnwrap(HTTPURLResponse(
             url: url,
             statusCode: 200,
             httpVersion: "1/1",
             headerFields: userPseudonymHeaders1
-        )!
+        ))
         chain.response = response1
         _ = try? await interceptor.intercept(chain: chain)
         expect(currentVauEndpoints.count) == 2
@@ -85,12 +85,12 @@ final class VAUSessionTests: XCTestCase {
 
         // Mock second response containing another user pseudonym for further use
         let userPseudonymHeaders2 = ["userpseudonym": "pseudo2"]
-        let response2 = HTTPURLResponse(
+        let response2 = try XCTUnwrap(HTTPURLResponse(
             url: url,
             statusCode: 200,
             httpVersion: "1/1",
             headerFields: userPseudonymHeaders2
-        )!
+        ))
         chain.response = response2
         _ = try? await interceptor.intercept(chain: chain)
         expect(currentVauEndpoints.count) == 3

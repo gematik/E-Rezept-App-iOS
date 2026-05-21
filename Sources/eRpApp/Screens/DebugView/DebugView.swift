@@ -107,8 +107,8 @@ extension DebugView {
                 Button("Reset Biometrie (Key and Cert)") {
                     store.send(.deleteKeyAndEGKAuthCertForBiometric)
                 }
-                Button("Reset CERT- and OCSP-Lists") {
-                    store.send(.resetOcspAndCertListButtonTapped)
+                Button("Reset TrustStore") {
+                    store.send(.resetTrustStoreButtonTapped)
                 }
             }
         }
@@ -208,13 +208,15 @@ extension DebugView {
         @Dependency(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
         @Bindable var store: StoreOf<DebugDomain>
 
-        var hidePkvConsentDrawerOnMainView: Binding<Bool> { Binding(
-            get: {
-                store.hidePkvConsentDrawerOnMainView
-            }, set: { _ in
-                store.send(.hidePkvConsentDrawerMainViewToggleTapped)
-            }
-        ) }
+        var hidePkvConsentDrawerOnMainView: Binding<Bool> {
+            Binding(
+                get: {
+                    store.hidePkvConsentDrawerOnMainView
+                }, set: { _ in
+                    store.send(.hidePkvConsentDrawerMainViewToggleTapped)
+                }
+            )
+        }
 
         var body: some View {
             Section(content: {
@@ -301,7 +303,14 @@ extension DebugView {
                     a11y: ""
                 )
 
-                SectionHeaderView(text: "Current access-token", a11y: "dummy_a11y_i")
+                HStack {
+                    Text("Current access-token")
+                        .font(.headline)
+                        .foregroundColor(Colors.systemLabel)
+                        .accessibilityAddTraits(.isHeader)
+                        .padding([.top])
+                    Spacer()
+                }
                 Text(store.token?.accessToken ?? "*** No valid token available ***")
                     .contextMenu(ContextMenu {
                         Button("Copy") {

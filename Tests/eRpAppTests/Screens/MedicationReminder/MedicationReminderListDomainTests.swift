@@ -107,7 +107,7 @@ final class MedicationReminderListDomainTests: XCTestCase {
             }
     }
 
-    func testLoadProfiles() async {
+    func testLoadProfiles() async throws {
         let sut = TestStore(initialState: .init()) {
             MedicationReminderListDomain()
         } withDependencies: { dependencies in
@@ -133,14 +133,14 @@ final class MedicationReminderListDomainTests: XCTestCase {
 
         await sut.receive(.loadProfileMedicationReminder(expectedProfiles))
 
-        await sut.receive(.profileMedicationReminderReceived([], expectedProfiles.first!)) { state in
+        try await sut.receive(.profileMedicationReminderReceived([], XCTUnwrap(expectedProfiles.first))) { state in
             state.profileMedicationReminder = [MedicationReminderListDomain.ProfileMedicationReminder(
                 profile: expectedProfiles.first!,
                 medicationProfileReminderList: []
             )]
         }
 
-        await sut.receive(.profileMedicationReminderReceived([], expectedProfiles.last!)) { state in
+        try await sut.receive(.profileMedicationReminderReceived([], XCTUnwrap(expectedProfiles.last))) { state in
             state.profileMedicationReminder = [MedicationReminderListDomain.ProfileMedicationReminder(
                 profile: expectedProfiles.first!,
                 medicationProfileReminderList: []

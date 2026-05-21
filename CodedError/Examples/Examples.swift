@@ -24,7 +24,7 @@ import CodedError
 
 enum Examples {}
 
-// Example 1: Using the new @ErrorCode annotation approach
+/// Example 1: Using the new @ErrorCode annotation approach
 @CodedError("029")
 enum NetworkError: Error {
     @ErrorCode("01")
@@ -37,7 +37,7 @@ enum NetworkError: Error {
     case serverError(statusCode: Int)
 }
 
-// Example 2: Mixed approach (backward compatibility)
+/// Example 2: Mixed approach (backward compatibility)
 @CodedError("030")
 enum ValidationError: Error {
     @ErrorCode("01")
@@ -47,7 +47,7 @@ enum ValidationError: Error {
     case commentBasedError
 }
 
-// Example 3: Traditional comment approach (still supported)
+/// Example 3: Traditional comment approach (still supported)
 @CodedError("031")
 enum LegacyError: Error {
     // sourcery: errorCode = "01"
@@ -57,7 +57,7 @@ enum LegacyError: Error {
     case anotherOldStyleError
 }
 
-// Usage examples:
+/// Usage examples:
 func demonstrateErrorCodes() {
     let networkError = NetworkError.connectionTimeout
     print("Network error code: \(networkError.erpErrorCode)") // "i-02901"

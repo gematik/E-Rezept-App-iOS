@@ -429,6 +429,9 @@ final class MainDomainTests: XCTestCase {
                 horizontalProfileSelectionState: .init()
             )
         )
+        sut.dependencies.updateChecker.isUpdateAvailable = {
+            false
+        }
 
         // when
         await sut.send(.checkForForcedUpdates)
@@ -440,10 +443,6 @@ final class MainDomainTests: XCTestCase {
 
     func testForcedUpdateAlertUpdateAvailable() async {
         // given
-        mockUserSession = MockUserSession(mockUpdateChecker: UpdateChecker {
-            true
-        })
-
         let sut = testStore(
             for: .init(
                 destination: .none,
@@ -451,6 +450,9 @@ final class MainDomainTests: XCTestCase {
                 horizontalProfileSelectionState: .init()
             )
         )
+        sut.dependencies.updateChecker.isUpdateAvailable = {
+            true
+        }
 
         // when
         await sut.send(.checkForForcedUpdates)
@@ -463,10 +465,6 @@ final class MainDomainTests: XCTestCase {
 
     func testForcedUpdateAlertUpdateAvailableButNavigationInProgress() async {
         // given
-        mockUserSession = MockUserSession(mockUpdateChecker: UpdateChecker {
-            true
-        })
-
         let sut = testStore(
             for: .init(
                 destination: .cardWall(.init(isNFCReady: true, profileId: UUID())),
@@ -474,6 +472,9 @@ final class MainDomainTests: XCTestCase {
                 horizontalProfileSelectionState: .init()
             )
         )
+        sut.dependencies.updateChecker.isUpdateAvailable = {
+            true
+        }
 
         // when
         await sut.send(.checkForForcedUpdates)

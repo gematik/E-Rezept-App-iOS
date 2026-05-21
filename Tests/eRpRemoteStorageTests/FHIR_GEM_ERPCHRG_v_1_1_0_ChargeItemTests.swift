@@ -27,7 +27,7 @@ import ModelsR4
 import Nimble
 import XCTest
 
-// FHIR GEM ERPCHRG tests for ChargeItem in Version 1.1.0
+/// FHIR GEM ERPCHRG tests for ChargeItem in Version 1.1.0
 final class FHIR_GEM_ERPCHRG_v_1_1_0_ChargeItemTests: XCTestCase {
     func testParseChargeItem() throws {
         guard let chargeItem = try decode(resource: "GEM_ERPCHRG_PR_ChargeItem.json")

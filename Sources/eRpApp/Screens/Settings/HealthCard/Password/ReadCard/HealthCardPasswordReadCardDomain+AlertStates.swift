@@ -27,7 +27,7 @@ import FeatureHelpers
 
 extension HealthCardPasswordReadCardDomain {
     enum AlertStates {
-        // success
+        /// success
         static let cardUnlocked: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCardUnlockedTitle,
             actions: {
@@ -131,7 +131,7 @@ extension HealthCardPasswordReadCardDomain {
             message: L10n.stgTxtCardResetRcAlertPinCounterExhaustedMessage
         )
 
-        // warning: retry counter
+        /// warning: retry counter
         static let pukIncorrectZeroRetriesLeft: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertWrongPukZeroRetriesTitle,
             actions: {
@@ -144,7 +144,7 @@ extension HealthCardPasswordReadCardDomain {
 
         static func pukIncorrect(retriesLeft: Int) -> ErpAlertState<Destination.Alert> {
             if retriesLeft == 0 {
-                return Self.pukIncorrectZeroRetriesLeft
+                return pukIncorrectZeroRetriesLeft
             } else {
                 return
                     .init(
@@ -164,7 +164,7 @@ extension HealthCardPasswordReadCardDomain {
 
         static func pinIncorrect(retriesLeft: Int) -> ErpAlertState<Destination.Alert> {
             if retriesLeft == 0 {
-                return Self.pinCounterExhausted
+                return pinCounterExhausted
             } else {
                 return .init(
                     title: L10n.stgTxtCardResetRcAlertWrongPinTitle,

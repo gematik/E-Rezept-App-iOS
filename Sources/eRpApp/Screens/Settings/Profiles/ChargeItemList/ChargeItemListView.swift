@@ -311,8 +311,8 @@ extension ChargeItemListView {
             }
 
             /// `LabelStyle` switching the icon to be trailing instead of leading.
-            public struct TrailingIconLabelStyle2: LabelStyle {
-                public func makeBody(configuration: Configuration) -> some View {
+            struct TrailingIconLabelStyle2: LabelStyle {
+                func makeBody(configuration: Configuration) -> some View {
                     HStack {
                         configuration.title
 

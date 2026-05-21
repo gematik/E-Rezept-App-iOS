@@ -129,19 +129,11 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
-    lazy var extAuthRequestStorage: ExtAuthRequestStorage = { PersistentExtAuthRequestStorage() }()
-    lazy var secureUserStore: SecureUserDataStore = { keychainStorage }()
-    lazy var localUserStore: UserDataStore = { UserDefaultsStore() }()
+    lazy var extAuthRequestStorage: ExtAuthRequestStorage = PersistentExtAuthRequestStorage()
+    lazy var secureUserStore: SecureUserDataStore = keychainStorage
+    lazy var localUserStore: UserDataStore = UserDefaultsStore()
 
-    lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
-        idpSession.isLoggedIn
-            .mapError { UserSessionError.idpError(error: $0) }
-            .eraseToAnyPublisher()
-    }()
-
-    lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
-        DefaultNFCResetRetryCounterController()
-    }()
+    lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = DefaultNFCResetRetryCounterController()
 
     // Local VAU storage configuration
     // [REQ:gemSpec_Krypt:A_20175#3|10] Initialization of the VAUStorage at a predefined location in the filesystem
@@ -158,36 +150,11 @@ class StandardSessionContainer: UserSession {
         return FileVAUStorage(vauStorageBaseFilePath: vauStorageFilePath)
     }()
 
-    lazy var updateChecker: UpdateChecker = {
-        @Dependency(\.updateCheckerFactory) var factory
-
-        let interceptors: [Interceptor] = [
-            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
-            LoggingInterceptor(log: .body),
-            DebugLiveLogger.LogInterceptor(),
-        ]
-        let client = DefaultHTTPClient(urlSessionConfiguration: .ephemeral, interceptors: interceptors)
-
-        return factory.updateChecker(client, appConfiguration)
-    }()
-
     @Dependency(\.erxTaskRepository) var erxTaskRepository
     @Dependency(\.pharmacyRepository) var pharmacyRepository
 
-    // Orders are displayed for all profiles, so the local store is returning objects from all profiles
-    lazy var ordersRepository: OrdersRepository = {
-        DefaultOrdersRepository()
-    }()
-
-    lazy var appSecurityManager: AppSecurityManager = {
-        DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
-    }()
-
-    lazy var deviceSecurityManager: DeviceSecurityManager = {
-        DefaultDeviceSecurityManager(
-            userDataStore: localUserStore
-        )
-    }()
+    /// Orders are displayed for all profiles, so the local store is returning objects from all profiles
+    lazy var ordersRepository: OrdersRepository = DefaultOrdersRepository()
 
     func profile() -> AnyPublisher<Profile, LocalStoreError> {
         profileDataStore.fetchProfile(by: profileId)
@@ -199,7 +166,7 @@ class StandardSessionContainer: UserSession {
         #if ENABLE_DEBUG_VIEW
         DefaultAVSSession(httpClient: avsHttpClient) { message, endpoint, httpResponse in
             var urlRequest = URLRequest(url: endpoint.url)
-            endpoint.additionalHeaders.forEach { key, value in
+            for (key, value) in endpoint.additionalHeaders {
                 urlRequest.addValue(value, forHTTPHeaderField: key)
             }
             urlRequest.httpBody = try? JSONEncoder().encode(message)
@@ -212,11 +179,9 @@ class StandardSessionContainer: UserSession {
         #endif
     }()
 
-    private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
-        DefaultPrescriptionRepository(
-            loginHandler: idpSessionLoginHandler
-        )
-    }()
+    private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = .init(
+        loginHandler: idpSessionLoginHandler
+    )
 
     var prescriptionRepository: PrescriptionRepository {
         prescriptionRepositoryWithActivity
@@ -228,19 +193,15 @@ class StandardSessionContainer: UserSession {
 
     @Dependency(\.loginHandlerServiceFactory) var loginHandlerServiceFactory: LoginHandlerServiceFactory
 
-    lazy var idpSessionLoginHandler: LoginHandler = {
-        loginHandlerServiceFactory.construct(
-            idpSession,
-            secureEnclaveSignatureProvider
-        )
-    }()
+    lazy var idpSessionLoginHandler: LoginHandler = loginHandlerServiceFactory.construct(
+        idpSession,
+        secureEnclaveSignatureProvider
+    )
 
-    lazy var pairingIdpSessionLoginHandler: LoginHandler = {
-        loginHandlerServiceFactory.construct(
-            pairingIdpSession,
-            secureEnclaveSignatureProvider
-        )
-    }()
+    lazy var pairingIdpSessionLoginHandler: LoginHandler = loginHandlerServiceFactory.construct(
+        pairingIdpSession,
+        secureEnclaveSignatureProvider
+    )
 
     lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
         #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)

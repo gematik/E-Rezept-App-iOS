@@ -106,7 +106,7 @@ struct ProfilePicturePicker: View {
                     L10n.ctlBtnProfilePickerSet :
                     (emoji != nil ? L10n.ctlBtnProfilePickerReset : L10n.ctlBtnProfilePickerEdit))
             })
-                .accessibility(identifier: A11y.controls.emojiPicker.ctlBtnEmojiPickerEditSave)
+            .accessibility(identifier: A11y.controls.emojiPicker.ctlBtnEmojiPickerEditSave)
         }
     }
 }

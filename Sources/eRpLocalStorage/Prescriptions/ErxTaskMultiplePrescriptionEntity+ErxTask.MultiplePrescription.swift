@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskMultiplePrescriptionEntity {
     convenience init?(multiplePrescription: MultiplePrescription?,
                       in context: NSManagedObjectContext) {
-        guard let multiplePrescription = multiplePrescription else { return nil }
+        guard let multiplePrescription else { return nil }
 
         self.init(context: context)
 
@@ -44,7 +44,7 @@ extension ErxTaskMultiplePrescriptionEntity {
 
 extension MultiplePrescription {
     init?(entity: ErxTaskMultiplePrescriptionEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         self.init(
             mark: entity.mark,

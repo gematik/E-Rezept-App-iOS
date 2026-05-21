@@ -95,7 +95,7 @@ struct MainDomain {
     struct State: Equatable {
         @Shared(.selectedProfileId) var profileId
         @Shared(.isDemoMode) var isDemoMode
-        // Delete this after iOS 16 deprecation
+        /// Delete this after iOS 16 deprecation
         var showIOS16DeprecationBanner: Bool {
             ProcessInfo().operatingSystemVersion.majorVersion == 16
         }
@@ -152,7 +152,7 @@ struct MainDomain {
         case redeemPrescriptions(_ prescriptions: Shared<[Prescription]>)
         case redeemFromPharmacy(_ pharmacy: PharmacyLocation, option: RedeemOption)
         case euRedeemSelection(_ prescriptions: Shared<[Prescription]>)
-        case euRedeemInstructions(_ isRedeeming: Bool)
+        case euRedeemInstructions(_ isRedeeming: Bool, countryCode: String?)
         case euRedeemCode(countryCode: String)
         case euNoCountryAlert
         case response(Response)
@@ -199,11 +199,11 @@ struct MainDomain {
         case localStoreError(LocalStoreError)
         @ErrorCode("02")
         case userSessionError(UserSessionError)
-        @ErrorCode("03")
         /// Import of shared Task failed due to being a duplicate already existing within the app
+        @ErrorCode("03")
         case importDuplicate
-        @ErrorCode("04")
         /// Saving or retrieving data failed
+        @ErrorCode("04")
         case repositoryError(ErxRepositoryError)
     }
 
@@ -220,6 +220,7 @@ struct MainDomain {
     @Dependency(\.profileDataStore) var profileDataStore
     @Dependency(\.router) var router: Routing
     @Dependency(\.drawerEvaluation) var drawerEvaluation: DrawerEvaluation
+    @Dependency(\.updateChecker) var updateChecker: UpdateChecker
 
     var environment: Environment {
         .init(
@@ -248,7 +249,7 @@ struct MainDomain {
             ExtAuthPendingDomain()
         }
 
-        Reduce(self.core)
+        Reduce(core)
             .forEach(\.path, action: \.path)
             .ifLet(\.$destination, action: \.destination)
     }
@@ -295,15 +296,13 @@ struct MainDomain {
                     .eraseToAnyPublisher
             )
         case let .response(.loadDeviceSecurityViewReceived(deviceSecurityState)):
-            if let deviceSecurityState = deviceSecurityState {
+            if let deviceSecurityState {
                 state.destination = .deviceSecurity(deviceSecurityState)
             }
             return .none
         case .checkForForcedUpdates:
             // [REQ:BSI-eRp-ePA:O.Arch_10#3] The actual business logic for the update check
             return .run { [updateChecked = state.updateChecked] send in
-                @Dependency(\.userSession.updateChecker) var updateChecker
-
                 guard !updateChecked else { return }
 
                 if await updateChecker.isUpdateAvailable() {
@@ -508,7 +507,6 @@ struct MainDomain {
             }
         case .grantChargeItemsConsentActivate,
              .destination(.presented(.alert(.retryGrantChargeItemConsent))):
-
             state.destination = nil
             let profileId = userSession.profileId
             return .run { send in
@@ -566,7 +564,6 @@ struct MainDomain {
         case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
             state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
             return .none
-
         case .refreshPrescription:
             return Effect.send(.prescriptionList(action: .refresh))
         case .horizontalProfileSelection(action: .showAddProfileView):
@@ -700,22 +697,25 @@ struct MainDomain {
             case .selectCountryButtonTapped:
                 state.path.append(.countrySelection(.init()))
                 return .none
-            case .selectInstructionButtonTapped:
-                return .send(.euRedeemInstructions(false))
-            case .redeemButtonTapped:
+            case let .selectInstructionButtonTapped(countryCode: code):
+                return .send(.euRedeemInstructions(false, countryCode: code))
+            case .redeemPrescriptions:
                 return .run { [path = state.path, userDataStore = self.userDataStore] send in
                     let hideEURedeemInstructions = try await userDataStore.hideEURedeemInstructions.async()
+                    guard let code = path[id: id, case: \.euRedeemSelection]?.selectedCountry?.countryCode else {
+                        await send(.euNoCountryAlert)
+                        return
+                    }
                     if hideEURedeemInstructions {
-                        guard let code = path[id: id, case: \.euRedeemSelection]?.selectedCountry?.countryCode else {
-                            await send(.euNoCountryAlert)
-                            return
-                        }
                         await send(.euRedeemCode(countryCode: code))
                     } else {
                         userDataStore.set(hideEURedeemInstructions: true)
-                        await send(.euRedeemInstructions(true))
+                        await send(.euRedeemInstructions(true, countryCode: code))
                     }
                 }
+            case .back:
+                state.path.pop(from: id)
+                return .none
             case .close:
                 state.path.removeAll()
                 return .none
@@ -737,8 +737,8 @@ struct MainDomain {
                 prescriptions: prescriptions
             )))
             return .none
-        case let .euRedeemInstructions(isRedeeming):
-            state.path.append(.instructions(.init(isRedeeming: isRedeeming)))
+        case let .euRedeemInstructions(isRedeeming, countryCode: code):
+            state.path.append(.instructions(.init(isRedeeming: isRedeeming, countryCode: code)))
             return .none
         case let .euRedeemCode(countryCode):
             state.path.append(.code(.init(countryCode: countryCode)))

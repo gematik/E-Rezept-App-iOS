@@ -31,7 +31,6 @@ import OpenSSL
 import Pharmacy
 import Testing
 
-@Suite
 struct HealthcareServiceFHIRDataSourceTests {
     @Test
     func searchPharmaciesTest() async throws {
@@ -147,68 +146,64 @@ struct HealthcareServiceFHIRDataSourceTests {
 
 extension PharmacyLocation {
     enum Fixtures {
-        static let hundredPharmacies: [PharmacyLocation] = {
-            (0 ..< 100).map {
-                PharmacyLocation(
-                    id: "\($0 + 101)",
-                    status: .active,
-                    telematikID: "3-06.2.ycl.\($0 + 101)",
-                    name: "Apotheke am Wäldchen \($0 + 101)",
-                    types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
-                    position: Position(latitude: 49.2470345, longitude: 8.8668786),
-                    address: PharmacyLocation.Address(
-                        street: "Hinter der Bahn",
-                        houseNumber: "\($0 + 101)",
-                        zip: "12\($0 + 101)",
-                        city: "Buxtehude"
+        static let hundredPharmacies: [PharmacyLocation] = (0 ..< 100).map {
+            PharmacyLocation(
+                id: "\($0 + 101)",
+                status: .active,
+                telematikID: "3-06.2.ycl.\($0 + 101)",
+                name: "Apotheke am Wäldchen \($0 + 101)",
+                types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
+                position: Position(latitude: 49.2470345, longitude: 8.8668786),
+                address: PharmacyLocation.Address(
+                    street: "Hinter der Bahn",
+                    houseNumber: "\($0 + 101)",
+                    zip: "12\($0 + 101)",
+                    city: "Buxtehude"
+                ),
+                telecom: PharmacyLocation.Telecom(
+                    phone: "555-\($0 + 101)",
+                    fax: "555-123456",
+                    email: "info@gematik.de",
+                    web: "http://www.gematik.de"
+                ),
+                hoursOfOperation: [
+                    PharmacyLocation.HoursOfOperation(
+                        daysOfWeek: ["tue", "wed"],
+                        openingTime: "08:00:00",
+                        closingTime: "18:00:00"
                     ),
-                    telecom: PharmacyLocation.Telecom(
-                        phone: "555-\($0 + 101)",
-                        fax: "555-123456",
-                        email: "info@gematik.de",
-                        web: "http://www.gematik.de"
-                    ),
-                    hoursOfOperation: [
-                        PharmacyLocation.HoursOfOperation(
-                            daysOfWeek: ["tue", "wed"],
-                            openingTime: "08:00:00",
-                            closingTime: "18:00:00"
-                        ),
-                    ]
-                )
-            }
-        }()
+                ]
+            )
+        }
 
-        static let fiftyOnePharmacies: [PharmacyLocation] = {
-            (0 ..< 51).map {
-                PharmacyLocation(
-                    id: "\($0 + 201)",
-                    status: .active,
-                    telematikID: "3-06.2.ycl.\($0 + 201)",
-                    name: "Apotheke am Wäldchen \($0 + 201)",
-                    types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
-                    position: Position(latitude: 49.2470345, longitude: 8.8668786),
-                    address: PharmacyLocation.Address(
-                        street: "Hinter der Bahn",
-                        houseNumber: "\($0 + 201)",
-                        zip: "12\($0 + 201)",
-                        city: "Buxtehude"
+        static let fiftyOnePharmacies: [PharmacyLocation] = (0 ..< 51).map {
+            PharmacyLocation(
+                id: "\($0 + 201)",
+                status: .active,
+                telematikID: "3-06.2.ycl.\($0 + 201)",
+                name: "Apotheke am Wäldchen \($0 + 201)",
+                types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
+                position: Position(latitude: 49.2470345, longitude: 8.8668786),
+                address: PharmacyLocation.Address(
+                    street: "Hinter der Bahn",
+                    houseNumber: "\($0 + 201)",
+                    zip: "12\($0 + 201)",
+                    city: "Buxtehude"
+                ),
+                telecom: PharmacyLocation.Telecom(
+                    phone: "555-\($0 + 201)",
+                    fax: "555-123456",
+                    email: "info@gematik.de",
+                    web: "http://www.gematik.de"
+                ),
+                hoursOfOperation: [
+                    PharmacyLocation.HoursOfOperation(
+                        daysOfWeek: ["tue", "wed"],
+                        openingTime: "08:00:00",
+                        closingTime: "18:00:00"
                     ),
-                    telecom: PharmacyLocation.Telecom(
-                        phone: "555-\($0 + 201)",
-                        fax: "555-123456",
-                        email: "info@gematik.de",
-                        web: "http://www.gematik.de"
-                    ),
-                    hoursOfOperation: [
-                        PharmacyLocation.HoursOfOperation(
-                            daysOfWeek: ["tue", "wed"],
-                            openingTime: "08:00:00",
-                            closingTime: "18:00:00"
-                        ),
-                    ]
-                )
-            }
-        }()
+                ]
+            )
+        }
     }
 }

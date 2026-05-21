@@ -25,14 +25,9 @@ import Nimble
 import XCTest
 
 @MainActor
-struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
+struct MedicationReminderSetupScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
 
     func saveButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         button(by: A11y.medicationReminder.medReminderBtnSaveSchedule, fileID: fileID, file: file, line: line)
@@ -43,7 +38,8 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
 
         // Tap might trigger notification alert
         // Interact somehow with the app, to trigger the registered `addUIInterruptionMonitor`
-        // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos swiftlint:disable:this line_length
+        // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos
+        // swiftlint:disable:this line_length
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.01)).tap()
 
         return previous

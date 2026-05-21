@@ -72,11 +72,11 @@ final class EditProfileNameDomainTest: XCTestCase {
 
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beFalse())
+            .to(beFalse())
         await sut.send(.saveEditedProfileName(name: "Crazy Niklas"))
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beTrue())
+            .to(beTrue())
 
         await testScheduler.run()
         await sut.receive(.saveEditedProfileNameReceived(.success(true)))
@@ -95,7 +95,7 @@ final class EditProfileNameDomainTest: XCTestCase {
         await sut.send(.saveEditedProfileName(name: invalidName))
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beFalse())
+            .to(beFalse())
         await sut.receive(.delegate(.close))
     }
 }

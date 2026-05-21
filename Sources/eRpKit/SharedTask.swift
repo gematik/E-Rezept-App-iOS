@@ -37,7 +37,7 @@ public struct SharedTask: Equatable, Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
 
-        if let name = name {
+        if let name {
             try container.encode("\(id)|\(accessCode)|\(name)")
         } else {
             try container.encode("\(id)|\(accessCode)")
@@ -79,7 +79,7 @@ public struct SharedTask: Equatable, Codable {
     }
 }
 
-extension Sequence where Element == SharedTask {
+extension Sequence<SharedTask> {
     /// Converts an Array of `SharedTask`s into an Array of `ErxTask`s
     /// - Parameters:
     ///   - status: The status the `ErxTask` should be created with
@@ -121,7 +121,7 @@ extension SharedTask {
 
     /// Creates a string of `ErxTask`'s id, accessCode, and optionally name.
     public var asString: String {
-        if let name = name {
+        if let name {
             return "\(id)|\(accessCode)|\(name)"
         } else {
             return "\(id)|\(accessCode)"

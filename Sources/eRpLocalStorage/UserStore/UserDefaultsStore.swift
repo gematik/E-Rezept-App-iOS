@@ -154,7 +154,7 @@ public class UserDefaultsStore: UserDataStore {
 
     public func wipeAll() {
         guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
-            userDefaults.dictionaryRepresentation().keys.forEach { key in
+            for key in userDefaults.dictionaryRepresentation().keys {
                 userDefaults.removeObject(forKey: key)
             }
             return

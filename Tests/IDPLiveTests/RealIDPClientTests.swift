@@ -71,13 +71,13 @@ final class RealIDPClientTests: XCTestCase {
         return documentPath
     }
 
-    func testLoadDiscoveryDocument() throws {
+    func testLoadDiscoveryDocument() {
         var counter = 0
         stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
             !hasHeaderNamed("Authorization")) { _ in
                 counter += 1
                 return fixture(filePath: self.documentPath, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         stub(condition: isPath("/ipdSig/jwk.json") && isMethodGET()) { _ in
             counter += 1
@@ -112,7 +112,7 @@ final class RealIDPClientTests: XCTestCase {
             !hasHeaderNamed("Authorization")) { _ in
                 counter += 1
                 return fixture(filePath: jwksPath, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -125,7 +125,7 @@ final class RealIDPClientTests: XCTestCase {
         expect(counter) == 1
     }
 
-    func testLoadDiscoveryDocumentNetworkError() throws {
+    func testLoadDiscoveryDocumentNetworkError() {
         var counter = 0
         let notConnectedError = NSError(domain: NSURLErrorDomain, code: URLError.notConnectedToInternet.rawValue)
         stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
@@ -134,7 +134,7 @@ final class RealIDPClientTests: XCTestCase {
                 let response = HTTPStubsResponse(error: notConnectedError)
                 response.requestTime = 0.0
                 return response
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -161,7 +161,7 @@ final class RealIDPClientTests: XCTestCase {
         return try! DiscoveryDocument(jwt: jwt, encryptPuks: jwk, signingPuks: jwk)
     }
 
-    func testRequestChallenge() {
+    func testRequestChallenge() throws {
         let codeChallenge = "1234567890abcdefghijklmnop"
         let state = "D1FC3A1F5303B169C51D85ACFD1DA845F8A33447A1A549636B6B5456C6AF"
         let nonce = "01379FF7F0754551CFA484FF19061EB61E847EF72D9886BA0180C8DD4F11"
@@ -187,9 +187,9 @@ final class RealIDPClientTests: XCTestCase {
             && !hasHeaderNamed("Authorization")) { _ in
                 counter += 1
                 return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
-        }
+            }
 
-        let expectedChallenge = try! IDPChallenge(
+        let expectedChallenge = try IDPChallenge(
             challenge: JWT(
                 from: "eyJhbGciOiJCUDI1NlIxIiwiZXhwIjoxNjE1OTA2NzE4LCJ0eXAiOiJKV1QiLCJraWQiOiJpZHBTaWcifQ.eyJpc3MiOiJodHRwczovL2lkcC56ZW50cmFsLmlkcC5zcGxpdGRucy50aS1kaWVuc3RlLmRlIiwicmVzcG9uc2VfdHlwZSI6ImNvZGUiLCJzbmMiOiJraFd5MmpaTlZoK1FOUlFMbmlPQkhORjZjR0Y1SUJrcmFZU1ZNdDhaT0tZPSIsImNvZGVfY2hhbGxlbmdlX21ldGhvZCI6IlMyNTYiLCJ0b2tlbl90eXBlIjoiY2hhbGxlbmdlIiwiY2xpZW50X2lkIjoiZVJlemVwdEFwcCIsInNjb3BlIjoiZS1yZXplcHQgb3BlbmlkIiwic3RhdGUiOiIzSXhCcjNKb2htZmxMcTFHIiwicmVkaXJlY3RfdXJpIjoiaHR0cDovL3JlZGlyZWN0LmdlbWF0aWsuZGUvZXJlemVwdCIsImV4cCI6MTYxNTkwNjcxOCwiaWF0IjoxNjE1OTA2NTM4LCJjb2RlX2NoYWxsZW5nZSI6IjdObnFpWG0tenM5RFNabHRPRnMwYXdabDlmU1hFU2wwc0lhTnVqWmF0N0EiLCJqdGkiOiI1OWIzNzRlZDg3MmIzNDJkIn0.BJyePEkKU-RUs37f2GVvHOt-MDnwW40JmO5IsPj1uzgApqnC97Ei_ev99-gjiRRkt2_QsOsz9d6XBRAPRBzT6w" // swiftlint:disable:this line_length
             ),
@@ -224,32 +224,32 @@ final class RealIDPClientTests: XCTestCase {
         expect(counter) == 1
     }
 
-    func testSendVerify() {
-        let signedChallengeResponse = try! JWT(from: Bundle.module
-            .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
+    func testSendVerify() throws {
+        let signedChallengeResponse = try JWT(from: XCTUnwrap(Bundle.module
+                .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "Resources/JWT.bundle")?
+                .readFileContents()))
+
+        let exchangeString = try XCTUnwrap(exchangeToken.asciiString)
+        let ssoToken = try XCTUnwrap(try Bundle.module
+            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")?
             .readFileContents())
+        let ssoString = try XCTUnwrap(ssoToken.asciiString)
 
-        let exchangeString = exchangeToken.asciiString!
-        let ssoToken = try! Bundle.module
-            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
-            .readFileContents()
-        let ssoString = ssoToken.asciiString!
-
-        let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey()
-        let nonce = try! generateSecureRandom(length: 12)
+        let privateKey = try BrainpoolP256r1.KeyExchange.generateKey()
+        let nonce = try generateSecureRandom(length: 12)
         let cryptoBox = IDPCrypto(randomGenerator: { _ in Data(base64Encoded: "random")! },
                                   brainpoolKeyPairGenerator: { privateKey },
                                   aesNonceGenerator: { nonce },
                                   aesKey: SymmetricKey(data: Data()))
 
-        let header = try! JWE.Header(algorithm: JWE.Algorithm
+        let header = try JWE.Header(algorithm: JWE.Algorithm
             .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
                                keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
             encryption: .a256gcm,
             contentType: "NJWT")
 
         let signedChallengePayload = NestedJWT(njwt: signedChallengeResponse.serialize())
-        let jwePayload = try! JSONEncoder().encode(signedChallengePayload)
+        let jwePayload = try JSONEncoder().encode(signedChallengePayload)
         guard let jwe = try? JWE(
             header: header,
             payload: jwePayload,
@@ -259,7 +259,7 @@ final class RealIDPClientTests: XCTestCase {
             return
         }
 
-        let encodedJwe = jwe.encoded().utf8string!
+        let encodedJwe = try XCTUnwrap(jwe.encoded().utf8string)
         let encodedJWEBody = Data("signed_challenge=\(encodedJwe)".utf8)
 
         let state = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc"
@@ -284,10 +284,10 @@ final class RealIDPClientTests: XCTestCase {
                     "Content-Length": "0",
                 ]
                 return response
-        }
+            }
 
-        let expectedToken = IDPExchangeToken(
-            code: exchangeToken.asciiString!,
+        let expectedToken = try IDPExchangeToken(
+            code: XCTUnwrap(exchangeToken.asciiString),
             sso: ssoToken.asciiString,
             state: state,
             redirect: "http://redirect.com/path?query=something&extra=5"
@@ -327,13 +327,11 @@ final class RealIDPClientTests: XCTestCase {
 
         let jwePayload = Data("<dummy_jwe_payload>".utf8)
 
-        let jwe = try JWE(
+        return try JWE(
             header: header,
             payload: jwePayload,
             nonceGenerator: cryptoBox.aesNonceGenerator
         )
-
-        return jwe
     }
 
     let dummyIdpToken = IDPToken(accessToken: "accesToken", expires: Date(), idToken: "idToken", redirect: "redirect")
@@ -346,7 +344,7 @@ final class RealIDPClientTests: XCTestCase {
         )
 
         let jwe = try dummyJwe()
-        let encodedJwe = jwe.encoded().utf8string!
+        let encodedJwe = try XCTUnwrap(jwe.encoded().utf8string)
         let encodedJWEBody = Data("encrypted_registration_data=\(encodedJwe)".utf8)
 
         var counter = 0
@@ -366,7 +364,7 @@ final class RealIDPClientTests: XCTestCase {
                                              "Pragma": "no-cache",
                                              "Content-Length": "0",
                                          ])
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -395,7 +393,7 @@ final class RealIDPClientTests: XCTestCase {
         )
 
         let jwe = try dummyJwe()
-        let encodedJwe = jwe.encoded().utf8string!
+        let encodedJwe = try XCTUnwrap(jwe.encoded().utf8string)
         let encodedJWEBody = Data("encrypted_registration_data=\(encodedJwe)".utf8)
 
         var counter = 0
@@ -415,7 +413,7 @@ final class RealIDPClientTests: XCTestCase {
                                              "Pragma": "no-cache",
                                              "Content-Length": "0",
                                          ])
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -435,14 +433,14 @@ final class RealIDPClientTests: XCTestCase {
     }
 
     func testSendAltVerifySucceeds() throws {
-        let exchangeString = exchangeToken.asciiString!
-        let ssoToken = try! Bundle.module
-            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
-            .readFileContents()
-        let ssoString = ssoToken.asciiString!
+        let exchangeString = try XCTUnwrap(exchangeToken.asciiString)
+        let ssoToken = try XCTUnwrap(try Bundle.module
+            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")?
+            .readFileContents())
+        let ssoString = try XCTUnwrap(ssoToken.asciiString)
 
         let jwe = try dummyJwe()
-        let encodedJwe = jwe.encoded().utf8string!
+        let encodedJwe = try XCTUnwrap(jwe.encoded().utf8string)
         let encodedJWEBody = Data("encrypted_signed_authentication_data=\(encodedJwe)".utf8)
 
         let state = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc"
@@ -467,10 +465,10 @@ final class RealIDPClientTests: XCTestCase {
                     "Content-Length": "0",
                 ]
                 return response
-        }
+            }
 
-        let expectedToken = IDPExchangeToken(
-            code: exchangeToken.asciiString!,
+        let expectedToken = try IDPExchangeToken(
+            code: XCTUnwrap(exchangeToken.asciiString),
             sso: ssoToken.asciiString,
             state: state,
             redirect: "http://redirect.com/path?query=something&extra=5"
@@ -498,7 +496,7 @@ final class RealIDPClientTests: XCTestCase {
 
     func testSendAltVerifyReturnsError() throws {
         let jwe = try dummyJwe()
-        let encodedJwe = jwe.encoded().utf8string!
+        let encodedJwe = try XCTUnwrap(jwe.encoded().utf8string)
         let encodedJWEBody = Data("encrypted_signed_authentication_data=\(encodedJwe)".utf8)
 
         var counter = 0
@@ -527,7 +525,7 @@ final class RealIDPClientTests: XCTestCase {
                                              "Pragma": "no-cache",
                                              "Content-Length": "0",
                                          ])
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -553,17 +551,13 @@ final class RealIDPClientTests: XCTestCase {
         challenge: JWT(header: JWT.Header(), payload: IDPChallenge.Claim())
     )
 
-    let ssoToken: String = {
-        try! String(data: Bundle.module
-            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
-            .readFileContents(), encoding: .nonLossyASCII)!
-    }()
+    let ssoToken: String = try! String(data: Bundle.module
+        .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
+        .readFileContents(), encoding: .nonLossyASCII)!
 
-    let exchangeToken: Data = {
-        try! Bundle.module
-            .path(forResource: "exchange-code", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
-            .readFileContents()
-    }()
+    let exchangeToken: Data = try! Bundle.module
+        .path(forResource: "exchange-code", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
+        .readFileContents()
 
     var ssoRequestStubCondition: HTTPStubsTestBlock {
         let ssoEndpoint = localDiscoveryDocument.sso.url
@@ -575,7 +569,7 @@ final class RealIDPClientTests: XCTestCase {
             && !hasHeaderNamed("Authorization")
     }
 
-    func testSSORefreshHappyPath() {
+    func testSSORefreshHappyPath() throws {
         // given
         // a valid exchangeToken
         // a valid ssoToken
@@ -583,8 +577,8 @@ final class RealIDPClientTests: XCTestCase {
 
         let state = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc"
 
-        let expectedToken = IDPExchangeToken(
-            code: exchangeToken.asciiString!,
+        let expectedToken = try IDPExchangeToken(
+            code: XCTUnwrap(exchangeToken.asciiString),
             sso: ssoToken,
             state: state,
             redirect: "redirect"
@@ -666,10 +660,10 @@ final class RealIDPClientTests: XCTestCase {
                         nonceGenerator: cryptoBox.aesNonceGenerator)
     }
 
-    func testExchange() {
+    func testExchange() throws {
         let verifier = "123456789&=^"
         let keyVerifier = encryptedKeyVerifier(for: verifier)
-        let keyVerifierString = keyVerifier.encoded().utf8string!
+        let keyVerifierString = try XCTUnwrap(keyVerifier.encoded().utf8string)
         let exchangeTokenDummy = IDPExchangeToken(
             code: "exchange-code!",
             sso: nil,
@@ -696,10 +690,10 @@ final class RealIDPClientTests: XCTestCase {
                 .utf8
         )
 
-        let idpTokenResponsePath = Bundle.module
-            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
-        let expectedTokenData = try! idpTokenResponsePath.readFileContents()
-        let expectedToken = try! JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
+        let idpTokenResponsePath = try XCTUnwrap(Bundle.module
+            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle"))
+        let expectedTokenData = try idpTokenResponsePath.readFileContents()
+        let expectedToken = try JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
 
         var counter = 0
         let tokenEndpoint = localDiscoveryDocument.token.url
@@ -712,7 +706,7 @@ final class RealIDPClientTests: XCTestCase {
                 counter += 1
 
                 return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -729,10 +723,10 @@ final class RealIDPClientTests: XCTestCase {
         expect(counter) == 1
     }
 
-    func testExchangeWithCustomRedirectURI() {
+    func testExchangeWithCustomRedirectURI() throws {
         let verifier = "123456789&=^"
         let keyVerifier = encryptedKeyVerifier(for: verifier)
-        let keyVerifierString = keyVerifier.encoded().utf8string!
+        let keyVerifierString = try XCTUnwrap(keyVerifier.encoded().utf8string)
         let exchangeTokenDummy = IDPExchangeToken(
             code: "exchange-code!",
             sso: nil,
@@ -759,10 +753,10 @@ final class RealIDPClientTests: XCTestCase {
                 .utf8
         )
 
-        let idpTokenResponsePath = Bundle.module
-            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
-        let expectedTokenData = try! idpTokenResponsePath.readFileContents()
-        let expectedToken = try! JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
+        let idpTokenResponsePath = try XCTUnwrap(Bundle.module
+            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle"))
+        let expectedTokenData = try idpTokenResponsePath.readFileContents()
+        let expectedToken = try JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
 
         var counter = 0
         let tokenEndpoint = localDiscoveryDocument.token.url
@@ -775,7 +769,7 @@ final class RealIDPClientTests: XCTestCase {
                 counter += 1
 
                 return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
-        }
+            }
 
         RealIDPClient(
             client: config,
@@ -800,13 +794,13 @@ final class RealIDPClientTests: XCTestCase {
         let responseJWT = try JWT(from: loadDirectoryKKAppsResponse)
 
         var counter = 0
-        let endpoint = localDiscoveryDocument.directoryKKAppsgId!.url
+        let endpoint = try XCTUnwrap(localDiscoveryDocument.directoryKKAppsgId?.url)
         stub(condition: isHost("localhost")
             && isPath(endpoint.path)
             && isMethodGET()) { _ in
                 counter += 1
                 return HTTPStubsResponse(data: loadDirectoryKKAppsResponse, statusCode: 200, headers: nil)
-        }
+            }
         let fixture = [
             KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
             KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002"),
@@ -829,7 +823,7 @@ final class RealIDPClientTests: XCTestCase {
     }
 
     func testStartExtAuthGID() throws {
-        let urlFixture = URL(string: "http://localhost/redirect")!
+        let urlFixture = try XCTUnwrap(URL(string: "http://localhost/redirect"))
         let idpExtAuth = IDPExtAuth(kkAppId: "kk_app_id",
                                     state: "state",
                                     codeChallenge: "code_challenge",
@@ -847,7 +841,7 @@ final class RealIDPClientTests: XCTestCase {
 
         var requestURL: URL?
         var counter = 0
-        let endpoint = localDiscoveryDocument.federationAuth!.url
+        let endpoint = try XCTUnwrap(localDiscoveryDocument.federationAuth?.url)
         stub(condition: isHost("localhost")
             && isPath(endpoint.path)
             && isMethodGET()) { request in
@@ -858,7 +852,7 @@ final class RealIDPClientTests: XCTestCase {
                     statusCode: 302,
                     headers: ["Location": urlFixture.absoluteString]
                 )
-        }
+            }
 
         var result: URL?
 
@@ -872,16 +866,16 @@ final class RealIDPClientTests: XCTestCase {
         })
 
         expect(result).toNot(beNil())
-        expect(result!).to(equal(urlFixture))
+        expect(try XCTUnwrap(result)).to(equal(urlFixture))
         expect(requestURL).toNot(beNil())
-        expect(requestURL!).to(containsParameters(parameters))
+        expect(try XCTUnwrap(requestURL)).to(containsParameters(parameters))
     }
 
     func testStartExtAuthGIDErrorViaRedirect() throws {
         let urlFixture =
-            URL(
+            try XCTUnwrap(URL(
                 string: "http://localhost/redirect?state=0A8436B61AB022CC84AD394D60AFAA68&error=invalid_request&gematik_code=7014&gematik_timestamp=1702630135&gematik_uuid=42ac5d7d-4c50-4d76-b551-45feb6f25bd4&gematik_error_text=some+error+text" // swiftlint:disable:this line_length
-            )!
+            ))
         let errorFixture = IDPError.serverError(
             .init(
                 error: "invalid_request",
@@ -908,7 +902,7 @@ final class RealIDPClientTests: XCTestCase {
 
         var requestURL: URL?
         var counter = 0
-        let endpoint = localDiscoveryDocument.federationAuth!.url
+        let endpoint = try XCTUnwrap(localDiscoveryDocument.federationAuth?.url)
         stub(condition: isHost("localhost")
             && isPath(endpoint.path)
             && isMethodGET()) { request in
@@ -919,7 +913,7 @@ final class RealIDPClientTests: XCTestCase {
                     statusCode: 302,
                     headers: ["Location": urlFixture.absoluteString]
                 )
-        }
+            }
 
         var result: IDPError?
 
@@ -940,6 +934,6 @@ final class RealIDPClientTests: XCTestCase {
         expect(result).toNot(beNil())
         expect(result).to(equal(errorFixture))
         expect(requestURL).toNot(beNil())
-        expect(requestURL!).to(containsParameters(parameters))
+        expect(try XCTUnwrap(requestURL)).to(containsParameters(parameters))
     }
 }

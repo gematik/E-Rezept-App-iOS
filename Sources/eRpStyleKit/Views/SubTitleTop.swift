@@ -38,7 +38,7 @@ public struct SubTitleTop: View {
         VStack {
             Text(subject, bundle: bundle)
 
-            if let title = title {
+            if let title {
                 Text(title, bundle: bundle)
             }
         }

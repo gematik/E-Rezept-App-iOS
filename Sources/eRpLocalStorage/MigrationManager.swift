@@ -40,7 +40,7 @@ public protocol ModelMigrating {
 }
 
 public class MigrationManager: ModelMigrating {
-    internal let coreDataControllerFactory: CoreDataControllerFactory
+    let coreDataControllerFactory: CoreDataControllerFactory
     private let userDataStore: UserDataStore
     private let erxTaskDataStore: ErxTaskCoreDataStore
     private var coreDataController: CoreDataController?
@@ -176,7 +176,7 @@ extension MigrationManager: CoreDataCrudable {
     func migrateToModelVersion4() -> AnyPublisher<[Profile], MigrationError> {
         deleteAllAuditEvents()
             .flatMap { [weak self] _ -> AnyPublisher<[Profile], MigrationError> in
-                guard let self = self else {
+                guard let self else {
                     return Empty(completeImmediately: true).eraseToAnyPublisher()
                 }
                 var scannedTasks: [ErxTask] = []
@@ -185,7 +185,7 @@ extension MigrationManager: CoreDataCrudable {
                     .map { tasks -> [Profile] in
                         Dictionary(grouping: tasks) { $0.patient?.name }
                             .compactMap { name, erxTasks -> Profile? in
-                                guard let name = name else {
+                                guard let name else {
                                     // tasks without patient name are scanned tasks
                                     scannedTasks.append(contentsOf: erxTasks)
                                     return nil
@@ -218,7 +218,7 @@ extension MigrationManager: CoreDataCrudable {
     func migrateToModelVersion6() -> AnyPublisher<ModelVersion, MigrationError> {
         Deferred {
             Future<ModelVersion, MigrationError> { [weak self] promise in
-                guard let self = self,
+                guard let self,
                       let moc = self.coreDataController?.container.newBackgroundContext() else {
                     return
                 }
@@ -255,7 +255,7 @@ extension MigrationManager: CoreDataCrudable {
     func migrateToModelVersion8() -> AnyPublisher<ModelVersion, MigrationError> {
         Deferred {
             Future<ModelVersion, MigrationError> { [weak self] promise in
-                guard let self = self,
+                guard let self,
                       let moc = self.coreDataController?.container.newBackgroundContext() else {
                     return
                 }
@@ -285,7 +285,7 @@ extension MigrationManager: CoreDataCrudable {
     func migrateToModelVersion9(defaultProfileName: String) -> AnyPublisher<ModelVersion, MigrationError> {
         Deferred {
             Future<ModelVersion, MigrationError> { [weak self] promise in
-                guard let self = self,
+                guard let self,
                       let moc = self.coreDataController?.container.newBackgroundContext() else {
                     return
                 }
@@ -327,7 +327,7 @@ extension MigrationManager: CoreDataCrudable {
             .eraseToAnyPublisher()
     }
 
-    // Add scanned ErxTask's to the first profile
+    /// Add scanned ErxTask's to the first profile
     func add(_ scannedTasks: [ErxTask], toFirstProfileOf profiles: [Profile]) -> [Profile] {
         var profiles = profiles
         guard var firstProfile = profiles.first else {
@@ -343,7 +343,7 @@ extension MigrationManager: CoreDataCrudable {
     func save(profiles: [Profile]) -> AnyPublisher<[Profile], MigrationError> {
         Deferred {
             Future<[Profile], MigrationError> { [weak self] promise in
-                guard let self = self,
+                guard let self,
                       let moc = self.coreDataController?.container.newBackgroundContext() else {
                     return
                 }
@@ -353,7 +353,7 @@ extension MigrationManager: CoreDataCrudable {
                     _ = profiles.map { profile -> ProfileEntity in
                         let profileEntity = ProfileEntity.from(profile: profile, in: moc)
                         if let erxTaskEntries = try? self.fetch(tasks: profile.erxTasks, in: moc) {
-                            erxTaskEntries.forEach { erxTaskEntry in
+                            for erxTaskEntry in erxTaskEntries {
                                 // Due to saving the wrong insuranceIdentifier we reset
                                 // `lastModified` so that the correct number can be fetched again
                                 erxTaskEntry.lastModified = nil

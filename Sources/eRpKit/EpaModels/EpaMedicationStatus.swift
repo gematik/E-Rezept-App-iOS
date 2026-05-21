@@ -22,10 +22,10 @@
 
 /// This code system http://hl7.org/fhir/CodeSystem/medication-status defines the following codes:
 public enum EpaMedicationStatus: String, Equatable, Codable, Sendable {
-    // The medication is available for use.
+    /// The medication is available for use.
     case active
-    // "The medication is not available for use.
+    /// "The medication is not available for use.
     case inactive
-    // The medication was entered in error.
+    /// The medication was entered in error.
     case enteredInError = "entered-in-error"
 }

@@ -38,14 +38,12 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
     let networkScheduler = DispatchQueue.test
     let uiScheduler = DispatchQueue.test
 
-    lazy var schedulers: Schedulers = {
-        Schedulers(
-            uiScheduler: uiScheduler.eraseToAnyScheduler(),
-            networkScheduler: networkScheduler.eraseToAnyScheduler(),
-            ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
-            computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
-        )
-    }()
+    lazy var schedulers: Schedulers = .init(
+        uiScheduler: uiScheduler.eraseToAnyScheduler(),
+        networkScheduler: networkScheduler.eraseToAnyScheduler(),
+        ioScheduler: DispatchQueue.test.eraseToAnyScheduler(),
+        computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
+    )
 
     override func setUp() {
         super.setUp()
@@ -67,7 +65,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         }
     }
 
-    func testLoadingTriggerSucceeds() async {
+    func testLoadingTriggerSucceeds_forDefault() async {
         let sut = testStore { dependencies in
             dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
         }
@@ -76,10 +74,55 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
+        // Default insuranceType is .unknown, which means we expect pkv == false and no federalKV filtering
+        let expectedApps = Self.testDirectory.apps.filter { !$0.pkv }
+        let expectedDirectory = KKAppDirectory(apps: expectedApps)
+
         await sut.send(.loadKKList)
         await uiScheduler.run()
         await sut.receive(.response(.loadKKList(.success(Self.testDirectory)))) { state in
-            state.kkList = Self.testDirectory
+            state.kkList = expectedDirectory
+        }
+    }
+
+    func testLoadingTriggerSucceeds_forPKV() async {
+        let sut = testStore(for: .init(profileId: UUID(), insuranceType: .pKV)) { dependencies in
+            dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
+        }
+
+        idpSessionMock.loadDirectoryKKApps_Publisher = Just(Self.testDirectory)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        // We expect only pkv == true
+        let expectedApps = Self.testDirectory.apps.filter(\.pkv)
+        let expectedDirectory = KKAppDirectory(apps: expectedApps)
+
+        await sut.send(.loadKKList)
+        await uiScheduler.run()
+        await sut.receive(.response(.loadKKList(.success(Self.testDirectory)))) { state in
+            state.kkList = expectedDirectory
+        }
+    }
+
+    func testLoadingTriggerSucceeds_forFederalKV() async {
+        let sut = testStore(for: .init(profileId: UUID(), insuranceType: .federalKV)) { dependencies in
+            dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
+        }
+
+        idpSessionMock.loadDirectoryKKApps_Publisher = Just(Self.testDirectory)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        // We expect pkv == false AND contains "Heilfürsorge"
+        let expectedApps = Self.testDirectory.apps
+            .filter { !$0.pkv && $0.name.localizedCaseInsensitiveContains("Heilfürsorge") }
+        let expectedDirectory = KKAppDirectory(apps: expectedApps)
+
+        await sut.send(.loadKKList)
+        await uiScheduler.run()
+        await sut.receive(.response(.loadKKList(.success(Self.testDirectory)))) { state in
+            state.kkList = expectedDirectory
         }
     }
 
@@ -129,10 +172,18 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
     static let testEntryA = KKAppDirectory.Entry(name: "Test Entry A", identifier: "identifierA")
     static let testEntryB = KKAppDirectory.Entry(name: "Test Entry B", identifier: "identifierB")
     static let testEntryG = KKAppDirectory.Entry(name: "Generic BKK", identifier: "identifierG")
+    static let testEntryP = KKAppDirectory.Entry(name: "PKV Entry", identifier: "identifierP", pkv: true)
+    static let testEntryFederal = KKAppDirectory.Entry(
+        name: "Heilfürsorge Bundeswehr",
+        identifier: "identifierFederal",
+        pkv: false
+    )
 
     static let testDirectory = KKAppDirectory(apps: [
         testEntryA,
         testEntryB,
         testEntryG,
+        testEntryP,
+        testEntryFederal,
     ])
 }

@@ -88,9 +88,7 @@ extension ScannerDomain {
 
         static func deduplicateTasks(codes: [ScannedErxTask], previous: Set<[ScannedErxTask]>) -> [ScannedErxTask] {
             let scannedTasks = previous.flatMap { $0 }
-            let result = codes.filter { !scannedTasks.contains($0) }
-
-            return result
+            return codes.filter { !scannedTasks.contains($0) }
         }
     }
 

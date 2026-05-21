@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskRatioEntity {
     convenience init?(ratio: ErxMedication.Ratio?,
                       in context: NSManagedObjectContext) {
-        guard let ratio = ratio else { return nil }
+        guard let ratio else { return nil }
 
         self.init(context: context)
 
@@ -37,7 +37,7 @@ extension ErxTaskRatioEntity {
 
 extension ErxMedication.Ratio {
     init?(entity: ErxTaskRatioEntity?) {
-        guard let entity = entity,
+        guard let entity,
               let numeratorValue = entity.numerator?.value else { return nil }
 
         var denominator: ErxMedication.Quantity?

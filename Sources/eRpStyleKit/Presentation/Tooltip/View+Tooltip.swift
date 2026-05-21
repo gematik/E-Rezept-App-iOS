@@ -43,7 +43,7 @@ struct TooltipModifier<TooltipContent: View>: ViewModifier {
     let tooltipContent: TooltipContent
     let tooltipId: any TooltipId
 
-    // This value will be loaded onAppear and updated on tooltip dismiss
+    /// This value will be loaded onAppear and updated on tooltip dismiss
     @State var tooltipHidden = true
 
     init(id: any TooltipId, tooltipContent: TooltipContent) {
@@ -58,7 +58,7 @@ struct TooltipModifier<TooltipContent: View>: ViewModifier {
         if tooltipHidden || !isEnabled {
             content
                 .onAppear {
-                    self.tooltipHidden = tooltipDisplayStorage.tooltipHidden(tooltipId.description)
+                    tooltipHidden = tooltipDisplayStorage.tooltipHidden(tooltipId.description)
                 }
         } else {
             content
@@ -133,7 +133,9 @@ enum PlaygroundTooltipId: UInt, TooltipId {
         lhs.rawValue < rhs.rawValue
     }
 
-    var description: String { "PlaygroundTooltipId_\(rawValue)" }
+    var description: String {
+        "PlaygroundTooltipId_\(rawValue)"
+    }
 
     case tooltipA = 100
     case tooltipB = 200
@@ -147,7 +149,9 @@ enum PlaygroundTooltipId: UInt, TooltipId {
     case tooltipJ = 850
     case tooltipK = 750
 
-    var priority: UInt { rawValue }
+    var priority: UInt {
+        rawValue
+    }
 }
 
 struct TooltipPlayground: View {
@@ -200,9 +204,9 @@ struct TooltipPlayground: View {
                         }
 
                         Text("Lorem ipsum dolor sit amet...")
-                            .background(Color.green)
+                            .background(Colors.secondary700)
                         Text("Lorem ipsum dolor sit amet...")
-                            .background(Color.green)
+                            .background(Colors.secondary700)
 
                         HStack {
                             Btn()
@@ -234,12 +238,12 @@ struct TooltipPlayground: View {
                                 }
                         }
                         Text("Lorem ipsum dolor sit amet...")
-                            .background(Color.green)
+                            .background(Colors.secondary700)
 
                         Text("Lorem ipsum dolor sit amet...")
                         Text("Lorem ipsum dolor sit amet...")
                         Text("Lorem ipsum dolor sit amet...")
-                            .background(Color.green)
+                            .background(Colors.secondary700)
 
                         HStack {
                             Btn()

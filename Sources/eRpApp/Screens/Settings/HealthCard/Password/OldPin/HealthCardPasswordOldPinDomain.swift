@@ -61,7 +61,7 @@ struct HealthCardPasswordOldPinDomain {
     }
 
     var body: some Reducer<State, Action> {
-        Reduce(self.core)
+        Reduce(core)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -88,6 +88,7 @@ struct HealthCardPasswordOldPinDomain {
                 // inconsistent
                 return .none
             }
+
         case .destination,
              .delegate:
             return .none

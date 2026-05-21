@@ -118,9 +118,9 @@ extension LoginHandlerError: Codable {
         } else if container.contains(.ssoExpired) {
             self = .ssoExpired
         } else if container.contains(.idpError) {
-            self = .idpError(try container.decode(IDPError.self, forKey: .idpError))
+            self = try .idpError(container.decode(IDPError.self, forKey: .idpError))
         } else if container.contains(.network) {
-            self = .network(LoadingError.message(try container.decode(String.self, forKey: .network)))
+            self = try .network(LoadingError.message(container.decode(String.self, forKey: .network)))
         } else {
             throw DecodingError.dataCorruptedError(forKey: .idpError, in: container, debugDescription: "No error found")
         }

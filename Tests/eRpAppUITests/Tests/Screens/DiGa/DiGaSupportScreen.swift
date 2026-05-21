@@ -27,10 +27,6 @@ import XCTest
 struct DiGaSupportScreen: Screen {
     let app: XCUIApplication
 
-    init(app: XCUIApplication) {
-        self.app = app
-    }
-
     func tapCloseButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
         button(by: A11y.diga.support.digaDtlSupportBtnClose, fileID: fileID, file: file, line: line).tap()
     }

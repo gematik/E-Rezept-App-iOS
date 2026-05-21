@@ -71,19 +71,19 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
             let sanatizedSearchTerm = searchTerm.isEmpty ? nil : searchTerm
                 .replacingOccurrences(of: "\"", with: "", options: .literal)
 
-            if let position = position {
+            if let position {
                 // Use nearPharmacy operation for radius search sorted by distance
                 // Per FHIR_VZD_HOWTO_Search.adoc section 5.1: uses "text" parameter (not "_text")
                 queryItems.append(URLQueryItem(name: "_query", value: "nearPharmacy"))
                 queryItems.append(URLQueryItem(name: "longitude", value: "\(position.longitude)"))
                 queryItems.append(URLQueryItem(name: "latitude", value: "\(position.latitude)"))
                 queryItems.append(URLQueryItem(name: "distance", value: "100"))
-                if let sanatizedSearchTerm = sanatizedSearchTerm {
+                if let sanatizedSearchTerm {
                     queryItems.append(URLQueryItem(name: "text", value: sanatizedSearchTerm))
                 }
             } else {
                 // Standard FHIR search without location uses "_text" parameter
-                if let sanatizedSearchTerm = sanatizedSearchTerm {
+                if let sanatizedSearchTerm {
                     queryItems.append(URLQueryItem(name: "_text", value: sanatizedSearchTerm))
                 }
                 queryItems.append(URLQueryItem(name: "_include", value: "HealthcareService:organization"))
@@ -155,7 +155,7 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         return urlComps?.string
     }
 
-    // Note: Only .json for now
+    /// Note: Only .json for now
     public var httpHeaders: [String: String] {
         var headers: [String: String] = [:]
         headers["Accept"] = acceptFormat.httpHeaderValue

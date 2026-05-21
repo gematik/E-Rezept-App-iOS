@@ -70,13 +70,13 @@ final class EditProfilePictureDomainTest: XCTestCase {
 
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beFalse())
+            .to(beFalse())
         await sut.send(.editColor(.blue)) { state in
             state.color = .blue
         }
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beTrue())
+            .to(beTrue())
 
         await testScheduler.run()
         await sut.receive(.updateProfileReceived(.success(true)))
@@ -97,13 +97,13 @@ final class EditProfilePictureDomainTest: XCTestCase {
 
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beFalse())
+            .to(beFalse())
         await sut.send(.editPicture(.boyWithCard)) { state in
             state.picture = .boyWithCard
         }
         expect(self.mockUserProfileService
             .updateProfileIdUUIDMutatingEscapingInoutProfileVoidAnyPublisherBoolUserProfileServiceErrorCalled)
-                    .to(beTrue())
+            .to(beTrue())
 
         await testScheduler.run()
         await sut.receive(.updateProfileReceived(.success(true)))

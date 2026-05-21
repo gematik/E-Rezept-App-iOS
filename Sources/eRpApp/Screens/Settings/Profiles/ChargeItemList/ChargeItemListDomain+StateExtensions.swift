@@ -117,7 +117,7 @@ extension ChargeItemListDomain {
     }
 }
 
-extension Collection where Element == ErxSparseChargeItem {
+extension Collection<ErxSparseChargeItem> {
     func asChargeItemGroups() -> [ChargeItemListDomain.ChargeItemGroup] {
         @Dependency(\.uiDateFormatter) var dateFormatter
         @Dependency(\.fhirDateFormatter) var fhirDateFormatter

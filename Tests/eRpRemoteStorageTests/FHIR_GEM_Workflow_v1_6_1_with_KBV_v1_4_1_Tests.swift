@@ -28,9 +28,9 @@ import Nimble
 import SwiftUI
 import XCTest
 
-// FHIRBundle tests with
-// - workflow bundle version: 1.6.1 (profiles encoded as |1.6)
-// - prescription (KBV) bundle version 1.4.1 (profiles encoded as |1.4)
+/// FHIRBundle tests with
+/// - workflow bundle version: 1.6.1 (profiles encoded as |1.6)
+/// - prescription (KBV) bundle version 1.4.1 (profiles encoded as |1.4)
 final class FHIR_GEM_Workflow_v1_6_1_with_KBV_v1_4_1_Tests: XCTestCase {
     /// FHIRBundle test of workflow version 1.6.1 with prescription version 1.4.1
     func testParseErxTaskWithPrescriptionBundle() throws {

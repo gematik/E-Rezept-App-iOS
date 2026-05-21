@@ -73,7 +73,7 @@ extension IDPStorageClient: DependencyKey {
             },
             setToken: { profileId, token in
                 do {
-                    if let token = token,
+                    if let token,
                        let tokenData = try? JSONEncoder().encode(token) {
                         _ = try keychainHelper.setGenericPassword(tokenData, for: idpTokenIdentifier(for: profileId))
                     } else {
@@ -101,7 +101,7 @@ extension IDPStorageClient: DependencyKey {
             },
             setDiscoveryDocument: { document in
                 do {
-                    if let document = document {
+                    if let document {
                         let archiver = NSKeyedArchiver(requiringSecureCoding: true)
                         archiver.outputFormat = .binary
                         try archiver.encodeEncodable(document, forKey: NSKeyedArchiveRootObjectKey)

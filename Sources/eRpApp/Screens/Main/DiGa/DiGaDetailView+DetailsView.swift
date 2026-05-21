@@ -79,8 +79,8 @@ extension DiGaDetailView {
                             Text(L10n.digaDtlTxtPatientCost)
                         }
                     })
-                        .labeledContentStyle(.vertical(icon: SFSymbolName.info))
-                        .accessibilityIdentifier(A11y.diga.detail.digaDtlTxtPatientCost)
+                    .labeledContentStyle(.vertical(icon: SFSymbolName.info))
+                    .accessibilityIdentifier(A11y.diga.detail.digaDtlTxtPatientCost)
 
                     LabeledContent {
                         Text(store.bfArMDisplayInfo?.manufacturerCost ?? L10n.digaDtlTxtBfarmNa.text)
@@ -96,8 +96,8 @@ extension DiGaDetailView {
                             Text(L10n.prscDtlTxtPractitionerPerson)
                         }
                     })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+                    .buttonStyle(.navigation)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
 
                     Button(action: { store.send(.setNavigation(tag: .practitioner)) }, label: {
                         LabeledContent {
@@ -106,8 +106,8 @@ extension DiGaDetailView {
                             Text(L10n.prscDtlTxtPractitionerPerson)
                         }
                     })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+                    .buttonStyle(.navigation)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
 
                     Button(action: { store.send(.setNavigation(tag: .organization)) }, label: {
                         LabeledContent {
@@ -116,8 +116,8 @@ extension DiGaDetailView {
                             Text(L10n.prscDtlTxtPractitionerPerson)
                         }
                     })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+                    .buttonStyle(.navigation)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
                 }, moreContent: {
                     LabeledContent {
                         Text(store.diGaTask.authoredOnDate ?? L10n.digaDtlTxtNa.text)

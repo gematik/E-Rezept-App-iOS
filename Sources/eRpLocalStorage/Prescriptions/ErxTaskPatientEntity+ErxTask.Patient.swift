@@ -26,7 +26,7 @@ import eRpKit
 extension ErxTaskPatientEntity {
     convenience init?(patient: ErxPatient?,
                       in context: NSManagedObjectContext) {
-        guard let patient = patient else { return nil }
+        guard let patient else { return nil }
 
         self.init(context: context)
 
@@ -43,7 +43,7 @@ extension ErxTaskPatientEntity {
 
 extension ErxPatient {
     init?(entity: ErxTaskPatientEntity?) {
-        guard let entity = entity else { return nil }
+        guard let entity else { return nil }
 
         self.init(
             name: entity.name,

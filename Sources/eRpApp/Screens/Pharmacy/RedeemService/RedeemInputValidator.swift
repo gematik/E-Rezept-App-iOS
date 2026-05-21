@@ -231,7 +231,7 @@ extension AVSMessage {
         }
 
         func isValid(phone: String?) -> Validity {
-            guard let phone = phone, !phone.isEmpty else {
+            guard let phone, !phone.isEmpty else {
                 return .valid
             }
             let types: NSTextCheckingResult.CheckingType = [.phoneNumber]
@@ -251,7 +251,7 @@ extension AVSMessage {
         }
 
         func isValid(mail: String?) -> Validity {
-            guard let mail = mail, !mail.isEmpty else {
+            guard let mail, !mail.isEmpty else {
                 return .valid
             }
             return mail.isValidEmail ? .valid : .invalid(L10n.rivAvsInvalidMail.text)
@@ -414,13 +414,13 @@ extension ErxTaskOrder {
                 .invalid(L10n.rivTiInvalidHint(String(Validator.maxHintLength)).text)
         }
 
-        // Not specified for ErxTaskOrder
+        /// Not specified for ErxTaskOrder
         func isValid(text _: String?) -> Validity {
             .valid
         }
 
         func isValid(phone: String?) -> Validity {
-            guard let phone = phone, !phone.isEmpty else {
+            guard let phone, !phone.isEmpty else {
                 return .valid
             }
             let types: NSTextCheckingResult.CheckingType = [.phoneNumber]
@@ -440,7 +440,7 @@ extension ErxTaskOrder {
         }
 
         func isValid(mail: String?) -> Validity {
-            guard let mail = mail, !mail.isEmpty else {
+            guard let mail, !mail.isEmpty else {
                 return .valid
             }
             return mail.isValidEmail ? .valid : .invalid(L10n.rivTiInvalidMail.text)
@@ -455,7 +455,7 @@ extension ErxTaskOrder {
             case .onPremise:
                 return .valid
             case .delivery, .shipment:
-                guard let phone = phone, !phone.isEmpty else {
+                guard let phone, !phone.isEmpty else {
                     return .invalid(L10n.rivTiInvalidMissingContact.text)
                 }
                 return .valid
@@ -506,23 +506,41 @@ extension DependencyValues {
 struct DemoRedeemInputValidator: RedeemInputValidator {
     var service: RedeemServiceOption = .erxTaskRepository
 
-    func isValid(version _: Int) -> Validity { .valid }
+    func isValid(version _: Int) -> Validity {
+        .valid
+    }
 
-    func isValid(name _: String?) -> Validity { .valid }
+    func isValid(name _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(street _: String?) -> Validity { .valid }
+    func isValid(street _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(zip _: String?) -> Validity { .valid }
+    func isValid(zip _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(city _: String?) -> Validity { .valid }
+    func isValid(city _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(hint _: String?) -> Validity { .valid }
+    func isValid(hint _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(text _: String?) -> Validity { .valid }
+    func isValid(text _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(phone _: String?) -> Validity { .valid }
+    func isValid(phone _: String?) -> Validity {
+        .valid
+    }
 
-    func isValid(mail _: String?) -> Validity { .valid }
+    func isValid(mail _: String?) -> Validity {
+        .valid
+    }
 
     func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
         optionType _: RedeemOption,

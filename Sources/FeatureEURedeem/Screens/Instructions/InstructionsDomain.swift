@@ -30,11 +30,15 @@ public struct InstructionsDomain {
     public struct State: Equatable {
         /// First time redeeming shows instructions with redeem button
         public var isRedeeming: Bool
+        /// Current country code
+        public var countryCode: String?
 
         public init(
-            isRedeeming: Bool = false
+            isRedeeming: Bool = false,
+            countryCode: String? = nil
         ) {
             self.isRedeeming = isRedeeming
+            self.countryCode = countryCode
         }
     }
 

@@ -52,13 +52,13 @@ extension MedicationScheduleEntity {
 }
 
 extension MedicationSchedule {
-    // Helper method to convert weekdays to a string for Core Data storage
+    /// Helper method to convert weekdays to a string for Core Data storage
     func weekdaysToString() -> String {
         weekdays.map { String($0.rawValue) }.sorted().joined(separator: ",")
     }
 
-    // Helper method to convert a string from Core Data to weekdays
-    // Note: This method assumes that the string is a comma-separated list of integers
+    /// Helper method to convert a string from Core Data to weekdays
+    /// Note: This method assumes that the string is a comma-separated list of integers
     static func weekdaysFromString(_ string: String?) -> Set<Weekday> {
         // Note:
         // If the string is nil, it hasn't been set yet. This means the device is reading a
@@ -67,7 +67,7 @@ extension MedicationSchedule {
 
         // For newly created schedules (and DB entities), the weekdays property is set to all weekdays by default.
         // (This is a short cut for a real data base migration step.)
-        guard let string = string else {
+        guard let string else {
             return Set(Weekday.allCases)
         }
 

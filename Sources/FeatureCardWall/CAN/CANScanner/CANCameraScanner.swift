@@ -52,7 +52,7 @@ public struct CANCameraScanner: View {
             }
 
             VStack {
-                if let canScan = canScan {
+                if let canScan {
                     Text("\(L10n.cdwCanScanTxtResult.text) \n\(canScan.value)")
                         .padding()
                         .background(Color(.systemBackground))
@@ -73,7 +73,7 @@ public struct CANCameraScanner: View {
                 Spacer()
 
                 Button {
-                    if let canScan = canScan {
+                    if let canScan {
                         closeAction(canScan)
                     }
                 } label: {
@@ -130,21 +130,21 @@ struct LightSwitch: View {
                             .padding(.trailing)
                     }
                 })
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color(.systemGray5))
-                    .cornerRadius(8)
-                    .padding()
-                    .accessibilityLabel(Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff))
-                    .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnFlashlight)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(Color(.systemGray5))
+                .cornerRadius(8)
+                .padding()
+                .accessibilityLabel(Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff))
+                .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnFlashlight)
             }
         }.onReceive(NotificationCenter.default
             .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 toggleFlashlight(status: false)
                 isFlashOn = false
-        }
-        .onChange(of: isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        }
+            }
+            .onChange(of: isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
     }
 }
 
@@ -176,7 +176,7 @@ struct VisionView: UIViewControllerRepresentable {
             self.can = can
         }
         uiViewController.onSuccessfulScanAction = {
-            self.onSuccessfulScanAction()
+            onSuccessfulScanAction()
         }
     }
 }
