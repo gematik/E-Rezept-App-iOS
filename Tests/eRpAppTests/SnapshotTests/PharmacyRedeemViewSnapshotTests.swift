@@ -137,7 +137,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             serviceOptionState: .init(
                 prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
                 selectedOption: .shipment,
-                availableOptions: [.onPremise, .delivery]
+                availableOptions: [.onPremise, .shipment]
             )
         )
         let sut = NavigationStack {
@@ -160,7 +160,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
             serviceOptionState: .init(
                 prescriptions: Shared(value: [Prescription.Dummies.prescriptionSelfPayer]),
-                selectedOption: .onPremise,
+                selectedOption: .delivery,
                 availableOptions: [.delivery]
             )
         )
@@ -168,6 +168,87 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
+            ) {
+                EmptyReducer()
+            })
+        }.frame(width: 375, height: 1200, alignment: .top)
+
+        assertSnapshots(of: sut, as: snapshotModi())
+    }
+
+    func testPharmacyRedeemViewTPrescriptionWithShipmentOption() {
+        let prescriptions = [Prescription.Dummies.prescriptionTPrescription]
+        let initialState = PharmacyRedeemDomain.State(
+            prescriptions: Shared(value: prescriptions),
+            selectedPrescriptions: Shared(value: prescriptions),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(value: prescriptions),
+                selectedOption: .onPremise,
+                availableOptions: [.onPremise, .shipment]
+            )
+        )
+        let sut = NavigationStack {
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
+                initialState: initialState
+            ) {
+                EmptyReducer()
+            })
+        }.frame(width: 375, height: 1200, alignment: .top)
+
+        assertSnapshots(of: sut, as: snapshotModi())
+    }
+
+    func testPharmacyRedeemViewTPrescriptionShipmentSelected() {
+        let prescriptions = [Prescription.Dummies.prescriptionTPrescription]
+        let initialState = PharmacyRedeemDomain.State(
+            prescriptions: Shared(value: prescriptions),
+            selectedPrescriptions: Shared(value: prescriptions),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            selectedShipmentInfo: ShipmentInfo(
+                name: "Anna Maria Vetter",
+                street: "Benzelrather Str. 29",
+                zip: "50226",
+                city: "Frechen",
+                phone: "+491771234567",
+                mail: "anna.vetter@gematik.de"
+            ),
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(value: prescriptions),
+                selectedOption: .shipment,
+                availableOptions: [.onPremise, .shipment]
+            ),
+            hasCompleteContactData: true
+        )
+        let sut = NavigationStack {
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
+                initialState: initialState
+            ) {
+                EmptyReducer()
+            })
+        }.frame(width: 375, height: 1200, alignment: .top)
+
+        assertSnapshots(of: sut, as: snapshotModi())
+    }
+
+    func testPharmacyRedeemViewTPrescriptionWithoutShipment() {
+        let prescriptions = [Prescription.Dummies.prescriptionTPrescription]
+        let initialState = PharmacyRedeemDomain.State(
+            prescriptions: Shared(value: prescriptions),
+            selectedPrescriptions: Shared(value: prescriptions),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(value: prescriptions),
+                selectedOption: .onPremise,
+                availableOptions: [.onPremise, .delivery]
+            )
+        )
+        let sut = NavigationStack {
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
+                initialState: initialState
             ) {
                 EmptyReducer()
             })

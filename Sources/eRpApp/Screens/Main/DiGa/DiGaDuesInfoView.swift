@@ -29,28 +29,31 @@ struct DiGaDuesInfoView: View {
     @Bindable var store: StoreOf<DiGaDetailDomain>
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Spacer()
                 CloseButton {
                     store.send(.setNavigation(tag: .none))
                 }
             }
+            .padding([.top, .horizontal])
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text(L10n.digaDtlDuesTxtHeader)
-                    .font(.headline)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.digaDtlDuesTxtHeader)
+                        .font(.headline)
 
-                Text(L10n.digaDtlDuesTxtInfo)
-                    .foregroundColor(Colors.systemLabelSecondary)
+                    Text(L10n.digaDtlDuesTxtInfo)
+                        .foregroundColor(Colors.systemLabelSecondary)
 
-                Text(L10n.digaDtlDuesTxtInfoDate)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .padding(.bottom, 16)
-                Spacer()
+                    Text(L10n.digaDtlDuesTxtInfoDate)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .padding(.bottom, 16)
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
             }
         }
-        .padding()
         .frame(maxWidth: .infinity)
         .background(Colors.systemBackground.ignoresSafeArea())
     }

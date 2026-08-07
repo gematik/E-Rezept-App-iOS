@@ -222,24 +222,31 @@ extension MedicationReminderSetupView {
         @Bindable var store: StoreOf<DosageInstructionsDomain>
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {
                     Spacer()
                     CloseButton {
                         store.send(.delegate(.close))
                     }
                 }
-                Text(store.title)
-                    .font(.headline)
-                    .accessibilityIdentifier(A11y.medicationReminder.medReminderDrawerDosageInstructionInfoTitle)
+                .padding([.top, .horizontal])
 
-                Text(store.description)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .accessibilityIdentifier(A11y.medicationReminder
-                        .medReminderDrawerDosageInstructionInfoDescription)
-                Spacer()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(store.title)
+                            .font(.headline)
+                            .accessibilityIdentifier(A11y.medicationReminder
+                                .medReminderDrawerDosageInstructionInfoTitle)
+
+                        Text(store.description)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .accessibilityIdentifier(A11y.medicationReminder
+                                .medReminderDrawerDosageInstructionInfoDescription)
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom)
+                }
             }
-            .padding()
             .frame(maxWidth: .infinity)
             .background(Colors.systemBackground.ignoresSafeArea())
             .accessibilityElement(children: .contain)

@@ -42,4 +42,15 @@ struct RedeemMatrixCodeScreen<Previous: Screen>: Screen {
     func selfPayerWarning(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         staticText(by: A11y.selfPayerWarning.selfPayerWarningTxtMessage, fileID: fileID, file: file, line: line)
     }
+
+    func redeemEUButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.matrixCode.dmcBtnRedeemEuPrsc, fileID: fileID, file: file, line: line, checkExistence: false)
+    }
+
+    @discardableResult
+    func tapRedeemEU(fileID: String = #fileID, file: String = #filePath,
+                     line: UInt = #line) -> EURedeemConsentScreen {
+        button(by: A11y.matrixCode.dmcBtnRedeemEuPrsc, fileID: fileID, file: file, line: line).tap()
+        return EURedeemConsentScreen(app: app)
+    }
 }

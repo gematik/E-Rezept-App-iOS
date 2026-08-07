@@ -64,5 +64,11 @@
         "text": "**🏥 Forbedrede apoteksoplysninger** \nApoteker kan nu tilføje tjenester såsom vaccinationer og funktioner på stedet, såsom barrierefri adgang. Apoteker kan filtreres baseret på disse nye oplysninger. \n \n **✨ Forbedret apotekssøgning** \nNyligt brugte apoteker og foretrukne apoteker er nu mere tydeligt adskilt. Filtrene er blevet forbedret. \n \n **✅ Sundheds-ID for personer med alternativ forsikring** \nPersoner, der ikke er dækket af lovpligtig eller privat sundhedsforsikring, kan nu også logge ind med deres sundheds-ID. \n \n **♿ Tilgængelighed** \nFiltrene har nu højere kontrast, og deres status er lettere at identificere. Tilgængelighedserklæringen er blevet opdateret og udvidet til at omfatte et afsnit, der dokumenterer ændringshistorikken. Nogle knapper er blevet justeret for forbedret synlighed.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ T-recepter tilgængelige**\nT-recepter kan nu modtages og vises korrekt. T-recepter bruges til visse lægemidler med særlige sikkerhedskrav.\n\n**⚙️ Indstillinger ryddet op**\nProfilindstillingerne er blevet revideret og gjort tydeligere.\n\n**🔐 Forbedret login**\nRegistrering i forsikringsappen er nu hurtigere.\n\n**🛡 Sporing fjernet**\nVi har fjernet sporingsværktøjet fra appen. Der indsamles ikke længere data om appens brug.\n\n**♿ Mere tilgængelighed**\nTekster med forklarende noter kan nu læses i deres fulde længde, selv med forstørrede skriftstørrelser.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

@@ -50,6 +50,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
+    // MARK: Push Notifications
+
+    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationCenter.default.post(
+            name: Notification.Name("didReceiveAPNSToken"),
+            object: nil,
+            userInfo: ["deviceToken": deviceToken]
+        )
+    }
+
+    func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationCenter.default.post(
+            name: Notification.Name("didFailToRegisterForAPNS"),
+            object: nil,
+            userInfo: ["error": error]
+        )
+    }
+
     // [REQ:BSI-eRp-ePA:O.Data_10#2|10] Keyboard extensions are disallowed
     func application(
         _: UIApplication,

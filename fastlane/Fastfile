@@ -23,7 +23,7 @@
 require 'json'
 
 xcodes(
-  version: ENV["FL_XCODE_VERSION"] || "26.2.0",
+  version: ENV["FL_XCODE_VERSION"] || "26.4.0",
   select_for_current_build_only: true, 
   update_list: false
 )
@@ -255,13 +255,19 @@ lane :build_all do |options|
   build_ios options unless skip_ios
 end
 
+desc "Lane that generates the CycloneDX SBOM (snyk) and stores it at doc/sbom.json."
+desc "Run whenever the dependency set changes (wired into the renovate lockfile-commit flow)."
+lane :generate_sbom do |options|
+  sh "cd .. && snyk sbom --file=Package.swift --format=cyclonedx1.6+json > doc/sbom.json"
+end
+
 desc "Lane that (auto) genarates API documentation from inline comments."
 lane :generate_documentation do |options|
   list_errors
   list_requirements
 
-  # create sbom into documentations
-  sh "cd .. && snyk sbom --file=Package.swift --format=cyclonedx1.6+json > docs/sbom.json; cd -"
+  # copy committed sbom (maintained by the renovate flow via `generate_sbom`) into documentations
+  sh "cd .. && mkdir -p docs && cp doc/sbom.json docs/sbom.json"
 
   output = sh "cd .. && swift package describe --type json | jq \".targets[]|select(.type == \\\"library\\\").name\" | grep -v Test | sed \"s/\\\"//g\" | sort"
   schemes = output.split("\n").map { |e| e.strip }
@@ -340,6 +346,7 @@ desc " * **`xcode`**: The path to the Xcode.app to use for this project [default
 desc ""
 lane :setup do |options|
   resolve_dependencies options
+  pull_erp_shared_data
   generate_xcodeproj options
   pull_environment_variables options
 end
@@ -680,7 +687,7 @@ lane :build_konnektathon_ru do |options|
     skip_package_ipa: true,
     export_method: "app-store",
     archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
-    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" GEM_PRODUCT_BUNDLE_IDENTIFIER=\"de.gematik.konny\" GEM_PROVISIONING_PROFILE_SPECIFIER=\"match AppStore de.gematik.konny\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW DEFAULT_ENVIRONMENT_RU_DEV\"",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" GEM_PRODUCT_BUNDLE_IDENTIFIER=\"de.gematik.konny\" GEM_APP_GROUP_IDENTIFIER=\"group.de.gematik.konny.pngroup\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW DEFAULT_ENVIRONMENT_RU_DEV\"",
     output_directory: "./distribution"
   )
   gym(
@@ -736,7 +743,7 @@ lane :build_drezept_ru do |options|
     skip_package_ipa: true,
     export_method: "app-store",
     archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
-    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" GEM_PRODUCT_BUNDLE_IDENTIFIER=\"de.gematik.drezept\" GEM_PROVISIONING_PROFILE_SPECIFIER=\"match AppStore de.gematik.drezept\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW TEST_ENVIRONMENT DEFAULT_ENVIRONMENT_RU\"",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" GEM_PRODUCT_BUNDLE_IDENTIFIER=\"de.gematik.drezept\" GEM_APP_GROUP_IDENTIFIER=\"group.de.gematik.drezept.pngroup\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW TEST_ENVIRONMENT DEFAULT_ENVIRONMENT_RU\"",
     output_directory: "./distribution"
   )
   gym(
@@ -997,6 +1004,7 @@ lane :prepare_release do |option|
 
   compile_foss
   pull_erp_shared_data
+  generate_sbom
 
   update_localization
 
@@ -1297,6 +1305,21 @@ lane :pull_erp_shared_data do
     replace_file_path: './Sources/FeatureCardWall/Resources/health_insurance_contacts.json',
     transform_to_json_format: true
   )
+
+  files_to_download = [
+    'erp-ios-app-resources/fastlane/audit_afos.json',
+    'erp-ios-app-resources/Tests/IntegrationTests/Resources/Certificates.bundle/109500969_X114428530_c.ch.aut-ecc-51.bin',
+    'erp-ios-app-resources/Tests/IntegrationTests/Resources/Certificates.bundle/109500969_X114428530_c.ch.aut-ecc-51.crt'
+  ]
+  files_to_download.each do |remote_file_path|
+    output_file = remote_file_path.sub('erp-ios-app-resources/', '')
+    next if File.exist?(File.expand_path("../#{output_file}", __dir__))
+    erp_shared_data_file_download(
+     gitlab_api_token: gitlab_api_token,
+     remote_file_path: remote_file_path,
+     output_file: output_file
+    )
+  end
 end
 
 desc "Pull the shared environment variables from the shared repositoriy and write them in a parseble format to a file"

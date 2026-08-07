@@ -4,6 +4,7 @@
 import Foundation
 import FeatureEURedeem
 import FeatureCardWall
+import FeatureCommunication
 import eRpResources
 
 
@@ -94,6 +95,8 @@ extension AppDomain.Action {
             case let .pharmacy(action: action):
                 action.analytics(tracker: tracker)
             case let .orders(action: action):
+                action.analytics(tracker: tracker)
+            case let .messages(action: action):
                 action.analytics(tracker: tracker)
             case let .settings(action: action):
                 action.analytics(tracker: tracker)
@@ -211,14 +214,6 @@ extension CardWallCANDomain.Destination.Action {
         }
     }
 }
-extension CardWallExtAuthConfirmationDomain.Action {
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func analytics(tracker: Tracker) {
-        switch self {
-            case _: break
-        }
-    }
-}
 extension CardWallExtAuthHelpDomain.Action {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     func analytics(tracker: Tracker) {
@@ -241,8 +236,6 @@ extension CardWallExtAuthSelectionDomain.Destination.Action {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     func analytics(tracker: Tracker) {
         switch self {
-            case let .confirmation(action):
-                action.analytics(tracker: tracker)
             case let .help(action):
                 action.analytics(tracker: tracker)
             case _: break
@@ -610,6 +603,8 @@ extension EditProfileDomain.Destination.Action {
     func analytics(tracker: Tracker) {
         switch self {
             case let .auditEvents(action):
+                action.analytics(tracker: tracker)
+            case let .notificationChannels(action):
                 action.analytics(tracker: tracker)
             case let .registeredDevices(action):
                 action.analytics(tracker: tracker)
@@ -1075,6 +1070,42 @@ extension MedicationReminderSetupDomain.Destination.Action {
         }
     }
 }
+extension MessageThreadDomain.Action {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func analytics(tracker: Tracker) {
+        switch self {
+            case _: break
+        }
+    }
+}
+extension MessageThreadListDomain.Action {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .destination(.presented(action)):
+                action.analytics(tracker: tracker)
+            case _: break
+        }
+    }
+}
+extension MessageThreadListDomain.Destination.Action {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .orderDetail(action):
+                action.analytics(tracker: tracker)
+            case _: break
+        }
+    }
+}
+extension NotificationChannelsDomain.Action {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func analytics(tracker: Tracker) {
+        switch self {
+            case _: break
+        }
+    }
+}
 extension OSDeprecationDomain.Action {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     func analytics(tracker: Tracker) {
@@ -1439,6 +1470,8 @@ extension PrescriptionDetailDomain.Destination.Action {
                 action.analytics(tracker: tracker)
             case let .accidentInfo(action):
                 action.analytics(tracker: tracker)
+            case let .teratogenicInfo(action):
+                action.analytics(tracker: tracker)
             case let .technicalInformations(action):
                 action.analytics(tracker: tracker)
             case let .sharePrescription(action):
@@ -1458,6 +1491,8 @@ extension PrescriptionDetailDomain.Destination.Action {
             case let .emergencyServiceFeeInfo(action):
                 action.analytics(tracker: tracker)
             case let .selfPayerInfo(action):
+                action.analytics(tracker: tracker)
+            case let .tPrescriptionInfo(action):
                 action.analytics(tracker: tracker)
             case let .medicationReminder(action):
                 action.analytics(tracker: tracker)
@@ -1720,6 +1755,14 @@ extension TCAToast_PreviewProvider.Domain.Destination.Action {
     }
 }
 extension TechnicalInformationsDomain.Action {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func analytics(tracker: Tracker) {
+        switch self {
+            case _: break
+        }
+    }
+}
+extension TeratogenicInfoDomain.Action {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     func analytics(tracker: Tracker) {
         switch self {

@@ -87,11 +87,11 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
                 prescriptions: [],
-                profile: UserProfile.Dummies.profileA
+                profile: UserProfile.Fixtures.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(
-                profiles: [UserProfile.Dummies.profileA],
-                selectedProfileId: UserProfile.Dummies.profileA.id
+                profiles: [UserProfile.Fixtures.profileA],
+                selectedProfileId: UserProfile.Fixtures.profileA.id
             )
         )))
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
@@ -105,7 +105,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
                 prescriptions: [prescription],
-                profile: UserProfile.Dummies.profileA
+                profile: UserProfile.Fixtures.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
@@ -131,7 +131,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
                 prescriptions: Prescription.Dummies.prescriptionsScanned,
-                profile: UserProfile.Dummies.profileA
+                profile: UserProfile.Fixtures.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
@@ -145,7 +145,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
                 prescriptions: prescriptions,
-                profile: UserProfile.Dummies.profileA
+                profile: UserProfile.Fixtures.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))

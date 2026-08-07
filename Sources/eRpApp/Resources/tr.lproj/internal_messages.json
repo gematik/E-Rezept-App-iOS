@@ -64,5 +64,11 @@
         "text": "**🏥 Geliştirilmiş Eczane Bilgileri** \nEczaneler artık aşılar ve engelsiz erişim gibi yerinde özellikler de ekleyebiliyor. Eczaneler bu yeni bilgilere göre filtrelenebiliyor. \n \n **✨ Geliştirilmiş Eczane Arama** \nSon kullanılan eczaneler ve favori eczaneler artık daha net bir şekilde ayrılıyor. Filtreler iyileştirildi. \n \n **✅ Alternatif Sigortası Olan Kişiler İçin Sağlık Kimliği** \nYasal veya özel sağlık sigortası kapsamında olmayan kişiler artık Sağlık Kimliklerini kullanarak da giriş yapabiliyor. \n \n **♿ Erişilebilirlik** \nFiltreler artık daha yüksek kontrastlı ve durumları daha kolay tanımlanabiliyor. Erişilebilirlik bildirimi güncellendi ve değişiklik geçmişini belgeleyen bir bölüm içerecek şekilde genişletildi. Bazı düğmeler daha iyi görünürlük için ayarlandı.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ Reçeteli ilaçlar mevcuttur**\nT-Reçeteleri artık doğru şekilde alınabiliyor ve görüntülenebiliyor. T-Reçeteleri, özel güvenlik gereksinimleri olan bazı ilaçlar için kullanılır.\n\n**⚙️ Ayarlar temizlendi**\nProfil ayarları gözden geçirildi ve daha anlaşılır hale getirildi.\n\n**🔐 Giriş işlemi iyileştirildi**\nSigorta uygulamasına kayıt olmak artık daha hızlı.\n\n**🛡 Takip kaldırıldı**\nUygulamadan izleme aracını kaldırdık. Artık uygulama kullanım verileri toplanmıyor.\n\n**♿ Daha fazla erişilebilirlik**\nAçıklayıcı notlar içeren metinler artık büyütülmüş yazı tiplerinde bile tam olarak okunabiliyor.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

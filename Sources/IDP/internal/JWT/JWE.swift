@@ -24,7 +24,6 @@ import CodedError
 import Combine
 import CryptoKit
 import Foundation
-import OpenSSL
 
 /// JSON Web Encryption (JWE) - Container format holding a payload and the corresponding
 /// ciphertext along with encryption information.
@@ -140,7 +139,7 @@ extension JWE {
 extension JWE {
     public struct Header: Encodable {
         /// algorithm used for encrypting the JWE
-        var alg: String
+        public var alg: String
         /// Encryption type
         var enc: String {
             switch encryption {
@@ -150,40 +149,22 @@ extension JWE {
         }
 
         /// expiry date of the payload (the original challenge)
-        let exp: Date?
+        public let exp: Date?
         /// Content type of the JWE (e.g. JWT, NJWT)
-        let cty: String
+        public let cty: String
         /// Token Type, e.g. JWT
-        let typ: String?
+        public let typ: String?
         /// Ephemeral public key that is used by the server for decryption
         var epk: JWK {
             encryptionContext.ephemeralPublicKey
         }
 
         /// Encryption object which performs the actual encryption
-        let encryption: Encryption
+        public let encryption: Encryption
         /// Key material used for encryption
-        let encryptionContext: EncryptionContext
+        public let encryptionContext: EncryptionContext
 
         public init(
-            algorithm: Algorithm,
-            encryption: Encryption,
-            expiry: Date? = nil,
-            contentType: String,
-            type: String? = nil
-        ) throws {
-            self.encryption = encryption
-            encryptionContext = try algorithm.encryptionContext()
-            exp = expiry
-            cty = contentType
-            typ = type
-            switch algorithm {
-            case .ecdh_es:
-                alg = "ECDH-ES"
-            }
-        }
-
-        init(
             encryptionContext: EncryptionContext,
             alg: String,
             encryption: Encryption,
@@ -221,30 +202,6 @@ extension JWE {
     }
 }
 
-extension JWK {
-    /// Initializer for creating a  JWK (JSON web key) from a brainpool curve's public key
-    /// - Parameter publicKey: A brainpoolP256r1 public key
-    /// - Throws: When encoding the coordinates from the public key fails
-    /// - Returns: A JWK
-    static func from(brainpoolP256r1 publicKey: BrainpoolP256r1.KeyExchange.PublicKey) throws -> Self {
-        // Contains  04 || x || y
-        let raw = publicKey.x962Value
-
-        // index 0 contains 04, representing `uncompressed`
-        let rangeX: Range<Data.Index> = 1 ..< 33
-        let rangeY: Range<Data.Index> = 33 ..< 65
-
-        guard let base64x = try raw().subdata(in: rangeX).encodeBase64UrlSafe(),
-              let xCoordinate = String(data: base64x, encoding: .utf8),
-              let base64y = try raw().subdata(in: rangeY).encodeBase64UrlSafe(),
-              let yCoordinate = String(data: base64y, encoding: .utf8) else {
-            throw JWE.Error.encodingError
-        }
-
-        return JWK(kty: "EC", crv: "BP-256", x: xCoordinate, y: yCoordinate)
-    }
-}
-
 extension JWE {
     private static let delimiter = UInt8(0x2E)
 
@@ -271,5 +228,12 @@ extension JWE.Backing {
             encodedIV + Self.dot +
             encodedCiphertext + Self.dot +
             encodedTag
+    }
+}
+
+extension JWE {
+    /// Decryption algorithm for JWE
+    enum DecryptionAlgorithm {
+        case plain(SymmetricKey)
     }
 }

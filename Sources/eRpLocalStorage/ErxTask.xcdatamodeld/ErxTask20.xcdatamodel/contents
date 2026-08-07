@@ -144,6 +144,7 @@
         <relationship name="practitioner" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskPractitionerEntity" inverseName="task" inverseEntity="ErxTaskPractitionerEntity"/>
         <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="erxTasks" inverseEntity="ProfileEntity"/>
         <relationship name="quantity" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="quantityTask" inverseEntity="ErxTaskQuantityEntity"/>
+        <relationship name="teratogenicInfo" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskTeratogenicInfoEntity" inverseName="task" inverseEntity="ErxTaskTeratogenicInfoEntity"/>
         <fetchIndex name="byObjectIdIndex">
             <fetchIndexElement property="identifier" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -215,6 +216,14 @@
         <attribute name="organizationIdentifier" optional="YES" attributeType="String"/>
         <attribute name="phone" optional="YES" attributeType="String"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="organization" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskTeratogenicInfoEntity" representedClassName="ErxTaskTeratogenicInfoEntity" syncable="YES">
+        <attribute name="expertKnowledgeDeclaration" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="informationMaterialProvided" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="offLabelUse" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="safetyMeasuresCompliance" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="womanOfChildbearingAge" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="teratogenicInfo" inverseEntity="ErxTaskEntity"/>
     </entity>
     <entity name="ErxTaskPatientEntity" representedClassName="ErxTaskPatientEntity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String"/>

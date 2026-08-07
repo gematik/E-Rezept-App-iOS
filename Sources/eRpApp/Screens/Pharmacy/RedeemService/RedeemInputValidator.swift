@@ -20,9 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-// swiftlint:disable file_length
-
-import AVS
 import Dependencies
 import DependenciesMacros
 import eRpKit
@@ -41,13 +38,10 @@ struct RedeemOrderInputValidator {
 
 extension RedeemOrderInputValidator: DependencyKey {
     static let liveValue: Self = {
-        @Dependency(\.avsMessageValidator) var avsMessageValidator
         @Dependency(\.erxTaskOrderValidator) var erxTaskOrderValidator
 
         return Self { option in
             switch option {
-            case .avs:
-                return avsMessageValidator
             case .erxTaskRepository, .erxTaskRepositoryAvailable:
                 return erxTaskOrderValidator
             case .noService, .none:
@@ -100,7 +94,7 @@ protocol RedeemInputValidator {
 
 struct RedeemInputValidatorDependency: DependencyKey {
     // Is initially unimplemented because there is no reasonable default
-    // Use the dependency values from `AVSMessage.Validator` or `ErxTaskOrder.Validator` to override
+    // Use the dependency values from `ErxTaskOrder.Validator` to override
     static let liveValue: RedeemInputValidator = UnimplementedRedeemInputValidator()
     static let previewValue: RedeemInputValidator = DemoRedeemInputValidator()
 }
@@ -124,212 +118,6 @@ extension RedeemInputValidator {
             return isValid(city: address?.city)
         }
         return .valid
-    }
-}
-
-extension AVSMessage {
-    /// Collection of input validation functions for redeem via AVS. Constraints defined in
-    /// [gemF_eRp_altern_Zuweisung:A_22784]
-    struct Validator: RedeemInputValidator, Equatable {
-        static var maxHintLength = 500
-        static var maxTextLength = 500
-        static var maxAddressFieldLength = 50
-        static var maxNameLength = 50
-        init() {}
-
-        func isValidAVSMessageInput( // swiftlint:disable:this function_parameter_count
-            version: Int,
-            supplyOptionsType: SupplyOptionsType,
-            name: String?,
-            address: Address?,
-            hint: String?,
-            text: String?,
-            phone: String?,
-            mail: String?
-        ) -> Validity {
-            if isValid(version: version) != .valid {
-                return isValid(version: version)
-            }
-            if isValid(name: name) != .valid {
-                return isValid(name: name)
-            }
-            if isValid(address: address) != .valid {
-                return isValid(address: address)
-            }
-            if isValid(hint: hint) != .valid {
-                return isValid(hint: hint)
-            }
-            if isValid(text: text) != .valid {
-                return isValid(text: text)
-            }
-            if isValid(phone: phone) != .valid {
-                return isValid(phone: phone)
-            }
-            if isValid(mail: mail) != .valid {
-                return isValid(mail: mail)
-            }
-            if ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-                supplyOptionsType: supplyOptionsType,
-                phone: phone,
-                mail: mail
-            ) != .valid {
-                return ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-                    supplyOptionsType: supplyOptionsType,
-                    phone: phone,
-                    mail: mail
-                )
-            }
-
-            return .valid
-        }
-
-        func isValid(version: Int) -> Validity {
-            (version > 0 && version < 1_000_000) ? .valid : .invalid(L10n.rivAvsWrongVersion.text)
-        }
-
-        func isValid(name: String?) -> Validity {
-            (name?.countIsLessOrEqual(Validator.maxNameLength) ?? true) ? .valid :
-                .invalid(L10n.rivAvsInvalidName(String(Validator.maxNameLength)).text)
-        }
-
-        func isValid(address: Address?) -> Validity {
-            if isValid(street: address?.street) != .valid {
-                return isValid(street: address?.street)
-            }
-            if isValid(zip: address?.zip) != .valid {
-                return isValid(zip: address?.zip)
-            }
-            if isValid(city: address?.city) != .valid {
-                return isValid(city: address?.city)
-            }
-            return .valid
-        }
-
-        func isValid(street: String?) -> Validity {
-            (street?.countIsLessOrEqual(Validator.maxAddressFieldLength) ?? true) ? .valid :
-                .invalid(L10n.rivAvsInvalidStreet(String(Validator.maxAddressFieldLength)).text)
-        }
-
-        func isValid(zip: String?) -> Validity {
-            (zip?.countIsLessOrEqual(Validator.maxAddressFieldLength) ?? true) ? .valid :
-                .invalid(L10n.rivAvsInvalidZip(String(Validator.maxAddressFieldLength)).text)
-        }
-
-        func isValid(city: String?) -> Validity {
-            (city?.countIsLessOrEqual(Validator.maxAddressFieldLength) ?? true) ? .valid :
-                .invalid(L10n.rivAvsInvalidCity(String(Validator.maxAddressFieldLength)).text)
-        }
-
-        func isValid(hint: String?) -> Validity {
-            (hint?.countIsLessOrEqual(Validator.maxHintLength) ?? true) ? .valid :
-                .invalid(L10n.rivAvsInvalidHint(String(Validator.maxHintLength)).text)
-        }
-
-        func isValid(text: String?) -> Validity {
-            (text?.countIsLessOrEqual(Validator.maxTextLength) ?? true) ? .valid :
-                .invalid(L10n.rivAvsInvalidHint(String(Validator.maxTextLength)).text)
-        }
-
-        func isValid(phone: String?) -> Validity {
-            guard let phone, !phone.isEmpty else {
-                return .valid
-            }
-            let types: NSTextCheckingResult.CheckingType = [.phoneNumber]
-            guard let detector = try? NSDataDetector(types: types.rawValue) else { return .valid }
-
-            let range = NSRange(phone.startIndex ..< phone.endIndex, in: phone)
-            let matches = detector.matches(in: phone, options: [], range: range)
-
-            guard matches.count == 1,
-                  let match = matches.first,
-                  match.resultType == .phoneNumber,
-                  match.phoneNumber != nil else {
-                return .invalid(L10n.rivAvsInvalidPhone.text)
-            }
-
-            return .valid
-        }
-
-        func isValid(mail: String?) -> Validity {
-            guard let mail, !mail.isEmpty else {
-                return .valid
-            }
-            return mail.isValidEmail ? .valid : .invalid(L10n.rivAvsInvalidMail.text)
-        }
-
-        func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-            supplyOptionsType: SupplyOptionsType,
-            phone: String?,
-            mail: String?
-        ) -> Validity {
-            switch supplyOptionsType {
-            case .onPremise:
-                return .valid
-            case .shipment, .delivery:
-                return isNonEmptyPhoneOrNonEmptyMail(phone: phone, mail: mail) ? .valid :
-                    .invalid(L10n.rivAvsInvalidMissingContact.text)
-            }
-        }
-
-        func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-            optionType: RedeemOption,
-            phone: String?,
-            mail: String?
-        ) -> Validity {
-            ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-                supplyOptionsType: optionType.asSupplyOptionType,
-                phone: phone,
-                mail: mail
-            )
-        }
-
-        func onPremiseOrElseIsNonEmptyContactData( // swiftlint:disable:this function_parameter_count
-            optionType: RedeemOption,
-            name: String?,
-            street: String?,
-            zip: String?,
-            city: String?,
-            phone: String?
-        ) -> Bool {
-            switch optionType {
-            case .onPremise:
-                return true
-            case .shipment, .delivery:
-                return isCompleteContactData(name: name, street: street, zip: zip, city: city, phone: phone)
-            }
-        }
-
-        var service: RedeemServiceOption {
-            .avs
-        }
-
-        func isNonEmptyPhoneOrNonEmptyMail(phone: String?, mail: String?) -> Bool {
-            switch (phone, mail) {
-            case (nil, nil): return false
-            case let (phone?, mail?): return !phone.isEmpty || !mail.isEmpty
-            case let (phone?, nil): return !phone.isEmpty
-            case let (nil, mail?): return !mail.isEmpty
-            }
-        }
-
-        func isCompleteContactData(name: String?, street: String?, zip: String?, city: String?,
-                                   phone: String?) -> Bool {
-            name != nil && street != nil && zip != nil && city != nil && phone != nil
-        }
-    }
-}
-
-// sourcery: skipUnimplemented
-extension AVSMessage.Validator: DependencyKey {
-    static let liveValue: RedeemInputValidator = AVSMessage.Validator()
-    static let previewValue: RedeemInputValidator = AVSMessage.Validator()
-    static let testValue: RedeemInputValidator = UnimplementedRedeemInputValidator()
-}
-
-extension DependencyValues {
-    var avsMessageValidator: RedeemInputValidator {
-        get { self[AVSMessage.Validator.self] }
-        set { self[AVSMessage.Validator.self] = newValue }
     }
 }
 
@@ -572,5 +360,3 @@ extension String {
         return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: self)
     }
 }
-
-// swiftlint:enable file_length

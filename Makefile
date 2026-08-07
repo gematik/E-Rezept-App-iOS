@@ -12,13 +12,10 @@ ifeq ($(CIBUILD), true)
     DRY_RUN = false
 endif
 
-.PHONY: setup update update-lockfiles test build format lint cibuild integrationtests publish
+.PHONY: setup update test build format lint cibuild integrationtests publish
 
 setup:
 	$(PROJECT_DIR)/scripts/setup ${BUILD_TYPE}
-
-update-lockfiles:
-	$(PROJECT_DIR)/scripts/update-lockfiles
 
 update:
 	$(PROJECT_DIR)/scripts/update

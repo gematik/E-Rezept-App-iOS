@@ -23,6 +23,7 @@
 import AsyncHelpers
 import Combine
 import ComposableArchitecture
+import CryptoKit
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
@@ -32,6 +33,7 @@ import FeatureHelpers
 import FHIRVZD
 import Foundation
 import IDP
+import PushNotificationCrypto
 import Settings
 
 // swiftlint:disable type_body_length file_length
@@ -47,7 +49,9 @@ struct DebugDomain {
         @Shared(.overwriteDIGAIK) var overwriteDIGAIK
         @Shared(.appDefaults) var appDefaults
         @Shared(.euRedeemPrescriptionsFeature) var euRedeemPrescriptionsFeature: Bool
+        @Shared(.communicationsV3Feature) var communicationsV3Feature: Bool
         @Shared(.useWorkflow16ForSending) var useWorkflow16: Bool
+        @Shared(.enablePushNotifications) var enablePushNotifications: Bool
 
         @Shared(.isVirtualEGKEnabled) var isVirtualEGKEnabled
         @Shared(.virtualEGKCCHAut) var virtualEGKCCHAut
@@ -95,6 +99,10 @@ struct DebugDomain {
         var showAlert = false
         var alertText: String?
         var logState = DebugLogsDomain.State(logs: [])
+        var encryptedCiphertext: String = ""
+        var timeMessageEncrypted: String = ""
+        var deviceToken: String = ""
+        var tokenError: String = ""
         #endif
 
         struct ServerEnvironment: Identifiable, Equatable {
@@ -113,6 +121,7 @@ struct DebugDomain {
         #if ENABLE_DEBUG_VIEW
         case hideOnboardingReceived(String?)
         case hideCardWallIntroReceived(Bool)
+        case resetPnKeyGenerationsButtonTapped
         case resetCanButtonTapped
         case deleteKeyAndEGKAuthCertForBiometric
         case loadAllLocalTasksReceived(Result<[ErxTask], ErxRepositoryError>)
@@ -138,6 +147,10 @@ struct DebugDomain {
         case appear
         case resetTooltips
         case logAction(action: DebugLogsDomain.Action)
+        case initializePushNotificationKeyChain(iss: String, timeISSCreated: String, keyIdentifier: String)
+        case encryptPushNotificationPayload(plaintext: String, keyIdentifier: String)
+        case requestPushPermissionAndRegister
+        case pushNotificationRegisterReceived(deviceToken: String?, error: String?)
         #endif
     }
 
@@ -147,8 +160,10 @@ struct DebugDomain {
     @Dependency(\.tracker) var tracker: Tracker
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
-    @Dependency(\.secureEnclaveSignatureProvider) var signatureProvider: SecureEnclaveSignatureProvider
     @Dependency(\.serviceLocatorDebugAccess) var serviceLocatorDebugAccess: ServiceLocatorDebugAccess
+    @Dependency(\.pushNotificationCrypto) var pushNotificationCrypto: PushNotificationCrypto
+    @Dependency(\.pushNotificationCryptoStorage) var pushNotificationCryptoStorage: PushNotificationCryptoStorage
+    @Dependency(\.apnsRegistrationService) var apnsRegistrationService: APNSRegistrationService
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> Effect<Action> {
@@ -167,6 +182,22 @@ struct DebugDomain {
         case let .hideCardWallIntroReceived(hideCardWallIntro):
             state.hideCardWallIntro = hideCardWallIntro
             return .none
+        case .resetPnKeyGenerationsButtonTapped:
+            return .run { _ in
+                // Use the same keyIdentifier that's used in DebugPushNotificationView
+                let keyIdentifier = "123e4567-e89b-12d3-a456-426614174000"
+                do {
+                    let allGenerations = try pushNotificationCryptoStorage.loadAllKeyGenerations(keyIdentifier)
+                    let yearMonths = allGenerations.map(\.yearMonth)
+                    if !yearMonths.isEmpty {
+                        try pushNotificationCryptoStorage.deleteKeyGenerations(keyIdentifier, yearMonths)
+                    }
+                } catch {
+                    // Silently handle errors in debug tool
+                    print("Failed to reset push notification key generations: \(error)")
+                }
+                print("Ran resetPnKeyGenerationsButtonTapped ")
+            }
         case .resetCanButtonTapped:
             userSession.secureUserStore.set(can: nil)
             return .none
@@ -404,12 +435,75 @@ struct DebugDomain {
             return .none
         case .logAction:
             return .none
+        case let .initializePushNotificationKeyChain(iss, timeISSCreated, keyIdentifier):
+            return .run { _ in
+                let issData = try Data(hex: iss)
+                try pushNotificationCrypto.initializeKeyChain(issData, timeISSCreated, keyIdentifier)
+            }
+        case let .encryptPushNotificationPayload(plaintext, keyIdentifier):
+            do {
+                let allGenerations = try pushNotificationCryptoStorage.loadAllKeyGenerations(keyIdentifier)
+                guard let latestGeneration = allGenerations.last else {
+                    throw PushNotificationCryptoError.noKeyAvailable
+                }
+
+                let encryptedPayload = encryptPushNotificationPayload(
+                    plaintext: plaintext,
+                    aesGCMKey: latestGeneration.aesGCMKey
+                )
+                state.encryptedCiphertext = encryptedPayload
+
+                state.timeMessageEncrypted = latestGeneration.yearMonth
+            } catch {
+                state.encryptedCiphertext = "Encryption failed: \(error.localizedDescription)"
+            }
+            return .none
+        case .requestPushPermissionAndRegister:
+            return .run { send in
+                do {
+                    let token = try await apnsRegistrationService.requestAuthorizationAndRegister()
+                    let hexToken = token.map { String(format: "%02x", $0) }.joined()
+                    await send(.pushNotificationRegisterReceived(deviceToken: hexToken, error: nil))
+                } catch APNSRegistrationError.permissionDenied {
+                    await send(.pushNotificationRegisterReceived(
+                        deviceToken: nil,
+                        error: "Notification permission denied."
+                    ))
+                } catch {
+                    await send(.pushNotificationRegisterReceived(deviceToken: nil, error: error.localizedDescription))
+                }
+            }
+        case let .pushNotificationRegisterReceived(deviceToken, error):
+            if let deviceToken {
+                state.deviceToken = deviceToken
+                state.tokenError = ""
+            } else {
+                state.deviceToken = ""
+                state.tokenError = error ?? "Unknown error"
+            }
+            return .none
         case .binding:
             return .none
         }
         #else
         return .none
         #endif
+    }
+
+    func encryptPushNotificationPayload(plaintext: String, aesGCMKey: Data) -> String {
+        do {
+            let framedPayload = PNM1Framing.apply(Data(plaintext.utf8))
+
+            // AES/GCM encrypt
+            let symmetricKey = SymmetricKey(data: aesGCMKey)
+            let sealedBox = try AES.GCM.seal(framedPayload, using: symmetricKey)
+            guard let combined = sealedBox.combined else {
+                return "Encryption failed: Unable to combine sealed box components."
+            }
+            return combined.base64EncodedString()
+        } catch {
+            return "Encryption failed: \(error.localizedDescription)"
+        }
     }
 
     var body: some Reducer<State, Action> {
@@ -434,6 +528,14 @@ struct DebugDomain {
             case success
             case failure(Error)
         }
+    }
+}
+
+extension SharedReaderKey
+    where Self == AppStorageKey<Bool>.Default {
+    /// A key to determine whether the app should show settings for push notifications.
+    public static var enablePushNotifications: Self {
+        Self[.appStorage("enable_push_notifications"), default: false]
     }
 }
 

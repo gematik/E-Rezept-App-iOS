@@ -79,6 +79,7 @@ public struct PictureButtonStyle: ButtonStyle {
                         cornerRadius: 16
                     )
             )
+            .accessibilityAddTraits(isActive ? .isSelected : [])
             .cornerRadius(16)
             .shadow(color: Colors.systemColorBlack.opacity(0.25), radius: 0.0, x: 0.0, y: 0.5)
     }

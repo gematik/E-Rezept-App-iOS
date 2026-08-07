@@ -1,0 +1,68 @@
+[
+    {
+        "id": "2",
+        "text": "Od nynějška používejte aplikaci e-receptu k zaznamenání svého rozhodnutí darovat orgány do **digitálního registru dárcovství orgánů** – bezpečně a snadno.\n\nV současné době v Německu naléhavě čeká 9 192 lidí na orgán – každé rozhodnutí se počítá a může zachránit životy.\n\nUdělejte své rozhodnutí ještě dnes a přispějte významným způsobem k budoucnosti mnoha lidí! ❤️‍🩹\n\nRegistr darování orgánů najdete v této aplikaci na záložce „Nastavení“.",
+        "timestamp": "2024-11-29T08:00:00.000Z",
+        "version": "1.27.0"
+    },
+    {
+        "id": "3",
+        "text": "**Kompatibilita ePA** \n 🤝 Vaše recepty jsou nyní plně kompatibilní s elektronickým zdravotním záznamem. \n \n **Vylepšené** \n ✨ Recepty s prošlou platností nyní zmizí v archivu.",
+        "timestamp": "2024-12-20T08:00:00.000Z",
+        "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Lepší čitelnost** \n Barvu naší značky jsme mírně ztmavili, abychom zvýšili barevný kontrast a zlepšili tak čitelnost. \n \n **Optimalizované vstupní pole** \n Kurzor ve vstupním poli pro přístupové číslo byl odstraněn.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Vylepšený tok objednávek** \nProces objednávání je nyní jednodušší a rychlejší. \n \n🌐 **Nové jazyky** \nNaše aplikace je nyní k dispozici také ve španělštině a irštině. \n \n📞 **Rozšířené možnosti kontaktu** \nZavedli jsme nové možnosti kontaktu pro vybrané pojišťovny. \n \n🔍 **Podrobné protokoly přístupu** \nNyní také zobrazujeme telematická ID v protokolech přístupu, aby bylo snazší identifikovat, kdo měl přístup.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Uplatněte si předepsané DiGA** \nNyní můžete uplatnit recepty pro digitální zdravotnické aplikace (DiGA) přímo prostřednictvím aplikace pro elektronické recepty. Recepty budou vydávány specialisty v Hamburku v rámci pilotního projektu. Aktivační kód a odkaz na DiGA najdete přímo zde v aplikaci pro elektronické recepty. \n \n **🏥 Nová databáze lékáren** \nZavedli jsme novou, do budoucna připravenou databázi pro vyhledávání lékáren.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Přístupnost** \nNaše prohlášení o přístupnosti je nyní k dispozici v nastavení. Proces registrace byl také zjednodušen. \n \n **📲 Uplatněte si DiGA u pojišťoven** \nRecepty pro digitální zdravotní aplikace (DiGA) lze nyní uplatnit i u jiných pojišťoven.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Registrace pro soukromě pojištěné osoby** \nRegistrace pro soukromě pojištěné osoby byla optimalizována. Můžete se pohodlně přihlásit pomocí svého zdravotního průkazu během několika kliknutí. \n \n **🏥 Aktualizovaná data o lékárnách** \nZměny, které lékárny provedou v nové databázi, se nyní spolehlivě zobrazují. \n \n **📲 Více informací pro DiGA** \nOd nynějška budete dostávat podrobnější informace o svých receptech DiGA, jako je prodejní cena nebo logo. \n \n **♿️ Přístupnost** \nObrazovka pro zadání přístupového čísla zdravotní karty byla přepracována a nyní je optimalizována pro použití s VoiceOverem. \n \n **📤 Sdílení receptů** \nRecepty lze nyní sdílet s ostatními přímo z aplikace.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Přístupnost** \nNastavení profilu bylo upraveno pro další zvýšení přístupnosti.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registrace pro více osob** \nRegistrace je nyní možná i pro pojištěnce federálních institucí, jako je federální policie a další. \n \n **🕒 Vylepšená otevírací doba lékáren** \nNyní se zobrazuje pohotovostní služba a zvláštní zavírací doba lékáren, pokud jsou k dispozici. \n \n **💊 Výběr všech receptů** \nPři uplatňování receptů lze nyní vybrat všechny recepty současně. \n \n **♿ Přístupnost** \nBarvy písem a ikon byly upraveny pro dosažení vyššího kontrastu. Dále byl vylepšen hlasový výstup VoiceOver pro úpravu profilového obrázku a rozpoznávání stavu přihlášení.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Zobrazení kódů receptů** \nObrazovka pro dávkové a jednotlivé kódy byla přepracována pro intuitivnější použití. \n \n **❤️ Oblíbené položky z lékárny** \nOblíbené položky z lékárny nyní fungují spolehlivěji a jsou kompatibilní s VoiceOverem. \n \n **♿ Přístupnost** \nNavigace pomocí VoiceOveru a klávesnice je vylepšena, tlačítka, text a vstupní pole jsou snadněji identifikovatelná a položky seznamu jsou logičtěji strukturované. Zvětšené písmo nyní funguje na všech obrazovkách aplikací. Animovaná videa se přehrávají pouze jednou, aby podpořila uživatele s kognitivním postižením.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Vylepšené podrobnosti o lékárnách** \nLékárny nyní mohou přidávat služby, jako je očkování, a funkce na místě, jako je bezbariérový přístup. Lékárny lze filtrovat na základě těchto nových informací. \n \n **✨ Vylepšené vyhledávání lékáren** \nNaposledy použité lékárny a oblíbené lékárny jsou nyní jasněji odděleny. Filtry byly vylepšeny. \n \n **✅ Zdravotní průkaz pro osoby s alternativním pojištěním** \nOsoby, které nejsou kryty zákonným ani soukromým zdravotním pojištěním, se nyní mohou také přihlásit pomocí svého zdravotního průkazu. \n \n **♿ Přístupnost** \nFiltry mají nyní vyšší kontrast a jejich stav je snáze identifikovatelný. Prohlášení o přístupnosti bylo aktualizováno a rozšířeno o část dokumentující historii změn. Některá tlačítka byla upravena pro lepší viditelnost.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
+    }
+]

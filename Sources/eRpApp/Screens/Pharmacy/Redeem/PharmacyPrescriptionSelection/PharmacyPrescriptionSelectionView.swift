@@ -71,11 +71,10 @@ struct PharmacyPrescriptionSelectionView: View {
                             action: { store.send(.didSelect(prescription.id)) },
                             label: {
                                 TitleWithSubtitleCellView(
-                                    title: prescription.title,
-                                    subtitle: prescription.statusMessage,
-                                    isSelected: store.selectedPrescriptionsCopy.contains(prescription)
+                                    prescription: prescription,
+                                    isSelected: store.selectedPrescriptionsCopy.contains(prescription),
+                                    selectedOption: store.selectedOption
                                 )
-                                .multilineTextAlignment(.leading)
                             }
                         )
                         .accessibilityElement(children: .combine)
@@ -108,15 +107,32 @@ struct PharmacyPrescriptionSelectionView: View {
     }
 
     private struct TitleWithSubtitleCellView: View {
-        var title: String
-        var subtitle: String
+        var prescription: Prescription
+        var title: String {
+            prescription.title
+        }
+
+        var subtitle: String {
+            prescription.statusMessage
+        }
+
         var isSelected: Bool
         var imageName: String = SFSymbolName.circle
         var selectedImageName: String = SFSymbolName.checkmarkCircleFill
+        var selectedOption: RedeemOption?
 
         var body: some View {
             Label {
-                SubTitle(title: title, description: subtitle)
+                VStack(alignment: .leading) {
+                    SubTitle(title: title, description: subtitle)
+                        .multilineTextAlignment(.leading)
+
+                    if let selectedOption, prescription.isTPrescription {
+                        Text(L10n.phaRedeemTxtPrescriptionSelectionTPrescriptionSubtitle)
+                            .font(.subheadline)
+                            .foregroundColor(selectedOption == .shipment ? Colors.yellow800 : Colors.primary)
+                    }
+                }
             } icon: {
                 isSelected ? Image(systemName: selectedImageName) : Image(systemName: imageName)
             }

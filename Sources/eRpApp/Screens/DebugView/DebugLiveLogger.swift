@@ -100,9 +100,9 @@ class DebugLiveLogger {
         } else {
             // If a Request already exists with same information, but with a `response`, just keep it and throw the new
             // one away
-            guard requests.first(where: { item in
+            guard !requests.contains(where: { item in
                 item.request == request && item.sentAt == sentAt
-            }) == nil else {
+            }) else {
                 return
             }
         }

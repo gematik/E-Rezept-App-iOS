@@ -28,90 +28,46 @@ public protocol IDPEndpoint {
     /// Endpoint URL
     var url: URL { get }
     /// Certificate that can validate responses from `url`
-    var cert: X509 { get }
-}
-
-extension BrainpoolP256r1.KeyExchange.PublicKey: @retroactive
-Equatable {
-    public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
-                          rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
-        guard let lhsValue = try? lhs.rawValue(),
-              let rhsValue = try? rhs.rawValue() else {
-            return false
-        }
-        return lhsValue == rhsValue
-    }
+    var cert: IDPX509 { get }
 }
 
 /// IDP Discovery document
-public struct DiscoveryDocument: Codable {
-    let createdOn: Date
-
+public struct DiscoveryDocument {
+    /// The date on which this discovery document was created/fetched
+    public let createdOn: Date
+    /// The raw JWT backing this discovery document
     public let backing: JWT
-    let payload: DiscoveryDocumentPayload
+    /// The decoded payload of the discovery document JWT
+    public let payload: DiscoveryDocumentPayload
     /// The IDP X.509 certificate used to validate the discovery document
-    public let discKey: X509
+    public let discKey: IDPX509
     /// The IDP Authentication endpoint public key, used to derivce the encryption key to encrypt the JWE‘s
     public let encryptionPublicKey: BrainpoolP256r1.KeyExchange.PublicKey
     /// The IDP X.509 certificate that is used to check signatures
-    public let signingCert: X509
+    public let signingCert: IDPX509
 
-    /// Initialize as Decodable
-    ///
-    /// - Parameter decoder: the decoder
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        backing = try container.decode(JWT.self, forKey: .payload)
-        payload = try backing.decodePayload(type: DiscoveryDocumentPayload.self)
-        encryptionPublicKey = try BrainpoolP256r1.KeyExchange
-            .PublicKey(x962: container.decode(Data.self, forKey: .encryptionPublicKey))
-        signingCert = try X509(der: container.decode(Data.self, forKey: .tokenKey))
-        guard let discHeaderX5C = backing.header.x5c?.first else {
-            throw IDPError.noCertificateFound
-        }
-        discKey = try X509(der: discHeaderX5C)
-        createdOn = try container.decode(Date.self, forKey: .createdOn)
-    }
-
-    /// Encode the DiscoveryDocument according to the Encodable protocol
-    ///
-    /// - Parameter encoder: the encoder
-    /// - Throws:
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(backing, forKey: .payload)
-        try container.encode(encryptionPublicKey.x962Value(), forKey: .encryptionPublicKey)
-        try container.encode(signingCert.derBytes, forKey: .tokenKey)
-        try container.encode(createdOn, forKey: .createdOn)
-    }
-
-    public init(jwt: JWT, encryptPuks: JWK, signingPuks: JWK, createdOn: Date = Date()) throws {
-        backing = jwt
-        // Get from every set the first key we encounter and use/set it accordingly
-        guard let signingX5C = signingPuks.x5c?.first else {
-            throw IDPError.noCertificateFound
-        }
-        signingCert = try X509(der: signingX5C)
-
-        if let encryptX5c = encryptPuks.x5c?.first,
-           let certPublicKey = try X509(der: encryptX5c).brainpoolP256r1KeyExchangePublicKey() {
-            encryptionPublicKey = certPublicKey
-        } else {
-            do {
-                guard let pubKeyX962 = encryptPuks.publicKeyX962UncompressedRepresentation() else {
-                    throw IDPError.noCertificateFound
-                }
-                encryptionPublicKey = try BrainpoolP256r1.KeyExchange.PublicKey(x962: pubKeyX962)
-            } catch {
-                throw IDPError.noCertificateFound
-            }
-        }
-        guard let discHeaderX5C = jwt.header.x5c?.first else {
-            throw IDPError.noCertificateFound
-        }
-        discKey = try X509(der: discHeaderX5C)
-        payload = try jwt.decodePayload(type: DiscoveryDocumentPayload.self)
+    /// Creates a new `DiscoveryDocument`
+    /// - Parameters:
+    ///   - createdOn: The date on which this document was created/fetched
+    ///   - backing: The raw JWT backing this document
+    ///   - payload: The decoded payload of the discovery document JWT
+    ///   - discKey: The X.509 certificate used to validate this discovery document
+    ///   - encryptionPublicKey: The public key used to derive the JWE encryption key
+    ///   - signingCert: The X.509 certificate used to verify signatures
+    public init(
+        createdOn: Date,
+        backing: JWT,
+        payload: DiscoveryDocumentPayload,
+        discKey: IDPX509,
+        encryptionPublicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+        signingCert: IDPX509
+    ) {
         self.createdOn = createdOn
+        self.backing = backing
+        self.payload = payload
+        self.discKey = discKey
+        self.encryptionPublicKey = encryptionPublicKey
+        self.signingCert = signingCert
     }
 
     /// IDP Authentication endpoint
@@ -129,14 +85,17 @@ public struct DiscoveryDocument: Codable {
         Endpoint(url: payload.token.correct(), cert: signingCert)
     }
 
+    /// IDP Pairing endpoint
     public var pairing: IDPEndpoint {
         Endpoint(url: payload.pairing, cert: signingCert)
     }
 
+    /// IDP Authentication endpoint for paired devices
     public var authenticationPaired: IDPEndpoint {
         Endpoint(url: payload.authenticationPair.correct(), cert: signingCert)
     }
 
+    /// IDP KK app directory endpoint
     @available(*, deprecated, renamed: "directoryKKAppsgId", message: "Not allowed anymore by 01.01.2024")
     public var directoryKKApps: IDPEndpoint? {
         guard let url = payload.kkAppList else {
@@ -145,6 +104,7 @@ public struct DiscoveryDocument: Codable {
         return Endpoint(url: url.correct(), cert: signingCert)
     }
 
+    /// IDP KK app directory endpoint using gId
     public var directoryKKAppsgId: IDPEndpoint? {
         guard let url = payload.kkAppListgId else {
             return nil
@@ -152,6 +112,7 @@ public struct DiscoveryDocument: Codable {
         return Endpoint(url: url.correct(), cert: signingCert)
     }
 
+    /// IDP third-party authentication endpoint, if supported by this IDP
     public var thirdPartyAuth: IDPEndpoint? {
         guard let url = payload.thirdPartyAuth else {
             return nil
@@ -159,6 +120,7 @@ public struct DiscoveryDocument: Codable {
         return Endpoint(url: url.correct(), cert: signingCert)
     }
 
+    /// IDP federation authentication endpoint, if supported by this IDP
     public var federationAuth: IDPEndpoint? {
         guard let url = payload.federationAuth else {
             return nil
@@ -177,20 +139,10 @@ public struct DiscoveryDocument: Codable {
     }
 }
 
-extension DiscoveryDocument: Equatable {}
-
 extension DiscoveryDocument {
     struct Endpoint: IDPEndpoint {
         let url: URL
-        let cert: X509
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case payload
-        case authKey = "puk_auth"
-        case tokenKey = "puk_token"
-        case encryptionPublicKey
-        case createdOn
+        let cert: IDPX509
     }
 }
 

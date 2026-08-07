@@ -64,6 +64,10 @@ extension ErxTaskEntity {
             multiplePrescription: task.medicationRequest.multiplePrescription,
             in: context
         )
+        teratogenicInfo = ErxTaskTeratogenicInfoEntity(
+            teratogenicInfo: task.medicationRequest.teratogenicRelatedInformation,
+            in: context
+        )
         source = task.source.rawValue
 
         medication = ErxTaskMedicationEntity(medication: task.medication,
@@ -249,7 +253,8 @@ extension ErxTask {
                 ser: entity.ser,
                 coPaymentStatus: CoPaymentStatus(rawValue: entity.coPaymentStatus ?? "nil"),
                 multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription),
-                quantity: quantity
+                quantity: quantity,
+                teratogenicRelatedInformation: TeratogenicRelatedInformation(entity: entity.teratogenicInfo)
             ),
             medicationSchedule: medicationSchedule,
             patient: ErxPatient(entity: entity.patient),

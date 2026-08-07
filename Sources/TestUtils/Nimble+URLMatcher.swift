@@ -34,7 +34,7 @@ public func containsParameters(_ parameters: [String: String]) -> Nimble.Matcher
             let comps = NSURLComponents(url: actualValue, resolvingAgainstBaseURL: true)
             if let queryItems = comps?.queryItems {
                 for (paramKey, paramValue) in parameters
-                    where queryItems.filter({ item in item.name == paramKey && item.value == paramValue }).isEmpty {
+                    where !queryItems.contains(where: { item in item.name == paramKey && item.value == paramValue }) {
                     return MatcherResult(
                         bool: false,
                         message: msg.appended(message: "Missing or unmatched parameter \(paramKey)")

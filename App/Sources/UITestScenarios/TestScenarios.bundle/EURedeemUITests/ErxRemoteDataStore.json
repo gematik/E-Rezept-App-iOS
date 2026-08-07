@@ -1,0 +1,100 @@
+{
+    "listAllCommunicationsAfterForProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload": []
+    },
+    "listAllTasksAfterProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        {
+            "content":
+            [
+                {
+                    "_FILE": "Generic.json#taskResponse"
+                    ,
+                    "_REPLACE":
+                    {
+                        "{{REDEEMABLE}}": "{{BOOL:true}}",
+                        "{{REDEEMABLE_BY_PATIENT}}": "{{BOOL:false}}"
+                    }
+                }
+            ]
+        }
+    },
+    "listDetailedTasksForProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        {
+            "content":
+            [
+                {
+                    "_FILE": "Generic.json#taskResponse",
+                    "_REPLACE":
+                    {
+                        "{{REDEEMABLE}}": "{{BOOL:true}}",
+                        "{{REDEEMABLE_BY_PATIENT}}": "{{BOOL:false}}"
+                    }
+                }
+            ]
+        }
+    },
+    "fetchConsentsProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload": []
+    },
+    "grantConsentProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        {
+            "identifier": "EU-CONSENT-TEST-001",
+            "insuranceId": "X123456789",
+            "timestamp": "2024-01-01T00:00:00+00:00",
+            "scope": "patient-privacy",
+            "category": "EUDISPCONS",
+            "policyRule": "OPTIN"
+        }
+    },
+    "markEURedeemableForByPatientAuthorizationProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload": null
+    },
+    "grantEuAccessPermissionAccessCodeProfileIdRecordings":
+    {
+        "type": "steps",
+        "payload":
+        [
+            {
+                "_FILE": "Generic.json#grantEuAccessResponse",
+                "_REPLACE":
+                {
+                    "{{VALID_UNTIL}}": "{{NUMBER:0.0}}"
+                }
+            },
+            {
+                "_FILE": "Generic.json#grantEuAccessResponse",
+                "_REPLACE":
+                {
+                    "{{VALID_UNTIL}}": "{{NUMBER:4102444800.0}}"
+                }
+            },
+            {
+                "_FILE": "Generic.json#grantEuAccessResponse",
+                "_REPLACE":
+                {
+                    "{{VALID_UNTIL}}": "{{NUMBER:4102444800.0}}"
+                }
+            }
+        ]
+    },
+    "loadRemoteEuAccessCodeProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload": null
+    }
+}

@@ -40,6 +40,8 @@ struct X509TrustStore {
     /// Category D: IDP certificates
     let idpCerts: [X509]
 
+    private let validationTime: Date?
+
     init(
         trustAnchor: X509,
         addRoots: [X509],
@@ -48,6 +50,7 @@ struct X509TrustStore {
         validationTime: Date? = nil
     ) throws {
         rootCa = trustAnchor
+        self.validationTime = validationTime
 
         // Category A:
         // Before adding an addRoot we check if it can be validated by the currently potential trust store.
@@ -213,7 +216,7 @@ extension X509TrustStore {
     private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -> [OCSPResponse] {
         ocspResponses.filter { ocspResponse in
             if let ocspResponseSigner = try? ocspResponse.getSigner(),
-               self.validate(certificate: ocspResponseSigner) {
+               self.validate(certificate: ocspResponseSigner, validationTime: validationTime) {
                 return true
             }
             return false

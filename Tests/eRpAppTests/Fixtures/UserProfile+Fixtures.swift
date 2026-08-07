@@ -54,6 +54,23 @@ extension UserProfile {
             activityIndicating: false
         )
 
+        static let profileA = UserProfile(
+            from: Profile(
+                name: "Spooky Dennis",
+                identifier: UUID(),
+                created: Date(),
+                givenName: "Dennis",
+                familyName: "Doe",
+                insurance: "Spooky BKK",
+                insuranceId: "X112233445",
+                insuranceIK: "AB123CD",
+                color: .blue,
+                lastAuthenticated: TestDate.createDate(.oneHourAgo, referenceDate: Date()),
+                erxTasks: []
+            ),
+            isAuthenticated: true
+        )
+
         static let privatePaul = UserProfile(
             from: Profile(
                 name: "Private Paul",

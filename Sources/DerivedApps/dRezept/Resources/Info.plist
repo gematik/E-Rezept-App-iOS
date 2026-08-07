@@ -37,6 +37,8 @@
 	<true/>
 	<key>GEMATIKSourceVersion</key>
 	<string>$(GEMATIK_SOURCE_VERSION)</string>
+	<key>GEMAppGroupIdentifier</key>
+	<string>$(GEM_APP_GROUP_IDENTIFIER)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>

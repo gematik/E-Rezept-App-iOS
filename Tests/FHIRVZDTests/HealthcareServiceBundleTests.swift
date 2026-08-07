@@ -28,6 +28,7 @@ import Nimble
 import OpenSSL
 import Testing
 
+@MainActor
 struct HealthcareServiceBundleTests {
     @Test
     func parseHealthcareServiceFhirBundle() throws {

@@ -54,49 +54,51 @@ struct HorizontalProfileSelectionDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .registerListener:
-            return .merge(
-                .publisher(
-                    userProfileService.userProfilesPublisher()
-                        .catchToPublisher()
-                        .map(Action.Response.loadReceived)
-                        .map(Action.response)
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
-                ),
-                .publisher(
-                    userProfileService.selectedProfileId
-                        .compactMap { $0 }
-                        .map(Action.Response.selectedProfileReceived)
-                        .map(Action.response)
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
+    var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case .registerListener:
+                return .merge(
+                    .publisher(
+                        userProfileService.userProfilesPublisher()
+                            .catchToPublisher()
+                            .map(Action.Response.loadReceived)
+                            .map(Action.response)
+                            .receive(on: schedulers.main)
+                            .eraseToAnyPublisher
+                    ),
+                    .publisher(
+                        userProfileService.selectedProfileId
+                            .compactMap { $0 }
+                            .map(Action.Response.selectedProfileReceived)
+                            .map(Action.response)
+                            .receive(on: schedulers.main)
+                            .eraseToAnyPublisher
+                    )
                 )
-            )
-        case .response(.loadReceived(.failure)):
-            // Handled by parent domain
-            return .none
-        case let .response(.loadReceived(.success(profiles))):
-            state.profiles = profiles
-            return .none
-        case let .selectProfile(profile):
-            state.selectedProfileId = profile.id
-            userProfileService.set(selectedProfileId: profile.id)
-            return .none
-        case let .response(.selectedProfileReceived(profileId)):
-            state.selectedProfileId = profileId
-            return .none
-        case let .profileButtonLongPressed(profile):
-            return .concatenate(
-                Effect.send(.selectProfile(profile)),
-                Effect.send(.showEditProfileNameView(profile.id, profile.name))
-            )
-        case .showEditProfileNameView:
-            return .none
-        case .showAddProfileView:
-            return .none
+            case .response(.loadReceived(.failure)):
+                // Handled by parent domain
+                return .none
+            case let .response(.loadReceived(.success(profiles))):
+                state.profiles = profiles
+                return .none
+            case let .selectProfile(profile):
+                state.selectedProfileId = profile.id
+                userProfileService.set(selectedProfileId: profile.id)
+                return .none
+            case let .response(.selectedProfileReceived(profileId)):
+                state.selectedProfileId = profileId
+                return .none
+            case let .profileButtonLongPressed(profile):
+                return .concatenate(
+                    Effect.send(.selectProfile(profile)),
+                    Effect.send(.showEditProfileNameView(profile.id, profile.name))
+                )
+            case .showEditProfileNameView:
+                return .none
+            case .showAddProfileView:
+                return .none
+            }
         }
     }
 }

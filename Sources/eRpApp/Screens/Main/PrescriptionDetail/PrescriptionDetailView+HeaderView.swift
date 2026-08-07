@@ -79,6 +79,18 @@ extension PrescriptionDetailView {
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo)
                 }
 
+                if store.prescription.erxTask.isTPrescription {
+                    Button(
+                        action: { store.send(.setNavigation(tag: .tPrescriptionInfo)) },
+                        label: {
+                            Label(L10n.prscDtlBtnTprescriptionInformation, systemImage: SFSymbolName.info)
+                                .labelStyle(.blueFlag)
+                        }
+                    )
+                    .padding(8)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnTPrescriptionInfo)
+                }
+
                 // Flag/Hints for the prescription type
                 switch store.type {
                 case .directAssignment:
@@ -202,7 +214,7 @@ extension PrescriptionDetailView {
             let store: StoreOf<PrescriptionDetailDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
                         Spacer()
 
@@ -210,17 +222,22 @@ extension PrescriptionDetailView {
                             store.send(.setNavigation(tag: .none))
                         }
                     }
+                    .padding([.top, .horizontal])
 
-                    Text(L10n.davTxtDirectAssignmentTitle)
-                        .font(.headline)
-                        .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentTitle)
-                    Text(L10n.davTxtDirectAssignmentHint)
-                        .font(Font.body)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentHint)
-                    Spacer()
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.davTxtDirectAssignmentTitle)
+                                .font(.headline)
+                                .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentTitle)
+                            Text(L10n.davTxtDirectAssignmentHint)
+                                .font(Font.body)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                                .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentHint)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    }
                 }
-                .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
             }
@@ -230,7 +247,7 @@ extension PrescriptionDetailView {
             @Bindable var store: StoreOf<SubstitutionInfoDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
                         Spacer()
 
@@ -238,17 +255,22 @@ extension PrescriptionDetailView {
                             store.send(.delegate(.close))
                         }
                     }
+                    .padding([.top, .horizontal])
 
-                    Text(store.title)
-                        .font(.headline)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerTitle)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(store.title)
+                                .font(.headline)
+                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerTitle)
 
-                    Text(store.description)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDescription)
-                    Spacer()
+                            Text(store.description)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDescription)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    }
                 }
-                .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
                 .accessibilityElement(children: .contain)
@@ -260,7 +282,7 @@ extension PrescriptionDetailView {
             let store: StoreOf<PrescriptionDetailDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
                         Spacer()
 
@@ -268,15 +290,20 @@ extension PrescriptionDetailView {
                             store.send(.setNavigation(tag: .none))
                         }
                     }
+                    .padding([.top, .horizontal])
 
-                    Text(L10n.prscDtlDrErrorInfoTitle)
-                        .font(.headline)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.prscDtlDrErrorInfoTitle)
+                                .font(.headline)
 
-                    Text(L10n.prscDtlDrErrorInfoDescription)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                    Spacer()
+                            Text(L10n.prscDtlDrErrorInfoDescription)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    }
                 }
-                .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerErrorInfo)
@@ -287,7 +314,7 @@ extension PrescriptionDetailView {
             let store: StoreOf<PrescriptionDetailDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
                         Spacer()
 
@@ -295,15 +322,20 @@ extension PrescriptionDetailView {
                             store.send(.setNavigation(tag: .none))
                         }
                     }
+                    .padding([.top, .horizontal])
 
-                    Text(L10n.prscDtlDrScannedPrescriptionInfoTitle)
-                        .font(.headline)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.prscDtlDrScannedPrescriptionInfoTitle)
+                                .font(.headline)
 
-                    Text(L10n.prscDtlDrScannedPrescriptionInfoDescription)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                    Spacer()
+                            Text(L10n.prscDtlDrScannedPrescriptionInfoDescription)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    }
                 }
-                .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerScannedPrescriptionInfo)
@@ -314,7 +346,7 @@ extension PrescriptionDetailView {
             @Bindable var store: StoreOf<PrescriptionValidityDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 0) {
                         Spacer()
 
@@ -322,35 +354,39 @@ extension PrescriptionDetailView {
                             store.send(.delegate(.close))
                         }
                     }
+                    .padding([.top, .horizontal])
 
-                    Text(L10n.prscDtlDrPrescriptionValidityInfoTitle)
-                        .font(.headline)
-                        .padding(.vertical, 8)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.prscDtlDrPrescriptionValidityInfoTitle)
+                                .font(.headline)
+                                .padding(.vertical, 8)
 
-                    DateView(
-                        fromDate: store.acceptBeginDisplayDate,
-                        toDate: store.acceptEndDisplayDate
-                    )
+                            DateView(
+                                fromDate: store.acceptBeginDisplayDate,
+                                toDate: store.acceptEndDisplayDate
+                            )
 
-                    Text(L10n.prscDtlDrPrescriptionValidityInfoAcceptDateDescription)
-                        .font(Font.body)
+                            Text(L10n.prscDtlDrPrescriptionValidityInfoAcceptDateDescription)
+                                .font(Font.body)
+                                .padding(.bottom)
+                                .foregroundColor(Colors.systemLabelSecondary)
+
+                            if !store.isMVO {
+                                DateView(
+                                    fromDate: store.expiresBeginDisplayDate,
+                                    toDate: store.expiresEndDisplayDate
+                                )
+
+                                Text(L10n.prscDtlDrPrescriptionValidityInfoExpireDateDescription)
+                                    .font(Font.body)
+                                    .foregroundColor(Colors.systemLabelSecondary)
+                            }
+                        }
+                        .padding(.horizontal)
                         .padding(.bottom)
-                        .foregroundColor(Colors.systemLabelSecondary)
-
-                    if !store.isMVO {
-                        DateView(
-                            fromDate: store.expiresBeginDisplayDate,
-                            toDate: store.expiresEndDisplayDate
-                        )
-
-                        Text(L10n.prscDtlDrPrescriptionValidityInfoExpireDateDescription)
-                            .font(Font.body)
-                            .foregroundColor(Colors.systemLabelSecondary)
                     }
-
-                    Spacer()
                 }
-                .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerPrescriptionValidityInfo)

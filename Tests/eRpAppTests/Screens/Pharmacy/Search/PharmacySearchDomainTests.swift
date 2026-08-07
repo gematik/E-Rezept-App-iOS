@@ -78,9 +78,6 @@ class PharmacySearchDomainTests: XCTestCase {
             dependencies.dateProvider = { TestData.openHoursTestReferenceDate! }
             dependencies.userSession = mockUserSession
             dependencies.prescriptionRepository = mockPrescriptionRepository
-            dependencies.redeemOrderService.redeemViaAVS = { @Sendable [mockRedeemService] orders, _ in
-                try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
-            }
             dependencies.redeemOrderService.redeemViaErxTaskRepository = { @Sendable [mockRedeemService] orders, _ in
                 try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
             }

@@ -318,7 +318,7 @@ extension MedicationSchedule {
             title: "Medication Title",
             dosageInstructions: "Medication Instructions",
             taskId: "123.4567.890",
-            isActive: false,
+            isActive: true,
             weekdays: [.monday, .wednesday, .friday],
             entries: IdentifiedArray(
                 uniqueElements: [

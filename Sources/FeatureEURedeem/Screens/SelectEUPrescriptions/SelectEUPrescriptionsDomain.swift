@@ -57,16 +57,8 @@ public struct SelectEUPrescriptionsDomain {
         case task
         /// Toggle selection of a specific prescription
         case togglePrescription(EUPrescription)
-        /// Delegate actions to parent
-        case delegate(Delegate)
         case response(Response)
         case destination(PresentationAction<Destination.Action>)
-
-        /// Delegate actions
-        public enum Delegate: Equatable {
-            /// Selected prescriptions changed
-            case didSelectPrescriptions([EUPrescription])
-        }
 
         public enum Response: Equatable {
             case prescriptionReceived(Result<[EUPrescription], ErxRepositoryError>)
@@ -161,7 +153,7 @@ public struct SelectEUPrescriptionsDomain {
         case let .response(.profileReceived(.failure(error))):
             state.destination = .alert(ErpAlertState(for: error))
             return .none
-        case .delegate, .destination:
+        case .destination:
             return .none
         }
     }

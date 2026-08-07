@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import Combine
 import ComposableArchitecture
 import Contacts
@@ -199,10 +198,15 @@ struct PharmacyDetailDomain {
             if provider.deliveryService.hasService {
                 options.insert(.delivery)
             }
+            var validOptions = options
             if provider.shipmentService.hasService {
                 options.insert(.shipment)
+                if state.prescriptions.allSatisfy(\.isShipmentAvailable) {
+                    validOptions.insert(.shipment)
+                }
             }
             state.serviceOptionState.availableOptions = options
+            state.serviceOptionState.validOptions = validOptions
             state.serviceOptionState.redeemOptionProvider = provider
             return .none
         case .openMapApp:

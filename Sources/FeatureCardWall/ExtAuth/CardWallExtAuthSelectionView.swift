@@ -86,6 +86,7 @@ struct CardWallExtAuthSelectionView: View {
                                     })
                                     .buttonStyle(.navigation)
                                     .modifier(SectionContainerCellModifier())
+                                    .disabled(store.selectLoading)
                                 }
                             } else {
                                 VStack {
@@ -106,6 +107,12 @@ struct CardWallExtAuthSelectionView: View {
                         store.send(.reset)
                     }
                     .scrollContentBackground(.hidden)
+
+                    if store.selectLoading {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .padding()
+                    }
 
                 } else {
                     VStack(spacing: 8) {
@@ -140,6 +147,11 @@ struct CardWallExtAuthSelectionView: View {
             store.send(.loadKKList)
         }
         .destinations(store: $store)
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .confirmationDialog($store.scope(
+            state: \.destination?.contactSheet,
+            action: \.destination.contactSheet
+        ))
     }
 
     struct CenteredActivityIndicator: View {
@@ -188,11 +200,6 @@ extension View {
             item: store.scope(state: \.destination?.help, action: \.destination.help)
         ) { store in
             CardWallExtAuthHelpView(store: store)
-        }
-        .navigationDestination(
-            item: store.scope(state: \.destination?.confirmation, action: \.destination.confirmation)
-        ) { store in
-            CardWallExtAuthConfirmationView(store: store)
         }
     }
 }

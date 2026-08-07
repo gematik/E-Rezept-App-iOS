@@ -200,6 +200,16 @@ class SmallSheetContainerViewController: UIViewController {
         notificationCenter.removeObserver(self)
     }
 
+    private var maxContentHeight: CGFloat {
+        let screenHeight = view.window?.bounds.height ?? UIScreen.main.bounds.height
+        let topInset = view.window?.safeAreaInsets.top ?? 0
+        return screenHeight - topInset
+    }
+
+    private func clampedHeight(_ height: CGFloat) -> CGFloat {
+        min(height, maxContentHeight)
+    }
+
     override func preferredContentSizeDidChange(forChildContentContainer container: UIContentContainer) {
         super.preferredContentSizeDidChange(forChildContentContainer: container)
 
@@ -210,7 +220,7 @@ class SmallSheetContainerViewController: UIViewController {
                 options: [.beginFromCurrentState, .curveEaseOut]
             ) {
                 if let height = self.contentViewController?.preferredContentSize.height {
-                    self.heightAnchor?.constant = height
+                    self.heightAnchor?.constant = self.clampedHeight(height)
                 }
                 self.fillingFooter.backgroundColor = self.contentViewController?.view.subviews.first?
                     .backgroundColor ?? .systemBackground
@@ -220,7 +230,7 @@ class SmallSheetContainerViewController: UIViewController {
             }
         } else {
             if let height = contentViewController?.preferredContentSize.height {
-                heightAnchor?.constant = height
+                heightAnchor?.constant = clampedHeight(height)
             }
             fillingFooter.backgroundColor = contentViewController?.view.subviews.first?
                 .backgroundColor ?? .systemBackground

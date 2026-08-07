@@ -27,7 +27,6 @@ import SwiftUI
 
 public struct InstructionsView: View {
     var store: StoreOf<InstructionsDomain>
-    @State var calculatedHeight = CGFloat(1)
 
     public init(store: StoreOf<InstructionsDomain>) {
         self.store = store
@@ -43,14 +42,14 @@ public struct InstructionsView: View {
                             .font(.title.bold())
                             .foregroundColor(Colors.systemLabel)
                             .accessibilityAddTraits(.isHeader)
+                            .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsTitle)
 
                         UIKitTextView(
                             attributedString: attributedSubtitle,
-                            calculatedHeight: $calculatedHeight,
                             font: .preferredFont(forTextStyle: .body),
                             foregroundColor: .label
                         ) { _ in }
-                            .frame(height: calculatedHeight)
+                            .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsSubtitle)
                     }
 
                     // Instructions steps
@@ -64,16 +63,19 @@ public struct InstructionsView: View {
                                 ) ?? L10n.euredeemInstructionsStep1RegionalDescription.text
                             )
                         )
+                        .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsStep1Title)
 
                         InstructionStepView(
                             stepNumber: L10n.euredeemInstructionsStep2Title,
                             description: L10n.euredeemInstructionsStep2Description
                         )
+                        .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsStep2Title)
 
                         InstructionStepView(
                             stepNumber: L10n.euredeemInstructionsStep3Title,
                             description: L10n.euredeemInstructionsStep3Description
                         )
+                        .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsStep3Title)
 
                         InstructionStepView(
                             stepNumber: L10n.euredeemInstructionsStep4Title,
@@ -84,11 +86,13 @@ public struct InstructionsView: View {
                                 ) ?? L10n.euredeemInstructionsStep4RegionalDescription.text
                             )
                         )
+                        .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsStep4Title)
 
                         InstructionStepView(
                             stepNumber: L10n.euredeemInstructionsStep5Title,
                             description: L10n.euredeemInstructionsStep5Description
                         )
+                        .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsStep5Title)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -106,12 +110,14 @@ public struct InstructionsView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 16)
                         .padding(.top, 16)
+                        .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmTxtInstructionsDisclaimer)
 
                     Button(L10n.euredeemInstructionsGenerateCodeButton) {
                         // Handle generate code action
                         store.send(.delegate(.continueButtonTapped))
                     }
                     .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
+                    .accessibilityIdentifier(A11y.redeem.eu.instructions.eurdmBtnInstructionsGenerateCode)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 16)
                 }
@@ -125,7 +131,7 @@ public struct InstructionsView: View {
                 }, label: {
                     Text(L10n.euredeemInstructionsBtnClose)
                 })
-                .accessibility(identifier: "euredeem_instructions_close_button")
+                .accessibility(identifier: A11y.redeem.eu.instructions.eurdmBtnInstructionsClose)
             }
         }
         .navigationTitle(L10n.euredeemInstructionsNavigationTitle)

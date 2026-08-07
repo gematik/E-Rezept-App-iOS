@@ -264,14 +264,9 @@ public struct CardWallIntroductionDomain { // swiftlint:disable:this type_body_l
             return Effect.run { send in
                 // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
                 // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
-                guard await openURLHandler.canOpenURL(url) else {
-                    await send(.response(.openURL(false)))
-                    return
-                }
-
                 // [REQ:gemSpec_IDP_Sek:A_22313-01] Remember State parameter for later verification
-                await openURLHandler.open(url)
-                await send(.response(.openURL(true)))
+                let result = await openURLHandler.open(url)
+                await send(.response(.openURL(result)))
             }
         case let .response(.openURL(successful)):
             state.loading = false
@@ -310,12 +305,12 @@ public struct CardWallIntroductionDomain { // swiftlint:disable:this type_body_l
         case .destination(.presented(.contactSheet(.contactByTelephone))):
             guard let url = URL(string: "tel:+498002773777") else { return .none }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .destination(.presented(.contactSheet(.contactByMail))):
             guard let url = URL(string: "mailto:app-feedback@gematik.de") else { return .none }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .destination(.presented(.alert(.searchKK))):
             state.destination = .extAuth(CardWallExtAuthSelectionDomain.State(

@@ -24,12 +24,15 @@ import Combine
 import ComposableArchitecture
 import eRpLocalStorage
 import eRpStyleKit
+import FeatureCommunication
 import SwiftUI
 
 struct TabContainerView: View {
     @Bindable var store: StoreOf<AppDomain>
 
     @Shared(.appDefaults) var appDefaults
+
+    @Shared(.communicationsV3Feature) var communicationsV3Feature
 
     var settingsBadge: String? {
         if appDefaults.diga.hasRedeemdADiga,
@@ -84,6 +87,19 @@ struct TabContainerView: View {
                         }
                         .badge(store.unreadMessageCount)
                         .tag(AppDomain.Destinations.State.orders)
+
+                    if communicationsV3Feature {
+                        MessageThreadListView(store: store.scope(state: \.messages, action: \.messages))
+                            .tabItem {
+                                Label {
+                                    Text(L10n.tabTxtMessages)
+                                } icon: {
+                                    Image(asset: Asset.TabIcon.message)
+                                }
+                            }
+                            .badge(store.unreadMessageCount)
+                            .tag(AppDomain.Destinations.State.messages)
+                    }
 
                     SettingsView(
                         store: store.scope(state: \.settings, action: \.settings)

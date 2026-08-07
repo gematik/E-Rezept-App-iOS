@@ -184,24 +184,3 @@ public enum ErpAlertState<Action: Equatable>: Equatable {
         }
     }
 }
-
-import SwiftUI
-
-extension View {
-    /// Displays an alert when then store's state becomes non-`nil`, and dismisses it when it becomes
-    /// `nil`.
-    ///
-    /// - Parameters:
-    ///   - store: A store that is focused on ``PresentationState`` and ``PresentationAction`` for an
-    ///     alert.
-    ///   - toDestinationState: A transformation to extract alert state from the presentation state.
-    ///   - fromDestinationAction: A transformation to embed alert actions into the presentation
-    ///     action.
-    public func alert<State, Action, ButtonAction>(
-        _ store: Store<PresentationState<State>, PresentationAction<Action>>,
-        state toDestinationState: @escaping (State) -> ErpAlertState<ButtonAction>?,
-        action fromDestinationAction: @escaping (ButtonAction) -> Action
-    ) -> some View {
-        alert(store: store, state: { toDestinationState($0)?.alert }, action: fromDestinationAction)
-    }
-}

@@ -65,9 +65,6 @@ class PharmacyRedeemDomainTests: XCTestCase {
             dependencies.redeemInputValidator = mockRedeemValidator
             dependencies.redeemService = mockRedeemService
             dependencies.serviceLocator = ServiceLocator()
-            dependencies.redeemOrderService.redeemViaAVS = { @Sendable [mockRedeemService] orders, _ in
-                try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
-            }
             dependencies.redeemOrderService.redeemViaErxTaskRepository = { @Sendable [mockRedeemService] orders, _ in
                 try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
             }
@@ -87,9 +84,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             position: nil,
             address: nil,
             telecom: nil,
-            hoursOfOperation: [],
-            avsEndpoints: PharmacyLocation.AVSEndpoints(onPremiseUrl: "http://onpremise.de"),
-            avsCertificates: []
+            hoursOfOperation: []
         )
     }
 
@@ -209,6 +204,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
                                                                             pharmacy: pharmacy))) {
                     $0.serviceOption = .erxTaskRepositoryAvailable
                     $0.serviceOptionState.availableOptions = [.onPremise]
+                    $0.serviceOptionState.validOptions = [.onPremise]
                     $0.hasCompleteContactData = true
                 }
 
@@ -229,11 +225,6 @@ class PharmacyRedeemDomainTests: XCTestCase {
                     expect(response?.requested.redeemType) == initialState.serviceOptionState.selectedOption
                     expect(response?.requested.accessCode) == task.accessCode
                     expect(response?.requested.telematikId) == self.pharmacy.telematikID
-                    expect(response?.requested.endpoint) == self.pharmacy.avsEndpoints?.url(
-                        for: initialState.serviceOptionState.selectedOption,
-                        transactionId: "",
-                        telematikId: self.pharmacy.telematikID
-                    )
                 }
             }
 //            expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 1
@@ -433,7 +424,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
         )
         let selectionPrescriptionState = PharmacyPrescriptionSelectionDomain.State(
             prescriptions: sut.state.$prescriptions,
-            selectedPrescriptions: sut.state.$selectedPrescriptions
+            selectedPrescriptions: sut.state.$selectedPrescriptions,
+            selectedOption: nil
         )
 
         await sut.send(.showPrescriptionSelection) { sut in

@@ -1,0 +1,68 @@
+[
+    {
+        "id": "2",
+        "text": "D'ora in poi registrate con l'app e-prescription la vostra decisione di donare gli organi nel **registro digitale delle donazioni di organi** – in modo semplice e sicuro.\n\nAttualmente in Germania ci sono 9.192 persone in attesa urgente di un organo: ogni decisione conta e può salvare vite umane.\n\nPrendi la tua decisione oggi e dai un contributo importante al futuro di tante persone! ❤️‍🩹\n\nIl registro delle donazioni di organi si trova nella scheda \"Impostazioni\" di questa app.",
+        "timestamp": "2024-11-29T08:00:00.000Z",
+        "version": "1.27.0"
+    },
+    {
+        "id": "3",
+        "text": "**Compatibilità ePA** \n 🤝 Le tue prescrizioni ora sono completamente compatibili con la cartella clinica elettronica. \n \n **Migliorato** \n ✨ Le ricette scadute ora scompaiono nell'archivio.",
+        "timestamp": "2024-12-20T08:00:00.000Z",
+        "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Migliore leggibilità** \n Abbiamo reso il colore del nostro marchio leggermente più scuro per aumentare il contrasto cromatico e quindi migliorare la leggibilità. \n \n **Campo di immissione ottimizzato** \n Il cursore nel campo di immissione del numero di accesso è stato rimosso.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Flusso degli ordini migliorato** \nIl processo di ordinazione è ora più semplice e veloce. \n \n 🌐 **Nuove lingue** \nLa nostra app è ora disponibile anche in spagnolo e irlandese. \n \n📞 **Opzioni di contatto estese** \nAbbiamo introdotto nuove opzioni di contatto per compagnie assicurative selezionate. \n \n🔍 **Registri di accesso dettagliati** \nOra visualizziamo anche gli ID telematici nei registri di accesso, in modo che sia più facile identificare chi ha avuto accesso.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Riscatta le prescrizioni DiGA** \nOra puoi riscattare le prescrizioni per le applicazioni sanitarie digitali (DiGA) direttamente tramite l'app per le prescrizioni elettroniche. Le prescrizioni saranno emesse da specialisti di Amburgo nell'ambito di un progetto pilota. Puoi trovare il tuo codice di attivazione e il link per la DiGA proprio qui nell'app per le prescrizioni elettroniche. \n \n **🏥 Nuovo database delle farmacie** \nAbbiamo introdotto un nuovo database a prova di futuro per la ricerca in farmacia.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Accessibilità** \nLa nostra dichiarazione di accessibilità è ora disponibile nelle impostazioni. Anche il processo di onboarding è stato reso più accessibile. \n \n **📲 Riscatta DiGA con le compagnie assicurative** \nLe prescrizioni per le applicazioni sanitarie digitali (DiGA) possono ora essere riscattate anche con altre compagnie assicurative.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Registrazione per persone con assicurazione privata** \nLa registrazione per persone con assicurazione privata è stata ottimizzata. Puoi accedere comodamente con il tuo ID sanitario in pochi clic. \n \n **🏥 Dati della farmacia aggiornati** \nLe modifiche apportate dalle farmacie nel nuovo database vengono ora visualizzate in modo affidabile. \n \n **📲 Maggiori informazioni per le DiGA** \nD'ora in poi riceverai informazioni più dettagliate sulle tue prescrizioni DiGA, come il prezzo di vendita o il logo. \n \n **♿️ Accessibilità** \nLa schermata per l'inserimento del numero di accesso della tessera sanitaria è stata ridisegnata e ora è ottimizzata per l'uso con VoiceOver. \n \n **📤 Condividi le prescrizioni** \nOra è possibile condividere le prescrizioni con altri direttamente dall'app.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Accessibilità** \nLe impostazioni del profilo sono state riviste per aumentare ulteriormente l'accessibilità.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registrazione per più persone** \nLa registrazione è ora possibile anche per gli assicurati di istituzioni federali, come la Polizia Federale e altri. \n \n **🕒 Orari di apertura delle farmacie migliorati** \nIl servizio di emergenza e gli orari di chiusura speciali per le farmacie vengono ora visualizzati, se disponibili. \n \n **💊 Selezione di tutte le prescrizioni** \nQuando si riscattano le prescrizioni, ora è possibile selezionarle tutte contemporaneamente. \n \n **♿ Accessibilità** \nI colori dei caratteri e delle icone sono stati regolati per ottenere un contrasto maggiore. Inoltre, è stata migliorata la sintesi vocale di VoiceOver per la modifica dell'immagine del profilo e il riconoscimento dello stato di accesso.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Mostra codici di prescrizione** \nLa schermata per i codici batch e singoli è stata riprogettata per un utilizzo più intuitivo. \n \n **❤️ Farmacia preferita** \nI Farmaci preferiti ora funzionano in modo più affidabile e sono compatibili con VoiceOver. \n \n **♿ Accessibilità** \nVoiceOver e la navigazione tramite tastiera sono migliorati, pulsanti, testo e campi di input sono più facilmente identificabili e le voci dell'elenco sono strutturate in modo più logico. Il carattere ingrandito ora funziona su tutte le schermate dell'app. I video animati vengono riprodotti una sola volta per supportare gli utenti con disabilità cognitive.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Dettagli farmacia migliorati** \nLe farmacie possono ora aggiungere servizi come vaccinazioni e funzionalità in loco come l'accesso senza barriere. Le farmacie possono essere filtrate in base a queste nuove informazioni. \n \n **✨ Ricerca farmacia migliorata** \nLe farmacie utilizzate di recente e le farmacie preferite sono ora separate in modo più chiaro. I filtri sono stati migliorati. \n \n **✅ ID sanitario per persone con assicurazione alternativa** \nLe persone che non sono coperte da un'assicurazione sanitaria pubblica o privata possono ora accedere anche utilizzando il loro ID sanitario. \n \n **♿ Accessibilità** \nI filtri ora hanno un contrasto maggiore e il loro stato è più facilmente identificabile. La dichiarazione di accessibilità è stata aggiornata e ampliata per includere una sezione che documenta la cronologia delle modifiche. Alcuni pulsanti sono stati modificati per migliorarne la visibilità.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
+    }
+]

@@ -75,7 +75,9 @@ struct OnboardingDomain {
             case let .some(version):
                 if let knownVersion = Self(rawValue: version) {
                     self = knownVersion
-                } else { return nil }
+                } else {
+                    return nil
+                }
             }
         }
     }

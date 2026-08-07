@@ -1,7 +1,6 @@
 disabled_rules: # rule identifiers to exclude from running
   - trailing_comma
   - function_name_whitespace # previously named operator_whitespace
-  - closure_end_indentation # remove me soon (swiftformat 0.60.1)
 opt_in_rules:
   - attributes
   - empty_count

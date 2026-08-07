@@ -1,0 +1,68 @@
+[
+    {
+        "id": "2",
+        "text": "A partir de ahora, utilice la aplicación de recetas electrónicas para registrar su decisión de donar órganos en el **registro digital de donación de órganos**, de forma segura y sencilla.\n\nActualmente hay 9.192 personas en Alemania esperando urgentemente un órgano: cada decisión cuenta y puede salvar vidas.\n\n¡Toma tu decisión hoy y haz una contribución importante al futuro de muchas personas! ❤️‍🩹\n\nEl registro de donación de órganos se puede encontrar en la pestaña \"Configuración\" de esta aplicación.",
+        "timestamp": "2024-11-29T08:00:00.000Z",
+        "version": "1.27.0"
+    },
+    {
+        "id": "3",
+        "text": "**Compatibilidad con ePA** \n 🤝 Sus recetas ahora son totalmente compatibles con el registro médico electrónico. \n \n **Mejorado** \n ✨ Las recetas caducadas ahora desaparecen en el archivo.",
+        "timestamp": "2024-12-20T08:00:00.000Z",
+        "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Mejor legibilidad** \n Hemos oscurecido ligeramente el color de nuestra marca para aumentar el contraste de color y así mejorar la legibilidad. \n \n **Campo de entrada optimizado** \n Se ha eliminado el cursor en el campo de entrada del número de acceso.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Flujo de pedidos mejorado** \nEl proceso de pedido ahora es más fácil y rápido. \n \n🌐 **Nuevos idiomas** \nNuestra aplicación ahora también está disponible en español e irlandés. \n \n📞 **Opciones de contacto ampliadas** \nHemos introducido nuevas opciones de contacto para compañías de seguros seleccionadas. \n \n🔍 **Registros de acceso detallados** \nAhora también mostramos las identificaciones telemáticas en los registros de acceso para que sea más fácil identificar quién tuvo acceso.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Canjea tus recetas DiGA** \nAhora puedes canjear recetas para aplicaciones de salud digital (DiGA) directamente a través de la app de receta electrónica. Las recetas serán emitidas por especialistas en Hamburgo como parte de un proyecto piloto. Puedes encontrar tu código de activación y el enlace a la DiGA aquí mismo, en la app de receta electrónica. \n \n **🏥 Nueva base de datos de farmacias** \nHemos presentado una nueva base de datos con visión de futuro para las búsquedas en farmacias.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Accesibilidad** \nNuestra declaración de accesibilidad ya está disponible en la configuración. El proceso de incorporación también es más accesible. \n \n **📲 Canjea DiGAs con aseguradoras** \nLas recetas para aplicaciones de salud digital (DiGAs) ahora también se pueden canjear con otras aseguradoras.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Registro para personas con seguro privado** \nSe ha optimizado el registro para personas con seguro privado. Puedes iniciar sesión cómodamente con tu ID de salud en solo unos clics. \n \n **🏥 Datos de farmacia actualizados** \nLos cambios que las farmacias realizan en la nueva base de datos ahora se muestran de forma fiable. \n \n **📲 Más información para DiGAs** \nA partir de ahora recibirás información más detallada sobre tus recetas de DiGA, como el precio de venta o el logotipo. \n \n **♿️ Accesibilidad** \nLa pantalla para introducir el número de acceso a la tarjeta sanitaria se ha rediseñado y ahora está optimizada para su uso con VoiceOver. \n \n **📤 Compartir recetas** \nAhora las recetas se pueden compartir con otros directamente desde la aplicación.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Accesibilidad** \nSe han revisado los ajustes del perfil para aumentar aún más la accesibilidad.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Registro para más personas** \nEl registro ahora también es posible para personas aseguradas de instituciones federales, como la Policía Federal y otras. \n \n **🕒 Horario de farmacia mejorado** \nAhora se muestran los horarios de servicio de emergencia y de cierre especial para farmacias, si están disponibles. \n \n **💊 Selección de todas las recetas** \nAl canjear recetas, ahora se pueden seleccionar todas las recetas simultáneamente. \n \n **♿ Accesibilidad** \nSe ajustaron los colores de las fuentes e íconos para lograr un mayor contraste. Además, se mejoró la salida de voz de VoiceOver para editar la foto de perfil y reconocer el estado de inicio de sesión.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Mostrar códigos de prescripción** \nLa pantalla para códigos de lote y únicos ha sido rediseñada para un uso más intuitivo. \n \n **❤️ Favoritos de farmacia** \nLos favoritos de farmacia ahora funcionan de manera más confiable y son compatibles con VoiceOver. \n \n **♿ Accesibilidad** \nVoiceOver y la navegación del teclado se han mejorado, los botones, el texto y los campos de entrada son más fáciles de identificar, y los elementos de la lista están estructurados de forma más lógica. La fuente agrandada ahora funciona en todas las pantallas de la aplicación. Los videos animados se reproducen solo una vez para ayudar a los usuarios con discapacidades cognitivas.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Detalles mejorados de la farmacia** \nLas farmacias ahora pueden agregar servicios como vacunas y características en el sitio como acceso sin barreras. Las farmacias se pueden filtrar según esta nueva información. \n \n **✨ Búsqueda de farmacias mejorada** \nLas farmacias usadas recientemente y las farmacias favoritas ahora están separadas más claramente. Los filtros se han mejorado. \n \n **✅ Identificación de salud para personas con seguro alternativo** \nLas personas que no están cubiertas por un seguro de salud público o privado ahora también pueden iniciar sesión usando su Identificación de salud. \n \n **♿ Accesibilidad** \nLos filtros ahora tienen mayor contraste y su estado es más fácil de identificar. La declaración de accesibilidad se ha actualizado y ampliado para incluir una sección que documenta el historial de cambios. Algunos botones se han ajustado para una mejor visibilidad.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
+    }
+]

@@ -88,6 +88,18 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
         }
         .accessibility(identifier: A11y.pharmacySearch.phaFilterBar)
         .tint(Colors.primary)
+        .preventSnapshotClipping()
+    }
+}
+
+extension View {
+    /// This is a workaround to prevent the filter bar from being clipped when it is placed in a scroll view.
+    func preventSnapshotClipping() -> some View {
+        #if DEBUG
+        offset(x: 0, y: 1)
+        #else
+        return self
+        #endif
     }
 }
 

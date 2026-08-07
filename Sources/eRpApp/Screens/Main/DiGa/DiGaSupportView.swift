@@ -29,7 +29,7 @@ struct DiGaSupportView: View {
     @Bindable var store: StoreOf<DiGaDetailDomain>
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Spacer()
                 CloseButton {
@@ -37,52 +37,54 @@ struct DiGaSupportView: View {
                 }
                 .accessibilityIdentifier(A11y.diga.support.digaDtlSupportBtnClose)
             }
+            .padding([.top, .horizontal])
 
-            VStack(alignment: .center, spacing: 8) {
-                Text(L10n.digaDtlSupportTxtHeader)
-                    .font(.headline)
-                    .accessibilityIdentifier(A11y.diga.support.digaDtlSupportTxtHeader)
+            ScrollView {
+                VStack(alignment: .center, spacing: 8) {
+                    Text(L10n.digaDtlSupportTxtHeader)
+                        .font(.headline)
+                        .accessibilityIdentifier(A11y.diga.support.digaDtlSupportTxtHeader)
 
-                if let supportText = store.bfArMDisplayInfo?.supportText {
-                    supportText
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 16)
-                        .accessibilityIdentifier(A11y.diga.support.digaDtlSupportTxtProvidedLink)
-                }
-
-                if let helpUrl = store.bfarmDiGaDetails?.helpUrl {
-                    Button {
-                        store.send(.openLink(urlString: helpUrl))
-                    } label: {
-                        Text(L10n.digaDtlSupportBtnOpenLink)
+                    if let supportText = store.bfArMDisplayInfo?.supportText {
+                        supportText
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom, 16)
+                            .accessibilityIdentifier(A11y.diga.support.digaDtlSupportTxtProvidedLink)
                     }
-                    .accessibilityIdentifier(A11y.diga.support.digaDtlSupportBtnOpenLink)
-                    .buttonStyle(.primaryHugging)
-                }
 
-                if let handbookUrl = store.bfarmDiGaDetails?.handbookUrl {
-                    Button(
-                        action: { store.send(.openLink(urlString: handbookUrl)) },
-                        label: {
-                            Text(L10n.digaDtlSupportBtnOpenPdf).font(Font.body.weight(.semibold))
-                                .multilineTextAlignment(.leading)
-                                .padding(.vertical)
-                                .padding(.horizontal, 64)
-                                .foregroundColor(Colors.primary700)
+                    if let helpUrl = store.bfarmDiGaDetails?.helpUrl {
+                        Button {
+                            store.send(.openLink(urlString: helpUrl))
+                        } label: {
+                            Text(L10n.digaDtlSupportBtnOpenLink)
                         }
-                    )
-                    .accessibilityIdentifier(A11y.diga.support.digaDtlSupportBtnOpenPdf)
-                    .padding(.horizontal)
-                    .fixedSize(horizontal: true, vertical: false)
-                    .buttonStyle(.secondary)
-                }
+                        .accessibilityIdentifier(A11y.diga.support.digaDtlSupportBtnOpenLink)
+                        .buttonStyle(.primaryHugging)
+                    }
 
-                Spacer()
+                    if let handbookUrl = store.bfarmDiGaDetails?.handbookUrl {
+                        Button(
+                            action: { store.send(.openLink(urlString: handbookUrl)) },
+                            label: {
+                                Text(L10n.digaDtlSupportBtnOpenPdf).font(Font.body.weight(.semibold))
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.vertical)
+                                    .padding(.horizontal, 64)
+                                    .foregroundColor(Colors.primary700)
+                            }
+                        )
+                        .accessibilityIdentifier(A11y.diga.support.digaDtlSupportBtnOpenPdf)
+                        .padding(.horizontal)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .buttonStyle(.secondary)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom)
             }
         }
-        .padding()
         .frame(maxWidth: .infinity)
         .background(Colors.systemBackground.ignoresSafeArea())
     }

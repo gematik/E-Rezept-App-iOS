@@ -30,131 +30,172 @@ public protocol ErxRemoteDataStore {
     /// - Parameters:
     ///   - id: the ErxTask ID
     ///   - accessCode: AccessCode, optional as required by implementing DataStore
+    ///   - profileId: The profile to use for the request
     /// - Returns: Publisher for the fetch request
-    func fetchTask(by id: ErxTask.ID, accessCode: String?)
-        -> AnyPublisher<ErxTask?, RemoteStoreError>
+    func fetchTask(by id: ErxTask.ID, accessCode: String?,
+                   profileId: UUID) -> AnyPublisher<ErxTask?, RemoteStoreError>
 
     /// List all tasks contained in the store
-    /// - Parameter referenceDate: Tasks with modification date greater or equal  `referenceDate` will be listed.
+    /// - Parameters:
+    ///   - referenceDate: Tasks with modification date greater or equal  `referenceDate` will be listed.
     ///                            Pass `nil` for listing all
-    func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
+    ///   - profileId: The profile to use for the request
+    func listAllTasks(after referenceDate: String?,
+                      profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
 
     /// List the next page of a previous received PagedContent.
-    /// - Parameter previousPage: The previous page of the content to retrieve
-    func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>)
-        -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
+    /// - Parameters:
+    ///   - previousPage: The previous page of the content to retrieve
+    ///   - profileId: The profile to use for the request
+    func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>,
+                           profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
 
     /// List detailed tasks with all available information in the store
-    /// - Parameter tasks: The low detail tasks
-    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>)
-        -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
+    /// - Parameters:
+    ///   - tasks: The low detail tasks
+    ///   - profileId: The profile to use for the request
+    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>,
+                           profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
 
     /// Deletes a sequence of tasks from the store
-    func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError>
+    /// - Parameters:
+    ///   - tasks: The tasks to delete
+    ///   - profileId: The profile to use for the request
+    func delete(tasks: [ErxTask],
+                profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError>
 
     /// Marks the `ErxTask` by its id as EU redeemable by a patient
     /// - Parameters:
     ///   - id: the `ErxTask` ID
     ///   - byPatientAuthorization: marks the task as EU redeemable `true` or `false`
+    ///   - profileId: The profile to use for the request
     /// - Returns: Publisher for the load request
-    func markEURedeemable(for id: ErxTask.ID,
-                          byPatientAuthorization: Bool) -> AnyPublisher<ErxTask?, RemoteStoreError>
+    func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool,
+                          profileId: UUID) -> AnyPublisher<ErxTask?, RemoteStoreError>
 
     /// Sends a redeem request of  an `ErxTask` for the selected pharmacy
     /// Note: The response does not verify that the pharmacy has accepted the order
-    /// - Parameter order: Order that contains informations about the task,  redeem option
+    /// - Parameters:
+    ///   - order: Order that contains informations about the task,  redeem option
     ///                     and the pharmacy where the task should be redeemed
+    ///   - profileId: The profile to use for the request
     /// - Returns: The order that has been redeemed
-    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>
+    func redeem(order: ErxTaskOrder,
+                profileId: UUID) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>
 
     /// Load All communications of the given profile
     /// - Parameters:
     ///   - referenceDate: `Communication`s with modification date great or equal  `referenceDate` will be listed.
     ///                     Pass `nil` for listing all
     ///   - profile: Filters for the passed Profile type
+    ///   - profileId: The profile to use for the request
     func listAllCommunications(
         after referenceDate: String?,
-        for profile: ErxTask.Communication.Profile
+        for profile: ErxTask.Communication.Profile,
+        profileId: UUID
     ) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError>
 
     /// Fetch the ErxAuditEvent by its id when required by `Self`
     ///
     /// - Parameters:
     ///   - id: the ErxAuditEvent ID
+    ///   - profileId: The profile to use for the request
     /// - Returns: Publisher for the fetch request
-    func fetchAuditEvent(by id: ErxAuditEvent.ID)
-        -> AnyPublisher<ErxAuditEvent?, RemoteStoreError>
+    func fetchAuditEvent(by id: ErxAuditEvent.ID,
+                         profileId: UUID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError>
 
     /// List all audit events contained in the store
     /// - Parameters:
     ///   - referenceDate: `AuditEvent`s with modification date great or equal  `referenceDate` will be listed.
     ///                             Pass `nil` for listing all
     ///   - locale: Location type of the language in which the result should be returned
-    func listAllAuditEvents(after referenceDate: String?,
-                            for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
+    ///   - profileId: The profile to use for the request
+    func listAllAuditEvents(after referenceDate: String?, for locale: String?,
+                            profileId: UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
 
     /// List all audit events contained in the store
     /// - Parameters:
     ///   - url: destination of the request
     ///   - locale: Location type of the language in which the result should be returned
-    func listAuditEventsNextPage(from url: URL, locale: String?)
-        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
+    ///   - profileId: The profile to use for the request
+    func listAuditEventsNextPage(from url: URL, locale: String?,
+                                 profileId: UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
 
     /// List all medication dispenses for a specific `Prescription` /  `ErxTask`
-    /// - Parameter id: MedicationDispense for the corresponding `ErxTask.ID` will be fetched.
+    /// - Parameters:
+    ///   - id: MedicationDispense for the corresponding `ErxTask.ID` will be fetched.
+    ///   - profileId: The profile to use for the request
     /// - Returns: `MedicationDispense`s
     func listMedicationDispenses(
-        for id: ErxTask.ID
+        for id: ErxTask.ID,
+        profileId: UUID
     ) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError>
 
     /// Fetch the ErxChargeItem by its id when required by `Self`
     ///
     /// - Parameters:
     ///   - id: the ErxChargeIem ID
+    ///   - profileId: The profile to use for the request
     /// - Returns: Publisher for the fetch request
-    func fetchChargeItem(by id: ErxChargeItem.ID)
-        -> AnyPublisher<ErxChargeItem?, RemoteStoreError>
+    func fetchChargeItem(by id: ErxChargeItem.ID,
+                         profileId: UUID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError>
 
     /// List all charge items contained in the store
-    /// - Parameter referenceDate: `ChargeItem`s with entered date great or equal  `referenceDate` will be listed.
+    /// - Parameters:
+    ///   - referenceDate: `ChargeItem`s with entered date great or equal  `referenceDate` will be listed.
     ///                             Pass `nil` for listing all
+    ///   - profileId: The profile to use for the request
     /// - Returns: Publisher for the fetch request
-    func listAllChargeItems(after referenceDate: String?)
-        -> AnyPublisher<[ErxChargeItem], RemoteStoreError>
+    func listAllChargeItems(after referenceDate: String?,
+                            profileId: UUID) -> AnyPublisher<[ErxChargeItem], RemoteStoreError>
 
     /// Deletes a sequence of charge items from the store
-    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>
+    /// - Parameters:
+    ///   - chargeItems: The charge items to delete
+    ///   - profileId: The profile to use for the request
+    func delete(chargeItems: [ErxChargeItem],
+                profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError>
 
     /// Loads All consents of a given profile
     /// Uses the request headers  ACCESS_TOKEN with the containing insurance id
     ///
+    /// - Parameter profileId: The profile to use for the request
     /// - Returns: Array of all loaded `ErxConsent`
-    func fetchConsents() -> AnyPublisher<[ErxConsent], RemoteStoreError>
+    func fetchConsents(profileId: UUID) -> AnyPublisher<[ErxConsent], RemoteStoreError>
 
     /// Send a grant consent request of  an `ErxConsent`
     ///
-    /// - Parameter consent: Consent that contains information about the type of consent
+    /// - Parameters:
+    ///   - consent: Consent that contains information about the type of consent
     ///                         and insurance id which the consent will be granted for
+    ///   - profileId: The profile to use for the request
     /// - Returns: The `ErxConsent` that was granted
-    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError>
+    func grantConsent(_ consent: ErxConsent,
+                      profileId: UUID) -> AnyPublisher<ErxConsent?, RemoteStoreError>
 
     /// Delete an consent of `ErxConsent` to revoke it
     /// - Parameters:
     ///   - category: the `ErxConsent.Category`of the consent to be revoked
+    ///   - profileId: The profile to use for the request
     /// - Returns: Publisher for the load request
-    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError>
+    func revokeConsent(_ category: ErxConsent.Category,
+                       profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError>
 
     /// Loads All active `EuAccessCode`
     ///
+    /// - Parameter profileId: The profile to use for the request
     /// - Returns: Array of all active `EuAccessCode`
-    func loadRemoteEuAccessCode() -> AnyPublisher<EuAccessCode?, RemoteStoreError>
+    func loadRemoteEuAccessCode(profileId: UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError>
 
     ///  Sends an `EuAccessCode` to activate/grand it
     /// - Parameters:
-    ///   - category: the `EuAccessCode`to be granted
+    ///   - accessCode: the `EuAccessCode`to be granted
+    ///   - profileId: The profile to use for the request
     /// - Returns: The `EuAccessCode` that was granted
-    func grantEuAccessPermission(accessCode: EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError>
+    func grantEuAccessPermission(accessCode: EuAccessCode,
+                                 profileId: UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError>
 
     ///  Delete active `EuAccessCode` from server
-    func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError>
+    /// - Parameter profileId: The profile to use for the request
+    func deleteEuAccessCode(profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError>
 }

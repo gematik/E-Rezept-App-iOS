@@ -22,6 +22,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import eRpResources
 import eRpStyleKit
 import SwiftUI
 
@@ -42,10 +43,12 @@ public struct CountrySelectionView: View {
                     Text(L10n.euredeemCountryEmptyTitle)
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(Color.white)
+                        .accessibilityIdentifier(A11y.redeem.eu.countrySelection.eurdmTxtCountryEmptyTitle)
                     Text(L10n.euredeemCountryEmptySubtitle)
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Color.white)
+                        .accessibilityIdentifier(A11y.redeem.eu.countrySelection.eurdmTxtCountryEmptySubtitle)
 
                     Spacer()
                 }
@@ -58,10 +61,12 @@ public struct CountrySelectionView: View {
                         .font(.title3.bold())
                         .foregroundStyle(Colors.systemLabel)
                         .accessibilityAddTraits(.isHeader)
+                        .accessibilityIdentifier(A11y.redeem.eu.countrySelection.eurdmTxtCountryTitle)
                     Text(L10n.euredeemCountrySelectionSubtitle)
                         .font(.subheadline)
                         .foregroundStyle(Colors.systemLabelSecondary)
                         .padding(.bottom, 8)
+                        .accessibilityIdentifier(A11y.redeem.eu.countrySelection.eurdmTxtCountrySubtitle)
 
                     SearchBar(
                         searchText: $store.searchText,
@@ -84,6 +89,7 @@ public struct CountrySelectionView: View {
                             }
                             .font(.subheadline.weight(.semibold))
                         }
+                        .accessibilityIdentifier(A11y.redeem.eu.countrySelection.eurdmBtnCountryLocation)
                         .padding(.bottom)
                     }
                 }
@@ -97,6 +103,9 @@ public struct CountrySelectionView: View {
                             .font(.subheadline)
                             .foregroundStyle(Colors.systemLabelSecondary)
                             .multilineTextAlignment(.center)
+                            .accessibilityIdentifier(
+                                A11y.redeem.eu.countrySelection.eurdmTxtCountryLocationEmpty
+                            )
                         Spacer()
                     }
                     .padding(.horizontal, 24)

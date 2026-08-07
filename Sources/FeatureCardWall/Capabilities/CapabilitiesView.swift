@@ -26,12 +26,6 @@ import SwiftUI
 
 struct CapabilitiesView: View {
     let store: StoreOf<CardWallIntroductionDomain>
-    @ObservedObject var viewStore: ViewStoreOf<CardWallIntroductionDomain>
-
-    init(store: StoreOf<CardWallIntroductionDomain>) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
 
     var body: some View {
         VStack(alignment: .leading) {

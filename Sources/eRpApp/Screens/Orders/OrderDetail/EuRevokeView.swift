@@ -28,50 +28,55 @@ struct EuRevokeView: View {
     @Bindable var store: StoreOf<OrderDetailDomain>
 
     var body: some View {
-        VStack(alignment: .center, spacing: 24) {
+        VStack(alignment: .center, spacing: 0) {
             HStack {
                 Spacer()
                 CloseButton {
                     store.send(.resetNavigation)
                 }
             }
+            .padding(.horizontal)
 
-            if store.isDeleted {
-                Image(systemName: SFSymbolName.checkmarkCircle)
-                    .font(.system(size: 48))
-                    .foregroundColor(Colors.secondary700)
+            ScrollView {
+                VStack(alignment: .center, spacing: 24) {
+                    if store.isDeleted {
+                        Image(systemName: SFSymbolName.checkmarkCircle)
+                            .font(.system(size: 48))
+                            .foregroundColor(Colors.secondary700)
 
-                Text(L10n.ordDetailEuRevokeTxtRevokeTitle)
-                    .bold()
+                        Text(L10n.ordDetailEuRevokeTxtRevokeTitle)
+                            .bold()
 
-                Text(L10n.ordDetailEuRevokeTxtRevokeMessage)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Colors.systemLabelSecondary)
-            } else {
-                Image(decorative: Asset.EUReedem.euFlag)
-                    .frame(width: 48, height: 48, alignment: .center)
+                        Text(L10n.ordDetailEuRevokeTxtRevokeMessage)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(Colors.systemLabelSecondary)
+                    } else {
+                        Image(decorative: Asset.EUReedem.euFlag)
+                            .frame(width: 48, height: 48, alignment: .center)
 
-                VStack(spacing: 8) {
-                    Text(L10n.ordDetailEuRevokeTxtValidTitle)
-                        .bold()
+                        VStack(spacing: 8) {
+                            Text(L10n.ordDetailEuRevokeTxtValidTitle)
+                                .bold()
 
-                    Text(L10n.ordDetailEuRevokeTxtValidMessage)
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(Colors.systemLabelSecondary)
+                            Text(L10n.ordDetailEuRevokeTxtValidMessage)
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(Colors.systemLabelSecondary)
 
-                    Button {
-                        store.send(.euRevokePermission)
-                    } label: {
-                        Text(L10n.ordDetailEuRevokeBtnRevokeCode)
+                            Button {
+                                store.send(.euRevokePermission)
+                            } label: {
+                                Text(L10n.ordDetailEuRevokeBtnRevokeCode)
+                            }
+                            .buttonStyle(.primary)
+                            .accessibility(identifier: A11y.welcomedrawer.wlcdBtnGkvUser)
+                        }
                     }
-                    .buttonStyle(.primary)
-                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnGkvUser)
                 }
+                .padding(.horizontal)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8) // capsule padding
-        .padding(.horizontal)
         .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
     }
 }

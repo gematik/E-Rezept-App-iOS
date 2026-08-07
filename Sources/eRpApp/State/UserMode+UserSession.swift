@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import BfArM
 import Combine
 import eRpKit
@@ -91,10 +90,6 @@ extension UserMode: UserSession {
         sessionContainer.profile()
     }
 
-    var avsSession: AVSSession {
-        sessionContainer.avsSession
-    }
-
     var avsTransactionDataStore: AVSTransactionDataStore {
         sessionContainer.avsTransactionDataStore
     }
@@ -113,9 +108,5 @@ extension UserMode: UserSession {
 
     var pairingIdpSessionLoginHandler: LoginHandler {
         sessionContainer.pairingIdpSessionLoginHandler
-    }
-
-    var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
-        sessionContainer.secureEnclaveSignatureProvider
     }
 }

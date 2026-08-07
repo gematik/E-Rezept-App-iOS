@@ -1,0 +1,18 @@
+keychain_name("gematik")
+keychain_password("gematikpassword")
+
+git_branch("master")
+readonly(true)
+
+app_identifier(["de.gematik.erp4ios.eRezept", "de.gematik.erp4ios.eRezept.notify"])
+
+for_lane :build_konnektathon_ru do
+  app_identifier(["de.gematik.konny", "de.gematik.konny.notify"])
+end
+
+for_lane :build_drezept_ru do
+  app_identifier(["de.gematik.drezept", "de.gematik.drezept.notify"])
+end
+
+team_name("gematik Gesellschaft für Telematikanwendungen der Gesundheitskarte mbH")
+team_id("A9FL89PFFL")

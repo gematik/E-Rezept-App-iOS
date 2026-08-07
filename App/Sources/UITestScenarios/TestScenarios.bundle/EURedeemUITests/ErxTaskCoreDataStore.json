@@ -1,0 +1,49 @@
+{
+    "listAllTasksOfRecordings":
+    {
+        "type": "steps",
+        "payload":
+        [
+            [
+                {
+                    "_FILE": "Generic.json#taskResponse",
+                    "_REPLACE":
+                    {
+                        "{{REDEEMABLE}}": "{{BOOL:true}}",
+                        "{{REDEEMABLE_BY_PATIENT}}": "{{BOOL:false}}"
+                    }
+                }
+            ],
+            [
+                {
+                    "_FILE": "Generic.json#taskResponse",
+                    "_REPLACE":
+                    {
+                        "{{REDEEMABLE}}": "{{BOOL:true}}",
+                        "{{REDEEMABLE_BY_PATIENT}}": "{{BOOL:false}}"
+                    }
+                }
+            ],
+            [
+                {
+                    "_FILE": "Generic.json#taskResponse",
+                    "_REPLACE":
+                    {
+                        "{{REDEEMABLE}}": "{{BOOL:true}}",
+                        "{{REDEEMABLE_BY_PATIENT}}": "{{BOOL:true}}"
+                    }
+                }
+            ],
+            [
+                {
+                    "_FILE": "Generic.json#taskResponse",
+                    "_REPLACE":
+                    {
+                        "{{REDEEMABLE}}": "{{BOOL:false}}",
+                        "{{REDEEMABLE_BY_PATIENT}}": "{{BOOL:false}}"
+                    }
+                }
+            ]
+        ]
+    }
+}

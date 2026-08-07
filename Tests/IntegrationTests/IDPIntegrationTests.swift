@@ -576,7 +576,10 @@ class Brainpool256r1Signer: JWTSigner {
     let x5c: X509
     let key: BrainpoolP256r1.Verify.PrivateKey
 
-    init(x5c path: String, key filePath: String) throws {
+    init(x5c path: String?, key filePath: String?) throws {
+        guard let path, let filePath else {
+            throw NSError(domain: "Invalid file paths", code: 0, userInfo: nil)
+        }
         x5c = try X509(der: path.readFileContents())
         key = try BrainpoolP256r1.Verify.PrivateKey(raw: filePath.readFileContents())
     }

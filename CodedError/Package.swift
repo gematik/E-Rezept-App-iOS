@@ -36,7 +36,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax", from: "603.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-syntax", from: "603.0.2"),
         .package(url: "https://github.com/pointfreeco/swift-macro-testing", from: "0.6.5"),
     ],
     targets: [

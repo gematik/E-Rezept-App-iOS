@@ -1,9 +1,4 @@
 {
-    "hideWelcomeDrawerRecordings":
-    {
-        "type": "repeated",
-        "payload": true
-    },
     "hideOnboardingRecordings":
     {
         "type": "repeated",

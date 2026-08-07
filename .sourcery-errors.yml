@@ -1,8 +1,0 @@
-sources:
-  - Sources
-parseDocumentation: true
-templates:
-  - Templates/Sourcery/Generic/errors.stencil
-  - Templates/Sourcery/Generic/errors-dot.stencil
-  - Templates/Sourcery/Generic/errors-csv.stencil
-output: doc/errors/generated/

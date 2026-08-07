@@ -21,7 +21,6 @@
 //
 
 import AsyncHelpers
-import AVS
 import Combine
 import Dependencies
 import eRpKit
@@ -42,7 +41,7 @@ protocol RedeemService {
 
 struct RedeemServiceDependency: DependencyKey {
     // Is initially unimplemented because there is no reasonable default
-    // Use the dependency values from `AVSRedeemService` or `ErxTaskRepositoryRedeemService` to override
+    // Use the dependency values from `ErxTaskRepositoryRedeemService` to override
     static let liveValue: RedeemService = UnimplementedRedeemService()
     static let previewValue: RedeemService = DemoRedeemService()
 }
@@ -51,131 +50,6 @@ extension DependencyValues {
     var redeemService: RedeemService {
         get { self[RedeemServiceDependency.self] }
         set { self[RedeemServiceDependency.self] = newValue }
-    }
-}
-
-struct AVSRedeemService: RedeemService {
-    let avsSession: AVSSession
-    let avsTransactionDataStore: AVSTransactionDataStore
-
-    let groupedRedeemTimeProvider: () -> Date = { Date() }
-
-    // swiftlint:disable:next function_body_length
-    func redeem(_ orders: [OrderRequest],
-                profileId _: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
-        guard orders.allSatisfy({ $0.endpoint != nil }),
-              let endpoint = orders.first?.endpoint else {
-            return Fail(error: RedeemServiceError.internalError(.missingAVSEndpoint)).eraseToAnyPublisher()
-        }
-        guard orders.allSatisfy({ !$0.recipients.isEmpty }),
-              let recipients = orders.first?.recipients else {
-            return Fail(error: RedeemServiceError.internalError(.missingAVSCertificate)).eraseToAnyPublisher()
-        }
-
-        var responses: IdentifiedArrayOf<OrderResponse> = []
-        var orderAndMessages = [(OrderRequest, AVSMessage)]()
-        for order in orders {
-            do {
-                let message = try AVSMessage(order)
-                orderAndMessages.append((order, message))
-            } catch {
-                return Fail(error: RedeemServiceError.from(error)).eraseToAnyPublisher()
-            }
-            responses.append(OrderResponse(requested: order, result: .progress(.loading)))
-        }
-
-        let groupedRedeemTime: Date = groupedRedeemTimeProvider()
-
-        let redeemMessagePublishers: [AnyPublisher<OrderResponse, Never>] =
-            orderAndMessages.map { order, message -> AnyPublisher<OrderResponse, Never> in
-                Future {
-                    try await avsSession.redeem(
-                        message: message,
-                        endpoint: endpoint.asEndpoint(),
-                        recipients: recipients
-                    )
-                }
-                .mapError { RedeemServiceError.from($0) }
-                .flatMap { avsSessionResponse -> AnyPublisher<OrderResponse, RedeemServiceError> in
-                    let httpStatusCode = avsSessionResponse.httpStatusCode
-                    guard 200 ..< 300 ~= httpStatusCode else {
-                        return Fail(error: .from(RedeemServiceError.InternalError.unexpectedHTTPStatusCode))
-                            .eraseToAnyPublisher()
-                    }
-                    let orderResponse = OrderResponse(requested: order, result: .success(true))
-                    return avsTransactionDataStore.save(
-                        avsTransaction: .init(
-                            transactionID: order.transactionID,
-                            httpStatusCode: Int32(httpStatusCode),
-                            groupedRedeemTime: groupedRedeemTime,
-                            groupedRedeemID: order.orderID,
-                            telematikID: order.telematikId,
-                            taskId: order.taskID
-                        )
-                    )
-                    .map { _ in orderResponse }
-                    .mapError { .from(RedeemServiceError.InternalError.localStoreError($0)) }
-                    .eraseToAnyPublisher()
-                }
-                .catch { error -> AnyPublisher<OrderResponse, Never> in // erase the RedeemServiceError to Never
-                    Just(
-                        OrderResponse(requested: order, result: .failure(error))
-                    )
-                    .eraseToAnyPublisher()
-                }
-                .eraseToAnyPublisher()
-            }
-
-        // Collects all order responses and merges them into a single emit of the publisher
-        return Publishers.MergeMany(redeemMessagePublishers)
-            .collect(redeemMessagePublishers.count)
-            .tryMap { collection in
-                var responseCollection: IdentifiedArrayOf<OrderResponse> = []
-                try collection.forEach { response in
-                    guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
-                        throw RedeemServiceError.InternalError.idMissmatch
-                    }
-                    responses.update(response, at: index)
-                    responses.forEach { responseCollection.updateOrAppend($0) }
-                }
-                return responseCollection
-            }
-            .mapError(RedeemServiceError.from)
-            .eraseToAnyPublisher()
-    }
-
-    func redeemDiGa(_: [OrderDiGaRequest],
-                    profileId _: UUID) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
-        Fail(error: RedeemServiceError.internalError(.missingAVSEndpoint)).eraseToAnyPublisher()
-    }
-}
-
-// `Unimplemented` code generation already done by `public struct RedeemServiceDependency: DependencyKey`
-// sourcery: skipUnimplemented
-extension AVSRedeemService: DependencyKey {
-    static let liveValue: () -> RedeemService = {
-        @Dependency(\.userSession) var userSession
-
-        return AVSRedeemService(
-            avsSession: userSession.avsSession,
-            avsTransactionDataStore: userSession.avsTransactionDataStore
-        )
-    }
-
-    static let previewValue: () -> RedeemService = liveValue
-    static let testValue: () -> RedeemService = { UnimplementedRedeemService() }
-}
-
-extension DependencyValues {
-    var avsRedeemService: () -> RedeemService {
-        get { self[AVSRedeemService.self] }
-        set { self[AVSRedeemService.self] = newValue }
-    }
-}
-
-extension PharmacyLocation.AVSEndpoints.Endpoint {
-    func asEndpoint() -> AVSEndpoint {
-        AVSEndpoint(url: url, additionalHeaders: additionalHeaders)
     }
 }
 
@@ -389,11 +263,12 @@ extension ErxTaskRepositoryRedeemService: DependencyKey {
     static let liveValue: () -> RedeemService = {
         @Dependency(\.userSession) var userSession
         @Dependency(\.loginHandlerServiceFactory) var loginHandlerFactory
+        @Dependency(\.secureEnclaveSignatureProviderFactory) var secureEnclaveSignatureProviderFactory
 
         return ErxTaskRepositoryRedeemService(
             loginHandler: loginHandlerFactory.construct(
                 userSession.idpSession,
-                userSession.secureEnclaveSignatureProvider
+                secureEnclaveSignatureProviderFactory.construct(userSession.profileId)
             )
         )
     }

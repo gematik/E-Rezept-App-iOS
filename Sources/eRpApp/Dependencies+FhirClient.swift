@@ -29,7 +29,6 @@ import HTTPClient
 import HTTPClientLive
 import IDP
 import IDPLive
-import Sharing
 import TrustStore
 import VAUClient
 
@@ -189,9 +188,6 @@ extension FHIRClientServiceFactory: DependencyKey {
                 server: appConfiguration.fhirVzd,
                 httpClient: fhirVZDHttpClient
             )
-        } erpClient: {
-            @Shared(.selectedProfileId) var selectedProfileId: UUID
-            return buildErpClient(selectedProfileId)
         } erpClientForProfile: { profileId in
             buildErpClient(profileId)
         }

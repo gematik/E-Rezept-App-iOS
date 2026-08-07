@@ -179,6 +179,8 @@ public enum SFSymbolName {
     public static let clockWarning = "clock.badge.exclamationmark"
     public static let iPhonelocked = "lock.iphone"
     public static let iPhoneGen2 = "iphone.smartbatterycase.gen2"
+    public static let macWindow = "macwindow"
+    public static let ipadLandscapeAndIphone = "ipad.landscape.and.iphone"
     public static let infoBubble = "info.bubble"
     public static let archivebox = "archivebox"
 

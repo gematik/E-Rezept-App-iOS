@@ -21,7 +21,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import BfArM
 import Combine
 @testable import eRpFeatures
@@ -42,7 +41,6 @@ import VAUClient
 extension SearchHistory {}
 extension ActivityIndicating {}
 extension AuthenticationChallengeProvider {}
-extension AVSSession {}
 extension AVSTransactionDataStore {}
 extension ChargeItemListDomainService {}
 extension DeviceSecurityManagerSessionStorage {}

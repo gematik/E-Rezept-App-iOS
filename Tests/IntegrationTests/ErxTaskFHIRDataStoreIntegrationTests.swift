@@ -125,6 +125,8 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         return ErxTaskFHIRDataStore(fhirClient: fhirClient)
     }()
 
+    let testProfileId = UUID()
+
     lazy var vauSession: VAUSession = .init(
         vauServer: environment.appConfiguration.erp,
         vauAccessTokenProvider: idpSession.asVAUAccessTokenProvider(),
@@ -158,7 +160,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         expect(didLogin).to(beTrue())
 
         // trying to revoke consent precautiously in case test failed before
-        cloudStorage.revokeConsent(.chargcons)
+        cloudStorage.revokeConsent(.chargcons, profileId: testProfileId)
             .first()
             .replaceError(with: false)
             .test(timeout: 60.0, expectations: { _ in })
@@ -280,7 +282,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         var success = false
         var finished = false
         var receivedErxTasks: [ErxTask] = []
-        cloudStorage.listAllTasks(after: nil)
+        cloudStorage.listAllTasks(after: nil, profileId: testProfileId)
             .first()
             .test(
                 timeout: 300,
@@ -306,7 +308,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         var finished = false
         var success = false
 
-        let cancellable = cloudStorage.listAllAuditEvents(after: nil, for: nil)
+        let cancellable = cloudStorage.listAllAuditEvents(after: nil, for: nil, profileId: testProfileId)
             .first()
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -331,7 +333,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         var finished = false
         var success = false
 
-        let cancellable = cloudStorage.listAllCommunications(after: nil, for: .all)
+        let cancellable = cloudStorage.listAllCommunications(after: nil, for: .all, profileId: testProfileId)
             .first()
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -357,7 +359,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         var success = false
         var receivedConsents = [ErxConsent]()
 
-        cloudStorage.fetchConsents()
+        cloudStorage.fetchConsents(profileId: testProfileId)
             .first()
             .test(
                 timeout: 300,
@@ -393,7 +395,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             policyRule: .optIn
         )
 
-        cloudStorage.grantConsent(consent)
+        cloudStorage.grantConsent(consent, profileId: testProfileId)
             .first()
             .test(
                 timeout: 300,
@@ -420,7 +422,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         let consentCategory = ErxConsent.Category.chargcons
 
-        cloudStorage.revokeConsent(consentCategory)
+        cloudStorage.revokeConsent(consentCategory, profileId: testProfileId)
             .first()
             .test(
                 timeout: 300,

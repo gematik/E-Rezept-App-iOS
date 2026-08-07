@@ -64,5 +64,11 @@
         "text": "**🏥 Uitgebreidere apotheekgegevens** \nApotheken kunnen nu diensten toevoegen, zoals vaccinaties, en voorzieningen ter plaatse, zoals een drempelvrije toegang. Apotheken kunnen op basis van deze nieuwe informatie worden gefilterd. \n \n **✨ Verbeterde apotheekzoekfunctie** \n Recent bezochte apotheken en favoriete apotheken worden nu duidelijker van elkaar gescheiden. De filters zijn verbeterd. \n \n **✅ Health ID voor personen met een alternatieve verzekering** \nPersonen die niet gedekt zijn door een wettelijke of particuliere ziektekostenverzekering kunnen nu ook inloggen met hun Health ID. \n \n **♿ Toegankelijkheid** \n De filters hebben nu een hoger contrast en hun status is gemakkelijker te herkennen. De toegankelijkheidsverklaring is bijgewerkt en uitgebreid met een sectie waarin de wijzigingsgeschiedenis wordt gedocumenteerd. Sommige knoppen zijn aangepast voor een betere zichtbaarheid.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ T-recepten beschikbaar**\nT-recepten kunnen nu correct worden ontvangen en weergegeven. T-recepten worden gebruikt voor bepaalde geneesmiddelen met speciale veiligheidseisen.\n\n**⚙️ Instellingen opgeschoond**\nDe profielinstellingen zijn herzien en duidelijker gemaakt.\n\n**🔐 Inlogproces verbeterd**\nRegistreren via de verzekeringsapp gaat nu sneller.\n\n**🛡 Tracking verwijderd**\nWe hebben de trackingtool uit de app verwijderd. Er worden geen gebruiksgegevens van de app meer verzameld.\n\n**♿ Betere toegankelijkheid**\nTeksten met toelichtende aantekeningen kunnen nu volledig worden gelezen, zelfs met een vergroot lettertype.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

@@ -586,6 +586,36 @@ extension ErxTask {
             organization: demoOrganization
         )
 
+        static let erxTaskTPrescription: ErxTask = .init(
+            identifier: "166.000.000.001.042.08",
+            status: .ready,
+            flowType: .tPrescription,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.today),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication1,
+            medicationRequest: .init(
+                dosageInstructions: "1-0-1-0",
+                substitutionAllowed: false,
+                hasEmergencyServiceFee: true,
+                coPaymentStatus: .noSubjectToCharge,
+                quantity: .init(value: "1", unit: "Packung"),
+                teratogenicRelatedInformation: .init(
+                    offLabelUse: false,
+                    womanOfChildbearingAge: false,
+                    safetyMeasuresCompliance: true,
+                    informationMaterialProvided: true,
+                    expertKnowledgeDeclaration: true
+                )
+            ),
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization
+        )
+
         static let erxTaskScanned1: ErxTask = .init(
             identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
             status: .ready,

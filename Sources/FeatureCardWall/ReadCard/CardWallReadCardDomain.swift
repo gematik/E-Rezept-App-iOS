@@ -1,4 +1,5 @@
 //
+//
 //  Copyright (Change Date see Readme), gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
@@ -243,7 +244,7 @@ public struct CardWallReadCardDomain {
             guard let url = mailState.createEmailUrl() else { return .none }
             return .run { _ in
                 if await openURLHandler.canOpenURL(url) {
-                    await openURLHandler.open(url)
+                    _ = await openURLHandler.open(url)
                 }
             }
         case .openHelpView,

@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureCommunication
 import FeatureHelpers
 import IDP
 import SwiftUI
@@ -77,6 +78,7 @@ struct AppStartDomain {
                             )
                         ),
                         orders: OrdersDomain.State(communicationMessage: Shared(value: [])),
+                        messages: MessageThreadListDomain.State(),
                         settings: .init(),
                         unreadOrderMessageCount: 0,
                         unreadInternalCommunicationCount: 0
@@ -109,6 +111,7 @@ struct AppStartDomain {
                             )
                         ),
                         orders: OrdersDomain.State(communicationMessage: Shared(value: [])),
+                        messages: MessageThreadListDomain.State(),
                         settings: .init(),
                         unreadOrderMessageCount: 0,
                         unreadInternalCommunicationCount: 0

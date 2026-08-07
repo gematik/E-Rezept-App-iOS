@@ -141,13 +141,73 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         }
     }
 
-    func testSelectingAnEntrySucceeds() async {
+    func testSelectingAnEntryStartsExtAuth() async throws {
+        let openedURL: LockIsolated<URL?> = .init(nil)
+
+        let sut = testStore { dependencies in
+            dependencies.openURLHandler.canOpenURL = { _ in true }
+            dependencies.openURLHandler.openWithOptions = { url, _ in
+                openedURL.setValue(url)
+                return true
+            }
+            dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
+        }
+
+        let urlFixture = try XCTUnwrap(URL(string: "https://dummy.gematik.de"))
+
+        idpSessionMock.startExtAuth_Publisher = Just(urlFixture).setFailureType(to: IDPError.self).eraseToAnyPublisher()
+
+        await sut.send(.selectKK(Self.testEntryA)) { state in
+            state.selectLoading = true
+        }
+        await uiScheduler.run()
+        await sut.receive(.openURL(urlFixture))
+
+        await sut.receive(.response(.openURL(true))) { state in
+            state.selectLoading = false
+        }
+        expect(openedURL.value).to(equal(urlFixture))
+
+        await sut.receive(.delegate(.close))
+    }
+
+    func testSelectKKFailsWithIDPError() async {
         let sut = testStore { dependencies in
             dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
         }
 
+        idpSessionMock.startExtAuth_Publisher = Fail(error: Self.testError).eraseToAnyPublisher()
+
         await sut.send(.selectKK(Self.testEntryA)) { state in
-            state.destination = .confirmation(.init(profileId: state.profileId, selectedKK: Self.testEntryA))
+            state.selectLoading = true
+        }
+        await uiScheduler.run()
+        await sut.receive(.selectError(CardWallExtAuthSelectionDomain.Error.idpError(Self.testError))) { state in
+            state.selectLoading = false
+            state.destination = .alert(
+                CardWallExtAuthSelectionDomain.AlertStates.alert(for: .idpError(Self.testError))
+            )
+        }
+    }
+
+    func testSelectKKFailsOpenURLError() async throws {
+        let sut = testStore(for: .init(
+            profileId: UUID(),
+            selectLoading: true
+        )) { dependencies in
+            dependencies.openURLHandler.canOpenURL = { _ in false }
+        }
+
+        let urlFixture = try XCTUnwrap(URL(string: "https://dummy.gematik.de"))
+
+        await sut.send(.openURL(urlFixture))
+        await uiScheduler.run()
+
+        await sut.receive(.response(.openURL(false))) { state in
+            state.selectLoading = false
+            state.destination = .alert(
+                CardWallExtAuthSelectionDomain.AlertStates.alert(for: .universalLinkFailed)
+            )
         }
     }
 
@@ -164,8 +224,6 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
             state.filteredKKList = KKAppDirectory(apps: [Self.testEntryA])
         }
     }
-
-    // TODO: while adding the next screen, test confirmKK to push it swiftlint:disable:this todo
 
     static let testError = IDPError.internal(error: .notImplemented)
 

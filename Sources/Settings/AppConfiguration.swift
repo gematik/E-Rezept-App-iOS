@@ -48,6 +48,9 @@ extension AppConfiguration.Environment {
         "https://organspende-register.de/erklaerendenportal/epa"
     /// Organ donation fallback URL if the register is not configured for the selected environment
     public static let ORGAN_DONATION_REGISTER_PU_FALLBACK_URL_TEMP: String = "https://www.organspende-info.de/"
+    // TODO: replace with the real hersteller-hinterlegte push gateway host per environment // swiftlint:disable:this todo line_length
+    /// Temporary placeholder push gateway host until the real per-environment value is configured.
+    public static let PUSH_GATEWAY_URL_TEMP: String = "https://push-gateway.example.gematik.solutions"
     // swiftlint:enable identifier_name
 }
 
@@ -64,6 +67,7 @@ public struct AppConfiguration: Equatable, Sendable {
         eRezept: Server?,
         organDonationUrl: URL?,
         clientId: String,
+        pushGateway: URL?,
         userAgent: String? = nil
     ) {
         self.clientId = clientId
@@ -84,6 +88,7 @@ public struct AppConfiguration: Equatable, Sendable {
         self.eRezept = eRezept.url
         eRezeptAdditionalHeader = sharedHeader.merging(eRezept.header) { _, new in new }
         self.organDonationUrl = organDonationUrl
+        self.pushGateway = pushGateway
     }
 
     public let name: String
@@ -108,11 +113,8 @@ public struct AppConfiguration: Equatable, Sendable {
     // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
     public let clientId: String
     // [REQ:gemSpec_IDP_Frontend:A_20740] Actual redirect uri
-    public let redirectUri =
-        URL(string: "https://redirect.gematik.de/erezept")! // swiftlint:disable:this force_unwrapping
-    public let extAuthRedirectUri = URL(
-        string: "https://das-e-rezept-fuer-deutschland.de/extauth"
-    )! // swiftlint:disable:this force_unwrapping
+    public let redirectUri = URL(string: "https://redirect.gematik.de/erezept")!
+    public let extAuthRedirectUri = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth")!
 
     // FHIR VZD
     public let fhirVzd: URL
@@ -123,6 +125,10 @@ public struct AppConfiguration: Equatable, Sendable {
     public let eRezeptAdditionalHeader: [String: String]
 
     public let organDonationUrl: URL?
+
+    /// The push gateway URL (`data.url`) sent to the Fachdienst when registering a pusher.
+    /// Hersteller-hinterlegt; the Fachdienst forwards encrypted notifications to this gateway.
+    public let pushGateway: URL?
 
     public struct Server: Sendable {
         public let url: URL
@@ -299,6 +305,16 @@ let ORGAN_DONATION_REGISTER_RU_URL = URL(string: AppConfiguration.Environment.OR
 
 let ORGAN_DONATION_REGISTER_PU_URL = URL(string: AppConfiguration.Environment.ORGAN_DONATION_REGISTER_PU_URL_TEMP)
 
+// MARK: - ## Push Gateway
+
+#if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU || DEFAULT_ENVIRONMENT_RU || DEFAULT_ENVIRONMENT_RU_DEV
+
+let PUSH_GATEWAY_RU_URL = URL(string: AppConfiguration.Environment.PUSH_GATEWAY_RU_URL)
+
+#endif
+
+let PUSH_GATEWAY_PU_URL = URL(string: AppConfiguration.Environment.PUSH_GATEWAY_URL_TEMP)
+
 // swiftlint:enable identifier_name
 
 // MARK: - # Environments -
@@ -313,7 +329,8 @@ let environmentTU: AppConfiguration? = AppConfiguration(
     fhirVzd: FHIRVZD_RU,
     eRezept: EREZEPT_API_TU,
     organDonationUrl: ORGAN_DONATION_REGISTER_RU_URL,
-    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_TU
+    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_TU,
+    pushGateway: PUSH_GATEWAY_RU_URL
 )
 
 #endif
@@ -328,7 +345,8 @@ let environmentRU: AppConfiguration? = AppConfiguration(
     fhirVzd: FHIRVZD_RU,
     eRezept: EREZEPT_API_RU,
     organDonationUrl: ORGAN_DONATION_REGISTER_RU_URL,
-    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_RU
+    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_RU,
+    pushGateway: PUSH_GATEWAY_RU_URL
 )
 
 #endif
@@ -344,7 +362,8 @@ let environmentRUDEV: AppConfiguration? = AppConfiguration(
     fhirVzd: FHIRVZD_RU,
     eRezept: EREZEPT_API_RU,
     organDonationUrl: ORGAN_DONATION_REGISTER_RU_URL,
-    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_RU_DEV
+    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_RU_DEV,
+    pushGateway: PUSH_GATEWAY_RU_URL
 )
 
 #endif
@@ -359,7 +378,8 @@ let environmentPU: AppConfiguration = {
         eRezept: EREZEPT_API_PU,
         organDonationUrl: ORGAN_DONATION_REGISTER_PU_URL,
         // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
-        clientId: AppConfiguration.Environment.ERP_CLIENT_ID_PU
+        clientId: AppConfiguration.Environment.ERP_CLIENT_ID_PU,
+        pushGateway: PUSH_GATEWAY_PU_URL
     ) else {
         fatalError(
             // swiftlint:disable:next line_length

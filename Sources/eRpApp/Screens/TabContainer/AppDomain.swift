@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FeatureCommunication
 import FeatureHelpers
 import IDP
 import SwiftUI
@@ -43,6 +44,9 @@ struct AppDomain {
             // sourcery: AnalyticsState = orders
             // sourcery: AnalyticsScreen = orders
             case orders
+            // sourcery: AnalyticsState = messages
+            // sourcery: AnalyticsScreen = orders
+            case messages
             // sourcery: AnalyticsState = settings
             // sourcery: AnalyticsScreen = settings
             case settings
@@ -66,6 +70,7 @@ struct AppDomain {
         var pharmacy: PharmacyContainerDomain.State
         var orders: OrdersDomain.State
         var settings: SettingsDomain.State
+        var messages: MessageThreadListDomain.State
 
         var unreadMessageCount: Int {
             unreadOrderMessageCount + unreadInternalCommunicationCount
@@ -79,6 +84,7 @@ struct AppDomain {
             main: MainDomain.State,
             pharmacy: PharmacyContainerDomain.State,
             orders: OrdersDomain.State,
+            messages: MessageThreadListDomain.State,
             settings: SettingsDomain.State,
             unreadOrderMessageCount: Int,
             unreadInternalCommunicationCount: Int
@@ -87,6 +93,7 @@ struct AppDomain {
             self.main = main
             self.pharmacy = pharmacy
             self.orders = orders
+            self.messages = messages
             self.settings = settings
             self.unreadOrderMessageCount = unreadOrderMessageCount
             self.unreadInternalCommunicationCount = unreadInternalCommunicationCount
@@ -104,6 +111,7 @@ struct AppDomain {
         case main(action: MainDomain.Action)
         case pharmacy(action: PharmacyContainerDomain.Action)
         case orders(action: OrdersDomain.Action)
+        case messages(action: MessageThreadListDomain.Action)
         case settings(action: SettingsDomain.Action)
     }
 
@@ -123,6 +131,10 @@ struct AppDomain {
 
         Scope(state: \.orders, action: \.orders) {
             OrdersDomain()
+        }
+
+        Scope(state: \.messages, action: \.messages) {
+            MessageThreadListDomain()
         }
 
         Scope(state: \.settings, action: \.settings) {
@@ -194,6 +206,9 @@ struct AppDomain {
                 case .pharmacy:
                     state.pharmacy.pharmacySearch.destination = nil
                     return .none
+                case .messages:
+                    state.messages.destination = nil
+                    return .none
                 case .orders:
                     state.orders.destination = nil
                     return .none
@@ -205,7 +220,7 @@ struct AppDomain {
                 state.destination = destination
                 return .none
             }
-        case .main, .settings, .pharmacy, .orders:
+        case .main, .settings, .pharmacy, .orders, .messages:
             return .none
         }
     }
@@ -224,9 +239,19 @@ extension AppDomain {
                 pharmacySearch: PharmacySearchDomain.Dummies.stateStartView
             ),
             orders: OrdersDomain.Dummies.state,
+            messages: MessageThreadListDomain.Dummies.state,
             settings: SettingsDomain.Dummies.state,
             unreadOrderMessageCount: 0,
             unreadInternalCommunicationCount: 0
         )
+    }
+}
+
+extension SharedReaderKey
+    where Self == AppStorageKey<Bool>.Default {
+    /// A key to determine whether the app should show the feature eu redeeming of prescriptions.
+    /// As soon as this feature goes live, this key should be removed.
+    public static var communicationsV3Feature: Self {
+        Self[.appStorage("communications_v3_feature"), default: false]
     }
 }

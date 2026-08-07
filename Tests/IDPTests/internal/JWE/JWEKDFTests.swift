@@ -37,7 +37,8 @@ class JWEKDFTests: XCTestCase {
         let ephemeralPrivate = try BrainpoolP256r1.KeyExchange
             .PrivateKey(raw: Data(hex: "a1746e2e69305e90bce385965f82069be49ac9afe190e69f951cb214a8cb9475"))
 
-        let algorithm = JWE.Algorithm.ecdh_es(.bpp256r1(publicKey, keyPairGenerator: { ephemeralPrivate }))
+        let algorithm = JWE.EncryptionContext.Algorithm
+            .ecdh_es(.bpp256r1(publicKey, keyPairGenerator: { ephemeralPrivate }))
         let context = try algorithm.encryptionContext()
 
         let aesKey = try Data(hex: "D624C6F81B44CE7D26E98841BEB79652E9DEC79DFD8E2E6F6E706A105D37EC87")

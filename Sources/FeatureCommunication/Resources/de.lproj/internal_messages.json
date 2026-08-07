@@ -1,0 +1,68 @@
+[
+    {
+        "id": "2",
+        "text": "Nutzen Sie ab sofort die E-Rezept App, um Ihre Entscheidung zur Organspende im **digitalen Organspenderegister** festzuhalten – sicher und unkompliziert.\u2028\n\nAktuell warten 9.192 Menschen in Deutschland dringend auf ein Organ – jede Entscheidung zählt und kann Leben retten.\n\nTreffen Sie heute Ihre Entscheidung und leisten Sie einen wichtigen Beitrag zur Zukunft vieler Menschen! ❤️‍🩹\n\nDas Organspenderegister finden Sie im Tab „Einstellungen“ in dieser App.",
+        "timestamp": "2024-11-29T08:00:00.000Z",
+        "version": "1.27.0"
+    },
+    {
+        "id": "3",
+        "text": "**ePA-Kompatibilität**\n🤝 Ihre Rezepte sind jetzt vollständig mit der elektronischen Patientenakte kompatibel.\n\n**Verbessert**\n✨ Abgelaufene Rezepte verschwinden jetzt ins Archiv.",
+        "timestamp": "2024-12-20T08:00:00.000Z",
+        "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Bessere Lesbarkeit**\nWir haben unsere Markenfarbe etwas dunkler gestaltet, um die Farbkontraste zu verstärken und dadurch die Lesbarkeit zu verbessern.\n\n**Optimiertes Eingabefeld**\nDer Cursor im Eingabefeld für die Zugangsnummer wurde entfernt.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Verbesserter Bestellflow**\nDer Bestellprozess ist jetzt einfacher und schneller.\n\n🌐 **Neue Sprachen**\nUnsere App ist ab jetzt auch in Spanisch und Irisch verfügbar.\n\n📞 **Erweiterte Kontaktmöglichkeiten**\nWir haben neue Kontaktoptionen für ausgewählte Versicherungen eingeführt.\n\n🔍 **Detaillierte Zugriffsprotokolle**\nIn den Zugriffsprotokollen zeigen wir jetzt auch die TelematikIDs an, sodass besser identifiziert werden kann, wer Zugriff hatte.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Verordnete DiGAs einlösen**\nAb sofort können Sie Verordnungen für digitale Gesundheitsanwendungen (DiGAs) direkt über die E-Rezept App einlösen. Die Rezepte werden im Rahmen eines Pilotprojekts von Fachkräften in Hamburg ausgestellt. Ihren Freischaltcode und den Link zur DiGA finden Sie direkt hier in der E-Rezept App.\n\n**🏥 Neue Apothekendatenbank**\nWir haben eine neue, zukunftssichere Datenbank für die Apothekensuche eingeführt.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Barrierefreiheit**\nUnsere Barrierefreiheitserklärung ist ab sofort in den Einstellungen verfügbar. Außerdem wurde der Onboarding-Prozess barrierefreundlicher gestaltet.\n\n**📲 DiGAs bei Versicherungen einlösen**\nVerordnungen für digitale Gesundheitsanwendungen (DiGAs) können jetzt auch bei anderen Versicherungen eingelöst werden.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Anmelden für Privatversicherte**\nDas Anmelden für Privatversicherte ist jetzt optimiert. Mit wenigen Klicks können Sie sich bequem mit Ihrer GesundheitsID anmelden.\n\n**🏥 Aktualisierte Apothekendaten**\nÄnderungen, die Apotheken in der neuen Datenbank vornehmen, werden jetzt zuverlässig angezeigt.\n\n**📲 Mehr Informationen für DiGAs**\nAb jetzt erhalten Sie ausführlichere Informationen zu Ihren DiGA-Verordnungen, wie den Verkaufspreis oder das Logo.\n\n**♿️ Barrierefreiheit**\nDer Screen zur Eingabe der Zugangsnummer der Gesundheitskarte wurde neu gestaltet und ist jetzt für die Nutzung mit VoiceOver optimiert.\n\n**📤 Rezepte teilen**\nRezepte können jetzt direkt aus der App mit anderen geteilt werden.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Barrierefreiheit**\nDie Profileinstellungen wurden überarbeitet, um die Barrierefreiheit weiter zu erhöhen.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "**🏛️ Anmeldung für mehr Personen**\nDie Anmeldung ist jetzt auch für Versicherte von Bundeseinrichtungen, wie der Bundespolizei und anderen möglich.\n\n**🕒 Bessere Apothekenöffnungszeiten**\nNotdienst- und Sonderschließzeiten von Apotheken werden jetzt angezeigt, sofern diese hinterlegt sind.\n\n**💊 Auswahl von allen Rezepten**\nBeim Einlösen können jetzt alle Rezepte gleichzeitig ausgewählt werden.\n\n**♿ Barrierefreiheit**\nDie Farben von Schriften und Icons wurden angepasst, um höhere Kontrastwerte zu erzielen. Zudem wurden die VoiceOver-Sprachausgaben für das Bearbeiten des Profilbilds und Erkennen des Anmeldestatus verbessert.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Rezeptcodes anzeigen**\nDer Screen für Sammel- und Einzelcodes wurde überarbeitet, um die Nutzung intuitiver zu gestalten.\n\n**❤️ Apothekenfavoriten**\nDie Apothekenfavoriten funktionieren jetzt zuverlässiger und sind mit VoiceOver bedienbar.\n\n**♿ Barrierefreiheit**\nDie VoiceOver- und Tastaturbedienung funktioniert besser, Buttons, Texte und Eingabefelder sind besser erkennbar und Listenelemente sind logischer aufgebaut. Vergrößerte Schrift funktioniert ab jetzt auf allen Screens der App. Animierte Videos werden nur einmal abgespielt, um kognitiv eingeschränkte Nutzende zu unterstützen.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Erweiterte Apothekendetails**\nApotheken können jetzt Services wie Impfungen sowie Gegebenheiten vor Ort wie einen barrierefreien Zugang hinterlegen. Apotheken können anhand der neuen Informationen gefiltert werden.\n\n**✨ Apothekensuche verbessert**\nDie zuletzt genutzten Apotheken und die Favoritenapotheken sind jetzt deutlicher voneinander getrennt. Die Filter wurden verbessert.\n\n**✅ GesundheitsID für anders Versicherte**\nVersicherte, die nicht gesetzlich oder privat versichert sind, können sich jetzt auch mit der GesundheitsID anmelden. \n\n**♿ Barrierefreiheit**\nDie Filter haben jetzt einen höheren Kontrast und der Status der Filter ist jetzt besser erkennbar. Die Barrierefreiheitserklärung wurde angepasst und um einen Abschnitt erweitert, der den Verlauf der Änderungen dokumentiert. Einige Buttons wurden angepasst, um die Sichtbarkeit zu verbessern.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
+    }
+]

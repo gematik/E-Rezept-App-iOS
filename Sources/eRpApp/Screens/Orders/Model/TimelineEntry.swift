@@ -23,6 +23,7 @@
 import Dependencies
 import eRpKit
 import eRpResources
+import FeatureHelpers
 import Foundation
 import IdentifiedCollections
 import Pharmacy

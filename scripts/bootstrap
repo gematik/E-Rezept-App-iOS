@@ -21,11 +21,11 @@ fi
 
 if [ -f "Gemfile" ]; then
   hash bundle 2>/dev/null || {
-    echo "==> Installing Bundler 2.1.4…"
-    gem install bundler -v 2.1.4 --no-document --quiet
+    echo "==> Installing Bundler 4.0.6…"
+    gem install bundler -v 4.0.6 --no-document --quiet
   }
   echo "==> Installing gem dependencies…"
-  bundle install --system
+  bundle install
 fi
 
 if [ -f "Mintfile" ]; then

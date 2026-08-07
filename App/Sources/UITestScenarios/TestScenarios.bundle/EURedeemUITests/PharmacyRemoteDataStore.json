@@ -1,0 +1,27 @@
+{
+    "fetchEuCountriesRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        [
+            {
+                "id": "PL",
+                "countryCode": "PL",
+                "name": "Poland",
+                "telematikId": "010110"
+            },
+            {
+                "id": "FR",
+                "countryCode": "FR",
+                "name": "France",
+                "telematikId": "010111"
+            },
+            {
+                "id": "IT",
+                "countryCode": "IT",
+                "name": "Italy",
+                "telematikId": "010112"
+            }
+        ]
+    }
+}

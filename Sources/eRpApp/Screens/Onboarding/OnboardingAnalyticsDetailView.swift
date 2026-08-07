@@ -27,8 +27,6 @@ import SwiftUI
 struct OnboardingAnalyticsDetailView: View {
     @Bindable var store: StoreOf<OnboardingDomain>
 
-    @State var calculatedHeight = CGFloat(1)
-
     var body: some View {
         VStack {
             ScrollView {
@@ -51,11 +49,9 @@ struct OnboardingAnalyticsDetailView: View {
                             .font(.body)
                         UIKitTextView(
                             attributedString: list(input: L10n.onbAnaDtlTxtBodyHowPart2.text),
-                            calculatedHeight: $calculatedHeight,
                             font: .preferredFont(forTextStyle: .body),
                             foregroundColor: .label
                         ) { _ in }
-                            .frame(height: calculatedHeight)
                     }
 
                     Text(L10n.onbAnaDtlTxtBodyHowPart3)

@@ -30,7 +30,7 @@ struct SelfPayerWarningView: View {
     let erxTasks: [ErxTask]
 
     var body: some View {
-        if !erxTasks.filter({ $0.patient?.coverageType == .SEL }).isEmpty {
+        if erxTasks.contains(where: { $0.patient?.coverageType == .SEL }) {
             HStack(alignment: .center, spacing: 0) {
                 Image(systemName: SFSymbolName.exclamationMark)
                     .foregroundColor(Colors.yellow900)

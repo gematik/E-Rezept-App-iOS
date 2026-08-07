@@ -64,5 +64,11 @@
         "text": "**🏥 Detalles mejorados de la farmacia** \nLas farmacias ahora pueden agregar servicios como vacunas y características en el sitio como acceso sin barreras. Las farmacias se pueden filtrar según esta nueva información. \n \n **✨ Búsqueda de farmacias mejorada** \nLas farmacias usadas recientemente y las farmacias favoritas ahora están separadas más claramente. Los filtros se han mejorado. \n \n **✅ Identificación de salud para personas con seguro alternativo** \nLas personas que no están cubiertas por un seguro de salud público o privado ahora también pueden iniciar sesión usando su Identificación de salud. \n \n **♿ Accesibilidad** \nLos filtros ahora tienen mayor contraste y su estado es más fácil de identificar. La declaración de accesibilidad se ha actualizado y ampliado para incluir una sección que documenta el historial de cambios. Algunos botones se han ajustado para una mejor visibilidad.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ Recetas de testosterona disponibles**\nAhora se pueden recibir y visualizar correctamente las recetas electrónicas (T-Prescriptions). Las recetas electrónicas se utilizan para ciertos medicamentos con requisitos de seguridad especiales.\n\n**⚙️ Ajustes optimizados**\nSe han revisado y aclarado los ajustes del perfil.\n\n**🔐 Inicio de sesión mejorado**\nAhora es más rápido registrarse en la aplicación de seguros.\n\n**🛡 Seguimiento eliminado**\nHemos eliminado la herramienta de seguimiento de la aplicación. Ya no se recopilan datos de uso de la aplicación.\n\n**♿ Mayor accesibilidad**\nAhora es posible leer íntegramente los textos con notas explicativas, incluso con tamaños de fuente ampliados.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

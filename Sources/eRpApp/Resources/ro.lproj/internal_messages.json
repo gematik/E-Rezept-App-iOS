@@ -64,5 +64,11 @@
         "text": "**🏥 Detalii îmbunătățite despre farmacie** \nFarmaciile pot adăuga acum servicii precum vaccinări și funcții la fața locului, cum ar fi accesul fără bariere. Farmaciile pot fi filtrate pe baza acestor informații noi. \n \n **✨ Căutare îmbunătățită a farmaciilor** \nFarmaciile utilizate recent și farmaciile preferate sunt acum separate mai clar. Filtrele au fost îmbunătățite. \n \n **✅ ID de sănătate pentru persoanele cu asigurare alternativă** \nPersoanele care nu sunt acoperite de asigurare medicală statutară sau privată se pot conecta acum și folosind ID-ul lor de sănătate. \n \n **♿ Accesibilitate** \nFiltrele au acum un contrast mai mare, iar starea lor este mai ușor de identificat. Declarația de accesibilitate a fost actualizată și extinsă pentru a include o secțiune care documentează istoricul modificărilor. Unele butoane au fost ajustate pentru o vizibilitate îmbunătățită.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ Rețete T disponibile**\nRețetele T pot fi acum recepționate și afișate corect. Rețetele T sunt utilizate pentru anumite medicamente cu cerințe speciale de siguranță.\n\n**⚙️ Setările au fost curățate**\nSetările profilului au fost revizuite și făcute mai clare.\n\n**🔐 Autentificare îmbunătățită**\nÎnregistrarea în aplicația de asigurări este acum mai rapidă.\n\n**🛡 Urmărirea a fost eliminată**\nAm eliminat instrumentul de urmărire din aplicație. Nu se mai colectează date de utilizare a aplicației.\n\n**♿ Mai multă accesibilitate**\nTextele cu note explicative pot fi acum citite integral chiar și cu dimensiuni de font mărite.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

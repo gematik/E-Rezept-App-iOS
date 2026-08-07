@@ -227,8 +227,10 @@ public class DefaultIDPSession: IDPSession {
                         return Fail(error: IDPError.invalidNonce).eraseToAnyPublisher()
                     }
                     // [REQ:gemSpec_IDP_Frontend:A_20625#2|4] Validate `ID_TOKEN` signature with `C.FD.SIG`.
-                    guard let jwt = try? JWT(from: decrypted.idToken),
-                          (try? jwt.verify(with: document.signingCert)) ?? false else {
+                    guard let signingCertX509Data = document.signingCert.derBytes,
+                          let signingCertX509 = try? X509(der: signingCertX509Data),
+                          let jwt = try? JWT(from: decrypted.idToken),
+                          (try? jwt.verify(with: signingCertX509)) ?? false else {
                         return Fail(error: IDPError.invalidSignature("ID_TOKEN")).eraseToAnyPublisher()
                     }
                     do {
@@ -306,7 +308,9 @@ public class DefaultIDPSession: IDPSession {
                             // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
                             // [REQ:gemSpec_Krypt:GS-A_4361-02] Assure that brainpoolP256r1 is used
                             // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
-                            guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+                            guard let discKeyX509Data = fetchedDocument.discKey.derBytes,
+                                  let discKeyX509 = try? X509(der: discKeyX509Data),
+                                  (try? fetchedDocument.backing.verify(with: discKeyX509)) ?? false else {
                                 return Fail(error: IDPError.validation(error: IDPError.invalidDiscoveryDocument))
                                     .eraseToAnyPublisher()
                             }
@@ -443,7 +447,9 @@ public class DefaultIDPSession: IDPSession {
                         // [REQ:gemSpec_IDP_Frontend:A_22296-01] Signature verification
                         // [REQ:gemSpec_IDP_Frontend:A_23082#3] Signature verification
                         // [REQ:BSI-eRp-ePA:O.Resi_6#3] Discovery Document signature verification
-                        guard try jwtContainer.verify(with: document.discKey) == true else {
+                        guard let discKeyX509Data = document.discKey.derBytes,
+                              let discKeyX509 = try? X509(der: discKeyX509Data),
+                              try jwtContainer.verify(with: discKeyX509) == true else {
                             throw IDPError.invalidSignature("kk_apps document signature wrong")
                         }
                         return try jwtContainer
@@ -650,7 +656,9 @@ extension DefaultIDPSession {
                     // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
                     // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
                     // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
-                    guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
+                    guard let authenticationCertX509Data = document.authentication.cert.derBytes,
+                          let authenticationCertX509 = try? X509(der: authenticationCertX509Data),
+                          let verified = try? challenge.challenge.verify(with: authenticationCertX509),
                           verified else {
                         // Reset DiscoveryDocument in case the certificates changed. This will trigger a reload of the
                         // DiscoveryDocument on the next request, which should fix the issue in case of certificate
@@ -786,10 +794,15 @@ extension TrustStoreSession {
     func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustStoreError> {
         Future {
             // [REQ:BSI-eRp-ePA:O.Resi_6#5|6] Discovery Document signature verification
-            guard try await self.validate(eeCertificate: discoveryDocument.discKey)
+            guard let discKeyX509Data = discoveryDocument.discKey.derBytes,
+                  let discKeyX509 = try? X509(der: discKeyX509Data),
+                  try await self.validate(eeCertificate: discKeyX509)
             else { return false }
             // [REQ:gemSpec_IDP_Frontend:A_20625#3|4] `C.FD.SIG`-Certificate verification
-            return try await self.validate(eeCertificate: discoveryDocument.signingCert)
+            guard let signingCertX509Data = discoveryDocument.signingCert.derBytes,
+                  let signingCertX509 = try? X509(der: signingCertX509Data)
+            else { return false }
+            return try await self.validate(eeCertificate: signingCertX509)
         }
         .mapError { $0.asTrustStoreError() }
         .eraseToAnyPublisher()
@@ -855,10 +868,11 @@ extension SignedChallenge {
                  using cryptoBox: IDPCrypto) throws -> JWE {
         // [REQ:BSI-eRp-ePA:O.Cryp_1#2] Signature via ecdh ephemeral-static
         // [REQ:BSI-eRp-ePA:O.Cryp_4#5] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
+        let algorithm = JWE.EncryptionContext.Algorithm
+            .ecdh_es(JWE.EncryptionContext.Algorithm.KeyExchangeContext.bpp256r1(
+                publicKey,
+                keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+            ))
         let signedChallengePayload = NestedJWT(njwt: serialize())
         guard let jweHeader = try? JWE.Header(algorithm: algorithm,
                                               encryption: .a256gcm,
@@ -892,10 +906,11 @@ extension SignedAuthenticationData {
                    using cryptoBox: IDPCrypto) throws -> JWE {
         // [REQ:BSI-eRp-ePA:O.Cryp_1#3] Signature via ecdh ephemeral-static
         // [REQ:BSI-eRp-ePA:O.Cryp_4#4] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
+        let algorithm = JWE.EncryptionContext.Algorithm
+            .ecdh_es(JWE.EncryptionContext.Algorithm.KeyExchangeContext.bpp256r1(
+                publicKey,
+                keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+            ))
         let signedChallengePayload = NestedJWT(njwt: serialize())
         guard let jweHeader = try? JWE.Header(algorithm: algorithm,
                                               encryption: .a256gcm,
@@ -933,10 +948,11 @@ extension RegistrationData {
                    using cryptoBox: IDPCrypto) throws -> JWE {
         // [REQ:BSI-eRp-ePA:O.Cryp_1#4] Signature via ecdh ephemeral-static
         // [REQ:BSI-eRp-ePA:O.Cryp_4#3] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
+        let algorithm = JWE.EncryptionContext.Algorithm
+            .ecdh_es(JWE.EncryptionContext.Algorithm.KeyExchangeContext.bpp256r1(
+                publicKey,
+                keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+            ))
         guard let jweHeader = try? JWE.Header(algorithm: algorithm,
                                               encryption: .a256gcm,
                                               contentType: "JSON",

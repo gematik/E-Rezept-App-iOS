@@ -534,11 +534,13 @@ struct PharmacySearchDomain {
             if filterOptions.contains(.currentLocation) {
                 state.searchState = .searchAfterLocalizationWasAuthorized
 
-                return .send(.requestLocation)
-                    .animation()
+                return .run { send in
+                    await send(.requestLocation, animation: .default)
+                }
             }
-            return .send(.performSearch)
-                .animation()
+            return .run { send in
+                await send(.performSearch, animation: .default)
+            }
         case .destination(.presented(.pharmacyFilter(.delegate(.close)))):
             state.destination = nil
             return .none
@@ -687,7 +689,7 @@ extension URLComponents {
 extension PharmacySearchDomain {
     func openSettings() async {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            await openURLHandler.open(url)
+            _ = await openURLHandler.open(url)
         }
     }
 

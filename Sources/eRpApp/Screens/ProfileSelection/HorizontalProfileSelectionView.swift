@@ -46,7 +46,6 @@ struct HorizontalProfileSelectionView: View {
                     }
                     .frame(maxWidth: width * 0.4, alignment: .leading)
                 }
-                .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileRow)
 
                 Button(action: {
                     store.send(.showAddProfileView)
@@ -57,11 +56,13 @@ struct HorizontalProfileSelectionView: View {
                 .padding(.vertical, 5)
                 .background(Colors.backgroundNeutral)
                 .border(Colors.systemGray6, cornerRadius: 8)
-                .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
+                .accessibilityIdentifier(A11y.profileSelection.proBtnSelectionAddProfile)
                 .accessibilityLabel(L10n.mainBtnAddProfile)
 
                 Spacer()
             }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(A11y.profileSelection.proBtnSelectionProfileRow)
             .padding()
             .task {
                 await store.send(.registerListener).finish()

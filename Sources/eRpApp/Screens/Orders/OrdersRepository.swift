@@ -100,11 +100,15 @@ final class DefaultOrdersRepository: OrdersRepository {
     func loadChargeItems(for taskIds: Set<ErxTask.ID>) async throws -> IdentifiedArray<String, ErxChargeItem> {
         var foundChargeItems: IdentifiedArray<String, ErxChargeItem> = IdentifiedArray()
         for taskId in taskIds {
-            if let chargeItem = try await erxTaskRepository.loadLocalChargeItem(nil, taskId)?.chargeItem {
-                // Known issue: A Task can be assigned to multiple orders and different pharmacies.
-                // With adding the ChargeItem to each order with this taskId we potentially add it to wrong orders
-                // Also we cannot relate it to a pharmacy, since the telematikId is not part of the ChargeItem
-                foundChargeItems.append(chargeItem)
+            if let sparse = try await erxTaskRepository.loadLocalChargeItem(nil, taskId) {
+                // Parse FHIR data on the main thread to avoid stack overflow from large
+                // FHIR value types (ResourceProxy) on the cooperative thread pool's limited stack
+                if let chargeItem = await MainActor.run(body: { sparse.chargeItem }) {
+                    // Known issue: A Task can be assigned to multiple orders and different pharmacies.
+                    // With adding the ChargeItem to each order with this taskId we potentially add it to wrong orders
+                    // Also we cannot relate it to a pharmacy, since the telematikId is not part of the ChargeItem
+                    foundChargeItems.append(chargeItem)
+                }
             }
         }
 

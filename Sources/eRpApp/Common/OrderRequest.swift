@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import eRpKit
 import Foundation
 import OpenSSL
@@ -42,24 +41,7 @@ protocol eRpRemoteStorageOrder {
     var telematikId: String? { get }
 }
 
-protocol AVSOrder {
-    var version: String { get }
-    var redeemType: RedeemOption { get }
-    var name: String? { get }
-    var flowType: String { get }
-    var address: Address? { get }
-    var hint: String? { get }
-    var text: String? { get }
-    var phone: String? { get }
-    var mail: String? { get }
-    var transactionID: UUID { get }
-    var taskID: String { get }
-    var accessCode: String { get }
-    var endpoint: PharmacyLocation.AVSEndpoints.Endpoint? { get }
-    var recipients: [X509] { get }
-}
-
-struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
+struct OrderRequest: eRpRemoteStorageOrder, Equatable, Codable {
     let orderID: UUID
     let redeemType: RedeemOption
     let version: String
@@ -73,7 +55,6 @@ struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
     let transactionID: UUID
     let taskID: String
     let accessCode: String
-    let endpoint: PharmacyLocation.AVSEndpoints.Endpoint?
     let recipients: [X509]
     let telematikId: String?
 
@@ -91,7 +72,6 @@ struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
         transactionID: UUID = UUID(),
         taskID: String,
         accessCode: String,
-        endpoint: PharmacyLocation.AVSEndpoints.Endpoint? = nil,
         recipients: [X509] = [],
         telematikId: String? = nil
     ) {
@@ -108,7 +88,6 @@ struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
         self.transactionID = transactionID
         self.taskID = taskID
         self.accessCode = accessCode
-        self.endpoint = endpoint
         self.recipients = recipients
         self.telematikId = telematikId
     }
@@ -147,7 +126,6 @@ struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
         transactionID = try container.decode(UUID.self, forKey: .transactionID)
         taskID = try container.decode(String.self, forKey: .taskID)
         accessCode = try container.decode(String.self, forKey: .accessCode)
-        endpoint = try container.decodeIfPresent(PharmacyLocation.AVSEndpoints.Endpoint.self, forKey: .endpoint)
         recipients = try container.decode([Data].self, forKey: .recipients).map { try X509(der: $0) }
         telematikId = try container.decodeIfPresent(String.self, forKey: .telematikId)
     }
@@ -167,29 +145,8 @@ struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
         try container.encode(transactionID, forKey: .transactionID)
         try container.encode(taskID, forKey: .taskID)
         try container.encode(accessCode, forKey: .accessCode)
-        try container.encodeIfPresent(endpoint, forKey: .endpoint)
         try container.encode(recipients.map(\.derBytes), forKey: .recipients)
         try container.encodeIfPresent(telematikId, forKey: .telematikId)
-    }
-}
-
-extension AVSMessage.SupplyOptionsType {
-    var asRedeemOption: RedeemOption {
-        switch self {
-        case .onPremise: return .onPremise
-        case .delivery: return .delivery
-        case .shipment: return .shipment
-        }
-    }
-}
-
-extension RedeemOption {
-    var asSupplyOptionType: AVSMessage.SupplyOptionsType {
-        switch self {
-        case .onPremise: return .onPremise
-        case .delivery: return .delivery
-        case .shipment: return .shipment
-        }
     }
 }
 
@@ -230,41 +187,6 @@ extension ErxTaskOrder {
     }
 }
 
-extension AVSMessage {
-    init(_ order: OrderRequest) throws {
-        guard let version = Int(order.version) else {
-            throw RedeemServiceError.InternalError.conversionVersionNumber
-        }
-        guard Validator().isValidAVSMessageInput(
-            version: version,
-            supplyOptionsType: order.redeemType.asSupplyOptionType,
-            name: order.name,
-            address: order.address,
-            hint: order.hint,
-            text: order.text,
-            phone: order.phone,
-            mail: order.mail
-        ) == .valid
-        else {
-            throw AVSError.invalidAVSMessageInput
-        }
-
-        self.init(
-            version: version,
-            supplyOptionsType: order.redeemType.asSupplyOptionType,
-            name: order.name,
-            address: order.address?.asArray(),
-            hint: order.hint,
-            text: order.text,
-            phone: order.phone,
-            mail: order.mail,
-            transactionID: order.transactionID,
-            taskID: order.taskID,
-            accessCode: order.accessCode
-        )
-    }
-}
-
 extension Sequence<ErxTask> {
     func asOrders(
         orderId: UUID,
@@ -298,12 +220,6 @@ extension ErxTask {
             transactionID: transactionId,
             taskID: id,
             accessCode: accessCode ?? "",
-            endpoint: pharmacy.avsEndpoints?.url(
-                for: redeemOption,
-                transactionId: transactionId.uuidString,
-                telematikId: pharmacy.telematikID
-            ),
-            recipients: pharmacy.avsCertificates,
             telematikId: pharmacy.telematikID
         )
     }

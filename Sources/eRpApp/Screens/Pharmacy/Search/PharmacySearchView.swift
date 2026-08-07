@@ -55,7 +55,6 @@ struct PharmacySearchView: View {
                         }, removeFilter: { option in
                             store.send(.removeFilterOption(option.element), animation: .default)
                         }, elements: filter)
-                            .transition(.move(edge: .top).combined(with: .opacity))
 
                         if store.isEURedeemable, !store.hideEURedeemHint {
                             EURedeemHintView {
@@ -63,6 +62,7 @@ struct PharmacySearchView: View {
                             } closeAction: {
                                 store.send(.hideEuRedeemHint, animation: .easeOut)
                             }
+                            .padding(.top, 16)
                         }
 
                         NoResultsView()
@@ -76,7 +76,6 @@ struct PharmacySearchView: View {
                         }, removeFilter: { option in
                             store.send(.removeFilterOption(option.element), animation: .default)
                         }, elements: filter)
-                            .transition(.move(edge: .top).combined(with: .opacity))
 
                         ErrorView { store.send(.performSearch) }
                             .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
@@ -93,8 +92,6 @@ struct PharmacySearchView: View {
                                     animation: .default
                                 )
                             }, elements: filter)
-                                .transition(.move(edge: .top)
-                                    .combined(with: .opacity))
                         }, content: {
                             if store.isEURedeemable, !store.hideEURedeemHint {
                                 EURedeemHintView {
@@ -220,8 +217,6 @@ struct PharmacySearchView: View {
                 ForEach(searchHistory, id: \.hash) { item in
                     Suggestion(item)
                 }
-            } else {
-                EmptyView()
             }
         }
     }

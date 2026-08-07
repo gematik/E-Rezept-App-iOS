@@ -22,7 +22,6 @@
 
 import Combine
 import Foundation
-import HTTPClient
 
 /// Simple interceptor that adds additional or changes existing HTTP Headers with given values
 public class AdditionalHeaderInterceptor: Interceptor {

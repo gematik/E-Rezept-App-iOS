@@ -113,6 +113,7 @@ final class CardWallIntroductionDomainTests: XCTestCase {
             dependencies.openURLHandler.canOpenURL = { _ in true }
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
             dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
             dependencies.profilesStore.fetchProfile = { _ in
@@ -257,7 +258,7 @@ final class CardWallIntroductionDomainTests: XCTestCase {
                               gIdEntry: TestData.testEntryG)
 
         let sut = testStore { dependencies in
-            dependencies.openURLHandler.canOpenURL = { _ in false }
+            dependencies.openURLHandler.open = { _ in false }
             dependencies.profileBasedSessionProvider.idpSession = { _ in self.idpSessionMock }
             dependencies.profilesStore.fetchProfile = { _ in
                 Just(profile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()

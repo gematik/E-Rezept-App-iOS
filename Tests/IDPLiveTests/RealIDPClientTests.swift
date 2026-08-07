@@ -73,18 +73,24 @@ final class RealIDPClientTests: XCTestCase {
 
     func testLoadDiscoveryDocument() {
         var counter = 0
-        stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
-            !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                return fixture(filePath: self.documentPath, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
+                !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            return fixture(filePath: self.documentPath, headers: ["Content-Type": "application/json"])
+        }
 
-        stub(condition: isPath("/ipdSig/jwk.json") && isMethodGET()) { _ in
+        stub(
+            condition: isPath("/ipdSig/jwk.json") && isMethodGET()
+        ) { _ in
             counter += 1
             return fixture(filePath: self.jwkPath, headers: ["Content-Type": "application/json"])
         }
 
-        stub(condition: isPath("/idpEnc/jwk.json") && isMethodGET()) { _ in
+        stub(
+            condition: isPath("/idpEnc/jwk.json") && isMethodGET()
+        ) { _ in
             counter += 1
             return fixture(filePath: self.jwkPath, headers: ["Content-Type": "application/json"])
         }
@@ -108,11 +114,13 @@ final class RealIDPClientTests: XCTestCase {
         }
 
         var counter = 0
-        stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
-            !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                return fixture(filePath: jwksPath, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
+                !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            return fixture(filePath: jwksPath, headers: ["Content-Type": "application/json"])
+        }
 
         RealIDPClient(
             client: config,
@@ -128,13 +136,15 @@ final class RealIDPClientTests: XCTestCase {
     func testLoadDiscoveryDocumentNetworkError() {
         var counter = 0
         let notConnectedError = NSError(domain: NSURLErrorDomain, code: URLError.notConnectedToInternet.rawValue)
-        stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
-            !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                let response = HTTPStubsResponse(error: notConnectedError)
-                response.requestTime = 0.0
-                return response
-            }
+        stub(
+            condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
+                !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            let response = HTTPStubsResponse(error: notConnectedError)
+            response.requestTime = 0.0
+            return response
+        }
 
         RealIDPClient(
             client: config,
@@ -173,21 +183,23 @@ final class RealIDPClientTests: XCTestCase {
 
         var counter = 0
         let authenticationEndpoint = localDiscoveryDocument.authentication.url
-        stub(condition: isHost("localhost")
-            && isPath(authenticationEndpoint.path)
-            && isMethodGET()
-            && hasHeaderNamed("Accept", value: "application/json")
-            && containsQueryParams([
-                "client_id": config.clientId,
-                "code_challenge": codeChallenge,
-                "code_challenge_method": "S256",
-                "state": state,
-                "redirect_uri": config.redirectURI.absoluteString,
-            ])
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(authenticationEndpoint.path)
+                && isMethodGET()
+                && hasHeaderNamed("Accept", value: "application/json")
+                && containsQueryParams([
+                    "client_id": config.clientId,
+                    "code_challenge": codeChallenge,
+                    "code_challenge_method": "S256",
+                    "state": state,
+                    "redirect_uri": config.redirectURI.absoluteString,
+                ])
+                && !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
+        }
 
         let expectedChallenge = try IDPChallenge(
             challenge: JWT(
@@ -242,7 +254,7 @@ final class RealIDPClientTests: XCTestCase {
                                   aesNonceGenerator: { nonce },
                                   aesKey: SymmetricKey(data: Data()))
 
-        let header = try JWE.Header(algorithm: JWE.Algorithm
+        let header = try JWE.Header(algorithm: JWE.EncryptionContext.Algorithm
             .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
                                keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
             encryption: .a256gcm,
@@ -267,24 +279,26 @@ final class RealIDPClientTests: XCTestCase {
         var counter = 0
         let authenticationEndpoint = localDiscoveryDocument.authentication.url
 
-        stub(condition: isHost("localhost")
-            && isPath(authenticationEndpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(encodedJWEBody)
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                let response = HTTPStubsResponse()
-                let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
-                response.statusCode = 302
-                response.httpHeaders = [
-                    "Cache-Control": "no-store",
-                    "Pragma": "no-cache",
-                    "Location": location,
-                    "Content-Length": "0",
-                ]
-                return response
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(authenticationEndpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(encodedJWEBody)
+                && !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            let response = HTTPStubsResponse()
+            let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
+            response.statusCode = 302
+            response.httpHeaders = [
+                "Cache-Control": "no-store",
+                "Pragma": "no-cache",
+                "Location": location,
+                "Content-Length": "0",
+            ]
+            return response
+        }
 
         let expectedToken = try IDPExchangeToken(
             code: XCTUnwrap(exchangeToken.asciiString),
@@ -319,7 +333,7 @@ final class RealIDPClientTests: XCTestCase {
                                   aesNonceGenerator: { nonce },
                                   aesKey: SymmetricKey(data: Data()))
 
-        let header = try! JWE.Header(algorithm: JWE.Algorithm
+        let header = try! JWE.Header(algorithm: JWE.EncryptionContext.Algorithm
             .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
                                keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
             encryption: .a256gcm,
@@ -350,21 +364,23 @@ final class RealIDPClientTests: XCTestCase {
         var counter = 0
         let endpoint = localDiscoveryDocument.pairing.url
 
-        stub(condition: isHost("localhost")
-            && isPath(endpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(encodedJWEBody)
-            && hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                return HTTPStubsResponse(data: try! JSONEncoder().encode(expected),
-                                         statusCode: 200,
-                                         headers: [
-                                             "Cache-Control": "no-store",
-                                             "Pragma": "no-cache",
-                                             "Content-Length": "0",
-                                         ])
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(endpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(encodedJWEBody)
+                && hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(data: try! JSONEncoder().encode(expected),
+                                     statusCode: 200,
+                                     headers: [
+                                         "Cache-Control": "no-store",
+                                         "Pragma": "no-cache",
+                                         "Content-Length": "0",
+                                     ])
+        }
 
         RealIDPClient(
             client: config,
@@ -399,21 +415,23 @@ final class RealIDPClientTests: XCTestCase {
         var counter = 0
         let endpoint = localDiscoveryDocument.pairing.url
 
-        stub(condition: isHost("localhost")
-            && isPath(endpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(encodedJWEBody)
-            && hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
-                                         statusCode: 400,
-                                         headers: [
-                                             "Cache-Control": "no-store",
-                                             "Pragma": "no-cache",
-                                             "Content-Length": "0",
-                                         ])
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(endpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(encodedJWEBody)
+                && hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
+                                     statusCode: 400,
+                                     headers: [
+                                         "Cache-Control": "no-store",
+                                         "Pragma": "no-cache",
+                                         "Content-Length": "0",
+                                     ])
+        }
 
         RealIDPClient(
             client: config,
@@ -448,24 +466,26 @@ final class RealIDPClientTests: XCTestCase {
         var counter = 0
         let authenticationEndpoint = localDiscoveryDocument.authenticationPaired.url
 
-        stub(condition: isHost("localhost")
-            && isPath(authenticationEndpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(encodedJWEBody)
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                let response = HTTPStubsResponse()
-                let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
-                response.statusCode = 302
-                response.httpHeaders = [
-                    "Cache-Control": "no-store",
-                    "Pragma": "no-cache",
-                    "Location": location,
-                    "Content-Length": "0",
-                ]
-                return response
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(authenticationEndpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(encodedJWEBody)
+                && !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
+            let response = HTTPStubsResponse()
+            let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
+            response.statusCode = 302
+            response.httpHeaders = [
+                "Cache-Control": "no-store",
+                "Pragma": "no-cache",
+                "Location": location,
+                "Content-Length": "0",
+            ]
+            return response
+        }
 
         let expectedToken = try IDPExchangeToken(
             code: XCTUnwrap(exchangeToken.asciiString),
@@ -510,22 +530,24 @@ final class RealIDPClientTests: XCTestCase {
             code: "code"
         )
 
-        stub(condition: isHost("localhost")
-            && isPath(authenticationEndpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(encodedJWEBody)
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
+        stub(
+            condition: isHost("localhost")
+                && isPath(authenticationEndpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(encodedJWEBody)
+                && !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
 
-                return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
-                                         statusCode: 400,
-                                         headers: [
-                                             "Cache-Control": "no-store",
-                                             "Pragma": "no-cache",
-                                             "Content-Length": "0",
-                                         ])
-            }
+            return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
+                                     statusCode: 400,
+                                     headers: [
+                                         "Cache-Control": "no-store",
+                                         "Pragma": "no-cache",
+                                         "Content-Length": "0",
+                                     ])
+        }
 
         RealIDPClient(
             client: config,
@@ -649,8 +671,9 @@ final class RealIDPClientTests: XCTestCase {
         let keyVerifierEncoded = try! JSONEncoder().encode(keyVerifier)
 
         let header = try! JWE.Header(
-            algorithm: JWE.Algorithm.ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
-                                                       keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
+            algorithm: JWE.EncryptionContext.Algorithm.ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
+                                                                         keyPairGenerator: cryptoBox
+                                                                             .brainpoolKeyPairGenerator)),
             encryption: .a256gcm,
             contentType: "JWT"
         )
@@ -697,16 +720,18 @@ final class RealIDPClientTests: XCTestCase {
 
         var counter = 0
         let tokenEndpoint = localDiscoveryDocument.token.url
-        stub(condition: isHost("localhost")
-            && isPath(tokenEndpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(httpBodyData)
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
+        stub(
+            condition: isHost("localhost")
+                && isPath(tokenEndpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(httpBodyData)
+                && !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
 
-                return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
-            }
+            return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
+        }
 
         RealIDPClient(
             client: config,
@@ -760,16 +785,18 @@ final class RealIDPClientTests: XCTestCase {
 
         var counter = 0
         let tokenEndpoint = localDiscoveryDocument.token.url
-        stub(condition: isHost("localhost")
-            && isPath(tokenEndpoint.path)
-            && isMethodPOST()
-            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
-            && hasBody(httpBodyData)
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
+        stub(
+            condition: isHost("localhost")
+                && isPath(tokenEndpoint.path)
+                && isMethodPOST()
+                && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+                && hasBody(httpBodyData)
+                && !hasHeaderNamed("Authorization")
+        ) { _ in
+            counter += 1
 
-                return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
-            }
+            return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
+        }
 
         RealIDPClient(
             client: config,
@@ -795,12 +822,14 @@ final class RealIDPClientTests: XCTestCase {
 
         var counter = 0
         let endpoint = try XCTUnwrap(localDiscoveryDocument.directoryKKAppsgId?.url)
-        stub(condition: isHost("localhost")
-            && isPath(endpoint.path)
-            && isMethodGET()) { _ in
-                counter += 1
-                return HTTPStubsResponse(data: loadDirectoryKKAppsResponse, statusCode: 200, headers: nil)
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(endpoint.path)
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(data: loadDirectoryKKAppsResponse, statusCode: 200, headers: nil)
+        }
         let fixture = [
             KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
             KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002"),
@@ -842,17 +871,19 @@ final class RealIDPClientTests: XCTestCase {
         var requestURL: URL?
         var counter = 0
         let endpoint = try XCTUnwrap(localDiscoveryDocument.federationAuth?.url)
-        stub(condition: isHost("localhost")
-            && isPath(endpoint.path)
-            && isMethodGET()) { request in
-                requestURL = request.url
-                counter += 1
-                return HTTPStubsResponse(
-                    data: Data(),
-                    statusCode: 302,
-                    headers: ["Location": urlFixture.absoluteString]
-                )
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(endpoint.path)
+                && isMethodGET()
+        ) { request in
+            requestURL = request.url
+            counter += 1
+            return HTTPStubsResponse(
+                data: Data(),
+                statusCode: 302,
+                headers: ["Location": urlFixture.absoluteString]
+            )
+        }
 
         var result: URL?
 
@@ -903,17 +934,19 @@ final class RealIDPClientTests: XCTestCase {
         var requestURL: URL?
         var counter = 0
         let endpoint = try XCTUnwrap(localDiscoveryDocument.federationAuth?.url)
-        stub(condition: isHost("localhost")
-            && isPath(endpoint.path)
-            && isMethodGET()) { request in
-                requestURL = request.url
-                counter += 1
-                return HTTPStubsResponse(
-                    data: Data(),
-                    statusCode: 302,
-                    headers: ["Location": urlFixture.absoluteString]
-                )
-            }
+        stub(
+            condition: isHost("localhost")
+                && isPath(endpoint.path)
+                && isMethodGET()
+        ) { request in
+            requestURL = request.url
+            counter += 1
+            return HTTPStubsResponse(
+                data: Data(),
+                statusCode: 302,
+                headers: ["Location": urlFixture.absoluteString]
+            )
+        }
 
         var result: IDPError?
 

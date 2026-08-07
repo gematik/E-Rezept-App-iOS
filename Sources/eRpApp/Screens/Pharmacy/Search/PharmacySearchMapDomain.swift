@@ -434,7 +434,7 @@ extension PharmacySearchMapDomain {
 
     func openSettings() async {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            await openURLHandler.open(url)
+            _ = await openURLHandler.open(url)
         }
     }
 

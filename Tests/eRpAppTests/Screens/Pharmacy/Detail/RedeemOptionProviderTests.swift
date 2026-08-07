@@ -37,9 +37,8 @@ class RedeemOptionProviderTests: XCTestCase {
             pharmacy: mixedServicesPharmacy
         )
 
-        expect(sut.reservationService) == .noService
-        expect(sut.shipmentService) == .avs
-        expect(sut.deliveryService) == .noService
+        expect(sut.reservationService) == .erxTaskRepositoryAvailable
+        expect(sut.deliveryService) == .erxTaskRepositoryAvailable
     }
 
     func testWithMixedServiceAndWithLogin() {
@@ -48,9 +47,9 @@ class RedeemOptionProviderTests: XCTestCase {
             pharmacy: mixedServicesPharmacy
         )
 
-        expect(sut.reservationService) == .noService
+        expect(sut.reservationService) == .erxTaskRepository
         expect(sut.shipmentService) == .erxTaskRepository
-        expect(sut.deliveryService) == .noService
+        expect(sut.deliveryService) == .erxTaskRepository
     }
 
     func testWithoutAVSServiceAndWithoutLogin() {
@@ -81,9 +80,8 @@ class RedeemOptionProviderTests: XCTestCase {
             pharmacy: oneAVSServicePharmacy
         )
 
-        expect(sut.reservationService) == .noService
-        expect(sut.shipmentService) == .noService
-        expect(sut.deliveryService) == .avs
+        expect(sut.reservationService) == .erxTaskRepositoryAvailable
+        expect(sut.shipmentService) == .erxTaskRepositoryAvailable
     }
 
     func testOneAVSServiceWithLogin() {
@@ -92,9 +90,9 @@ class RedeemOptionProviderTests: XCTestCase {
             pharmacy: oneAVSServicePharmacy
         )
 
-        expect(sut.reservationService) == .noService
-        expect(sut.shipmentService) == .noService
-        expect(sut.deliveryService) == .erxTaskRepository
+        expect(sut.reservationService) == .erxTaskRepository
+        expect(sut.shipmentService) == .erxTaskRepository
+        expect(sut.deliveryService) == .noService
     }
 
     func testApolloApothekeFuerthWithLogin() {
@@ -104,57 +102,38 @@ class RedeemOptionProviderTests: XCTestCase {
         )
 
         expect(sut.reservationService) == .erxTaskRepository
-        expect(sut.shipmentService) == .noService
-        expect(sut.deliveryService) == .noService
+        expect(sut.shipmentService) == .erxTaskRepository
+        expect(sut.deliveryService) == .erxTaskRepository
     }
 
     lazy var allServicesPharmacy: PharmacyLocation = .init(
         id: "id",
         telematikID: "telematikID",
-        types: [.delivery, .mobl, .outpharm],
-        avsEndpoints: .init(
-            onPremiseUrl: "some",
-            shipmentUrl: "some",
-            deliveryUrl: "some"
-        ),
-        avsCertificates: [avsCert]
+        types: [.delivery, .mobl, .outpharm]
     )
 
     lazy var oneAVSServicePharmacy: PharmacyLocation = .init(
         id: "id",
         telematikID: "telematikID",
-        types: [.mobl, .outpharm],
-        avsEndpoints: .init(
-            deliveryUrl: "some"
-        ),
-        avsCertificates: [avsCert]
+        types: [.mobl, .outpharm]
     )
 
     lazy var mixedServicesPharmacy: PharmacyLocation = .init(
         id: "id",
         telematikID: "telematikID",
-        types: [.delivery, .mobl, .outpharm],
-        avsEndpoints: .init(
-            shipmentUrl: "some"
-        ),
-        avsCertificates: [avsCert]
+        types: [.delivery, .mobl, .outpharm]
     )
 
     lazy var tiServicesPharmacy: PharmacyLocation = .init(
         id: "id",
         telematikID: "telematikID",
-        types: [.delivery, .mobl, .outpharm],
-        avsCertificates: []
+        types: [.delivery, .mobl, .outpharm]
     )
 
     lazy var apolloApothekeFuerth: PharmacyLocation = .init(
         id: "id",
         telematikID: "telematikID",
-        types: [.delivery, .mobl, .outpharm],
-        avsEndpoints: .init(
-            onPremiseUrl: "https://some-pharmacy.de"
-        ),
-        avsCertificates: [avsCert]
+        types: [.delivery, .mobl, .outpharm]
     )
 
     lazy var noServicePharmacy: PharmacyLocation = .init(id: "id", telematikID: "telematikID", types: [])

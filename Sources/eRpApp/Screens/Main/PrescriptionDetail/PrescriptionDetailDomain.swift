@@ -458,6 +458,8 @@ struct PrescriptionDetailDomain {
                 state.destination = .errorInfo(.init())
             case .selfPayerInfo:
                 state.destination = .selfPayerInfo(.init())
+            case .tPrescriptionInfo:
+                state.destination = .tPrescriptionInfo(.init())
             case .scannedPrescriptionInfo:
                 state.destination = .scannedPrescriptionInfo(.init())
             case .coPaymentInfo:
@@ -500,6 +502,12 @@ struct PrescriptionDetailDomain {
                 guard let accidentInfo = state.prescription.medicationRequest.accidentInfo else { return .none }
                 let accidentInfoState = AccidentInfoDomain.State(accidentInfo: accidentInfo)
                 state.destination = .accidentInfo(accidentInfoState)
+            case .teratogenicInfo:
+                guard let teratogenicInfo = state.prescription.medicationRequest
+                    .teratogenicRelatedInformation else { return .none }
+                state.destination = .teratogenicInfo(
+                    TeratogenicInfoDomain.State(teratogenicInfo: teratogenicInfo)
+                )
             case .technicalInformations:
                 let techInfoState = TechnicalInformationsDomain.State(
                     taskId: state.prescription.erxTask.identifier,
@@ -527,8 +535,7 @@ struct PrescriptionDetailDomain {
             guard let url = URL(string: "https://gesund.bund.de") else { return .none }
 
             return .run { _ in
-                guard await openURLHandler.canOpenURL(url) else { return }
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case let .setName(newName):
             let name = newName

@@ -24,6 +24,7 @@ import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -287,6 +288,118 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let store = store(with: ErxTask.Fixtures.erxTaskSelfPayer)
         let sut = PrescriptionDetailView(store: store)
 
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_SubstitutionAllowedDrawerView() {
+        let sut = NavigationStack {
+            PrescriptionDetailView.HeaderView.SubstitutionAllowedDrawerView(
+                store: Store(initialState: .init(substitutionAllowed: true)) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_SubstitutionNotAllowedDrawerView() {
+        let sut = NavigationStack {
+            PrescriptionDetailView.HeaderView.SubstitutionAllowedDrawerView(
+                store: Store(initialState: .init(substitutionAllowed: false)) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_ErrorInfoDrawerView() {
+        let store = store(with: ErxTask.Fixtures.erxTaskError)
+        let sut = NavigationStack {
+            PrescriptionDetailView.HeaderView.ErrorInfoDrawerView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_ScannedPrescriptionInfoDrawerView() {
+        let store = store(with: ErxTask.Fixtures.scannedTask)
+        let sut = NavigationStack {
+            PrescriptionDetailView.HeaderView.ScannedPrescriptionInfoDrawerView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_DirectAssignmentDrawerView() {
+        let store = store(with: ErxTask.Fixtures.erxTaskDirectAssigned)
+        let sut = NavigationStack {
+            PrescriptionDetailView.HeaderView.DirectAssignmentDrawerView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_CoPaymentDrawerView() {
+        let sut = NavigationStack {
+            PrescriptionDetailView.Navigations.CoPaymentDrawerView(
+                store: Store(initialState: .init(status: .subjectToCharge)) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_EmergencyServiceFeeDrawerView() {
+        let store = store(with: ErxTask.Fixtures.erxTaskReady)
+        let sut = NavigationStack {
+            PrescriptionDetailView.Navigations.EmergencyServiceFeeDrawerView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_SelDrawerView() {
+        let store = store(with: ErxTask.Fixtures.erxTaskSelfPayer)
+        let sut = NavigationStack {
+            PrescriptionDetailView.Navigations.SelDrawerView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_TPrescriptionDrawerView() {
+        let store = store(with: ErxTask.Fixtures.erxTaskReady)
+        let sut = NavigationStack {
+            PrescriptionDetailView.Navigations.TPrescriptionDrawerView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_DosageInstructionsDrawerView() {
+        let sut = NavigationStack {
+            PrescriptionDetailView.Navigations.DosageInstructionsDrawerView(
+                store: Store(initialState: .init(dosageInstructions: "1-0-1-0")) {
+                    EmptyReducer()
+                }
+            )
+        }
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())

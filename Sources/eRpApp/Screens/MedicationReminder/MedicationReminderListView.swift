@@ -40,36 +40,37 @@ struct MedicationReminderListView: View {
                     ForEach(store.profileMedicationReminder) { profileMedicationReminder in
                         if !profileMedicationReminder.medicationProfileReminderList.isEmpty {
                             Section {
-                                ForEach(profileMedicationReminder
-                                    .medicationProfileReminderList) { medicationProfileReminderListEntry in
-                                        Button {
-                                            store
-                                                .send(.selectMedicationReminder(medicationProfileReminderListEntry))
-                                        } label: {
-                                            LabeledContent {
-                                                Text(medicationProfileReminderListEntry.isActive ?
-                                                    L10n.medReminderTxtListPlanActive.text :
-                                                    L10n.medReminderTxtListPlanInactive.text)
-                                            } label: {
-                                                Text(medicationProfileReminderListEntry.title)
-                                            }
-                                            .labeledContentStyle(.horizontal)
-                                            .accessibilityElement(children: .combine)
-                                            .accessibilityLabel(medicationProfileReminderListEntry.title)
-                                            .accessibilityValue(medicationProfileReminderListEntry
-                                                .isActive ?
+                                ForEach(
+                                    profileMedicationReminder.medicationProfileReminderList
+                                ) { medicationProfileReminderListEntry in
+                                    Button {
+                                        store
+                                            .send(.selectMedicationReminder(medicationProfileReminderListEntry))
+                                    } label: {
+                                        LabeledContent {
+                                            Text(medicationProfileReminderListEntry.isActive ?
                                                 L10n.medReminderTxtListPlanActive.text :
                                                 L10n.medReminderTxtListPlanInactive.text)
-                                            .contentShape(Rectangle())
+                                        } label: {
+                                            Text(medicationProfileReminderListEntry.title)
                                         }
-                                        .buttonStyle(.simpleNavigation)
-                                        .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
+                                        .labeledContentStyle(.horizontal)
+                                        .accessibilityElement(children: .combine)
+                                        .accessibilityLabel(medicationProfileReminderListEntry.title)
+                                        .accessibilityValue(medicationProfileReminderListEntry
+                                            .isActive ?
+                                            L10n.medReminderTxtListPlanActive.text :
+                                            L10n.medReminderTxtListPlanInactive.text)
+                                        .contentShape(Rectangle())
                                     }
-                                    .onDelete { indexSet in
-                                        store.send(.deleteFromProfileMedicationReminderList(
-                                            profileMedicationReminder.id, indexSet
-                                        ))
-                                    }
+                                    .buttonStyle(.simpleNavigation)
+                                    .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
+                                }
+                                .onDelete { indexSet in
+                                    store.send(.deleteFromProfileMedicationReminderList(
+                                        profileMedicationReminder.id, indexSet
+                                    ))
+                                }
                             } header: {
                                 SectionHeaderView(profile: profileMedicationReminder.profile)
                                     .font(.headline)

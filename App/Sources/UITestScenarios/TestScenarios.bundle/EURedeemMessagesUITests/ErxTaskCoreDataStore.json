@@ -1,0 +1,85 @@
+{
+    "listAllTasksOfRecordings":
+    {
+        "type": "repeated",
+        "payload": []
+    },
+    "listAllCommunicationsForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        [
+            {
+                "orderId": "EU-DISPENSED-ORDER-001",
+                "insuranceId": "X123456789",
+                "payloadJSON": "{\"version\":1,\"supplyOptionsType\":\"onPremise\"}",
+                "identifier": "30000000-0000-0000-0000-000000000001",
+                "isRead": false,
+                "taskId": "160.000.006.456.334.99",
+                "profile": "dispReq",
+                "timestamp": "2024-01-01T12:00:00+00:00",
+                "telematikId": "3-01.2.2023001.16.999"
+            }
+        ]
+    },
+    "listAllEuCommunicationCountryCodeProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        [
+            {
+                "id": "10000000-0000-0000-0000-000000000001",
+                "eventType": {"createdAccessCode": {}},
+                "orderId": "EU-ORDER-VARIOUS-001",
+                "timestamp": 1699900000.0,
+                "isRead": false,
+                "euAccessCode":
+                {
+                    "identifier": "20000000-0000-0000-0000-000000000004",
+                    "accessCode": "EU-AC-VARIOUS-001",
+                    "countryCode": "IT",
+                    "validUntil": 1699000000.0,
+                    "createdAt": 1699700000.0,
+                    "profileId": null
+                },
+                "countryCode": "IT"
+            },
+            {
+                "id": "10000000-0000-0000-0000-000000000002",
+                "eventType": {"refreshedAccessCode": {}},
+                "orderId": "EU-ORDER-VARIOUS-001",
+                "timestamp": 1699710000.0,
+                "isRead": false,
+                "euAccessCode": null,
+                "countryCode": "IT"
+            },
+            {
+                "id": "10000000-0000-0000-0000-000000000003",
+                "eventType": {"createdAccessCode": {}},
+                "orderId": "EU-ORDER-NO-PHARMACY-001",
+                "timestamp": 1699700000.0,
+                "isRead": false,
+                "euAccessCode":
+                {
+                    "identifier": "20000000-0000-0000-0000-000000000002",
+                    "accessCode": "EU-AC-NOPHARMACY-001",
+                    "countryCode": "FR",
+                    "validUntil": 4102444800.0,
+                    "createdAt": 1699900000.0,
+                    "profileId": null
+                },
+                "countryCode": "FR"
+            }
+        ]
+    },
+    "loadLatestActiveEuCommunicationProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload": null
+    },
+    "deleteEuCommunicationsProfileIdRecordings":
+    {
+        "type": "repeated",
+        "payload": true
+    }
+}

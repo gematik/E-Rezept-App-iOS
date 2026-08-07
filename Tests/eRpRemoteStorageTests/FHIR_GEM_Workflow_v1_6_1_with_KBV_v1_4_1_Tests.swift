@@ -72,6 +72,7 @@ final class FHIR_GEM_Workflow_v1_6_1_with_KBV_v1_4_1_Tests: XCTestCase {
         expect(task.medicationRequest.multiplePrescription?.endPeriod).to(beNil())
         expect(task.medicationRequest.accidentInfo).to(beNil())
         expect(task.medicationRequest.quantity) == .init(value: "1", unit: "Packung")
+        expect(task.medicationRequest.teratogenicRelatedInformation).to(beNil())
         // patient
         expect(task.patient?.name) == "Ingrid Erbprinzessin von und zu der Schimmelpfennig-Hammerschmidt Federmannssohn"
         expect(task.patient?.address) == "Anneliese- und Georg-von-Groscurth-Plaetzchen 149-C\n60437 Bad Homburg"
@@ -93,6 +94,79 @@ final class FHIR_GEM_Workflow_v1_6_1_with_KBV_v1_4_1_Tests: XCTestCase {
         expect(task.organization?.address) == "Yorckstraße 15\n93049, Regensburg"
         expect(task.organization?.email).to(beNil())
         expect(task.organization?.identifier) == "687777700"
+    }
+
+    /// FHIRBundle test of workflow version 1.6.1 with prescription version 1.4.1
+    func testParseErxTaskWithPrescriptionBundle2() throws {
+        let gemFhirBundle = try decode(resource: "Task_and_KBV_Bundle2.json")
+
+        guard let task = gemFhirBundle.parseErxTask(taskId: "166.000.000.001.042.08") else {
+            fail("Could not parse ModelsR4.Bundle into TaskBundle.")
+            return
+        }
+        // task
+        expect(task.id) == "166.000.000.001.042.08"
+        expect(task.status) == ErxTask.Status.ready
+        expect(task.flowType) == .tPrescription
+        expect(task.source) == .server
+        expect(task.fullUrl).to(equal("https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/166.000.000.001.042.08"))
+        expect(task.accessCode) == "9d7426da539deea658f9f38b77285c8d0816bd38fafdc7db84165d0038983b55"
+        expect(task.authoredOn) == "2026-05-08T07:23:28.956+00:00"
+        expect(task.lastModified) == "2026-05-08T07:23:29.302+00:00"
+        expect(task.expiresOn) == "2026-05-14"
+        expect(task.acceptedUntil) == "2026-05-14"
+        expect(task.author) == "Elle O'Quent"
+        // medication
+        expect(task.medication?.name) == "L-Tryptophan Kapseln 600 mg"
+        expect(task.medication?.dosageForm) == "IFL"
+        expect(task.medication?.normSizeCode) == "KTP"
+        expect(task.medication?.pzn) == "82035212"
+        expect(task.medication?.amount) == .init(
+            numerator: .init(value: "218", unit: "Stück"),
+            denominator: .init(value: "1")
+        )
+        // medication request
+        expect(task.medicationRequest.dosageInstructions) == "1-2-2-2-0-1"
+        expect(task.medicationRequest.hasEmergencyServiceFee) == true
+        expect(task.medicationRequest.dispenseValidityEnd).to(beNil())
+        expect(task.medicationRequest.substitutionAllowed) == false
+        expect(task.medicationRequest.coPaymentStatus) == .noSubjectToCharge
+        expect(task.medicationRequest.ser) == true
+        expect(task.medicationRequest.multiplePrescription?.mark) == false
+        expect(task.medicationRequest.multiplePrescription?.numbering).to(beNil())
+        expect(task.medicationRequest.multiplePrescription?.totalNumber).to(beNil())
+        expect(task.medicationRequest.multiplePrescription?.startPeriod).to(beNil())
+        expect(task.medicationRequest.multiplePrescription?.endPeriod).to(beNil())
+        expect(task.medicationRequest.accidentInfo).to(beNil())
+        expect(task.medicationRequest.quantity) == .init(value: "20", unit: "Packung")
+        // teratogenic related information
+        expect(task.medicationRequest.teratogenicRelatedInformation).toNot(beNil())
+        expect(task.medicationRequest.teratogenicRelatedInformation?.offLabelUse) == false
+        expect(task.medicationRequest.teratogenicRelatedInformation?.womanOfChildbearingAge) == false
+        expect(task.medicationRequest.teratogenicRelatedInformation?.safetyMeasuresCompliance) == true
+        expect(task.medicationRequest.teratogenicRelatedInformation?.informationMaterialProvided) == true
+        expect(task.medicationRequest.teratogenicRelatedInformation?.expertKnowledgeDeclaration) == true
+        // patient
+        expect(task.patient?.name) == "Ingrid Erbprinzessin von und zu der Schimmelpfennig-Hammerschmidt Federmannssohn"
+        expect(task.patient?.address) == "Karl-Wingchen-Str. 085\n91844 Bjarnegrün"
+        expect(task.patient?.birthDate) == "1988-05-02"
+        expect(task.patient?.phone).to(beNil())
+        expect(task.patient?.status) == "1"
+        expect(task.patient?.insurance) == "TUI BKK"
+        expect(task.patient?.insuranceId) == "M310119802"
+        expect(task.patient?.coverageType) == .GKV
+        // practitioner
+        expect(task.practitioner?.lanr) == "102528369"
+        expect(task.practitioner?.name) == "Nelson Ender"
+        expect(task.practitioner?.qualification) == "dental hygienist"
+        expect(task.practitioner?.email).to(beNil())
+        expect(task.practitioner?.address).to(beNil())
+        // organization
+        expect(task.organization?.name) == "Elle O'Quent"
+        expect(task.organization?.phone) == "09411234567"
+        expect(task.organization?.address) == "Maashofstr. 8\n50374, Neu Willibrunn"
+        expect(task.organization?.email).to(beNil())
+        expect(task.organization?.identifier) == "170304210"
     }
 
     private func decode(

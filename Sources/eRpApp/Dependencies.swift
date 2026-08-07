@@ -29,26 +29,10 @@ import FeatureCardWall
 import Foundation
 import XCTestDynamicOverlay
 
-// MARK: TCA Dependency eRpKit
-
-import eRpKit
-
-extension FHIRDateFormatter: DependencyKey {
-    public static let liveValue = FHIRDateFormatter.shared
-
-    public static let testValue = FHIRDateFormatter.shared
-}
-
-extension DependencyValues {
-    var fhirDateFormatter: FHIRDateFormatter {
-        get { self[FHIRDateFormatter.self] }
-        set { self[FHIRDateFormatter.self] = newValue }
-    }
-}
-
 // MARK: - ErxTask
 
 import AsyncAlgorithms
+import eRpKit
 import ErxTaskRepository
 import IDP
 import IDPLive
@@ -303,7 +287,12 @@ extension ErxTaskRepository {
         return ErxTaskRepository { taskId, accessCode, profileId in
             if let accessCode {
                 do {
-                    guard let remoteTask = try await cloud.fetchTask(by: taskId, accessCode: accessCode).async()
+                    guard let remoteTask = try await cloud.fetchTask(
+                        by: taskId,
+                        accessCode: accessCode,
+                        profileId: profileId
+                    )
+                    .async()
                     else { return nil }
                     _ = try await disk.save(tasks: [remoteTask], in: profileId, updateProfileLastAuthenticated: false)
                         .async()
@@ -360,8 +349,9 @@ extension ErxTaskRepository {
                 }
                 // Delete remote & locally when at least one is not a scanned task
             } else {
+                @Shared(.selectedProfileId) var selectedProfileId: UUID
                 do {
-                    _ = try await cloud.delete(tasks: erxTasks).async()
+                    _ = try await cloud.delete(tasks: erxTasks, profileId: profileId ?? selectedProfileId).async()
                     _ = try await disk.delete(tasks: erxTasks, in: profileId).async()
                     try await deleteSchedules(schedules)
                 } catch let error as LocalStoreError {
@@ -372,7 +362,12 @@ extension ErxTaskRepository {
             }
         } markTaskEURedeemable: { taskId, profileId, authorization in
             do {
-                _ = try await cloud.markEURedeemable(for: taskId, byPatientAuthorization: authorization).async()
+                _ = try await cloud.markEURedeemable(
+                    for: taskId,
+                    byPatientAuthorization: authorization,
+                    profileId: profileId
+                )
+                .async()
                 var task = try await disk.fetchTask(by: taskId, accessCode: nil).async()
                 task?.isSetEURedeemableByPatient = authorization
                 if let task {
@@ -383,8 +378,9 @@ extension ErxTaskRepository {
                 throw ErxRepositoryError.remote(error)
             }
         } redeem: { order in
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                return try await cloud.redeem(order: order).async()
+                return try await cloud.redeem(order: order, profileId: selectedProfileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
@@ -455,14 +451,17 @@ extension ErxTaskRepository {
                 }
             }
         } loadRemoteLatestAuditEvents: { locale in
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                return try await cloud.listAllAuditEvents(after: nil, for: locale).async()
+                return try await cloud.listAllAuditEvents(after: nil, for: locale, profileId: selectedProfileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
         } loadRemoteAuditEvents: { url, locale in
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                return try await cloud.listAuditEventsNextPage(from: url, locale: locale).async()
+                return try await cloud.listAuditEventsNextPage(from: url, locale: locale, profileId: selectedProfileId)
+                    .async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
@@ -476,12 +475,8 @@ extension ErxTaskRepository {
                 throw ErxRepositoryError.remote(error)
             }
         } fetchConsents: { profileId in
-            @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
-            let cloud = ErxTaskFHIRDataStore {
-                fhirClientServiceFactory.erpClientForProfile(profileId)
-            }
             do {
-                return try await cloud.fetchConsents().async()
+                return try await cloud.fetchConsents(profileId: profileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
@@ -504,8 +499,9 @@ extension ErxTaskRepository {
                 throw ErxRepositoryError.local(error)
             }
         } deleteChargeItems: { chargeItems, profileId in
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                _ = try await cloud.delete(chargeItems: chargeItems).async()
+                _ = try await cloud.delete(chargeItems: chargeItems, profileId: profileId ?? selectedProfileId).async()
                 _ = try await disk.delete(of: profileId, chargeItems: chargeItems.map(\.sparseChargeItem)).async()
             } catch let error as LocalStoreError {
                 throw ErxRepositoryError.local(error)
@@ -519,40 +515,36 @@ extension ErxTaskRepository {
                 throw ErxRepositoryError.local(error)
             }
         } grantConsent: { consent, profileId in
-            @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
-            let cloud = ErxTaskFHIRDataStore {
-                fhirClientServiceFactory.erpClientForProfile(profileId)
-            }
             do {
-                return try await cloud.grantConsent(consent).async()
+                return try await cloud.grantConsent(consent, profileId: profileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
         } revokeConsent: { category, profileId in
-            @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
-            let cloud = ErxTaskFHIRDataStore {
-                fhirClientServiceFactory.erpClientForProfile(profileId)
-            }
             do {
-                _ = try await cloud.revokeConsent(category).async()
+                _ = try await cloud.revokeConsent(category, profileId: profileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
         } loadRemoteEuAccessCode: {
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                return try await cloud.loadRemoteEuAccessCode().async()
+                return try await cloud.loadRemoteEuAccessCode(profileId: selectedProfileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
         } grantEuAccessPermission: { euAccessCode in
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                return try await cloud.grantEuAccessPermission(accessCode: euAccessCode).async()
+                return try await cloud.grantEuAccessPermission(accessCode: euAccessCode, profileId: selectedProfileId)
+                    .async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
-        } deleteEuAccessCode: { _ in
+        } deleteEuAccessCode: { profileId in
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
             do {
-                _ = try await cloud.deleteEuAccessCode().async()
+                _ = try await cloud.deleteEuAccessCode(profileId: profileId ?? selectedProfileId).async()
             } catch let error as RemoteStoreError {
                 throw ErxRepositoryError.remote(error)
             }
@@ -597,18 +589,27 @@ extension ErxTaskRepository {
         -> Void = { profileId in
             @Dependency(\.erxRemoteDataStore) var cloud
             @Dependency(\.erxLocalDataStore) var disk
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
+            let resolvedProfileId = profileId ?? selectedProfileId
             let timestamp = try await disk.fetchLatestTimestampForCommunications(of: profileId).async()
-            let communications = try await cloud.listAllCommunications(after: timestamp, for: .all).async()
+            let communications = try await cloud.listAllCommunications(
+                after: timestamp,
+                for: .all,
+                profileId: resolvedProfileId
+            )
+            .async()
             _ = try await disk.save(communications: communications, of: profileId).async()
         }
 
     static let loadRemoteLatestTasks: @Sendable (_ profileId: UUID?) async throws -> Void = { profileId in
         @Dependency(\.erxRemoteDataStore) var cloud
         @Dependency(\.erxLocalDataStore) var disk
+        @Shared(.selectedProfileId) var selectedProfileId: UUID
+        let resolvedProfileId = profileId ?? selectedProfileId
         let timestamp = try await disk.fetchLatestLastModifiedForErxTasks(of: profileId).async()
-        let tasks = try await cloud.listAllTasks(after: timestamp).async()
-        let updatedTasks = try await loadAndUpdateAllDetailedTasks(tasks)
-        try await loadRemoteMedicationDispenses(updatedTasks.content)
+        let tasks = try await cloud.listAllTasks(after: timestamp, profileId: resolvedProfileId).async()
+        let updatedTasks = try await loadAndUpdateAllDetailedTasks(tasks, resolvedProfileId)
+        try await loadRemoteMedicationDispenses(updatedTasks.content, resolvedProfileId)
         let result = try await disk.save(
             tasks: updatedTasks.content,
             in: profileId,
@@ -628,9 +629,11 @@ extension ErxTaskRepository {
         -> Void = { previousPage, profileId in
             @Dependency(\.erxRemoteDataStore) var cloud
             @Dependency(\.erxLocalDataStore) var disk
-            let nextPage = try await cloud.listTasksNextPage(of: previousPage).async()
-            let updatedTasks = try await loadAndUpdateAllDetailedTasks(nextPage)
-            try await loadRemoteMedicationDispenses(updatedTasks.content)
+            @Shared(.selectedProfileId) var selectedProfileId: UUID
+            let resolvedProfileId = profileId ?? selectedProfileId
+            let nextPage = try await cloud.listTasksNextPage(of: previousPage, profileId: resolvedProfileId).async()
+            let updatedTasks = try await loadAndUpdateAllDetailedTasks(nextPage, resolvedProfileId)
+            try await loadRemoteMedicationDispenses(updatedTasks.content, resolvedProfileId)
             let result = try await disk.save(
                 tasks: updatedTasks.content,
                 in: profileId,
@@ -643,8 +646,11 @@ extension ErxTaskRepository {
             }
         }
 
-    private static let loadAndUpdateAllDetailedTasks: @Sendable (_ tasks: PagedContent<[ErxTask]>) async throws
-        -> PagedContent<[ErxTask]> = { tasks in
+    private static let loadAndUpdateAllDetailedTasks: @Sendable (
+        _ tasks: PagedContent<[ErxTask]>,
+        _ profileId: UUID
+    ) async throws
+        -> PagedContent<[ErxTask]> = { tasks, profileId in
             @Dependency(\.erxRemoteDataStore) var cloud
             @Dependency(\.erxLocalDataStore) var disk
             // Load and update cancelled local ErxTasks
@@ -660,8 +666,8 @@ extension ErxTaskRepository {
                 content: tasks.content
                     .filter { $0.status != .cancelled },
                 next: tasks.next
-            ))
-            .async()
+            ), profileId: profileId)
+                .async()
 
             // Early out if no cancelled tasks are present
             guard !updatedCancelledTasks.isEmpty else {
@@ -674,12 +680,15 @@ extension ErxTaskRepository {
             )
         }
 
-    private static let loadRemoteMedicationDispenses: @Sendable (_ tasks: [ErxTask]) async throws -> Void = { tasks in
+    private static let loadRemoteMedicationDispenses: @Sendable (
+        _ tasks: [ErxTask],
+        _ profileId: UUID
+    ) async throws -> Void = { tasks, profileId in
         @Dependency(\.erxRemoteDataStore) var cloud
         @Dependency(\.erxLocalDataStore) var disk
         for task in tasks {
             if task.lastMedicationDispense != nil || task.status == .completed {
-                let medDispense = try await cloud.listMedicationDispenses(for: task.id).async()
+                let medDispense = try await cloud.listMedicationDispenses(for: task.id, profileId: profileId).async()
                 _ = try await disk.save(medicationDispenses: medDispense).async()
             }
         }
@@ -688,8 +697,10 @@ extension ErxTaskRepository {
     private static let loadRemoteLatestChargeItems: @Sendable (_ profileId: UUID?) async throws -> Void = { profileId in
         @Dependency(\.erxRemoteDataStore) var cloud
         @Dependency(\.erxLocalDataStore) var disk
+        @Shared(.selectedProfileId) var selectedProfileId: UUID
+        let resolvedProfileId = profileId ?? selectedProfileId
         let timestamp = try await disk.fetchLatestTimestampForChargeItems(of: profileId).async()
-        let chargeItems = try await cloud.listAllChargeItems(after: timestamp).async()
+        let chargeItems = try await cloud.listAllChargeItems(after: timestamp, profileId: resolvedProfileId).async()
         _ = try await disk.save(chargeItems: chargeItems.map(\.sparseChargeItem), of: profileId).async()
     }
 }
@@ -1065,19 +1076,46 @@ extension DependencyValues {
     }
 }
 
-struct SecureEnclaveSignatureProviderDependency: DependencyKey {
-    static let liveValue: SecureEnclaveSignatureProvider = UsersSessionContainerDependency.liveValue.userSession
-        .secureEnclaveSignatureProvider
+@DependencyClient
+struct SecureEnclaveSignatureProviderFactory {
+    let construct: (_ profileId: UUID) -> SecureEnclaveSignatureProvider
+}
 
-    static let previewValue: SecureEnclaveSignatureProvider = DummySecureEnclaveSignatureProvider()
+extension SecureEnclaveSignatureProviderFactory: DependencyKey {
+    static let liveValue = SecureEnclaveSignatureProviderFactory { profileId in
+        @Shared(.isDemoMode) var isDemoMode
 
-    static let testValue: SecureEnclaveSignatureProvider = UnimplementedSecureEnclaveSignatureProvider()
+        if isDemoMode {
+            return DummySecureEnclaveSignatureProvider()
+        }
+
+        @Dependency(\.schedulers) var schedulers
+        let secureUserStore = KeychainStorage(
+            profileId: profileId,
+            schedulers: schedulers
+        )
+        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
+        return DefaultSecureEnclaveSignatureProvider(
+            storage: secureUserStore,
+            keyIdentifierGenerator: { try generateSecureRandom(length: 32) },
+            privateKeyContainerProvider: { try PrivateKeyContainer.createFromKeyChain(with: $0) }
+        )
+        #else
+        return DefaultSecureEnclaveSignatureProvider(
+            storage: secureUserStore
+        )
+        #endif
+    }
+
+    static let previewValue = SecureEnclaveSignatureProviderFactory { _ in
+        DummySecureEnclaveSignatureProvider()
+    }
 }
 
 extension DependencyValues {
-    var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
-        get { self[SecureEnclaveSignatureProviderDependency.self] }
-        set { self[SecureEnclaveSignatureProviderDependency.self] = newValue }
+    var secureEnclaveSignatureProviderFactory: SecureEnclaveSignatureProviderFactory {
+        get { self[SecureEnclaveSignatureProviderFactory.self] }
+        set { self[SecureEnclaveSignatureProviderFactory.self] = newValue }
     }
 }
 
@@ -1137,8 +1175,6 @@ extension PharmacyRepository: DependencyKey {
                 updated.specialities = remotePharmacy.specialities
                 updated.emergencyServiceHours = remotePharmacy.emergencyServiceHours
                 updated.specialClosingHours = remotePharmacy.specialClosingHours
-                updated.avsEndpoints = remotePharmacy.avsEndpoints
-                updated.avsCertificates = remotePharmacy.avsCertificates
 
                 return updated
 
@@ -1532,7 +1568,9 @@ struct ErxRemoteDataStoreDependencyKey: DependencyKey {
     static var liveValue: ErxRemoteDataStore = {
         @Dependency(\.fhirClientServiceFactory) var fhirClientServiceFactory
 
-        return ErxTaskFHIRDataStore(factory: fhirClientServiceFactory.erpClient)
+        return ErxTaskFHIRDataStore { profileId in
+            fhirClientServiceFactory.erpClientForProfile(profileId)
+        }
     }()
 }
 
@@ -1541,6 +1579,16 @@ extension DependencyValues {
         get { self[ErxRemoteDataStoreDependencyKey.self] }
         set { self[ErxRemoteDataStoreDependencyKey.self] = newValue }
     }
+}
+
+import FeatureCommunication
+
+extension InternalCommunicationClient: DependencyKey {
+    public static var liveValue: InternalCommunicationClient = {
+        @Dependency(\.userDataStore) var userDataStore
+
+        return Self.live(userDataStore: userDataStore)
+    }()
 }
 
 // swiftlint:enable file_length

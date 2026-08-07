@@ -4,6 +4,7 @@
 import Foundation
 import FeatureEURedeem
 import FeatureCardWall
+import FeatureCommunication
 import eRpResources
 
 
@@ -56,6 +57,8 @@ extension AppDomain.State {
                 return pharmacy.routeName() ?? destination.tag.analyticsName
             case .orders:
                 return orders.routeName() ?? destination.tag.analyticsName
+            case .messages:
+                return messages.routeName() ?? destination.tag.analyticsName
             case .settings:
                 return settings.routeName() ?? destination.tag.analyticsName
         }
@@ -121,12 +124,6 @@ extension CardWallCANDomain.State {
     }
 }
 
-extension CardWallExtAuthConfirmationDomain.State {
-    func routeName() -> String? {
-        return nil
-    }
-}
-
 extension CardWallExtAuthHelpDomain.State {
     func routeName() -> String? {
         return nil
@@ -137,10 +134,12 @@ extension CardWallExtAuthSelectionDomain.State {
     func routeName() -> String? {
         guard let destination else { return nil }
         switch destination {
-            case let .confirmation(state: state):
-                return state.routeName() ?? destination.analyticsName
             case let .help(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case .alert:
+                return destination.analyticsName
+            case .contactSheet:
+                return destination.analyticsName
         }
     }
 }
@@ -373,6 +372,8 @@ extension EditProfileDomain.State {
             case .alert:
                 return destination.analyticsName
             case let .auditEvents(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .notificationChannels(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .registeredDevices(state: state):
                 return state.routeName() ?? destination.analyticsName
@@ -665,6 +666,30 @@ extension MedicationReminderSetupDomain.State {
     }
 }
 
+extension MessageThreadDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
+extension MessageThreadListDomain.State {
+    func routeName() -> String? {
+        guard let destination else { return nil }
+        switch destination {
+            case let .orderDetail(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case .alert:
+                return destination.analyticsName
+        }
+    }
+}
+
+extension NotificationChannelsDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
 extension OSDeprecationDomain.State {
     func routeName() -> String? {
         return nil
@@ -915,6 +940,8 @@ extension PrescriptionDetailDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case let .accidentInfo(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case let .teratogenicInfo(state: state):
+                return state.routeName() ?? destination.analyticsName
             case let .technicalInformations(state: state):
                 return state.routeName() ?? destination.analyticsName
             case .alert:
@@ -936,6 +963,8 @@ extension PrescriptionDetailDomain.State {
             case let .emergencyServiceFeeInfo(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .selfPayerInfo(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .tPrescriptionInfo(state: state):
                 return state.routeName() ?? destination.analyticsName
             case .toast:
                 return destination.analyticsName
@@ -1116,6 +1145,12 @@ extension TechnicalInformationsDomain.State {
     }
 }
 
+extension TeratogenicInfoDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
 
 
 
@@ -1129,6 +1164,8 @@ extension AppDomain.Destinations.State.Tag {
             case .pharmacy:
                 return Analytics.Screens.pharmacySearch.name
             case .orders:
+                return Analytics.Screens.orders.name
+            case .messages:
                 return Analytics.Screens.orders.name
             case .settings:
                 return Analytics.Screens.settings.name
@@ -1205,10 +1242,12 @@ extension CardWallCANDomain.Destination.State {
 extension CardWallExtAuthSelectionDomain.Destination.State {
     var analyticsName: String {
         switch self {
-            case .confirmation:
-                return Analytics.Screens.cardWall_extAuthConfirm.name
             case .help:
                 return Analytics.Screens.cardWall_extAuthSelectionHelp.name
+            case .alert:
+                return Analytics.Screens.alert.name
+            case .contactSheet:
+                return "contactSheet"
         }
     }
 }
@@ -1367,6 +1406,8 @@ extension EditProfileDomain.Destination.State {
                 return Analytics.Screens.alert.name
             case .auditEvents:
                 return Analytics.Screens.profile_auditEvents.name
+            case .notificationChannels:
+                return Analytics.Screens.profile_notificationChannels.name
             case .registeredDevices:
                 return Analytics.Screens.profile_registeredDevices.name
             case .chargeItemList:
@@ -1558,6 +1599,16 @@ extension MedicationReminderSetupDomain.Destination.State {
         }
     }
 }
+extension MessageThreadListDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .orderDetail:
+                return "orderDetail"
+            case .alert:
+                return Analytics.Screens.alert.name
+        }
+    }
+}
 extension OrderDetailDomain.Destination.State {
     var analyticsName: String {
         switch self {
@@ -1685,6 +1736,8 @@ extension PrescriptionDetailDomain.Destination.State {
                 return Analytics.Screens.prescriptionDetail_organization.name
             case .accidentInfo:
                 return Analytics.Screens.prescriptionDetail_accidentInfo.name
+            case .teratogenicInfo:
+                return Analytics.Screens.prescriptionDetail_teratogenicInfo.name
             case .technicalInformations:
                 return Analytics.Screens.prescriptionDetail_technicalInfo.name
             case .alert:
@@ -1707,6 +1760,8 @@ extension PrescriptionDetailDomain.Destination.State {
                 return Analytics.Screens.prescriptionDetail_emergencyServiceFeeInfo.name
             case .selfPayerInfo:
                 return Analytics.Screens.prescriptionDetail_selfPayerPrescriptionBottomSheet.name
+            case .tPrescriptionInfo:
+                return Analytics.Screens.prescriptionDetail_teratogenicInfo.name
             case .toast:
                 return Analytics.Screens.prescriptionDetail_toast.name
             case .medicationReminder:

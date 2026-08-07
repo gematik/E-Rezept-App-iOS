@@ -196,7 +196,7 @@ struct SettingsDomain {
                 return .none
             }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .destination(.presented(.healthCardPasswordUnlockCard(.delegate(.navigateToSettings)))),
              .destination(.presented(.healthCardPasswordForgotPin(.delegate(.navigateToSettings)))),

@@ -33,7 +33,8 @@ public struct ErxMedicationRequest: Hashable, Codable, Sendable {
         ser: Bool? = false,
         coPaymentStatus: ErxTask.CoPaymentStatus? = nil,
         multiplePrescription: MultiplePrescription? = nil,
-        quantity: ErxMedication.Quantity? = nil
+        quantity: ErxMedication.Quantity? = nil,
+        teratogenicRelatedInformation: TeratogenicRelatedInformation? = nil
     ) {
         self.authoredOn = authoredOn
         self.dosageInstructions = dosageInstructions
@@ -45,6 +46,7 @@ public struct ErxMedicationRequest: Hashable, Codable, Sendable {
         self.coPaymentStatus = coPaymentStatus
         self.multiplePrescription = multiplePrescription
         self.quantity = quantity
+        self.teratogenicRelatedInformation = teratogenicRelatedInformation
     }
 
     public let authoredOn: String?
@@ -67,4 +69,6 @@ public struct ErxMedicationRequest: Hashable, Codable, Sendable {
     public let multiplePrescription: MultiplePrescription?
     /// Indicates the number of packages of the prescribed medication
     public let quantity: ErxMedication.Quantity?
+
+    public let teratogenicRelatedInformation: TeratogenicRelatedInformation?
 }

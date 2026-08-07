@@ -31,51 +31,56 @@ struct GrantChargeItemConsentDrawerView: View {
     let store: StoreOf<MainDomain>
 
     var body: some View {
-        VStack(alignment: .center, spacing: 24) {
+        VStack(alignment: .center, spacing: 0) {
             HStack(spacing: 0) {
                 Spacer()
 
                 CloseButton { store.send(.grantChargeItemsConsentCloseButtonTapped) }
                     .accessibilityIdentifier(A11y.mainScreen.erxBtnConsentDrawerClose)
             }
+            .padding(.horizontal)
 
-            Image(decorative: Asset.Illustrations.pharmacistm1)
+            ScrollView {
+                VStack(alignment: .center, spacing: 24) {
+                    Image(decorative: Asset.Illustrations.pharmacistm1)
 
-            VStack(alignment: .center, spacing: 8) {
-                Text(L10n.mainTxtConsentDrawerTitle)
-                    .fontWeight(.semibold)
-                    .accessibility(identifier: A11y.mainScreen.erxTxtConsentDrawerTitle)
+                    VStack(alignment: .center, spacing: 8) {
+                        Text(L10n.mainTxtConsentDrawerTitle)
+                            .fontWeight(.semibold)
+                            .accessibility(identifier: A11y.mainScreen.erxTxtConsentDrawerTitle)
 
-                Text(L10n.mainTxtConsentDrawerMessage)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibility(identifier: A11y.mainScreen.erxTxtConsentDrawerMessage)
-            }
+                        Text(L10n.mainTxtConsentDrawerMessage)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibility(identifier: A11y.mainScreen.erxTxtConsentDrawerMessage)
+                    }
 
-            VStack(alignment: .center, spacing: 16) {
-                Button {
-                    store.send(.grantChargeItemsConsentActivate)
-                } label: {
-                    Text(L10n.mainBtnConsentDrawerActivate)
+                    VStack(alignment: .center, spacing: 16) {
+                        Button {
+                            store.send(.grantChargeItemsConsentActivate)
+                        } label: {
+                            Text(L10n.mainBtnConsentDrawerActivate)
+                        }
+                        .buttonStyle(.primaryHugging)
+                        .accessibility(identifier: A11y.mainScreen.erxBtnConsentDrawerActivate)
+
+                        Button {
+                            store.send(.grantChargeItemsConsentDismiss, animation: .easeInOut)
+                        } label: {
+                            Text(L10n.mainBtnConsentDrawerCancel)
+                                .foregroundColor(Colors.primary700)
+                                .fontWeight(.semibold)
+                        }
+                        .frame(minHeight: 52, alignment: .center) // quaternary button minHeight
+                        .accessibility(identifier: A11y.mainScreen.erxBtnConsentDrawerCancel)
+                    }
                 }
-                .buttonStyle(.primaryHugging)
-                .accessibility(identifier: A11y.mainScreen.erxBtnConsentDrawerActivate)
-
-                Button {
-                    store.send(.grantChargeItemsConsentDismiss, animation: .easeInOut)
-                } label: {
-                    Text(L10n.mainBtnConsentDrawerCancel)
-                        .foregroundColor(Colors.primary700)
-                        .fontWeight(.semibold)
-                }
-                .frame(minHeight: 52, alignment: .center) // quaternary button minHeight
-                .accessibility(identifier: A11y.mainScreen.erxBtnConsentDrawerCancel)
+                .padding(.horizontal)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8) // close button padding
-        .padding(.horizontal)
         .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
     }
 }

@@ -296,7 +296,8 @@ extension ModelsR4.Bundle {
             ser: medicationRequest?.ser,
             coPaymentStatus: medicationRequest?.coPaymentStatus,
             multiplePrescription: medicationRequest?.multiplePrescription,
-            quantity: medicationRequest?.erxTaskQuantity
+            quantity: medicationRequest?.erxTaskQuantity,
+            teratogenicRelatedInformation: medicationRequest?.teratogenicRelatedInformation
         )
     }
 }

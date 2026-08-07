@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import BfArM
 import Combine
 import Dependencies
@@ -104,9 +103,17 @@ class DemoSessionContainer: UserSession {
         ))
     }()
 
+    var updateChecker = UpdateChecker {
+        false
+    }
+
     lazy var ordersRepository: OrdersRepository = DemoOrdersRepository()
 
     lazy var trustStoreSession: TrustStoreSession = DemoTrustStoreSession()
+
+    lazy var appSecurityManager: AppSecurityManager = DemoAppSecurityPasswordManager()
+
+    private(set) lazy var deviceSecurityManager: DeviceSecurityManager = DemoDeviceSecurityManager()
 
     let profileId = DemoProfileDataStore.anna.id
 
@@ -121,8 +128,6 @@ class DemoSessionContainer: UserSession {
     }
 
     lazy var profileSecureDataWiper: ProfileSecureDataWiper = DemoProfileSecureDataWiper()
-
-    lazy var avsSession: AVSSession = DemoAVSSession()
 
     lazy var avsTransactionDataStore: AVSTransactionDataStore = DemoAVSTransactionDataStore()
 

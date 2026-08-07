@@ -128,7 +128,7 @@ public struct CardWallLoginOptionDomain {
         case .destination(.presented(.alert(.openAppSpecificSettings))):
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return .none }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .advance:
             state.destination = .readCard(.init(profileId: state.profileId,

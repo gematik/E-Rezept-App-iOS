@@ -22,6 +22,7 @@
 
 import eRpKit
 import eRpStyleKit
+import FeatureHelpers
 import Foundation
 import SwiftUI
 
@@ -303,6 +304,10 @@ struct Prescription: Equatable, Identifiable {
              (.undefined, _),
              (.error, _): return false
         }
+    }
+
+    var isShipmentAvailable: Bool {
+        erxTask.flowType != .tPrescription && erxTask.flowType != .tPrescriptionForPKV
     }
 
     var isPharmacyRedeemable: Bool {
@@ -599,6 +604,7 @@ extension Prescription {
             .map { Prescription(erxTask: $0) }
         static let prescriptionMVO = Prescription(erxTask: ErxTask.Demo.erxTask14)
         static let prescriptionSelfPayer = Prescription(erxTask: ErxTask.Demo.erxTaskSelfPayer)
+        static let prescriptionTPrescription = Prescription(erxTask: ErxTask.Demo.erxTaskTPrescription)
     }
 }
 
@@ -608,6 +614,19 @@ extension ErxTask {
             flowType == .directAssignmentForPKV ||
             id.starts(with: ErxTask.FlowType.Code.kDirectAssignment) ||
             id.starts(with: ErxTask.FlowType.Code.kDirectAssignmentForPKV)
+    }
+}
+
+extension ErxTask {
+    var isTPrescription: Bool {
+        flowType == .tPrescription ||
+            flowType == .tPrescriptionForPKV
+    }
+}
+
+extension [Prescription] {
+    func containsTPrescription() -> Bool {
+        contains { $0.erxTask.isTPrescription }
     }
 }
 

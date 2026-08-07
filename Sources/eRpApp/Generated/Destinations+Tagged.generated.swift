@@ -9,6 +9,7 @@ extension AppDomain.Destinations.State {
         case main
         case pharmacy
         case orders
+        case messages
         case settings
     }
 
@@ -20,6 +21,8 @@ extension AppDomain.Destinations.State {
                 return .pharmacy
             case .orders:
                 return .orders
+            case .messages:
+                return .messages
             case .settings:
                 return .settings
         }
