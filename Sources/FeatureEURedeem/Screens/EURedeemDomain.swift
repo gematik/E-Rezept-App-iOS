@@ -77,7 +77,6 @@ public struct EURedeemDomain {
             .forEach(\.path, action: \.path)
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .selection(.delegate(delegate)):
@@ -106,10 +105,6 @@ public struct EURedeemDomain {
         case let .path(.element(id: _, action: .countrySelection(.selectCountry(country)))):
             state.selection.selectedCountry = country
             state.path.removeLast()
-            return .none
-        case let .path(.element(id: _,
-                                action: .prescriptionSelection(.delegate(.didSelectPrescriptions(prescriptions))))):
-            state.selection.$prescriptions.withLock { $0 = prescriptions }
             return .none
         case .path(.element(id: _, action: .instructions(.delegate(.continueButtonTapped)))):
             state.path.append(.code(.init(countryCode: "De")))

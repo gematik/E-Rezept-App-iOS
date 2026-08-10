@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import BfArM
 import CodedError
 import Combine
@@ -77,8 +76,6 @@ protocol UserSession {
 
     func profile() -> AnyPublisher<Profile, LocalStoreError>
 
-    var avsSession: AVSSession { get }
-
     var avsTransactionDataStore: AVSTransactionDataStore { get }
 
     var prescriptionRepository: PrescriptionRepository { get }
@@ -88,8 +85,6 @@ protocol UserSession {
     var idpSessionLoginHandler: LoginHandler { get }
 
     var pairingIdpSessionLoginHandler: LoginHandler { get }
-
-    var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider { get }
 }
 
 struct UserSessionDependency: DependencyKey {

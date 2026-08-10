@@ -625,6 +625,7 @@ final class DiGaDetailDomainTests: XCTestCase {
             dependencies.openURLHandler.canOpenURL = { _ in true }
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
         }
         expect(openedURL.withLock { $0 }).to(beNil())

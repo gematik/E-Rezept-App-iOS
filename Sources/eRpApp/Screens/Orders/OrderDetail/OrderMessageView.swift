@@ -23,6 +23,7 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FeatureHelpers
 import Foundation
 import Perception
 import SwiftUI
@@ -32,7 +33,6 @@ struct OrderMessageView: View {
     let store: StoreOf<OrderDetailDomain>
     let timelineEntry: TimelineEntry
     var style: Indicator.Style = .middle
-    @State var calculatedHeight = CGFloat(1)
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     var body: some View {
@@ -65,8 +65,7 @@ struct OrderMessageView: View {
                         .padding(.horizontal)
                 }
 
-                UIKitTextView(attributedString: timelineEntry.formattedText,
-                              calculatedHeight: $calculatedHeight) { url in
+                UIKitTextView(attributedString: timelineEntry.formattedText) { url in
                     switch timelineEntry {
                     case .dispReq:
                         if let action = timelineEntry.actions.first?.action {
@@ -81,7 +80,6 @@ struct OrderMessageView: View {
                         store.send(.openUrl(url: url))
                     }
                 }
-                .frame(height: calculatedHeight)
                 .contextMenu(ContextMenu {
                     Button(L10n.orderTxtCopyToClipboard) {
                         UIPasteboard.general.string = timelineEntry.text

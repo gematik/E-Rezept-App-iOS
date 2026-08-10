@@ -270,18 +270,16 @@ struct OrderDetailDomain {
         case let .openUrl(url: url):
             return .run { send in
                 guard let url else { return }
-                guard await openURLHandler.canOpenURL(url) else {
-                    await send(.response(.showAlert(Self.openUrlAlertState(for: url))))
-                    return
-                }
 
-                await openURLHandler.open(url)
+                if await !openURLHandler.open(url) {
+                    await send(.response(.showAlert(Self.openUrlAlertState(for: url))))
+                }
             }
         case let .openMail(message),
              let .destination(.presented(.alert(.openMail(message)))):
             state.destination = nil
             return .run { send in
-                if let url = Self.createEmailUrl(
+                guard let url = Self.createEmailUrl(
                     to: L10n.ordDetailTxtEmailSupport.text,
                     subject: L10n.ordDetailTxtMailSubject.text,
                     body: Self.eMailBody(
@@ -290,9 +288,12 @@ struct OrderDetailDomain {
                         deviceInfo: deviceInfo,
                         version: version.productVersion.description
                     )
-                ), await openURLHandler.canOpenURL(url) {
-                    await openURLHandler.open(url)
-                } else {
+                ) else {
+                    await send(.response(.showAlert(Self.openMailAlertState)))
+                    return
+                }
+                let isOpenURLSuccessfull = await openURLHandler.open(url)
+                if !isOpenURLSuccessfull {
                     await send(.response(.showAlert(Self.openMailAlertState)))
                 }
             }
@@ -317,11 +318,11 @@ struct OrderDetailDomain {
                 return .none
             }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case let .openPhoneAppWith(url: url):
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .openMailApp:
             guard let email = state.communicationMessage.order?.pharmacy?.telecom?.email,
@@ -329,7 +330,7 @@ struct OrderDetailDomain {
                 return .none
             }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .showRevokeSheet:
             state.destination = .euRevoke

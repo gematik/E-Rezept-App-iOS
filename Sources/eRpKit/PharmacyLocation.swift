@@ -45,9 +45,7 @@ public struct PharmacyLocation: Identifiable, Equatable {
         physicalFeatures: [PhysicalFeature] = [],
         specialities: [Speciality] = [],
         specialClosingHours: [SpecialOperationHours] = [],
-        emergencyServiceHours: [SpecialOperationHours] = [],
-        avsEndpoints: AVSEndpoints? = nil,
-        avsCertificates: [X509] = []
+        emergencyServiceHours: [SpecialOperationHours] = []
     ) {
         self.id = id
         self.status = status
@@ -67,8 +65,6 @@ public struct PharmacyLocation: Identifiable, Equatable {
         self.specialities = specialities
         self.specialClosingHours = specialClosingHours
         self.emergencyServiceHours = emergencyServiceHours
-        self.avsEndpoints = avsEndpoints
-        self.avsCertificates = avsCertificates
     }
 
     // MARK: FHIR resources
@@ -110,17 +106,9 @@ public struct PharmacyLocation: Identifiable, Equatable {
     public var physicalFeatures: [PhysicalFeature] = []
     /// Specialities offered at this pharmacy location
     public var specialities: [Speciality] = []
-    /// Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul
-    public var avsEndpoints: AVSEndpoints?
-    /// Array of certificates for all recipients
-    public var avsCertificates: [X509] = []
 
     public var canBeDisplayedInMap: Bool {
         position?.latitude != nil && position?.longitude != nil
-    }
-
-    public var hasAVSEndpoints: Bool {
-        avsEndpoints != nil
     }
 
     /// Indicates if the delivery service via the `eRpRemoteStorage` module (Fachdienst) is present
@@ -145,100 +133,6 @@ public struct PharmacyLocation: Identifiable, Equatable {
     /// Note: Authentication via "Fachdienst" is required
     public var hasEmergencyService: Bool {
         types.contains { $0.isEmergency }
-    }
-
-    /// Indicates if the delivery service via the `AVS` module (ApothekenVerwaltunsSystem) is present
-    /// Note: No authentication via "Fachdienst" is required
-    public var hasDeliveryAVSService: Bool {
-        avsEndpoints?.deliveryUrl != nil && !avsCertificates.isEmpty
-    }
-
-    /// Indicates if the shipment service via the `AVS` module (ApothekenVerwaltunsSystem) is present
-    /// Note: No authentication via "Fachdienst" is required
-    public var hasShipmentAVSService: Bool {
-        avsEndpoints?.shipmentUrl != nil && !avsCertificates.isEmpty
-    }
-
-    /// Indicates if the reservation/onPremise service via the `AVS` module (ApothekenVerwaltunsSystem) is present
-    /// Note: No authentication via "Fachdienst" is required
-    public var hasReservationAVSService: Bool {
-        avsEndpoints?.onPremiseUrl != nil && !avsCertificates.isEmpty
-    }
-
-    public var hasAnyAVSService: Bool {
-        hasReservationAVSService || hasShipmentAVSService || hasDeliveryAVSService
-    }
-
-    public struct AVSEndpoints: Codable, Equatable {
-        public let onPremiseUrl: String?
-        public let onPremiseUrlAdditionalHeaders: [String: String]
-        public let shipmentUrl: String?
-        public let shipmentUrlAdditionalHeaders: [String: String]
-        public let deliveryUrl: String?
-        public let deliveryUrlAdditionalHeaders: [String: String]
-
-        public struct Endpoint: Equatable, Codable {
-            public let url: URL
-            public let additionalHeaders: [String: String]
-
-            public init(url: URL, additionalHeaders: [String: String] = [:]) {
-                self.url = url
-                self.additionalHeaders = additionalHeaders
-            }
-        }
-
-        public init(
-            onPremiseUrl: String? = nil,
-            onPremiseUrlAdditionalHeaders: [String: String] = [:],
-            shipmentUrl: String? = nil,
-            shipmentUrlAdditionalHeaders: [String: String] = [:],
-            deliveryUrl: String? = nil,
-            deliveryUrlAdditionalHeaders: [String: String] = [:]
-        ) {
-            self.onPremiseUrl = onPremiseUrl
-            self.onPremiseUrlAdditionalHeaders = onPremiseUrlAdditionalHeaders
-            self.shipmentUrl = shipmentUrl
-            self.shipmentUrlAdditionalHeaders = shipmentUrlAdditionalHeaders
-            self.deliveryUrl = deliveryUrl
-            self.deliveryUrlAdditionalHeaders = deliveryUrlAdditionalHeaders
-        }
-
-        public func url(for redeemOption: RedeemOption?, transactionId: String, telematikId: String) -> Endpoint? {
-            guard let redeemOption else { return nil }
-            guard let sanatizedUrl = url(for: redeemOption)?
-                .replacingOccurrences(of: "<ti_id>", with: telematikId.urlPercentEscapedString() ?? "")
-                .replacingOccurrences(of: "<transactionID>", with: transactionId.urlPercentEscapedString() ?? "") else {
-                return nil
-            }
-
-            guard let url = URL(string: sanatizedUrl) else {
-                return nil
-            }
-
-            return Endpoint(url: url, additionalHeaders: additionalHeaders(for: redeemOption))
-        }
-
-        private func url(for redeemOption: RedeemOption) -> String? {
-            switch redeemOption {
-            case .onPremise:
-                return onPremiseUrl
-            case .delivery:
-                return deliveryUrl
-            case .shipment:
-                return shipmentUrl
-            }
-        }
-
-        private func additionalHeaders(for redeemOption: RedeemOption) -> [String: String] {
-            switch redeemOption {
-            case .onPremise:
-                return onPremiseUrlAdditionalHeaders
-            case .delivery:
-                return deliveryUrlAdditionalHeaders
-            case .shipment:
-                return shipmentUrlAdditionalHeaders
-            }
-        }
     }
 
     public mutating func updateLocalStoredProperties(with pharmacy: PharmacyLocation) {
@@ -466,6 +360,5 @@ extension PharmacyLocation: Codable {
         case specialities
         case specialClosingHours
         case emergencyServiceHours
-        case avsEndpoints
     }
 }

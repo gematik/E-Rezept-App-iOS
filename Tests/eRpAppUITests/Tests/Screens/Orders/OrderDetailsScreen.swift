@@ -87,6 +87,54 @@ struct OrderDetailsScreen: Screen {
             )
         }
 
+        func showAccessCodeButton(fileID: String = #fileID, file: String = #file, line: UInt = #line) -> XCUIElement {
+            elements(
+                query: container.buttons,
+                identifier: A11y.orderDetail.list.ordDetailBtnRefreshCode,
+                fileID: fileID,
+                file: file,
+                line: line,
+                checkExistence: false
+            )
+        }
+
+        @discardableResult
+        func tapShowAccessCode(fileID _: String = #fileID, file _: String = #file,
+                               line _: UInt = #line) -> EURedeemCodeScreen {
+            showAccessCodeButton().tap()
+            return EURedeemCodeScreen(app: app)
+        }
+
+        func revokeAccessCodeButton(fileID: String = #fileID, file: String = #file, line: UInt = #line) -> XCUIElement {
+            elements(
+                query: container.buttons,
+                identifier: A11y.orderDetail.list.ordDetailBtnRevokeAccessCode,
+                fileID: fileID,
+                file: file,
+                line: line,
+                checkExistence: false
+            )
+        }
+
+        func accessCodeRevokedIndicator(fileID: String = #fileID, file: String = #file,
+                                        line: UInt = #line) -> XCUIElement {
+            elements(
+                query: container.buttons,
+                identifier: A11y.orderDetail.list.ordDetailBtnAccessCodeRevoked,
+                fileID: fileID,
+                file: file,
+                line: line,
+                checkExistence: false
+            )
+        }
+
+        @discardableResult
+        func tapRevokeAccessCode(fileID _: String = #fileID, file _: String = #file,
+                                 line _: UInt = #line) -> EuRevokeScreen {
+            revokeAccessCodeButton().tap()
+            return EuRevokeScreen(app: app)
+        }
+
         func chipTexts(fileID _: String = #fileID, file _: String = #file, line _: UInt = #line) -> [XCUIElement] {
             container.staticTexts.matching(.any, identifier: A11y.orderDetail.message.msgTxtChips)
                 .allElementsBoundByIndex

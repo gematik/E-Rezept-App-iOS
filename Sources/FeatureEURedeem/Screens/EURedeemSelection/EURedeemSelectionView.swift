@@ -29,7 +29,6 @@ import SwiftUI
 
 public struct EURedeemSelectionView: View {
     @Bindable var store: StoreOf<EURedeemSelectionDomain>
-    @State var calculatedHeight = CGFloat(1)
 
     public init(store: StoreOf<EURedeemSelectionDomain>) {
         self.store = store
@@ -44,6 +43,7 @@ public struct EURedeemSelectionView: View {
                     // Replace with actual illustration asset
                     Image(asset: Asset.EUReedem.banner)
                         .accessibilityLabel(L10n.euredeemSelectionBannerVoice.text)
+                        .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmImgSelectionBanner)
                         .frame(width: 120, height: 120)
                         .foregroundColor(.yellow)
                 }
@@ -56,10 +56,10 @@ public struct EURedeemSelectionView: View {
                         .bold()
                         .padding(.top, 8)
                         .accessibilityAddTraits(.isHeader)
+                        .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmTxtSelectionTitle)
 
                     UIKitTextView(
                         attributedString: attributedSubtitle,
-                        calculatedHeight: $calculatedHeight,
                         font: .preferredFont(forTextStyle: .body),
                         foregroundColor: .label
                     ) { _ in
@@ -67,7 +67,7 @@ public struct EURedeemSelectionView: View {
                             .send(.delegate(.selectInstructionButtonTapped(countryCode: store.selectedCountry?
                                     .countryCode)))
                     }
-                    .frame(height: calculatedHeight)
+                    .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmTxtSelectionSubtitle)
                 }
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -90,6 +90,7 @@ public struct EURedeemSelectionView: View {
                     label: { Text(L10n.euredeemSelectionBtnRedeem) }
                 )
                 .buttonStyle(.primaryHugging)
+                .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmBtnSelectionRedeem)
                 .padding(.horizontal)
                 .padding(.top, 4)
                 .padding(.bottom)
@@ -119,7 +120,7 @@ public struct EURedeemSelectionView: View {
                 }, label: {
                     Text(L10n.euredeemSelectionBtnClose)
                 })
-                .accessibility(identifier: "euredeem_selection_close_button")
+                .accessibility(identifier: A11y.redeem.eu.selection.eurdmBtnSelectionClose)
             }
         }
         .toolbarBackground(.visible)
@@ -146,10 +147,16 @@ public struct EURedeemSelectionView: View {
                                         store.validation == .emptyPrescription
                                             ? Colors.red700 : Colors.systemLabel
                                     )
+                                    .accessibilityIdentifier(
+                                        A11y.redeem.eu.selection.eurdmTxtSelectionPrescriptionTitle
+                                    )
                             } else {
                                 Text(L10n.euredeemSelectionPrescriptionTitle)
                                     .font(.caption)
                                     .foregroundColor(.gray)
+                                    .accessibilityIdentifier(
+                                        A11y.redeem.eu.selection.eurdmTxtSelectionPrescriptionTitle
+                                    )
                                 // Show selected prescriptions
                                 ForEach(store.selectedPrescriptions) { prescription in
                                     Text(prescription.name)
@@ -176,6 +183,7 @@ public struct EURedeemSelectionView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(PlainButtonStyle())
+                .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmBtnSelectionPrescriptions)
 
                 if store.validation == .emptyPrescription {
                     Text(L10n.euredeemSelectionPrescriptionCaptionNone)
@@ -183,6 +191,7 @@ public struct EURedeemSelectionView: View {
                         .foregroundColor(Colors.red700)
                         .padding(.leading)
                         .padding(.top, 8)
+                        .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmTxtSelectionPrescriptionCaption)
                 }
             }
         }
@@ -206,6 +215,9 @@ public struct EURedeemSelectionView: View {
                                     Text(L10n.euredeemSelectionCountryTitle)
                                         .font(.caption)
                                         .foregroundColor(.gray)
+                                        .accessibilityIdentifier(
+                                            A11y.redeem.eu.selection.eurdmTxtSelectionCountryTitle
+                                        )
                                     Text(store.selectedCountry?.displayName ?? "")
                                         .font(.body)
                                         .foregroundColor(.primary)
@@ -221,6 +233,9 @@ public struct EURedeemSelectionView: View {
                                     .foregroundColor(
                                         store.validation == .emptyCountry
                                             ? Colors.red700 : Colors.systemLabel
+                                    )
+                                    .accessibilityIdentifier(
+                                        A11y.redeem.eu.selection.eurdmTxtSelectionCountryNoSelection
                                     )
                             }
                             Spacer()
@@ -240,6 +255,7 @@ public struct EURedeemSelectionView: View {
                     }
                 )
                 .buttonStyle(PlainButtonStyle())
+                .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmBtnSelectionCountry)
 
                 if store.validation == .emptyCountry {
                     Text(L10n.euredeemSelectionCountryCaptionNone)
@@ -247,6 +263,7 @@ public struct EURedeemSelectionView: View {
                         .foregroundColor(Colors.red700)
                         .padding(.leading)
                         .padding(.top, 8)
+                        .accessibilityIdentifier(A11y.redeem.eu.selection.eurdmTxtSelectionCountryCaption)
                 }
             }
         }

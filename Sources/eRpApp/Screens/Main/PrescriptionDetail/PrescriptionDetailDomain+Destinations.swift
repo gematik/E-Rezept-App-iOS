@@ -45,6 +45,8 @@ extension PrescriptionDetailDomain {
         case organization(OrganizationDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail_accidentInfo
         case accidentInfo(AccidentInfoDomain)
+        // sourcery: AnalyticsScreen = prescriptionDetail_teratogenicInfo
+        case teratogenicInfo(TeratogenicInfoDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail_technicalInfo
         case technicalInformations(TechnicalInformationsDomain)
         // sourcery: AnalyticsScreen = alert
@@ -68,6 +70,8 @@ extension PrescriptionDetailDomain {
         case emergencyServiceFeeInfo(EmptyDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail_selfPayerPrescriptionBottomSheet
         case selfPayerInfo(EmptyDomain)
+        // sourcery: AnalyticsScreen = prescriptionDetail_teratogenicInfo
+        case tPrescriptionInfo(EmptyDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail_toast
         @ReducerCaseEphemeral
         case toast(ToastState<Toast>)
@@ -102,6 +106,7 @@ extension PrescriptionDetailDomain {
             case practitioner
             case organization
             case accidentInfo
+            case teratogenicInfo
             case technicalInformations
             case alert
             case sharePrescription
@@ -113,6 +118,7 @@ extension PrescriptionDetailDomain {
             case coPaymentInfo
             case emergencyServiceFeeInfo
             case selfPayerInfo
+            case tPrescriptionInfo
             case toast
             case medicationReminder
             case dosageInstructionsInfo
@@ -292,7 +298,9 @@ struct TechnicalInformationsDomain {
                     let nextIndex = accessCode
                         .index(currentIndex, offsetBy: 4, limitedBy: accessCode.endIndex) ?? accessCode.endIndex
                     result.append(contentsOf: accessCode[currentIndex ..< nextIndex])
-                    if nextIndex < accessCode.endIndex { result.append(softBreak) }
+                    if nextIndex < accessCode.endIndex {
+                        result.append(softBreak)
+                    }
                     currentIndex = nextIndex
                 }
 
@@ -357,6 +365,20 @@ struct AccidentInfoDomain {
     @ObservableState
     struct State: Equatable {
         let accidentInfo: AccidentInfo
+    }
+
+    enum Action: Equatable {}
+
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
+}
+
+@Reducer
+struct TeratogenicInfoDomain {
+    @ObservableState
+    struct State: Equatable {
+        let teratogenicInfo: TeratogenicRelatedInformation
     }
 
     enum Action: Equatable {}

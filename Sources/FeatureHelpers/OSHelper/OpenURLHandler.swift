@@ -30,12 +30,12 @@ public struct OpenURLHandler {
     /// Checks if a URL can be opened
     public var canOpenURL: @Sendable (URL) async -> Bool = { _ in false }
     /// Opens a URL asynchronously
-    public var open: @Sendable (URL) async -> Void
+    public var open: @Sendable (URL) async -> Bool = { _ in false }
     /// Opens a URL with specific options asynchronously
     public var openWithOptions: @Sendable (
         _ url: URL,
         _ options: [UIApplication.OpenExternalURLOptionsKey: Any]
-    ) async -> Void
+    ) async -> Bool = { _, _ in false }
 }
 
 // MARK: - TCA Dependency

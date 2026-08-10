@@ -52,7 +52,7 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
                 header: {
                     header
                 }, content: {
-                    let hasOpenPrescriptions = !store.prescriptions.filter { !$0.isArchived }.isEmpty
+                    let hasOpenPrescriptions = store.prescriptions.contains { !$0.isArchived }
                     content
                         .padding(.bottom, hasOpenPrescriptions ? 80 : 28)
                 }

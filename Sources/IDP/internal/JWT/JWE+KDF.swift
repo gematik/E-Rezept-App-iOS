@@ -23,70 +23,21 @@
 import Combine
 import CryptoKit
 import Foundation
-import OpenSSL
 
 extension JWE {
-    struct EncryptionContext {
+    /// Container for the derived symmetric key and the ephemeral public key used for encryption
+    public struct EncryptionContext {
         let symmetricKey: SymmetricKey
 
         let ephemeralPublicKey: JWK
-    }
 
-    /// JWE Algorithm for key exchange and encryption
-    public enum Algorithm {
-        /// ECDH-ES algorithm with specified key exchange context
-        case ecdh_es(KeyExchangeContext) // swiftlint:disable:this identifier_name
-
-        func encryptionContext() throws -> EncryptionContext {
-            switch self {
-            case let .ecdh_es(curve):
-                return try curve.encryptionContext()
-            }
+        /// Initializes a new EncryptionContext with the given symmetric key and ephemeral public key
+        public init(
+            symmetricKey: SymmetricKey,
+            ephemeralPublicKey: JWK
+        ) {
+            self.symmetricKey = symmetricKey
+            self.ephemeralPublicKey = ephemeralPublicKey
         }
-
-        /// Key exchange context for different cryptographic curves
-        public enum KeyExchangeContext {
-            // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
-            // [REQ:gemSpec_Krypt:GS-A_4367] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
-            /// BrainpoolP256r1 key exchange context
-            case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
-                          keyPairGenerator: () throws -> BrainpoolP256r1.KeyExchange.PrivateKey
-                              // [REQ:BSI-eRp-ePA:O.Cryp_3#4] Brainpool key generator
-                              // [REQ:gemSpec_eRp_FdV:A_19179#4] Key pair generation delegated to OpenSSL
-                              = { try BrainpoolP256r1.KeyExchange.generateKey() })
-
-            func encryptionContext() throws -> EncryptionContext {
-                switch self {
-                case let .bpp256r1(staticPublicKey, keyPairGenerator: keyPairGenerator):
-                    let ephemeralPrivate = try keyPairGenerator()
-                    let ephemeralPublic = ephemeralPrivate.publicKey
-
-                    let sharedSecret = try ephemeralPrivate.sharedSecret(with: staticPublicKey)
-
-                    // Concat KDF as described in
-                    // https://tools.ietf.org/html/rfc5084
-                    // and
-                    // https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Ar2.pdf
-                    // We might need to replace this with a corresponding openssl method
-                    let part1 = try Data(hex: "00000001")
-                    let part2 = try Data(hex: "000000074132353647434d000000000000000000000100")
-
-                    let digest = SHA256.hash(data: part1 + sharedSecret + part2)
-                    let symmetricKey = SymmetricKey(data: digest)
-
-                    return try EncryptionContext(
-                        symmetricKey: symmetricKey,
-                        ephemeralPublicKey: JWK.from(brainpoolP256r1: ephemeralPublic)
-                    )
-                }
-            }
-        }
-    }
-}
-
-extension JWE {
-    /// Decryption algorithm for JWE
-    enum DecryptionAlgorithm {
-        case plain(SymmetricKey)
     }
 }

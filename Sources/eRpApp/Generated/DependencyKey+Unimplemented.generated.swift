@@ -1,7 +1,6 @@
 // Generated using Sourcery — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
-import AVS
 import BfArM
 import Combine
 import CombineSchedulers
@@ -238,68 +237,68 @@ struct UnimplementedErxMatrixCodeGenerator: ErxMatrixCodeGenerator {
 struct UnimplementedErxRemoteDataStore: ErxRemoteDataStore {
     init() {}
 
-    func fetchTask(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, RemoteStoreError> {
-        fatalError("fetchTask(by:accessCode:) has not been implemented")
+    func fetchTask(by id: ErxTask.ID, accessCode: String?, profileId: UUID) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        fatalError("fetchTask(by:accessCode:profileId:) has not been implemented")
     }
-    func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        fatalError("listAllTasks(after:) has not been implemented")
+    func listAllTasks(after referenceDate: String?, profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        fatalError("listAllTasks(after:profileId:) has not been implemented")
     }
-    func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        fatalError("listTasksNextPage(of:) has not been implemented")
+    func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>, profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        fatalError("listTasksNextPage(of:profileId:) has not been implemented")
     }
-    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        fatalError("listDetailedTasks(for:) has not been implemented")
+    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>, profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        fatalError("listDetailedTasks(for:profileId:) has not been implemented")
     }
-    func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError> {
-        fatalError("delete(tasks:) has not been implemented")
+    func delete(tasks: [ErxTask], profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        fatalError("delete(tasks:profileId:) has not been implemented")
     }
-    func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool) -> AnyPublisher<ErxTask?, RemoteStoreError> {
-        fatalError("markEURedeemable(for:byPatientAuthorization:) has not been implemented")
+    func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool, profileId: UUID) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        fatalError("markEURedeemable(for:byPatientAuthorization:profileId:) has not been implemented")
     }
-    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
-        fatalError("redeem(order:) has not been implemented")
+    func redeem(order: ErxTaskOrder, profileId: UUID) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
+        fatalError("redeem(order:profileId:) has not been implemented")
     }
-    func listAllCommunications(after referenceDate: String?, for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
-        fatalError("listAllCommunications(after:for:) has not been implemented")
+    func listAllCommunications(after referenceDate: String?, for profile: ErxTask.Communication.Profile, profileId: UUID) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
+        fatalError("listAllCommunications(after:for:profileId:) has not been implemented")
     }
-    func fetchAuditEvent(by id: ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
-        fatalError("fetchAuditEvent(by:) has not been implemented")
+    func fetchAuditEvent(by id: ErxAuditEvent.ID, profileId: UUID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
+        fatalError("fetchAuditEvent(by:profileId:) has not been implemented")
     }
-    func listAllAuditEvents(after referenceDate: String?, for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
-        fatalError("listAllAuditEvents(after:for:) has not been implemented")
+    func listAllAuditEvents(after referenceDate: String?, for locale: String?, profileId: UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        fatalError("listAllAuditEvents(after:for:profileId:) has not been implemented")
     }
-    func listAuditEventsNextPage(from url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
-        fatalError("listAuditEventsNextPage(from:locale:) has not been implemented")
+    func listAuditEventsNextPage(from url: URL, locale: String?, profileId: UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        fatalError("listAuditEventsNextPage(from:locale:profileId:) has not been implemented")
     }
-    func listMedicationDispenses(for id: ErxTask.ID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
-        fatalError("listMedicationDispenses(for:) has not been implemented")
+    func listMedicationDispenses(for id: ErxTask.ID, profileId: UUID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
+        fatalError("listMedicationDispenses(for:profileId:) has not been implemented")
     }
-    func fetchChargeItem(by id: ErxChargeItem.ID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
-        fatalError("fetchChargeItem(by:) has not been implemented")
+    func fetchChargeItem(by id: ErxChargeItem.ID, profileId: UUID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
+        fatalError("fetchChargeItem(by:profileId:) has not been implemented")
     }
-    func listAllChargeItems(after referenceDate: String?) -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
-        fatalError("listAllChargeItems(after:) has not been implemented")
+    func listAllChargeItems(after referenceDate: String?, profileId: UUID) -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
+        fatalError("listAllChargeItems(after:profileId:) has not been implemented")
     }
-    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
-        fatalError("delete(chargeItems:) has not been implemented")
+    func delete(chargeItems: [ErxChargeItem], profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        fatalError("delete(chargeItems:profileId:) has not been implemented")
     }
-    func fetchConsents() -> AnyPublisher<[ErxConsent], RemoteStoreError> {
-        fatalError("fetchConsents has not been implemented")
+    func fetchConsents(profileId: UUID) -> AnyPublisher<[ErxConsent], RemoteStoreError> {
+        fatalError("fetchConsents(profileId:) has not been implemented")
     }
-    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
-        fatalError("grantConsent(_:) has not been implemented")
+    func grantConsent(_ consent: ErxConsent, profileId: UUID) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
+        fatalError("grantConsent(_:profileId:) has not been implemented")
     }
-    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError> {
-        fatalError("revokeConsent(_:) has not been implemented")
+    func revokeConsent(_ category: ErxConsent.Category, profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        fatalError("revokeConsent(_:profileId:) has not been implemented")
     }
-    func loadRemoteEuAccessCode() -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
-        fatalError("loadRemoteEuAccessCode has not been implemented")
+    func loadRemoteEuAccessCode(profileId: UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        fatalError("loadRemoteEuAccessCode(profileId:) has not been implemented")
     }
-    func grantEuAccessPermission(accessCode: EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
-        fatalError("grantEuAccessPermission(accessCode:) has not been implemented")
+    func grantEuAccessPermission(accessCode: EuAccessCode, profileId: UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        fatalError("grantEuAccessPermission(accessCode:profileId:) has not been implemented")
     }
-    func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError> {
-        fatalError("deleteEuAccessCode has not been implemented")
+    func deleteEuAccessCode(profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        fatalError("deleteEuAccessCode(profileId:) has not been implemented")
     }
 }
 class UnimplementedExtAuthRequestStorage: NSObject, ExtAuthRequestStorage {
@@ -619,27 +618,6 @@ struct UnimplementedSearchHistory: SearchHistory {
         fatalError("historyItems has not been implemented")
     }
 }
-struct UnimplementedSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
-    init() {}
-
-    var isBiometrieRegistered: AnyPublisher<Bool, Never> {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
-    func createPairingSession() throws -> PairingSession {
-        fatalError("createPairingSession has not been implemented")
-    }
-    func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: IDPX509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
-        fatalError("signPairingSession(_:with:certificate:) has not been implemented")
-    }
-    func abort(pairingSession: PairingSession) throws -> Void {
-        fatalError("abort(pairingSession:) has not been implemented")
-    }
-    func authenticationData(for challenge: IDPChallengeSession) -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> {
-        fatalError("authenticationData(for:) has not been implemented")
-    }
-}
 struct UnimplementedShipmentInfoDataStore: ShipmentInfoDataStore {
     init() {}
 
@@ -918,11 +896,6 @@ struct UnimplementedUserSession: UserSession {
         set(value) { fatalError("") }
     }
 
-    var avsSession: AVSSession {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
     var avsTransactionDataStore: AVSTransactionDataStore {
         get { fatalError("") }
         set(value) { fatalError("") }
@@ -944,11 +917,6 @@ struct UnimplementedUserSession: UserSession {
     }
 
     var pairingIdpSessionLoginHandler: LoginHandler {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
-    var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

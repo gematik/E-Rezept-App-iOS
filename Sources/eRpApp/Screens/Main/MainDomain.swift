@@ -404,7 +404,7 @@ struct MainDomain {
         case let .prescriptionList(action: .redeemButtonTapped(openPrescriptions)):
             state.destination = nil
             if openPrescriptions.filter(\.isDiGaPrescription).count >= 1,
-               openPrescriptions.filter({ !$0.isDiGaPrescription }).isEmpty {
+               !openPrescriptions.contains(where: { !$0.isDiGaPrescription }) {
                 // redeem DiGa
                 return .none
             }
@@ -559,7 +559,7 @@ struct MainDomain {
                 return .none
             }
             return .run { _ in
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
             state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
@@ -820,8 +820,9 @@ struct MainDomain {
                 state.path.removeAll()
                 return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
             case .changePharmacy:
+                let selectedPrescriptions = state.path.last?.redeem?.$selectedPrescriptions ?? Shared(value: [])
                 state.path.append(.pharmacy(PharmacySearchDomain.State(
-                    selectedPrescriptions: Shared(value: []),
+                    selectedPrescriptions: selectedPrescriptions,
                     inRedeemProcess: true
                 )))
             }

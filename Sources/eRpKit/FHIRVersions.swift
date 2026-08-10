@@ -408,6 +408,19 @@ public enum ErpPrescription {
             /// dosage instruction has been provided
             /// source: KBV_ITA_SIEX_Infos_Dosierungsangabe
             public static let dosageInstructionDj = "Dj"
+            /// Teratogenic related information
+            public static let teratogenicKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Teratogenic"
+            /// Off-label use flag
+            public static let teratogenicOffLabel = "Off-Label"
+            /// Woman of childbearing age flag
+            public static let teratogenicWomanOfChildbearingAge = "GebaerfaehigeFrau"
+            /// Safety measures compliance flag
+            public static let teratogenicSafetyMeasuresCompliance = "EinhaltungSicherheitsmassnahmen"
+            /// Information material provided flag
+            public static let teratogenicInformationMaterialProvided = "AushaendigungInformationsmaterialien"
+            /// Expert knowledge declaration flag
+            public static let teratogenicExpertKnowledgeDeclaration = "ErklaerungSachkenntnis"
         }
 
         /// DeviceRequest keys

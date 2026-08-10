@@ -239,7 +239,8 @@ extension ModelsR4.Bundle {
                 return urlString.contains(resourceIdentifier)
             }
             if let resourceType = bundleEntry.resource?.resourceType,
-               let id = bundleEntry.resource?.get().id?.value?.string {
+               let resource = bundleEntry.resource?.get(if: Resource.self),
+               let id = resource.id?.value?.string {
                 return "\(resourceType)/\(id)".contains(resourceIdentifier)
             }
             return false

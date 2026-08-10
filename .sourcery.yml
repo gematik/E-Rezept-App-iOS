@@ -4,15 +4,6 @@ configurations:
     templates:
       - Templates/Sourcery/eRpApp
     output: Sources
-  - sources: # writes to Tests/AVSTests/Mocks/Generated/
-      - Sources
-      - Tests/AVSTests
-    templates:
-      - Templates/Sourcery/Tests/AutoMockable.stencil
-    output: Tests/AVSTests
-    args:
-      autoMockableImports: [ Combine,Foundation,HTTPClient,OpenSSL ]
-      autoMockableTestableImports: [ AVS ]
   - sources: # writes to Tests/eRpAppTests/Mocks/Generated/
       - Sources
       - Tests/eRpAppTests
@@ -20,7 +11,7 @@ configurations:
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/eRpAppTests
     args:
-      autoMockableImports: [ AVS, BfArM, Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,Profiles,TestUtils,TrustStore,VAUClient, ZXingCpp, FeatureCardWall, FeatureHelpers, eRpResources ]
+      autoMockableImports: [ BfArM, Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,Profiles,TestUtils,TrustStore,VAUClient, ZXingCpp, FeatureCardWall, FeatureHelpers, eRpResources ]
       autoMockableTestableImports: [ eRpFeatures ]
   - sources: # writes to Tests/eRpKitTests/Mocks/Generated/
       - Sources

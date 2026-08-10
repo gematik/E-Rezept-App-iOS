@@ -23,50 +23,8 @@
 import Combine
 import CryptoKit
 import Foundation
-import OpenSSL
 
 extension JWE {
-    /// Nest a JWT inside a JWE for secure transport
-    /// - Parameters:
-    ///   - jwt: JWT to be nested
-    ///   - publicKey: BrainpoolP256r1 public key for encryption
-    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
-    ///   - expiry: Optional expiry date for the JWE
-    /// - Returns: JWE containing the nested JWT
-    /// - Throws: IDPError if nesting fails
-    public static func nest(
-        jwt: JWT,
-        with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-        using cryptoBox: IDPCrypto,
-        expiry: Date? = nil
-    ) throws -> Self {
-        // [REQ:BSI-eRp-ePA:O.Cryp_1#5] Signature via ecdh ephemeral-static
-        // [REQ:BSI-eRp-ePA:O.Cryp_4#6] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
-        let serialized = NestedJWT(njwt: jwt.serialize())
-        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
-                                              encryption: .a256gcm,
-                                              expiry: expiry,
-                                              contentType: "NJWT"),
-            let jwePayload = try? Self.defaultEncoder.encode(serialized),
-            let jwe = try? JWE(header: jweHeader, payload: jwePayload, nonceGenerator: cryptoBox.aesNonceGenerator)
-        else {
-            throw IDPError.internal(error: .nestJwtInJwePayloadEncryption)
-        }
-
-        return jwe
-    }
-
-    private static let defaultEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .sortedKeys
-        jsonEncoder.dataEncodingStrategy = .base64
-        return jsonEncoder
-    }()
-
     /// JWE encryption algorithms
     public enum Encryption {
         /// AES-256-GCM encryption

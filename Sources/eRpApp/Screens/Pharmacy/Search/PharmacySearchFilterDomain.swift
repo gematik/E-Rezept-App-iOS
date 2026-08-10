@@ -258,23 +258,25 @@ struct PharmacySearchFilterDomain {
         }
     }
 
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .delegate(.close):
-            return .none
-        case let .toggleFilter(filterOption):
-            if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
-                state.$pharmacyFilterOptions.withLock { _ = $0.remove(at: index) }
-            } else {
-                state.$pharmacyFilterOptions.withLock { $0.append(filterOption) }
+    var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case .delegate(.close):
+                return .none
+            case let .toggleFilter(filterOption):
+                if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
+                    state.$pharmacyFilterOptions.withLock { _ = $0.remove(at: index) }
+                } else {
+                    state.$pharmacyFilterOptions.withLock { $0.append(filterOption) }
+                }
+                return .none
+            case .toggleServiceDescriptions:
+                state.showServiceDescriptions.toggle()
+                return .none
+            case .resetFilters:
+                state.$pharmacyFilterOptions.withLock { $0.removeAll() }
+                return .none
             }
-            return .none
-        case .toggleServiceDescriptions:
-            state.showServiceDescriptions.toggle()
-            return .none
-        case .resetFilters:
-            state.$pharmacyFilterOptions.withLock { $0.removeAll() }
-            return .none
         }
     }
 }

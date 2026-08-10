@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import BfArM
 import Combine
 import ComposableArchitecture
@@ -133,6 +132,10 @@ class StandardSessionContainer: UserSession {
     lazy var secureUserStore: SecureUserDataStore = keychainStorage
     lazy var localUserStore: UserDataStore = UserDefaultsStore()
 
+    lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = idpSession.isLoggedIn
+        .mapError { UserSessionError.idpError(error: $0) }
+        .eraseToAnyPublisher()
+
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = DefaultNFCResetRetryCounterController()
 
     // Local VAU storage configuration
@@ -150,34 +153,37 @@ class StandardSessionContainer: UserSession {
         return FileVAUStorage(vauStorageBaseFilePath: vauStorageFilePath)
     }()
 
+    lazy var updateChecker: UpdateChecker = {
+        @Dependency(\.updateCheckerFactory) var factory
+
+        let interceptors: [Interceptor] = [
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
+            LoggingInterceptor(log: .body),
+            DebugLiveLogger.LogInterceptor(),
+        ]
+        let client = DefaultHTTPClient(urlSessionConfiguration: .ephemeral, interceptors: interceptors)
+
+        return factory.updateChecker(client, appConfiguration)
+    }()
+
     @Dependency(\.erxTaskRepository) var erxTaskRepository
     @Dependency(\.pharmacyRepository) var pharmacyRepository
 
     /// Orders are displayed for all profiles, so the local store is returning objects from all profiles
     lazy var ordersRepository: OrdersRepository = DefaultOrdersRepository()
 
+    lazy var appSecurityManager: AppSecurityManager =
+        DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
+
+    lazy var deviceSecurityManager: DeviceSecurityManager = DefaultDeviceSecurityManager(
+        userDataStore: localUserStore
+    )
+
     func profile() -> AnyPublisher<Profile, LocalStoreError> {
         profileDataStore.fetchProfile(by: profileId)
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
-
-    lazy var avsSession: AVSSession = {
-        #if ENABLE_DEBUG_VIEW
-        DefaultAVSSession(httpClient: avsHttpClient) { message, endpoint, httpResponse in
-            var urlRequest = URLRequest(url: endpoint.url)
-            for (key, value) in endpoint.additionalHeaders {
-                urlRequest.addValue(value, forHTTPHeaderField: key)
-            }
-            urlRequest.httpBody = try? JSONEncoder().encode(message)
-            var response = httpResponse
-            response.status = HTTPStatusCode.debug
-            DebugLiveLogger.shared.log(request: urlRequest, sentAt: Date(), response: response, receivedAt: Date())
-        }
-        #else
-        DefaultAVSSession(httpClient: avsHttpClient)
-        #endif
-    }()
 
     private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = .init(
         loginHandler: idpSessionLoginHandler
@@ -192,6 +198,11 @@ class StandardSessionContainer: UserSession {
     }
 
     @Dependency(\.loginHandlerServiceFactory) var loginHandlerServiceFactory: LoginHandlerServiceFactory
+    @Dependency(\.secureEnclaveSignatureProviderFactory) var secureEnclaveSignatureProviderFactory:
+        SecureEnclaveSignatureProviderFactory
+
+    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = secureEnclaveSignatureProviderFactory
+        .construct(profileId)
 
     lazy var idpSessionLoginHandler: LoginHandler = loginHandlerServiceFactory.construct(
         idpSession,
@@ -202,20 +213,6 @@ class StandardSessionContainer: UserSession {
         pairingIdpSession,
         secureEnclaveSignatureProvider
     )
-
-    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
-        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
-        DefaultSecureEnclaveSignatureProvider(
-            storage: secureUserStore,
-            keyIdentifierGenerator: { try generateSecureRandom(length: 32) },
-            privateKeyContainerProvider: { try PrivateKeyContainer.createFromKeyChain(with: $0) }
-        )
-        #else
-        DefaultSecureEnclaveSignatureProvider(
-            storage: secureUserStore
-        )
-        #endif
-    }()
 }
 
 extension IDPSession {

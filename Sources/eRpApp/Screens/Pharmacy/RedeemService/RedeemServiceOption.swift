@@ -26,23 +26,17 @@ import Foundation
 enum RedeemServiceOption {
     /// `ErxTaskRepository`  has been used before and should now be used over  `avs`
     case erxTaskRepository
-    /// `avs` can be used
-    case avs
     ///  No `avs` service is available but `ErxTaskRepository` could be used after user authentication
     case erxTaskRepositoryAvailable
     /// None of the two services can be used.
     case noService
 
     var hasService: Bool {
-        self == .erxTaskRepository || self == .avs || self == .erxTaskRepositoryAvailable
+        self == .erxTaskRepository || self == .erxTaskRepositoryAvailable
     }
 
     var hasServiceAfterLogin: Bool {
         self == .erxTaskRepositoryAvailable
-    }
-
-    var isAVS: Bool {
-        self == .avs
     }
 
     var isErxTaskRepository: Bool {
@@ -55,60 +49,30 @@ struct RedeemOptionProvider: Equatable {
     let pharmacy: PharmacyLocation
 
     var reservationService: RedeemServiceOption {
-        guard pharmacy.hasAnyAVSService else {
-            if wasAuthenticatedBefore, pharmacy.hasReservationService {
-                return .erxTaskRepository
-            } else if pharmacy.hasReservationService {
-                return .erxTaskRepositoryAvailable
-            } else {
-                return .noService
-            }
-        }
-
-        if wasAuthenticatedBefore, pharmacy.hasReservationAVSService {
+        if wasAuthenticatedBefore, pharmacy.hasReservationService {
             return .erxTaskRepository
-        } else if pharmacy.hasReservationAVSService {
-            return .avs
+        } else if pharmacy.hasReservationService {
+            return .erxTaskRepositoryAvailable
         } else {
             return .noService
         }
     }
 
     var shipmentService: RedeemServiceOption {
-        guard pharmacy.hasAnyAVSService else {
-            if wasAuthenticatedBefore, pharmacy.hasShipmentService {
-                return .erxTaskRepository
-            } else if pharmacy.hasShipmentService {
-                return .erxTaskRepositoryAvailable
-            } else {
-                return .noService
-            }
-        }
-
-        if wasAuthenticatedBefore, pharmacy.hasShipmentAVSService {
+        if wasAuthenticatedBefore, pharmacy.hasShipmentService {
             return .erxTaskRepository
-        } else if pharmacy.hasShipmentAVSService {
-            return .avs
+        } else if pharmacy.hasShipmentService {
+            return .erxTaskRepositoryAvailable
         } else {
             return .noService
         }
     }
 
     var deliveryService: RedeemServiceOption {
-        guard pharmacy.hasAnyAVSService else {
-            if wasAuthenticatedBefore, pharmacy.hasDeliveryService {
-                return .erxTaskRepository
-            } else if pharmacy.hasDeliveryService {
-                return .erxTaskRepositoryAvailable
-            } else {
-                return .noService
-            }
-        }
-
-        if wasAuthenticatedBefore, pharmacy.hasDeliveryAVSService {
+        if wasAuthenticatedBefore, pharmacy.hasDeliveryService {
             return .erxTaskRepository
-        } else if pharmacy.hasDeliveryAVSService {
-            return .avs
+        } else if pharmacy.hasDeliveryService {
+            return .erxTaskRepositoryAvailable
         } else {
             return .noService
         }

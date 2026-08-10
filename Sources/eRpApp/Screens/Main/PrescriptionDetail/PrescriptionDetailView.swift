@@ -26,6 +26,7 @@ import eRpStyleKit
 import SwiftUI
 import WebKit
 
+// swiftlint:disable:next type_body_length
 struct PrescriptionDetailView: View {
     @Bindable var store: StoreOf<PrescriptionDetailDomain>
 
@@ -220,6 +221,14 @@ struct PrescriptionDetailView: View {
                             .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
                         }
 
+                        if store.hasTeratogenicInfo {
+                            Button(action: { store.send(.setNavigation(tag: .teratogenicInfo)) }, label: {
+                                SubTitle(title: L10n.prscDtlTxtTeratogenicInfo)
+                            })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnTeratogenicInfo)
+                        }
+
                         LabeledContent {
                             Text(store.ser ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo)
                         } label: {
@@ -377,6 +386,10 @@ extension PrescriptionDetailDomain.State {
 
     var isSubstitutionAllowed: Bool {
         prescription.medicationRequest.substitutionAllowed
+    }
+
+    var hasTeratogenicInfo: Bool {
+        prescription.medicationRequest.teratogenicRelatedInformation != nil
     }
 }
 

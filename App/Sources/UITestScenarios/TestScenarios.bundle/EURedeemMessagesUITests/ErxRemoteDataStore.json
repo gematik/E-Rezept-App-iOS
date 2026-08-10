@@ -1,0 +1,39 @@
+{
+    "listAllCommunicationsAfterForProfileIdRecordings": {
+        "type": "repeated",
+        "payload": []
+    },
+    "listAllTasksAfterProfileIdRecordings": {
+        "type": "repeated",
+        "payload": {
+            "content": []
+        }
+    },
+    "listDetailedTasksForProfileIdRecordings": {
+        "type": "repeated",
+        "payload": {
+            "content": []
+        }
+    },
+    "fetchConsentsProfileIdRecordings": {
+        "type": "repeated",
+        "payload": [
+            {
+                "identifier": "EU-CONSENT-001",
+                "insuranceId": "X123456789",
+                "timestamp": "2024-01-01T00:00:00+00:00",
+                "scope": "patient-privacy",
+                "category": "EUDISPCONS",
+                "policyRule": "OPTIN"
+            }
+        ]
+    },
+    "revokeConsentProfileIdRecordings": {
+        "type": "repeated",
+        "payload": true
+    },
+    "deleteEuAccessCodeProfileIdRecordings": {
+        "type": "repeated",
+        "payload": true
+    }
+}

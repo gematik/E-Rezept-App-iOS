@@ -43,7 +43,7 @@ struct CardWallIntroductionScreen: Screen {
     }
 
     func tapDirectExtAuth(fileID: String = #fileID, file: String = #filePath,
-                          line: UInt = #line) -> CardWallExtAuthConfirmationScreen {
+                          line: UInt = #line) -> CardWallExtAuthSelectionScreen {
         button(by: A11y.cardWall.intro.cdwBtnIntroDirectGid, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)

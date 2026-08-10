@@ -163,11 +163,10 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         let error = CardWallReadCardDomain.State.Error.idpError(idpError)
 
-        await sut.receive(CardWallReadCardDomain.Action
-            .response(.state(.signingChallenge(.error(error))))) { state in
-                state.output = .signingChallenge(.error(error))
-                state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
-            }
+        await sut.receive(CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(error))))) { state in
+            state.output = .signingChallenge(.error(error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
+        }
     }
 
     func testSigningStates_HappyPath() async {
@@ -227,11 +226,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
 
         await uiScheduler.advance()
-        await sut.receive(CardWallReadCardDomain.Action
-            .response(.state(.signingChallenge(.error(.signChallengeError(pinError)))))) { state in
-                state.output = .signingChallenge(.error(.signChallengeError(pinError)))
-                state.destination = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError)))
-            }
+        await sut.receive(
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(pinError)))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(pinError)))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError)))
+        }
     }
 
     func testSigningStates_CanError() async {
@@ -291,6 +291,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             dependencies.openURLHandler.canOpenURL = { _ in true }
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
         } operation: {
             let sut = testStore(initialState: .init(

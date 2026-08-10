@@ -37,6 +37,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     var url: URL!
     var fhirClient: FHIRClient!
     var sut: ErxTaskFHIRDataStore!
+    var profileId: UUID = .init()
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -44,8 +45,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         url = URL(string: "http://\(host ?? "")")!
         fhirClient = FHIRClient(
             server: url,
-            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral),
-            receiveQueue: .immediate
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
         )
         sut = ErxTaskFHIRDataStore(fhirClient: fhirClient)
     }
@@ -62,13 +62,15 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
         var counter = 0
-        stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
+        stub(
+            condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
+        ) { _ in
             counter += 1
             return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
 
-        sut.fetchTask(by: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", accessCode: nil)
-            .test(expectations: { erxTask in
+        sut.fetchTask(by: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", accessCode: nil, profileId: profileId)
+            .testWait(expectations: { erxTask in
                 guard let erxTask else {
                     fail("erxTask is expected to not be nil")
                     return
@@ -114,7 +116,9 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
         var counter = 0
-        stub(condition: isHost(host) && isPath("/Task")) { _ in
+        stub(
+            condition: isHost(host) && isPath("/Task")
+        ) { _ in
             counter += 1
             return fixture(filePath: taskIdsResponse, headers: ["Accept": "application/fhir+json"])
         }
@@ -124,7 +128,9 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
 
-        stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
+        stub(
+            condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
+        ) { _ in
             counter += 1
             return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
@@ -132,12 +138,14 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0",
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
-        stub(condition: isHost(host) && isPath("/Task/5e00e907-1e4f-11b2-80be-b806a73c0cd0")) { _ in
+        stub(
+            condition: isHost(host) && isPath("/Task/5e00e907-1e4f-11b2-80be-b806a73c0cd0")
+        ) { _ in
             counter += 1
             return fixture(filePath: secondTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
-        sut.listAllTasks(after: nil)
-            .test(expectations: { erxTasks in
+        sut.listAllTasks(after: nil, profileId: profileId)
+            .testWait(expectations: { erxTasks in
                 expect(erxTasks.content.count).to(equal(2))
                 let sortedIds = erxTasks.content.map(\.id).sorted()
                 expect(sortedIds)
@@ -159,9 +167,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                     ),
                 ],
                 next: nil
-            )
+            ),
+            profileId: profileId
         )
-        .test(expectations: { erxTasks in
+        .testWait(expectations: { erxTasks in
             expect(erxTasks.content.count).to(equal(2))
         })
 
@@ -177,13 +186,15 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         var counter = 0
 
-        stub(condition: isHost(host) && isPath("/AuditEvent")) { _ in
+        stub(
+            condition: isHost(host) && isPath("/AuditEvent")
+        ) { _ in
             counter += 1
             return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
 
-        sut.listAllAuditEvents()
-            .test(expectations: { erxTasks in
+        sut.listAllAuditEvents(profileId: profileId)
+            .testWait(expectations: { erxTasks in
                 expect(erxTasks.content.count).to(equal(4))
                 let sortedIds = erxTasks.content.map(\.id).sorted()
                 expect(sortedIds)
@@ -203,27 +214,31 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
 
-        stub(condition: isHost(host) && pathStartsWith("/Task") && pathEndsWith("$abort")) { _ in
+        stub(
+            condition: isHost(host) && pathStartsWith("/Task") && pathEndsWith("$abort")
+        ) { _ in
             fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
         }
         let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")
-        sut.delete(tasks: [erxTask])
-            .test(expectations: { response in
+        sut.delete(tasks: [erxTask], profileId: profileId)
+            .testWait(expectations: { response in
                 expect(response) == true
             })
     }
 
     /// This tests if occuring errors are mapped to false for the result.
     func testDeleteTasksError() {
-        stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
+        stub(
+            condition: isHost(host) && pathEndsWith("$abort")
+        ) { _ in
             let error = URLError(URLError.Code(rawValue: -1))
             return HTTPStubsResponse(error: error)
         }
 
         let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")
 
-        sut.delete(tasks: [erxTask])
-            .test(failure: { error in
+        sut.delete(tasks: [erxTask], profileId: profileId)
+            .testWait(failure: { error in
                 let expectedError = RemoteStoreError.fhirClient(
                     .http(.init(httpClientError: .httpError(URLError(URLError.Code(rawValue: -1))),
                                 operationOutcome: nil))
@@ -239,15 +254,16 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
 
         var counter = 0
-        stub(condition: isPath("/Communication")
-            && isMethodPOST()) { _ in
-                counter += 1
-                // Note: response is not validated for test
-                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isPath("/Communication") && isMethodPOST()
+        ) { _ in
+            counter += 1
+            // Note: response is not validated for test
+            return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+        }
 
-        sut.redeem(order: shipmentOrder)
-            .test { error in
+        sut.redeem(order: shipmentOrder, profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { order in
                 expect(counter) == 1
@@ -262,16 +278,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
 
         var counter = 0
-        stub(condition: isPath("/Communication")
-            && isMethodPOST()
-            && hasBody(expectedDeliveryRequestBody)) { _ in
-                counter += 1
-                // Note: response is not validated for test
-                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isPath("/Communication")
+                && isMethodPOST()
+                && hasBody(expectedDeliveryRequestBody)
+        ) { _ in
+            counter += 1
+            // Note: response is not validated for test
+            return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+        }
 
-        sut.redeem(order: deliveryOrder)
-            .test { error in
+        sut.redeem(order: deliveryOrder, profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { order in
                 expect(counter) == 1
@@ -286,16 +304,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
 
         var counter = 0
-        stub(condition: isPath("/Communication")
-            && isMethodPOST()
-            && hasBody(expectedOnPremiseRequestBody)) { _ in
-                counter += 1
-                // Note: response is not validated for test
-                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isPath("/Communication")
+                && isMethodPOST()
+                && hasBody(expectedOnPremiseRequestBody)
+        ) { _ in
+            counter += 1
+            // Note: response is not validated for test
+            return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+        }
 
-        sut.redeem(order: onPremiseOrder)
-            .test { error in
+        sut.redeem(order: onPremiseOrder, profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { order in
                 expect(counter) == 1
@@ -307,15 +327,17 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         let expectedError = URLError(.notConnectedToInternet)
 
         var counter = 0
-        stub(condition: isPath("/Communication")
-            && isMethodPOST()
-            && hasBody(expectedShipmentRequestBody)) { _ in
-                counter += 1
-                return HTTPStubsResponse(error: expectedError)
-            }
+        stub(
+            condition: isPath("/Communication")
+                && isMethodPOST()
+                && hasBody(expectedShipmentRequestBody)
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(error: expectedError)
+        }
 
-        sut.redeem(order: shipmentOrder)
-            .test { error in
+        sut.redeem(order: shipmentOrder, profileId: profileId)
+            .testWait { error in
                 expect(counter) == 1
                 expect(error) ==
                     .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
@@ -331,16 +353,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
         var counter = 0
 
-        stub(condition: isHost(host)
-            && isMethodGET()
-            && isPath("/Communication")) { _ in
-                counter += 1
-                // Note: response is not validated for test
-                return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isMethodGET()
+                && isPath("/Communication")
+        ) { _ in
+            counter += 1
+            // Note: response is not validated for test
+            return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
+        }
 
-        sut.listAllCommunications(after: nil, for: .reply)
-            .test { error in
+        sut.listAllCommunications(after: nil, for: .reply, profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { communications in
                 expect(counter) == 1
@@ -355,15 +379,17 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         let expectedError = URLError(.notConnectedToInternet)
 
         var counter = 0
-        stub(condition: isHost(host)
-            && isPath("/Communication")
-            && isMethodGET()) { _ in
-                counter += 1
-                return HTTPStubsResponse(error: expectedError)
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Communication")
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(error: expectedError)
+        }
 
-        sut.listAllCommunications(after: nil, for: .reply)
-            .test { error in
+        sut.listAllCommunications(after: nil, for: .reply, profileId: profileId)
+            .testWait { error in
                 expect(counter) == 1
                 expect(error) ==
                     .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
@@ -379,15 +405,17 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
         var counter = 0
 
-        stub(condition: isHost(host)
-            && isMethodGET()
-            && isPath("/MedicationDispense")) { _ in
-                counter += 1
-                return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isMethodGET()
+                && isPath("/MedicationDispense")
+        ) { _ in
+            counter += 1
+            return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
+        }
 
-        sut.listMedicationDispenses(for: "160.000.000.014.285.76")
-            .test { error in
+        sut.listMedicationDispenses(for: "160.000.000.014.285.76", profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { medicationDispenses in
                 expect(counter) == 1
@@ -402,15 +430,17 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         let expectedError = URLError(.notConnectedToInternet)
 
         var counter = 0
-        stub(condition: isHost(host)
-            && isPath("/MedicationDispense")
-            && isMethodGET()) { _ in
-                counter += 1
-                return HTTPStubsResponse(error: expectedError)
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/MedicationDispense")
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(error: expectedError)
+        }
 
-        sut.listMedicationDispenses(for: "160.000.000.014.285.76")
-            .test { error in
+        sut.listMedicationDispenses(for: "160.000.000.014.285.76", profileId: profileId)
+            .testWait { error in
                 expect(counter) == 1
                 expect(error) ==
                     .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
@@ -425,28 +455,32 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
 
-        stub(condition: pathStartsWith("/ChargeItem")
-            && isMethodDELETE()) { _ in
-                fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
-            }
+        stub(
+            condition: pathStartsWith("/ChargeItem")
+                && isMethodDELETE()
+        ) { _ in
+            fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
+        }
         let chargeItem = ErxChargeItem(
             identifier: "200.000.001.206.112.29",
             fhirData: Data("FHIRData".utf8),
             accessCode: "12"
         )
 
-        sut.delete(chargeItems: [chargeItem])
-            .test(expectations: { response in
+        sut.delete(chargeItems: [chargeItem], profileId: profileId)
+            .testWait(expectations: { response in
                 expect(response) == true
             })
     }
 
     func testDeleteChargeItemWithError() {
-        stub(condition: pathStartsWith("/ChargeItem")
-            && isMethodDELETE()) { _ in
-                let error = URLError(URLError.Code(rawValue: -1))
-                return HTTPStubsResponse(error: error)
-            }
+        stub(
+            condition: pathStartsWith("/ChargeItem")
+                && isMethodDELETE()
+        ) { _ in
+            let error = URLError(URLError.Code(rawValue: -1))
+            return HTTPStubsResponse(error: error)
+        }
 
         let chargeItem = ErxChargeItem(
             identifier: "200.000.001.206.112.29",
@@ -454,8 +488,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             accessCode: "12"
         )
 
-        sut.delete(chargeItems: [chargeItem])
-            .test(failure: { error in
+        sut.delete(chargeItems: [chargeItem], profileId: profileId)
+            .testWait(failure: { error in
                 let expectedError = RemoteStoreError.fhirClient(
                     .http(.init(httpClientError: .httpError(URLError(URLError.Code(rawValue: -1))),
                                 operationOutcome: nil))
@@ -471,15 +505,17 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
 
         var counter = 0
-        stub(condition: isHost(host)
-            && isPath("/Consent")
-            && isMethodGET()) { _ in
-                counter += 1
-                return fixture(filePath: consentResponse, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Consent")
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return fixture(filePath: consentResponse, headers: ["Content-Type": "application/json"])
+        }
 
-        sut.fetchConsents()
-            .test { error in
+        sut.fetchConsents(profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { consent in
                 expect(counter) == 1
@@ -492,15 +528,17 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         let expectedError = URLError(.notConnectedToInternet)
 
         var counter = 0
-        stub(condition: isHost(host)
-            && isPath("/Consent")
-            && isMethodGET()) { _ in
-                counter += 1
-                return HTTPStubsResponse(error: expectedError)
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Consent")
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(error: expectedError)
+        }
 
-        sut.fetchConsents()
-            .test { error in
+        sut.fetchConsents(profileId: profileId)
+            .testWait { error in
                 expect(counter) == 1
                 expect(error) ==
                     .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
@@ -515,14 +553,16 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
 
-        stub(condition: isHost(host)
-            && isPath("/Consent")
-            && isMethodDELETE()) { _ in
-                fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Consent")
+                && isMethodDELETE()
+        ) { _ in
+            fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
+        }
 
-        sut.revokeConsent(.chargcons)
-            .test(expectations: { response in
+        sut.revokeConsent(.chargcons, profileId: profileId)
+            .testWait(expectations: { response in
                 expect(response) == true
             })
     }
@@ -533,16 +573,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_erpChrg_v1_0_0
         )
 
-        stub(condition: isHost(host)
-            && isPath("/Consent")
-            && isMethodDELETE()) { _ in
-                fixture(filePath: errorResponse,
-                        status: Int32(HTTPStatusCode.badRequest.rawValue),
-                        headers: ["Accept": "application/fhir+json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Consent")
+                && isMethodDELETE()
+        ) { _ in
+            fixture(filePath: errorResponse,
+                    status: Int32(HTTPStatusCode.badRequest.rawValue),
+                    headers: ["Accept": "application/fhir+json"])
+        }
 
-        sut.revokeConsent(.chargcons)
-            .test(failure: { error in
+        sut.revokeConsent(.chargcons, profileId: profileId)
+            .testWait(failure: { error in
                 expect(error.localizedDescription)
                     .to(contain("error: Could not find any consent for given KVNR , code: not-found"))
             }, expectations: { _ in
@@ -557,16 +599,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         )
 
         var counter = 0
-        stub(condition: isHost(host)
-            && isPath("/Consent")
-            && isMethodPOST()
-            && hasBody(expectedChargeConsentRequestBody)) { _ in
-                counter += 1
-                return fixture(filePath: grantConsentResponse, headers: ["Content-Type": "application/json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Consent")
+                && isMethodPOST()
+                && hasBody(expectedChargeConsentRequestBody)
+        ) { _ in
+            counter += 1
+            return fixture(filePath: grantConsentResponse, headers: ["Content-Type": "application/json"])
+        }
 
-        sut.grantConsent(chargeConsent)
-            .test { error in
+        sut.grantConsent(chargeConsent, profileId: profileId)
+            .testWait { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { consent in
                 expect(counter) == 1
@@ -580,16 +624,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_erpChrg_v1_0_0
         )
 
-        stub(condition: isHost(host)
-            && isPath("/Consent")
-            && isMethodPOST()) { _ in
-                fixture(filePath: errorResponse,
-                        status: Int32(HTTPStatusCode.badRequest.rawValue),
-                        headers: ["Accept": "application/fhir+json"])
-            }
+        stub(
+            condition: isHost(host)
+                && isPath("/Consent")
+                && isMethodPOST()
+        ) { _ in
+            fixture(filePath: errorResponse,
+                    status: Int32(HTTPStatusCode.badRequest.rawValue),
+                    headers: ["Accept": "application/fhir+json"])
+        }
 
-        sut.grantConsent(chargeConsent)
-            .test(failure: { error in
+        sut.grantConsent(chargeConsent, profileId: profileId)
+            .testWait(failure: { error in
                 expect(error.localizedDescription)
                     .to(contain("error: Charging consent already exists for this kvnr, code: conflict"))
             }, expectations: { _ in

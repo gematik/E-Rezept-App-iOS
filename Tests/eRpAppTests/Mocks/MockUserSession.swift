@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 import BfArM
 import Combine
 @testable import eRpFeatures
@@ -41,6 +40,7 @@ class MockUserSession: UserSession {
     var mockIDPSession: IDPSessionMock
     var profileSecureDataWiper: ProfileSecureDataWiper
     var secureUserStore: SecureUserDataStore
+    var mockUpdateChecker: UpdateChecker
 
     var isLoggedIn: Bool
     var profileId: UUID
@@ -51,7 +51,8 @@ class MockUserSession: UserSession {
         prescriptionRepository: PrescriptionRepositoryMock = PrescriptionRepositoryMock(),
         idpSession: IDPSessionMock = IDPSessionMock(),
         secureUserStore: SecureUserDataStore = MockSecureUserStore(),
-        profileSecureDataWiper: ProfileSecureDataWiper = ProfileSecureDataWiperMock()
+        profileSecureDataWiper: ProfileSecureDataWiper = ProfileSecureDataWiperMock(),
+        mockUpdateChecker: UpdateChecker = UpdateChecker { false }
     ) {
         isLoggedIn = isAuthenticated
         self.profileId = profileId
@@ -59,6 +60,7 @@ class MockUserSession: UserSession {
         mockIDPSession = idpSession
         self.profileSecureDataWiper = profileSecureDataWiper
         self.secureUserStore = secureUserStore
+        self.mockUpdateChecker = mockUpdateChecker
     }
 
     lazy var idpSession: IDPSession = mockIDPSession
@@ -95,15 +97,21 @@ class MockUserSession: UserSession {
 
     lazy var profileDataStore: ProfileDataStore = mockProfileDataStore
 
+    var updateChecker: UpdateChecker {
+        mockUpdateChecker
+    }
+
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = NFCHealthCardPasswordControllerMock()
+
+    lazy var appSecurityManager: AppSecurityManager = AppSecurityManagerMock()
+
+    private(set) lazy var deviceSecurityManager: DeviceSecurityManager = MockDeviceSecurityManager()
 
     var profileReturnValue: AnyPublisher<Profile, LocalStoreError>!
 
     func profile() -> AnyPublisher<Profile, LocalStoreError> {
         profileReturnValue
     }
-
-    lazy var avsSession: AVSSession = AVSSessionMock()
 
     lazy var avsTransactionDataStore: AVSTransactionDataStore = AVSTransactionDataStoreMock()
 
@@ -114,8 +122,6 @@ class MockUserSession: UserSession {
     lazy var idpSessionLoginHandler: LoginHandler = LoginHandlerMock()
 
     lazy var pairingIdpSessionLoginHandler: LoginHandler = LoginHandlerMock()
-
-    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = SecureEnclaveSignatureProviderMock()
 
     var bfarmSession: BfArMSession = .init(fetchBfArMInfo: { _ in nil }, fetchCachedImage: { _ in nil })
 }

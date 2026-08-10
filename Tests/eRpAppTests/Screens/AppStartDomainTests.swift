@@ -25,6 +25,7 @@ import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
+import FeatureCommunication
 import FeatureHelpers
 import Nimble
 import XCTest
@@ -95,6 +96,7 @@ final class AppStartDomainTests: XCTestCase {
                         )
                     ),
                     orders: OrdersDomain.State(communicationMessage: Shared(value: [])),
+                    messages: MessageThreadListDomain.State(),
                     settings: SettingsDomain.State(),
                     unreadOrderMessageCount: 0,
                     unreadInternalCommunicationCount: 0
@@ -127,6 +129,7 @@ final class AppStartDomainTests: XCTestCase {
                         )
                     ),
                     orders: OrdersDomain.State(communicationMessage: Shared(value: [])),
+                    messages: MessageThreadListDomain.State(),
                     settings: .init(),
                     unreadOrderMessageCount: 0,
                     unreadInternalCommunicationCount: 0

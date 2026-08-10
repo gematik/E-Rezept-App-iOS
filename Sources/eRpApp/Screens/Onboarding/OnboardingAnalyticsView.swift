@@ -116,7 +116,6 @@ struct OnboardingAnalyticsView: View {
 extension OnboardingAnalyticsView {
     struct TitleView: View {
         var action: () -> Void
-        @State var calculatedHeight = CGFloat(1)
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -132,13 +131,11 @@ extension OnboardingAnalyticsView {
 
                 UIKitTextView(
                     attributedString: attributedSubtitle,
-                    calculatedHeight: $calculatedHeight,
                     font: .preferredFont(forTextStyle: .subheadline),
                     foregroundColor: .secondaryLabel
                 ) { _ in
                     action()
                 }
-                .frame(height: calculatedHeight)
                 .accessibilityElement(children: .contain)
                 .accessibility(identifier: A11y.onboarding.analytics.onbAnaTxtSubtitle)
                 .padding(.top, 8)

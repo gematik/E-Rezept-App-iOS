@@ -396,8 +396,7 @@ struct DiGaDetailDomain {
                 return .none
             }
             return .run { _ in
-                guard await openURLHandler.canOpenURL(url) else { return }
-                await openURLHandler.open(url)
+                _ = await openURLHandler.open(url)
             }
         case let .copyCode(text):
             pasteboardService.copy(text)
@@ -541,7 +540,7 @@ struct DiGaDetailDomain {
             guard let email = createReportEmail(body: body) else { return .none }
             return .run { _ in
                 guard await openURLHandler.canOpenURL(email) else { return }
-                await openURLHandler.open(email)
+                _ = await openURLHandler.open(email)
             }
         case .archive:
             return update(diGaInfo: state.diGaInfo

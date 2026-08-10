@@ -1,15 +1,15 @@
 {
-    "listMedicationDispensesForRecordings":
+    "listMedicationDispensesForProfileIdRecordings":
     {
         "type": "repeated",
         "payload": []
     },
-    "listAllCommunicationsAfterForRecordings":
+    "listAllCommunicationsAfterForProfileIdRecordings":
     {
         "type": "repeated",
         "payload": []
     },
-    "listAllTasksAfterRecordings":
+    "listAllTasksAfterProfileIdRecordings":
     {
         "type": "repeated",
         "payload":
@@ -155,7 +155,7 @@
                 ]
             }
     },
-    "listDetailedTasksForRecordings":
+    "listDetailedTasksForProfileIdRecordings":
     {
         "type": "repeated",
         "payload":

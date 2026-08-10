@@ -97,11 +97,14 @@ struct MainScreen: Screen {
         return RedeemSelectionScreen(app: app)
     }
 
+    @discardableResult
     func swipeToRefresh(fileID _: String = #fileID, file _: String = #filePath,
-                        line _: UInt = #line) {
+                        line _: UInt = #line) -> MainScreen {
         let from = app.scrollViews.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
         let to = app.scrollViews.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.9))
         from.press(forDuration: 0.0, thenDragTo: to)
+
+        return MainScreen(app: app)
     }
 
     func tapRegister(fileID: String = #fileID, file: String = #filePath,
@@ -121,6 +124,16 @@ struct MainScreen: Screen {
 
         let insuranceDrawerScreen = InsuranceDrawerScreen(app: app)
         await screen(insuranceDrawerScreen)
+    }
+
+    func redeemButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.mainScreen.erxBtnRedeemPrescriptions,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
     }
 
     func tapArchive(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> ArchiveScreen {

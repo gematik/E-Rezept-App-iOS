@@ -24,6 +24,7 @@ import CodedError
 import Dependencies
 import eRpKit
 import eRpResources
+import FeatureHelpers
 import Foundation
 import GemPDFKit
 import Settings
@@ -72,7 +73,7 @@ extension DependencyValues {
 
 // swiftlint:disable:next type_body_length
 struct DefaultChargeItemPDFService: ChargeItemPDFService {
-    let uiDateFormatter = UIDateFormatter(fhirDateFormatter: .shared)
+    @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     func loadPDFOrGenerate(for chargeItem: ErxChargeItem) throws -> URL {
         guard let outputURL = try? FileManager.default.url(
@@ -388,8 +389,9 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
     static let unsafeFileCharacterSet = CharacterSet(charactersIn: "\"\\/?<>:*| ")
 
     func generateChargeItemPDFName(for chargeItem: ErxChargeItem) -> String {
-        let date = uiDateFormatter.fhirDateFormatter.date(from: chargeItem.enteredDate ?? "") ?? Date()
-        let dateFormatted = uiDateFormatter.fhirDateFormatter.string(from: date, format: .yearMonthDay)
+        @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+        let date = fhirDateFormatter.date(from: chargeItem.enteredDate ?? "") ?? Date()
+        let dateFormatted = fhirDateFormatter.string(from: date, format: .yearMonthDay)
         let medicationNameFormatted = (chargeItem.medication?.name ?? L10n.serviceTxtMissingChargeItemPdfName.text)
             .trimmed()
             .components(separatedBy: Self.unsafeFileCharacterSet)

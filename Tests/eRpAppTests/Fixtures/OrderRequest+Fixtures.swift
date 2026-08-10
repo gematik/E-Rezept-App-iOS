@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVS
 @testable import eRpFeatures
 import eRpKit
 import Foundation
@@ -33,7 +32,6 @@ extension OrderRequest {
             flowType: "160",
             taskID: "task_id_1",
             accessCode: "access_code_1",
-            endpoint: endpoint,
             recipients: certificates
         )
 
@@ -42,7 +40,6 @@ extension OrderRequest {
             flowType: "160",
             taskID: "task_id_2",
             accessCode: "access_code_2",
-            endpoint: endpoint,
             recipients: certificates
         )
 
@@ -51,7 +48,6 @@ extension OrderRequest {
             flowType: "160",
             taskID: "task_id_3",
             accessCode: "access_code_3",
-            endpoint: endpoint,
             recipients: certificates
         )
 
@@ -63,7 +59,6 @@ extension OrderRequest {
                     flowType: "160",
                     taskID: "task_id_1",
                     accessCode: "access_code_1",
-                    endpoint: endpoint,
                     recipients: certificates
                 ),
                 OrderRequest(
@@ -72,7 +67,6 @@ extension OrderRequest {
                     flowType: "160",
                     taskID: "task_id_2",
                     accessCode: "access_code_2",
-                    endpoint: endpoint,
                     recipients: certificates
                 ),
                 OrderRequest(
@@ -81,7 +75,6 @@ extension OrderRequest {
                     flowType: "160",
                     taskID: "task_id_3",
                     accessCode: "access_code_3",
-                    endpoint: endpoint,
                     recipients: certificates
                 ),
             ]
@@ -94,7 +87,6 @@ extension OrderRequest {
             accessCode: "access_code_1"
         )
 
-        static let endpoint = PharmacyLocation.AVSEndpoints.Endpoint(url: URL(string: "http://some-service.com:8003/")!)
         static let certificates = [x509]
 
         static let x509: X509 = {

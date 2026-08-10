@@ -135,7 +135,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#10] Testing the implementation
-    @MainActor func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async throws {
+    func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async throws {
         let trustStoreSessionMock = TrustStoreSessionMock()
         trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = false
         let idpClientMock = MockIDPClient()
@@ -179,7 +179,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
-        expect(self.trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).to(equal(1))
+        expect(self.trustStoreSessionMock.validateEeCertificateX509BoolCallsCount).toEventually(equal(1))
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
@@ -211,7 +211,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#13] Testing the implementation
-    @MainActor func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async throws {
+    func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async throws {
         let trustStoreSessionMock = TrustStoreSessionMock()
         trustStoreSessionMock.validateEeCertificateX509BoolThrowableError = TrustStoreError.invalidOCSPResponse
         let idpClientMock = MockIDPClient()
@@ -261,7 +261,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512#15] Testing the implementation
-    @MainActor func testLoadDiscoveryDocumentFromRemoteOnInit() async throws {
+    func testLoadDiscoveryDocumentFromRemoteOnInit() async throws {
         let trustStoreSessionMock = TrustStoreSessionMock()
         trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = true
         let idpClientMock = MockIDPClient()
@@ -340,7 +340,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         })
     }
 
-    @MainActor func testInvalidateStoredDocumentWhenExpired() async throws {
+    func testInvalidateStoredDocumentWhenExpired() async throws {
         let idpClientMock = MockIDPClient()
         // Date provider provides a date that should invalidate the DiscoveryDocument when reading from IDPStorage
         // But provide a date that would validate the (same) document when coming from the IDPClient
@@ -383,7 +383,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         _ = sut
     }
 
-    @MainActor func testRequestChallenge() async throws {
+    func testRequestChallenge() async throws {
         let trustStoreSessionMock = TrustStoreSessionMock()
         trustStoreSessionMock.validateEeCertificateX509BoolReturnValue = true
         let idpClientMock = MockIDPClient()
@@ -1214,7 +1214,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(idpClientMock.loadDiscoveryDocument_CallsCount).to(equal(1))
     }
 
-    @MainActor func testRequestChallengeInvalidSignatureRetriesSuccessfully() async throws {
+    func testRequestChallengeInvalidSignatureRetriesSuccessfully() async throws {
         let storage = MemStorage()
         let issuedDate = try XCTUnwrap(dateFormatter.date(from: "2021-03-16 14:00:00.0000+0000"))
         let discoveryDocument = discoveryDocument(createdOn: issuedDate)
@@ -1291,5 +1291,27 @@ final class DefaultIDPSessionTests: XCTestCase {
 extension String {
     func encodeBase64urlsafe() -> Data? {
         data(using: .utf8)?.encodeBase64UrlSafe()
+    }
+}
+
+extension DiscoveryDocument: Equatable {
+    public static func ==(lhs: DiscoveryDocument, rhs: DiscoveryDocument) -> Bool {
+        lhs.createdOn == rhs.createdOn &&
+            lhs.backing == rhs.backing &&
+            lhs.discKey.derBytes == rhs.discKey.derBytes &&
+            lhs.signingCert.derBytes == rhs.signingCert.derBytes &&
+            lhs.encryptionPublicKey == rhs.encryptionPublicKey &&
+            lhs.payload == rhs.payload
+    }
+}
+
+extension BrainpoolP256r1.KeyExchange.PublicKey: @retroactive Equatable {
+    public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
+                          rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
+        guard let lhsValue = try? lhs.rawValue(),
+              let rhsValue = try? rhs.rawValue() else {
+            return false
+        }
+        return lhsValue == rhsValue
     }
 }

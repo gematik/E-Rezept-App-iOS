@@ -23,6 +23,7 @@
 import Dependencies
 @testable import eRpFeatures
 import eRpKit
+import FeatureHelpers
 import Foundation
 
 extension Prescription {

@@ -31,6 +31,7 @@ import Settings
 extension ProfileBasedSessionProvider: DependencyKey {
     public static let liveValue: ProfileBasedSessionProvider = {
         @Dependency(\.userSessionProvider) var userSessionProvider
+        @Dependency(\.secureEnclaveSignatureProviderFactory) var secureEnclaveSignatureProviderFactory
         var demoUserSession = UsersSessionContainerDependency.liveValue.userSession
 
         func userSession(for profileId: UUID) -> UserSession {
@@ -52,7 +53,7 @@ extension ProfileBasedSessionProvider: DependencyKey {
         } idTokenValidator: { profileId in
             userSession(for: profileId).idTokenValidator()
         } signatureProvider: { profileId in
-            userSession(for: profileId).secureEnclaveSignatureProvider
+            secureEnclaveSignatureProviderFactory.construct(profileId)
         }
     }()
 }

@@ -74,10 +74,9 @@ extension OrganDonorJumpService: DependencyKey {
                     }
                     url = genericUrl
                 }
-                guard await openURLHandler.canOpenURL(url) else {
+                guard await openURLHandler.open(url) else {
                     throw OrganDonorJumpServiceError.openingSpecificUrl
                 }
-                await openURLHandler.open(url)
             }
         } catch let error as OrganDonorJumpServiceError {
             throw error

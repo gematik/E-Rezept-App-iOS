@@ -48,10 +48,9 @@ final class ErxTaskRepositoryTests: XCTestCase {
                     return Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
                 }
             }
-
         mockRemoteDataStore
-            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
-            { sparseTask in
+            .listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { sparseTask, _ in
                 if sparseTask.next == Fixtures.erxTaskPageA.next {
                     return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
                 } else if sparseTask.next == Fixtures.erxTaskPageB.next {
@@ -64,7 +63,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
             }
 
         mockRemoteDataStore
-            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { timestamp in
+            .listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { timestamp, _ in
                 if timestamp == nil {
                     return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
                 } else {
@@ -73,8 +73,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
             }
 
         mockRemoteDataStore
-            .listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
-            { previousPage in
+            .listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { previousPage, _ in
                 guard let next = previousPage.next else {
                     return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
                 }
@@ -159,13 +159,15 @@ final class ErxTaskRepositoryTests: XCTestCase {
                 return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+            .listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listTasksRemote")
                 return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
                     .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+            .listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listDetailedTasksRemote")
                 return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
                     .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
@@ -173,7 +175,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
 
         // medication dispenses
         mockRemoteDataStore
-            .listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure = { _ in
+            .listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listMDRemote")
                 return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self)
                     .eraseToAnyPublisher()
@@ -203,8 +206,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
                 return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
-            { _, _ in
+            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
+            { _, _, _ in
                 actualCallOrder.append("listAllCommunicationsRemote")
                 return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             }
@@ -216,8 +219,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
 
         // audit events
         mockRemoteDataStore
-            .listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
-            { _, _ in
+            .listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
+            { _, _, _ in
                 actualCallOrder.append("listAllAuditEventsRemote")
                 return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
                     .eraseToAnyPublisher()
@@ -269,13 +272,15 @@ final class ErxTaskRepositoryTests: XCTestCase {
                 return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+            .listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listTasksRemote")
                 return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
                     .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+            .listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listDetailedTasksRemote")
                 return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
                     .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
@@ -289,7 +294,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
             }
 
         mockRemoteDataStore
-            .listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorClosure = { _ in
+            .listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listAllChargeItemsRemote")
                 return Just([Fixtures.chargeItem])
                     .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
@@ -303,7 +309,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
 
         // medication dispenses
         mockRemoteDataStore
-            .listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure = { _ in
+            .listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listMDRemote")
                 return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self)
                     .eraseToAnyPublisher()
@@ -333,8 +340,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
                 return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
-            { _, _ in
+            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
+            { _, _, _ in
                 actualCallOrder.append("listAllCommunicationsRemote")
                 return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             }
@@ -346,8 +353,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
 
         // audit events
         mockRemoteDataStore
-            .listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
-            { _, _ in
+            .listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
+            { _, _, _ in
                 actualCallOrder.append("listAllAuditEventsRemote")
                 return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
                     .eraseToAnyPublisher()
@@ -435,7 +442,7 @@ final class ErxTaskRepositoryTests: XCTestCase {
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
-        mockRemoteDataStore.deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorClosure = { _ in
+        mockRemoteDataStore.deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure = { _, _ in
             actualCallOrder.append("deleteRemoteTasksCalled")
             return Just(true).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
         }
@@ -519,7 +526,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
             }
 
         mockRemoteDataStore
-            .listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+            .listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listAllTasksRemote")
                 return Just(PagedContent(
                     content: [ErxTask(identifier: task.identifier, status: .cancelled, flowType: .pharmacyOnly)],
@@ -530,7 +538,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
             }
 
         mockRemoteDataStore
-            .listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = { _ in
+            .listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure =
+            { _, _ in
                 actualCallOrder.append("listDetailedTasksRemote")
                 return Just(PagedContent(
                     content: [task],
@@ -565,8 +574,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
                 return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
             }
         mockRemoteDataStore
-            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
-            { _, _ in
+            .listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure =
+            { _, _, _ in
                 actualCallOrder.append("listAllCommunicationsRemote")
                 return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             }
@@ -578,8 +587,8 @@ final class ErxTaskRepositoryTests: XCTestCase {
 
         // audit events
         mockRemoteDataStore
-            .listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
-            { _, _ in
+            .listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure =
+            { _, _, _ in
                 actualCallOrder.append("listAllAuditEventsRemote")
                 return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
                     .eraseToAnyPublisher()

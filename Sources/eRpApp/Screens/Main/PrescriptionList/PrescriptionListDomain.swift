@@ -69,8 +69,8 @@ struct PrescriptionListDomain {
 
         var showRedeemDiGaButton: Bool {
             let openPrescription = prescriptions.filter { !$0.isArchived }
-            return openPrescription.filter(\.isDiGaPrescription).count >= 1 && openPrescription
-                .filter { !$0.isDiGaPrescription }.isEmpty
+            return openPrescription.filter(\.isDiGaPrescription).count >= 1
+                && !openPrescription.contains { !$0.isDiGaPrescription }
         }
 
         init(
@@ -223,7 +223,7 @@ struct PrescriptionListDomain {
             state.prescriptions = loadingState.value ?? []
             // check if user has a DiGA prescription
             if state.appDefaults.diga.hasPrescripedDiga == false,
-               state.prescriptions.first(where: { $0.isDiGaPrescription }) != nil {
+               state.prescriptions.contains(where: \.isDiGaPrescription) {
                 state.$appDefaults.withLock { $0.diga.hasPrescripedDiga = true }
             }
             return .none

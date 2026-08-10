@@ -1,5 +1,5 @@
 {
-    "listMedicationDispensesForRecordings":
+    "listMedicationDispensesForProfileIdRecordings":
     {
         "payload":
         [
@@ -19,7 +19,7 @@
         ],
         "type": "steps"
     },
-    "redeemOrderRecordings":
+    "redeemOrderProfileIdRecordings":
     {
         "payload":
         {
@@ -31,7 +31,7 @@
         },
         "type": "repeated"
     },
-    "listDetailedTasksForRecordings":
+    "listDetailedTasksForProfileIdRecordings":
     {
         "payload":
         [
@@ -101,7 +101,7 @@
         ],
         "type": "steps"
     },
-    "listAllTasksAfterRecordings":
+    "listAllTasksAfterProfileIdRecordings":
     {
         "payload":
         [
@@ -225,7 +225,7 @@
         ],
         "type": "steps"
     },
-    "listAllCommunicationsAfterForRecordings":
+    "listAllCommunicationsAfterForProfileIdRecordings":
     {
         "payload":
         [

@@ -29,6 +29,10 @@ protocol SmartMock {
     func recordedData() throws -> CodableMock
 }
 
+protocol VerifiableMock: Codable {
+    static var expectedKeys: Set<String> { get }
+}
+
 struct CodableMock: Codable {
     let jsonData: Data
     let name: String

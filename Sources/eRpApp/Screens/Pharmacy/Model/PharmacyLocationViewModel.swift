@@ -223,7 +223,7 @@ struct PharmacyLocationViewModel: Hashable, Equatable, Identifiable {
         let dayOfWeek: String
         let entries: [Timespan]
         var openingState: PharmacyOpenHoursCalculator.TodaysOpeningState {
-            entries.compactMap { entry in
+            entries.compactMap { (entry: Timespan) -> PharmacyOpenHoursCalculator.TodaysOpeningState? in
                 switch entry.openingState {
                 case .unknown, .closed:
                     return nil

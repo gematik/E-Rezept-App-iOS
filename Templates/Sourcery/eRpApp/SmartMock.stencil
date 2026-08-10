@@ -186,11 +186,34 @@
     {% endfor %}
 {% endmacro %}
 
+{% macro expectedKeysMethods type %}
+    {% typed type as Type %}
+    {% for method in type.allMethods %}
+        {% if not method.returnTypeName.isVoid and not method.definedInType.isExtension %}
+                "{{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings",
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro expectedKeysProperties type %}
+    {% typed type as Type %}
+    {% for property in type.variables where not property.isComputed %}
+                "{{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings",
+    {% endfor %}
+{% endmacro %}
+
 {% macro serialization type %}
     {% typed type as Type %}
-    struct Mocks: Codable {
+    struct Mocks: VerifiableMock {
     {% call serializationMethods type %}
     {% call serializationProperties type %}
+
+        static var expectedKeys: Set<String> {
+            [
+    {% call expectedKeysMethods type %}
+    {% call expectedKeysProperties type %}
+            ]
+        }
     }
     
     func recordedData() throws -> CodableMock {

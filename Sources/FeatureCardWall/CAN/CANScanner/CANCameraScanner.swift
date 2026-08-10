@@ -138,13 +138,13 @@ struct LightSwitch: View {
                 .accessibilityLabel(Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff))
                 .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnFlashlight)
             }
-        }.onReceive(NotificationCenter.default
-            .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                toggleFlashlight(status: false)
-                isFlashOn = false
-            }
-            .onChange(of: isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            toggleFlashlight(status: false)
+            isFlashOn = false
+        }
+        .onChange(of: isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
     }
 }
 

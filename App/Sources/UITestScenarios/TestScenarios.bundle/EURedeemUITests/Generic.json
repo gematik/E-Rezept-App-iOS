@@ -1,0 +1,94 @@
+{
+    "taskResponse":
+    {
+        "identifier": "160.000.006.456.334.91",
+        "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+        "medicationRequest":
+        {
+            "substitutionAllowed": true,
+            "hasEmergencyServiceFee": false,
+            "quantity":
+            {
+                "value": "1",
+                "unit": "{Package}"
+            },
+            "dosageInstructions": "1-0-0",
+            "ser": true,
+            "coPaymentStatus": "0",
+            "multiplePrescription":
+            {
+                "mark": false
+            }
+        },
+        "medicationDispenses": [],
+        "medication":
+        {
+            "isVaccine": false,
+            "amount":
+            {
+                "numerator":
+                {
+                    "unit": "Stk",
+                    "value": "14"
+                },
+                "denominator":
+                {
+                    "value": "1"
+                }
+            },
+            "profile": "pzn",
+            "normSizeCode": "N1",
+            "pzn": "03678010",
+            "dosageForm": "TRS",
+            "name": "EU-Testmedikament",
+            "drugCategory": "00",
+            "ingredients": []
+        },
+        "author": "Dr. Test",
+        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.91",
+        "authoredOn": "{{DATE:-1D}}",
+        "status": "ready",
+        "expiresOn": "{{DATE:+90D}}",
+        "acceptedUntil": "{{DATE:+24D}}",
+        "practitioner":
+        {
+            "qualification": "general practitioner",
+            "lanr": "123456789",
+            "name": "Dr. Test Arzt"
+        },
+        "organization":
+        {
+            "name": "Testpraxis",
+            "email": "test@testpraxis.de",
+            "identifier": "123456789",
+            "address": "Teststraße 1\n12345, Teststadt",
+            "phone": "+49-100-1234567"
+        },
+        "patient":
+        {
+            "birthDate": "1990-01-01",
+            "name": "Max Mustermann",
+            "status": "1",
+            "insurance": "Test Krankenkasse",
+            "address": "Musterstraße 1\n12345, Musterstadt",
+            "insuranceId": "X123456789"
+        },
+        "prescriptionId": "160.000.006.456.334.91",
+        "flowType": "160",
+        "isEURedeemable": "{{REDEEMABLE}}",
+        "isSetEURedeemableByPatient": "{{REDEEMABLE_BY_PATIENT}}",
+        "source": "server",
+        "communications": [],
+        "avsTransactions": [],
+        "lastModified": "{{DATETIME:-10m}}"
+    },
+    "grantEuAccessResponse":
+    {
+        "identifier": "12345678-1234-1234-1234-123456789012",
+        "accessCode": "X123456789",
+        "countryCode": "DE",
+        "validUntil": "{{VALID_UNTIL}}",
+        "createdAt": 0.0,
+        "profileId": null
+    }
+}

@@ -262,6 +262,7 @@ settings:
     - stg_btn_edit_profile_security_section_show_tokens
     - stg_btn_edit_profile_security_section_show_audit_events
     - stg_txt_edit_profile_security_show_tokens_hint
+    - stg_txt_edit_profile_my_area_title
   newProfile:
     - stg_txt_new_profile_bg_color_title
     - stg_txt_new_profile_bg_color_picker
@@ -285,6 +286,8 @@ settings:
     - stg_txt_audit_events_no_protocol_description
     - stg_txt_audit_events_bottom_banner_message
     - stg_btn_audit_events_bottom_banner
+  notificationChannels:
+    - stg_txt_notification_channels_description
   legalNotice:
     - stg_lno_txt_header_legal_info
     - stg_lno_txt_legal_notice
@@ -363,6 +366,39 @@ redeem:
       - eurdm_code_txt_validity_manual
       - eurdm_code_txt_qr_expired
       - eurdm_code_txt_validity_qr
+    selection:
+      - eurdm_txt_selection_title
+      - eurdm_txt_selection_subtitle
+      - eurdm_img_selection_banner
+      - eurdm_btn_selection_redeem
+      - eurdm_btn_selection_close
+      - eurdm_btn_selection_prescriptions
+      - eurdm_txt_selection_prescription_title
+      - eurdm_txt_selection_prescription_caption
+      - eurdm_btn_selection_country
+      - eurdm_txt_selection_country_title
+      - eurdm_txt_selection_country_no_selection
+      - eurdm_txt_selection_country_caption
+    countrySelection:
+      - eurdm_txt_country_title
+      - eurdm_txt_country_subtitle
+      - eurdm_btn_country_location
+      - eurdm_txt_country_empty_title
+      - eurdm_txt_country_empty_subtitle
+      - eurdm_txt_country_location_empty
+    prescriptionSelection:
+      - eurdm_txt_prsc_patient_name
+    instructions:
+      - eurdm_txt_instructions_title
+      - eurdm_txt_instructions_subtitle
+      - eurdm_txt_instructions_step1_title
+      - eurdm_txt_instructions_step2_title
+      - eurdm_txt_instructions_step3_title
+      - eurdm_txt_instructions_step4_title
+      - eurdm_txt_instructions_step5_title
+      - eurdm_txt_instructions_disclaimer
+      - eurdm_btn_instructions_generate_code
+      - eurdm_btn_instructions_close
 orders:
   list:
     - ord_txt_empty_list
@@ -432,6 +468,7 @@ profileSelection:
   - pro_btn_selection_edit
   - pro_btn_selection_profile_entry
   - pro_btn_selection_profile_row
+  - pro_btn_selection_profile_loading_spinner
   - pro_btn_selection_add_profile
 editProfilePicture:
     - epp_btn_reset_picture
@@ -456,6 +493,7 @@ prescriptionDetails:
   - prsc_dtl_btn_scanned_prescription_info
   - prsc_dtl_btn_direct_assignment_info
   - prsc_dtl_btn_self_payer_info
+  - prsc_dtl_btn_t_prescription_info
   - prsc_dtl_txt_prescription_validity
   - prsc_dtl_btn_prescription_validity_info
   - prsc_dtl_drawer_substitution_info
@@ -474,6 +512,7 @@ prescriptionDetails:
   - prsc_dtl_btn_practitioner
   - prsc_dtl_btn_institution
   - prsc_dtl_btn_work_related_accident
+  - prsc_dtl_btn_teratogenic_info
   - prsc_dtl_btn_technical_informations
   - prsc_dtl_drawer_co_payment_info_title
   - prsc_dtl_drawer_co_payment_info_description
@@ -483,6 +522,7 @@ prescriptionDetails:
   - prsc_dtl_drawer_dosage_instructions_info
   - prsc_dtl_drawer_emergency_service_fee_info
   - prsc_dtl_drawer_self_payer_info
+  - prsc_dtl_drawer_t_prescription_info
   - prsc_dtl_txt_authored_on
   - prsc_dtl_txt_bvg
   - prsc_dtl_txt_multi_prescription

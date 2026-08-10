@@ -21,6 +21,7 @@
 //
 import Dependencies
 @testable import eRpFeatures
+import FeatureHelpers
 import Nimble
 import SwiftUI
 import XCTest

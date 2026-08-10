@@ -1,0 +1,68 @@
+[
+    {
+        "id": "2",
+        "text": "Od teraz możesz korzystać z aplikacji e-recepty i rejestrować swoją decyzję o oddaniu narządów w **cyfrowym rejestrze dawstwa narządów** – bezpiecznie i łatwo.\n\nObecnie w Niemczech 9 192 osób pilnie oczekuje na narząd – każda decyzja ma znaczenie i może uratować życie.\n\nPodejmij decyzję już dziś i wnieś istotny wkład w przyszłość wielu ludzi! ❤️‍🩹\n\nRejestr dawstwa narządów można znaleźć w zakładce „Ustawienia” w tej aplikacji.",
+        "timestamp": "2024-11-29T08:00:00.000Z",
+        "version": "1.27.0"
+    },
+    {
+        "id": "3",
+        "text": "**Zgodność z ePA** \n 🤝 Twoje recepty są teraz w pełni kompatybilne z elektroniczną kartą zdrowia. \n \n **Ulepszono** \n ✨ Wygasłe przepisy znikają teraz w archiwum.",
+        "timestamp": "2024-12-20T08:00:00.000Z",
+        "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Lepsza czytelność** \n Przyciemniliśmy nieco kolor naszej marki, aby zwiększyć kontrast kolorów i tym samym poprawić czytelność. \n \n **Zoptymalizowane pole wprowadzania** \n Usunięto kursor w polu wprowadzania numeru dostępowego.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Ulepszony proces składania zamówień** \n Proces składania zamówień jest teraz łatwiejszy i szybszy. \n \n🌐 **Nowe języki** \nNasza aplikacja jest teraz dostępna również w języku hiszpańskim i irlandzkim. \n \n📞 **Rozszerzone możliwości kontaktu** \nWprowadziliśmy nowe możliwości kontaktu z wybranymi towarzystwami ubezpieczeniowymi. \n \n🔍 **Szczegółowe dzienniki dostępu** \nTeraz wyświetlamy również identyfikatory telematyczne w dziennikach dostępu, aby łatwiej było ustalić, kto miał dostęp.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Wykorzystaj przepisane DiGA** \nTeraz możesz realizować recepty na aplikacje zdrowia cyfrowego (DiGA) bezpośrednio za pośrednictwem aplikacji e-recept. Recepty będą wystawiane przez specjalistów w Hamburgu w ramach projektu pilotażowego. Kod aktywacyjny i link do DiGA znajdziesz tutaj, w aplikacji e-recept. \n \n **🏥 Nowa baza danych aptek** \nWprowadziliśmy nową, przyjazną dla przyszłości bazę danych do wyszukiwania aptek.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Dostępność** \nNasze oświadczenie o dostępności jest teraz dostępne w ustawieniach. Proces wdrażania stał się również bardziej dostępny. \n \n **📲 Realizuj DiGA u firm ubezpieczeniowych** \nRecepty na aplikacje zdrowia cyfrowego (DiGA) można teraz realizować również u innych firm ubezpieczeniowych.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Rejestracja dla osób ubezpieczonych prywatnie** \nRejestracja dla osób ubezpieczonych prywatnie została zoptymalizowana. Możesz wygodnie zalogować się za pomocą swojego identyfikatora zdrowotnego za pomocą zaledwie kilku kliknięć. \n \n **🏥 Zaktualizowane dane aptek** \nZmiany wprowadzane przez apteki w nowej bazie danych są teraz niezawodnie wyświetlane. \n \n **📲 Więcej informacji dla DiGA** \nOd teraz będziesz otrzymywać bardziej szczegółowe informacje o swoich receptach DiGA, takie jak cena sprzedaży lub logo. \n \n **♿️ Dostępność** \nEkran wprowadzania numeru dostępu do karty zdrowotnej został przeprojektowany i jest teraz zoptymalizowany pod kątem obsługi VoiceOver. \n \n **📤 Udostępniaj recepty** \nRecepty można teraz udostępniać innym osobom bezpośrednio z aplikacji.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Dostępność** \nUstawienia profilu zostały zmienione w celu dalszego zwiększenia dostępności.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
+    },
+    {
+        "id": "10",
+        "text": "Polski: **🏛️ Rejestracja dla większej liczby osób** \nRejestracja jest teraz możliwa również dla osób ubezpieczonych w instytucjach federalnych, takich jak Policja Federalna i inne. \n \n **🕒 Ulepszone godziny otwarcia aptek** \nTeraz wyświetlane są godziny dyżurów i specjalne godziny zamknięcia aptek, jeśli są dostępne. \n \n **💊 Wybór wszystkich recept** \nPodczas realizacji recept wszystkie recepty można teraz wybrać jednocześnie. \n \n **♿ Dostępność** \nKolory czcionek i ikon zostały dostosowane w celu uzyskania większego kontrastu. Ponadto ulepszono wyjście głosowe VoiceOver do edycji zdjęcia profilowego i rozpoznawania statusu logowania.",
+        "timestamp": "2025-12-08T08:00:00.000Z",
+        "version": "1.35.0"
+    },
+    {
+        "id": "11",
+        "text": "**✨ Pokaż kody recept** \nEkran kodów partii i pojedynczych został przeprojektowany, aby zapewnić bardziej intuicyjną obsługę. \n \n **❤️ Ulubione Apteki** \nUlubione Apteki działają teraz bardziej niezawodnie i są kompatybilne z VoiceOver. \n \n **♿ Ułatwienia dostępu** \nUlepszono nawigację VoiceOver i klawiaturą, przyciski, tekst i pola wprowadzania danych są łatwiejsze do zidentyfikowania, a elementy listy są bardziej logicznie ustrukturyzowane. Powiększona czcionka działa teraz na wszystkich ekranach aplikacji. Animowane filmy są odtwarzane tylko raz, aby ułatwić użytkownikom z upośledzeniem funkcji poznawczych.",
+        "timestamp": "2026-02-12T08:00:00.000Z",
+        "version": "1.36.0"
+    },
+    {
+        "id": "12",
+        "text": "**🏥 Ulepszone szczegóły apteki** \nApteki mogą teraz dodawać usługi takie jak szczepienia i funkcje na miejscu, takie jak dostęp bez barier. Apteki można filtrować na podstawie tych nowych informacji. \n \n **✨ Ulepszone wyszukiwanie aptek** \nOstatnio używane apteki i ulubione apteki są teraz wyraźniej oddzielone. Filtry zostały ulepszone. \n \n **✅ Identyfikator zdrowotny dla osób z ubezpieczeniem alternatywnym** \nOsoby, które nie są objęte ustawowym lub prywatnym ubezpieczeniem zdrowotnym, mogą teraz również logować się za pomocą swojego identyfikatora zdrowotnego. \n \n **♿ Dostępność** \nFiltry mają teraz wyższy kontrast, a ich status jest łatwiejszy do zidentyfikowania. Oświadczenie o dostępności zostało zaktualizowane i rozszerzone o sekcję dokumentującą historię zmian. Niektóre przyciski zostały dostosowane w celu poprawy widoczności.",
+        "timestamp": "2026-04-14T08:00:00.000Z",
+        "version": "1.37.0"
+    }
+]

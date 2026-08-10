@@ -317,17 +317,9 @@ final class EditProfileDomainTests: XCTestCase {
         mockUserSession.secureUserStore = mockSecureUserStore
         mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
 
-        mockAppSecurityManager.underlyingAvailableSecurityOptions = (options: [.password], error: nil)
-
-        await sut.send(.task) {
-            $0.availableSecurityOptions = [.password]
-        }
+        await sut.send(.task)
 
         await sut.receive(.response(.tokenReceived(Fixtures.token)))
-
-        await sut.receive(.response(.biometricKeyIDReceived(true))) {
-            $0.hasBiometricKeyID = true
-        }
 
         await sut.receive(.response(.canReceived(Fixtures.can))) {
             $0.can = Fixtures.can
@@ -407,153 +399,6 @@ final class EditProfileDomainTests: XCTestCase {
         expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCallsCount)
             .to(equal(1))
     }
-
-    func testShowDeleteBiometricPairingAlert() async {
-        let sut = testStore(for: Fixtures.profileA)
-
-        // Should show a confirmation dialog
-        await sut.send(.showDeleteBiometricPairingAlert) { state in
-            state.destination = .alert(EditProfileDomain.AlertStates.deleteBiometricPairing)
-        }
-    }
-
-    func testDeleteBiometricPairingHappyPath() async {
-        let sut = testStore(for: Fixtures.profileWithDeleteBiometricPairingAlert)
-
-        let mockSecureUserStore = MockSecureUserStore()
-        mockSecureUserStore.tokenState = Just(Fixtures.token).eraseToAnyPublisher()
-        mockSecureUserStore.can = Just(Fixtures.can).eraseToAnyPublisher()
-        mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
-        mockUserSession.secureUserStore = mockSecureUserStore
-        let mockBiometricsIdpSessionLoginHandler = LoginHandlerMock()
-        mockBiometricsIdpSessionLoginHandler
-            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
-            .eraseToAnyPublisher()
-        mockUserSession.pairingIdpSessionLoginHandler = mockBiometricsIdpSessionLoginHandler
-        let mockIDPSession = IDPSessionMock()
-        mockIDPSession.unregisterDevice_Publisher = Just(true).setFailureType(to: IDPError.self).eraseToAnyPublisher()
-        mockIDPSession.idpToken.send(Fixtures.token)
-        mockUserSession.pairingIdpSession = mockIDPSession
-        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
-        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
-            .eraseToAnyPublisher()
-
-        // when confirming deletion
-        await sut.send(.destination(.presented(.alert(.confirmDeleteBiometricPairing)))) { state in
-            state.token = Fixtures.token
-            state.hasBiometricKeyID = true
-            state.destination = nil
-        }
-
-        expect(mockBiometricsIdpSessionLoginHandler
-            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount).to(equal(1))
-        expect(mockIDPSession.autoRefreshedToken_Called).to(beTrue())
-        expect(mockIDPSession.unregisterDevice_CallsCount).to(equal(1))
-
-        let result = Result<Bool, IDPError>.success(true)
-        await sut.receive(.response(.deleteBiometricPairingReceived(result)))
-
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCallsCount)
-            .to(equal(1))
-    }
-
-    func testDeleteBiometricPairingFailedUnregisterCall() async {
-        let sut = testStore(for: Fixtures.profileWithDeleteBiometricPairingAlert)
-
-        let mockSecureUserStore = MockSecureUserStore()
-        mockSecureUserStore.set(token: Fixtures.token)
-        mockSecureUserStore.set(keyIdentifier: Fixtures.keyIdentifier)
-        mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
-        mockUserSession.secureUserStore = mockSecureUserStore
-        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
-        let mockBiometricsIdpSessionLoginHandler = LoginHandlerMock()
-        mockBiometricsIdpSessionLoginHandler
-            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue = Just(.success(true))
-            .eraseToAnyPublisher()
-        mockUserSession.pairingIdpSessionLoginHandler = mockBiometricsIdpSessionLoginHandler
-        let mockIDPSession = IDPSessionMock()
-        let expectedError = IDPError.internal(error: IDPError.InternalError.notImplemented)
-        mockIDPSession.unregisterDevice_Publisher = Fail(error: expectedError).eraseToAnyPublisher()
-        mockIDPSession.idpToken.send(Fixtures.token)
-        mockUserSession.pairingIdpSession = mockIDPSession
-        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
-        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
-            .eraseToAnyPublisher()
-
-        // when confirming deletion
-        await sut.send(.destination(.presented(.alert(.confirmDeleteBiometricPairing)))) { state in
-            state.token = Fixtures.token
-            state.hasBiometricKeyID = true
-            state.destination = nil
-        }
-
-        expect(mockBiometricsIdpSessionLoginHandler
-            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount).to(equal(1))
-        expect(mockIDPSession.autoRefreshedToken_Called).to(beTrue())
-        expect(mockIDPSession.unregisterDevice_CallsCount).to(equal(1))
-
-        let result = Result<Bool, IDPError>.failure(expectedError)
-        await sut.receive(.response(.deleteBiometricPairingReceived(result))) { state in
-            state.token = Fixtures.token
-            state.hasBiometricKeyID = true
-            state.destination = .alert(EditProfileDomain.AlertStates.deleteBiometricPairingFailed(with: expectedError))
-        }
-
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCalled).to(beFalse())
-    }
-
-    func testDeleteBiometricPairingWithMissingPairingTokenToDoRelogin() async {
-        let sut = testStore(for: Fixtures.profileWithDeleteBiometricPairingAlert)
-
-        let mockSecureUserStore = MockSecureUserStore()
-        mockSecureUserStore.tokenState = Just(Fixtures.token).eraseToAnyPublisher()
-        mockSecureUserStore.can = Just(Fixtures.can).eraseToAnyPublisher()
-        mockSecureUserStore.underlyingKeyIdentifier = Just(Data()).eraseToAnyPublisher()
-        let mockBiometricsIdpSessionLoginHandler = LoginHandlerMock()
-        mockBiometricsIdpSessionLoginHandler
-            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverReturnValue =
-            Just(.success(false))
-                .eraseToAnyPublisher()
-        mockUserSession.pairingIdpSessionLoginHandler = mockBiometricsIdpSessionLoginHandler
-        let mockIDPSession = IDPSessionMock()
-        mockUserSession.secureUserStore = mockSecureUserStore
-        mockUserSession.pairingIdpSession = mockIDPSession
-        mockUserSessionProvider.userSessionForUuidUUIDUserSessionReturnValue = mockUserSession
-        mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverReturnValue = Just(())
-            .eraseToAnyPublisher()
-        mockUsersSessionContainer.userSession = mockUserSession
-
-        // when confirming deletion
-        await sut.send(.destination(.presented(.alert(.confirmDeleteBiometricPairing)))) { state in
-            state.token = Fixtures.token
-            state.hasBiometricKeyID = true
-            state.destination = nil
-        }
-
-        expect(mockBiometricsIdpSessionLoginHandler
-            .isAuthenticatedOrAuthenticateAnyPublisherResultBoolLoginHandlerErrorNeverCallsCount).to(equal(1))
-        expect(mockIDPSession.autoRefreshedToken_Called).to(beTrue())
-        expect(mockIDPSession.unregisterDevice_Called).to(beFalse())
-
-        await sut.receive(.relogin) { state in
-            state.token = nil
-            state.hasBiometricKeyID = true
-            state.destination = nil
-        }
-
-        expect(self.mockProfileSecureDataWiper.wipeSecureDataOfProfileIdUUIDAnyPublisherVoidNeverCalled).to(beTrue())
-        await sut.receive(.showCardWall) {
-            $0.destination = .cardWall(.init(isNFCReady: true, profileId: Fixtures.uuid))
-        }
-    }
-
-    func testDeleteBiometricPairingConfirmationAlertCancelation() async {
-        let sut = testStore(for: Fixtures.profileWithDeleteBiometricPairingAlert)
-
-        await sut.send(.destination(.dismiss)) { state in
-            state.destination = nil
-        }
-    }
 }
 
 extension EditProfileDomainTests {
@@ -606,22 +451,6 @@ extension EditProfileDomainTests {
             profileId: uuid,
             token: token,
             destination: .alert(EditProfileDomain.AlertStates.deleteProfile)
-        )
-
-        static let profileWithDeleteBiometricPairingAlert = EditProfileDomain.State(
-            name: "Anna Vetter",
-            acronym: "AV",
-            fullName: nil,
-            insurance: nil,
-            can: nil,
-            insuranceId: nil,
-            image: ProfilePicture.none,
-            userImageData: nil,
-            color: .red,
-            profileId: uuid,
-            token: token,
-            hasBiometricKeyID: true,
-            destination: .alert(EditProfileDomain.AlertStates.deleteBiometricPairing)
         )
 
         static let erxProfile = Profile(

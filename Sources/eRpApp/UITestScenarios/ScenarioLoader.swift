@@ -22,6 +22,7 @@
 // swiftlint:disable file_length
 
 import ComposableArchitecture
+import ConsentService
 import Dependencies
 import eRpKit
 import eRpLocalStorage
@@ -29,11 +30,13 @@ import eRpRemoteStorage
 import eRpStyleKit
 import ErxTaskRepository
 import FeatureCardWall
+import FeatureEURedeem
 import FHIRClient
 import FHIRVZD
 import Foundation
 import IDP
 import Pharmacy
+import Profiles
 import SwiftUI
 
 extension View {
@@ -115,6 +118,7 @@ extension SceneDelegate {
 
 #if DEBUG
 extension Reducer {
+    // swiftlint:disable:next function_body_length
     func setupUITests() -> some Reducer<Self.State, Self.Action> {
         let isRecording = ProcessInfo.processInfo.environment["UITEST.RECORD_MOCKS"] != nil
         let scenario: Scenario?
@@ -126,6 +130,7 @@ extension Reducer {
             scenario = nil
         }
 
+        let euConsentGranted = LockIsolated(false)
         // swiftformat:disable:next redundantSelf
         return self.transformDependency(\.self) { dependencies in
             guard scenario != nil || isRecording else { return }
@@ -134,7 +139,9 @@ extension Reducer {
 
             dependencies.erxLocalDataStore = SmartMocks.shared.smartMockErxTaskCoreDataStore(scenario, isRecording)
             dependencies.erxRemoteDataStore = SmartMocks.shared.smartMockErxRemoteDataStore(
-                fhirClientFactory: dependencies.fhirClientServiceFactory.erpClient,
+                factory: { [dependencies] profileId in
+                    dependencies.fhirClientServiceFactory.erpClientForProfile(profileId)
+                },
                 scenario,
                 isRecording
             )
@@ -151,19 +158,26 @@ extension Reducer {
 
             if !isRecording {
                 let loginHandler = UITestLoginHandler()
-
                 dependencies.loginHandlerServiceFactory = LoginHandlerServiceFactory { _, _ in
                     loginHandler
                 }
-                dependencies.avsRedeemService = {
-                    SmartMocks.shared.smartMockRedeemService(scenario, isRecording, loginHandler)
-                }
+                dependencies.consentService = ConsentService(
+                    checkForConsent: { _, _ in
+                        euConsentGranted.value ? .granted : .notGranted
+                    },
+                    grantConsent: { _, _ in
+                        euConsentGranted.withValue { $0 = true }
+                        return .success
+                    },
+                    revokeConsent: { _, _ in
+                        euConsentGranted.withValue { $0 = false }
+                        return .success
+                    }
+                )
             }
 
             dependencies.drawerEvaluation.showDrawerEvaluation = { .none }
-
             dependencies.bfArMSession = SmartMocks.shared.smartMockBfArMSession(scenario, isRecording)
-
             dependencies.pharmacyRemoteDataStore = SmartMocks.shared.smartMockPharmacyRemoteDataStore(
                 scenario,
                 isRecording
@@ -249,14 +263,14 @@ struct SmartMocks {
 
     private var smartMockErxRemoteDataStore: SmartMockErxRemoteDataStore?
     mutating func smartMockErxRemoteDataStore(
-        fhirClientFactory: @escaping () -> FHIRClient,
+        factory: @escaping (UUID) -> FHIRClient,
         _ scenario: Scenario?,
         _ isRecording: Bool
     ) -> ErxRemoteDataStore {
         if let existingMock = smartMockErxRemoteDataStore {
             return existingMock
         }
-        let erxTaskFHIRDataStore = ErxTaskFHIRDataStore(factory: fhirClientFactory)
+        let erxTaskFHIRDataStore = ErxTaskFHIRDataStore(factory: factory)
 
         let mock = SmartMockErxRemoteDataStore(
             wrapped: erxTaskFHIRDataStore,
@@ -389,13 +403,24 @@ struct ScenarioLoader {
         )
     }
 
-    private func loadMockData<T: Codable>(scenarioUrl: URL, with name: String) -> T? {
+    private func loadMockData<T: VerifiableMock>(scenarioUrl: URL, with name: String) -> T? {
         let filePath = scenarioUrl.appendingPathComponent("\(name).json", isDirectory: false)
         guard FileManager.default.fileExists(atPath: filePath.path),
               let jsonData = try? Data(contentsOf: filePath).applyingDynamicReplacements(scenarioUrl) else {
             return nil
         }
         do {
+            if let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
+                let jsonKeys = Set(jsonObject.keys)
+                let unexpectedKeys = jsonKeys.subtracting(T.expectedKeys)
+                if !unexpectedKeys.isEmpty {
+                    fatalError(
+                        "Scenario file '\(name).json' contains unexpected keys: \(unexpectedKeys.sorted()). " +
+                            "Expected keys: \(T.expectedKeys.sorted()). " +
+                            "The mock data file may need to be updated to match the current protocol/struct definition."
+                    )
+                }
+            }
             return try JSONDecoder().decode(T.self, from: jsonData)
         } catch let DecodingError.typeMismatch(type, context) {
             print(String(data: jsonData, encoding: .utf8) ?? "")
@@ -433,6 +458,8 @@ extension Data {
             // replace placeholders
             .applyingDateReplacements()
             .applyingUUIDReplacements()
+            .applyingBoolReplacements()
+            .applyingNumberReplacements()
             .data(using: .utf8) else {
             fatalError("Something went wrong while converting JSON String back to Data")
         }
@@ -597,6 +624,28 @@ extension String {
         return result
     }
 
+    /// This extension method applies Bool replacements to the string.
+    /// The pattern is "{{BOOL:value}}" where value is `true` or `false`.
+    func applyingBoolReplacements() -> String {
+        let pattern = #""?\{\{BOOL:(true|false)\}\}"?"#
+        let regex: NSRegularExpression
+        do {
+            regex = try NSRegularExpression(pattern: pattern)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+
+        var result = self
+        let matches = regex.matches(in: self, range: NSRange(location: 0, length: count))
+        for match in matches.reversed() {
+            guard let fullRange = Range(match.range, in: result),
+                  let valueRange = Range(match.range(at: 1), in: result) else { continue }
+            let value = String(result[valueRange]) // "true" or "false"
+            result.replaceSubrange(fullRange, with: value)
+        }
+        return result
+    }
+
     // This extension method applies date replacements to the string using a specific pattern.
     // The pattern is defined as "{{<type>:<offset>#<format>}".
     // - The "<type>" specifies the type of date replacement. The following types are supported:
@@ -716,6 +765,33 @@ extension String {
             return "yyyy-MM-dd"
         }
     }
+
+    // Applies number replacements to the string.
+    // The pattern is `{{NUMBER:value}}` where value is any numeric literal.
+    // Surrounding JSON quotes are stripped so the value becomes a bare JSON number.
+    //
+    // Example: `"{{NUMBER:4102444800.0}}"` → `4102444800.0`
+    func applyingNumberReplacements() -> String {
+        let pattern = #""?\{\{NUMBER:(?<value>-?[\d.]+)\}\}"?"#
+        let regex: NSRegularExpression
+        do {
+            regex = try NSRegularExpression(pattern: pattern)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+
+        var result = self
+        let matches = regex.matches(in: self, range: NSRange(location: 0, length: count))
+
+        for match in matches.reversed() {
+            guard let fullRange = Range(match.range, in: result),
+                  let valueRange = Range(match.range(at: 1), in: result) else { continue }
+            let value = String(result[valueRange])
+            result.replaceSubrange(fullRange, with: value)
+        }
+
+        return result
+    }
 }
 
 // sourcery:begin: SmartMock
@@ -731,6 +807,8 @@ import BfArM
 // sourcery:begin: SmartMockStruct
 extension BfArMSession {}
 extension PharmacyRemoteDataStore {}
+// extension ConsentService {}
+// extension EuRedeemService {}
 // sourcery:end
 
 #endif

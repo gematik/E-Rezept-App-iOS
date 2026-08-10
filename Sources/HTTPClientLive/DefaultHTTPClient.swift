@@ -37,13 +37,15 @@ public class DefaultHTTPClient: HTTPClient {
     /// - Parameters:
     ///   - urlSession: `URLSessionConfiguration` that is used to create the URLSession.
     ///   - interceptors: list of `Interceptors` that may modify the request and/or response before sending.
+    ///   - clientIdentity: optional `SecIdentity` used to answer mutual-TLS client-certificate challenges.
     ///   - delegateQueue: An operation queue for scheduling the delegate calls and completion handlers.
     public init(
         urlSessionConfiguration: URLSessionConfiguration,
         interceptors: [Interceptor] = [],
+        clientIdentity: SecIdentity? = nil,
         delegateQueue: OperationQueue? = nil
     ) {
-        let delegate = ProxyDelegate()
+        let delegate = ProxyDelegate(clientIdentity: clientIdentity)
 
         // [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
         // [REQ:gemSpec_IDP_Frontend:A_20606#2] Setup of minimum TLS Version to use.
@@ -90,6 +92,12 @@ extension URLRequest {
 extension DefaultHTTPClient {
     actor ProxyDelegate: NSObject, URLSessionTaskDelegate {
         private var redirectHandler = [String: RedirectHandler]()
+        private let clientIdentity: SecIdentity?
+
+        init(clientIdentity: SecIdentity? = nil) {
+            self.clientIdentity = clientIdentity
+            super.init()
+        }
 
         func setRedirectHandler(_ handler: RedirectHandler?, for identifier: String) async {
             redirectHandler[identifier] = handler
@@ -105,6 +113,18 @@ extension DefaultHTTPClient {
                 return await handler(response, request)
             }
             return request
+        }
+
+        func urlSession(
+            _: URLSession,
+            didReceive challenge: URLAuthenticationChallenge
+        ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodClientCertificate,
+                  let clientIdentity else {
+                return (.performDefaultHandling, nil)
+            }
+            let credential = URLCredential(identity: clientIdentity, certificates: nil, persistence: .forSession)
+            return (.useCredential, credential)
         }
     }
 }

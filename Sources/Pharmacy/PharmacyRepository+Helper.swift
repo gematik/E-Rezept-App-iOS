@@ -58,8 +58,6 @@ extension PharmacyRepository {
                     updated.hoursOfOperation = remotePharmacy.hoursOfOperation
                     updated.physicalFeatures = remotePharmacy.physicalFeatures
                     updated.specialities = remotePharmacy.specialities
-                    updated.avsEndpoints = remotePharmacy.avsEndpoints
-                    updated.avsCertificates = remotePharmacy.avsCertificates
 
                     return updated
 

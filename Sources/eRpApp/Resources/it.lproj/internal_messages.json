@@ -64,5 +64,11 @@
         "text": "**🏥 Dettagli farmacia migliorati** \nLe farmacie possono ora aggiungere servizi come vaccinazioni e funzionalità in loco come l'accesso senza barriere. Le farmacie possono essere filtrate in base a queste nuove informazioni. \n \n **✨ Ricerca farmacia migliorata** \nLe farmacie utilizzate di recente e le farmacie preferite sono ora separate in modo più chiaro. I filtri sono stati migliorati. \n \n **✅ ID sanitario per persone con assicurazione alternativa** \nLe persone che non sono coperte da un'assicurazione sanitaria pubblica o privata possono ora accedere anche utilizzando il loro ID sanitario. \n \n **♿ Accessibilità** \nI filtri ora hanno un contrasto maggiore e il loro stato è più facilmente identificabile. La dichiarazione di accessibilità è stata aggiornata e ampliata per includere una sezione che documenta la cronologia delle modifiche. Alcuni pulsanti sono stati modificati per migliorarne la visibilità.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ Ricette mediche disponibili**\nLe prescrizioni T possono ora essere ricevute e visualizzate correttamente. Le prescrizioni T vengono utilizzate per alcuni medicinali con particolari requisiti di sicurezza.\n\n**⚙️ Impostazioni ripulite**\nLe impostazioni del profilo sono state riviste e rese più chiare.\n\n**🔐 Accesso migliorato**\nLa registrazione tramite l'app assicurativa ora è più veloce.\n\n**🛡 Tracciamento rimosso**\nAbbiamo rimosso lo strumento di tracciamento dall'app. Non vengono più raccolti dati sull'utilizzo dell'app.\n\n**♿ Maggiore accessibilità**\nOra i testi con note esplicative possono essere letti integralmente anche con caratteri ingranditi.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

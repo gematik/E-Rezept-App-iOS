@@ -41,4 +41,34 @@ struct RedeemSelectionScreen: Screen {
 
         return RedeemMatrixCodeScreen(app: app, previous: self)
     }
+
+    func redeemEUButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.redeem.overview.rdmBtnRedeemEuPrsc,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
+    @discardableResult
+    func tapRedeemEUToConsent(fileID: String = #fileID, file: String = #filePath,
+                              line: UInt = #line) -> EURedeemConsentScreen {
+        button(by: A11y.redeem.overview.rdmBtnRedeemEuPrsc, fileID: fileID, file: file, line: line).tap()
+        return EURedeemConsentScreen(app: app)
+    }
+
+    @discardableResult
+    func tapRedeemEU(fileID: String = #fileID, file: String = #filePath,
+                     line: UInt = #line) -> EURedeemSelectionScreen {
+        button(by: A11y.redeem.overview.rdmBtnRedeemEuPrsc, fileID: fileID, file: file, line: line).tap()
+        return EURedeemSelectionScreen(app: app)
+    }
+
+    func tapClose(fileID: String = #fileID, file: String = #filePath,
+                  line: UInt = #line) -> MainScreen {
+        button(by: A11y.redeem.overview.rdmBtnCloseButton, fileID: fileID, file: file, line: line).tap()
+        return MainScreen(app: app)
+    }
 }

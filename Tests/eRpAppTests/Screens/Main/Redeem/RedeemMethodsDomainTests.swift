@@ -110,12 +110,15 @@ final class RedeemMethodsDomainTests: XCTestCase {
 
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        return TestStore(initialState: RedeemMethodsDomain
-            .State(prescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady])) {
-                RedeemMethodsDomain()
-            } withDependencies: { dependencies in
-                dependencies.schedulers = schedulers
-            }
+        return TestStore(
+            initialState: RedeemMethodsDomain.State(
+                prescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady]
+            )
+        ) {
+            RedeemMethodsDomain()
+        } withDependencies: { dependencies in
+            dependencies.schedulers = schedulers
+        }
     }
 
     /// Tests to open the redeem matrix code view

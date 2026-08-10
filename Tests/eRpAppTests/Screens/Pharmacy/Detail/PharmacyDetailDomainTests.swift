@@ -66,9 +66,6 @@ class PharmacyDetailDomainTests: XCTestCase {
             dependencies.userSession = mockUserSession
             dependencies.hapticFeedbackGenerator.success = {}
             dependencies.prescriptionRepository = mockPrescriptionRepository
-            dependencies.redeemOrderService.redeemViaAVS = { @Sendable [mockRedeemService] orders, _ in
-                try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
-            }
             dependencies.redeemOrderService.redeemViaErxTaskRepository = { @Sendable [mockRedeemService] orders, _ in
                 try await mockRedeemService?.redeem(orders, profileId: UUID()).async() ?? []
             }
@@ -89,13 +86,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         pharmacy: PharmacyLocation(
             id: "id",
             telematikID: "telematikID",
-            types: [.delivery, .mobl, .outpharm],
-            avsEndpoints: .init(
-                onPremiseUrl: "some",
-                shipmentUrl: "some",
-                deliveryUrl: "some"
-            ),
-            avsCertificates: []
+            types: [.delivery, .mobl, .outpharm]
         )
     )
 
@@ -103,11 +94,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         pharmacy: PharmacyLocation(
             id: "id",
             telematikID: "telematikID",
-            types: [.delivery, .mobl, .outpharm],
-            avsEndpoints: .init(
-                shipmentUrl: "some"
-            ),
-            avsCertificates: []
+            types: [.delivery, .mobl, .outpharm]
         )
     )
 
@@ -115,9 +102,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         pharmacy: PharmacyLocation(
             id: "id",
             telematikID: "telematikID",
-            types: [.delivery, .mobl, .outpharm],
-            avsEndpoints: nil,
-            avsCertificates: []
+            types: [.delivery, .mobl, .outpharm]
         )
     )
 
@@ -175,6 +160,7 @@ class PharmacyDetailDomainTests: XCTestCase {
                 pharmacy: pharmacyModel.pharmacyLocation
             )))) {
                 $0.serviceOptionState.availableOptions = [.delivery, .onPremise, .shipment]
+                $0.serviceOptionState.validOptions = [.delivery, .onPremise, .shipment]
                 $0.serviceOptionState.redeemOptionProvider = RedeemOptionProvider(
                     wasAuthenticatedBefore: true,
                     pharmacy: pharmacyModel.pharmacyLocation
@@ -233,6 +219,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: pharmacyModel.pharmacyLocation)
         ))) {
             $0.serviceOptionState.availableOptions = [.delivery, .onPremise, .shipment]
+            $0.serviceOptionState.validOptions = [.delivery, .onPremise, .shipment]
             $0.serviceOptionState.redeemOptionProvider = RedeemOptionProvider(
                 wasAuthenticatedBefore: false,
                 pharmacy: pharmacyModel.pharmacyLocation
@@ -289,6 +276,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: pharmacyModel.pharmacyLocation)
         ))) {
             $0.serviceOptionState.availableOptions = [.onPremise, .delivery, .shipment]
+            $0.serviceOptionState.validOptions = [.delivery, .onPremise, .shipment]
             $0.serviceOptionState.redeemOptionProvider = RedeemOptionProvider(
                 wasAuthenticatedBefore: false,
                 pharmacy: pharmacyModel.pharmacyLocation
@@ -344,6 +332,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: pharmacyModel.pharmacyLocation)
         ))) {
             $0.serviceOptionState.availableOptions = [.onPremise, .delivery, .shipment]
+            $0.serviceOptionState.validOptions = [.delivery, .onPremise, .shipment]
             $0.serviceOptionState.redeemOptionProvider = RedeemOptionProvider(
                 wasAuthenticatedBefore: false,
                 pharmacy: pharmacyModel.pharmacyLocation
@@ -689,6 +678,7 @@ class PharmacyDetailDomainTests: XCTestCase {
                 RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: pharmacyModel.pharmacyLocation)
             ))) {
                 $0.serviceOptionState.availableOptions = [.onPremise, .delivery, .shipment]
+                $0.serviceOptionState.validOptions = [.delivery, .onPremise, .shipment]
                 $0.serviceOptionState.redeemOptionProvider = RedeemOptionProvider(
                     wasAuthenticatedBefore: false,
                     pharmacy: pharmacyModel.pharmacyLocation
@@ -737,6 +727,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: pharmacyModel.pharmacyLocation)
         ))) {
             $0.serviceOptionState.availableOptions = [.delivery, .onPremise, .shipment]
+            $0.serviceOptionState.validOptions = [.delivery, .onPremise, .shipment]
             $0.serviceOptionState.redeemOptionProvider = RedeemOptionProvider(
                 wasAuthenticatedBefore: false,
                 pharmacy: pharmacyModel.pharmacyLocation

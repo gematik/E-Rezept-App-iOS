@@ -89,19 +89,21 @@ struct RegisterPasswordDomain {
         case .binding(\.passwordA):
             // [REQ:BSI-eRp-ePA:O.Pass_2#3] Testing the actual password strength
             state.passwordStrength = passwordStrengthTester.passwordStrength(for: state.passwordA)
-            if state.passwordA.isEmpty { return .none }
+            if state.passwordA.isEmpty {
+                return .none
+            }
             return .run { [timeout = state.timeout] send in
                 try await schedulers.main.sleep(for: timeout)
-                await send(.comparePasswords)
+                await send(.comparePasswords, animation: .default)
             }
-            .animation()
         case .binding(\.passwordB):
-            if state.passwordB.isEmpty { return .none }
+            if state.passwordB.isEmpty {
+                return .none
+            }
             return .run { [timeout = state.timeout] send in
                 try await schedulers.main.sleep(for: timeout)
-                await send(.comparePasswords)
+                await send(.comparePasswords, animation: .default)
             }
-            .animation()
         case .comparePasswords:
             if state.hasValidPasswordEntries {
                 // Only dismiss keyboard when verdict changes from "error" to "valid"
@@ -119,9 +121,8 @@ struct RegisterPasswordDomain {
         case .enterButtonTapped:
             return .run { [timeout = state.timeout] send in
                 try await schedulers.main.sleep(for: timeout)
-                await send(.comparePasswords)
+                await send(.comparePasswords, animation: .default)
             }
-            .animation()
         case .delegate(.nextPage):
             UIApplication.shared.dismissKeyboard()
             // handled by OnboardingDomain

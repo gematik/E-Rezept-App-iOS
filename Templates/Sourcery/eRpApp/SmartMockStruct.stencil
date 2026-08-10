@@ -32,8 +32,16 @@
 
 {% macro serialization type %}
     {% typed type as Type %}
-    struct Mocks: Codable {
+    struct Mocks: VerifiableMock {
     {% call serializationProperties type %}
+
+        static var expectedKeys: Set<String> {
+            [
+    {% for property in type.variables where property.typeName.isClosure %}
+                "{{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings",
+    {% endfor %}
+            ]
+        }
     }
     
     func recordedData() throws -> CodableMock {

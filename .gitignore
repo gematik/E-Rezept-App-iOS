@@ -20,6 +20,10 @@ Sources/eRpApp/development.env
 Sources/eRpApp/development.apikeys.env
 Sources/eRpApp/development.static.env
 
+# Resources containing private (key) information
+# To be copied to their regarding locations via `make setup` and fastlane actions
+fastlane/audit_afos.json
+Tests/IntegrationTests/Resources/Certificates.bundle
 
 # AppCode project files
 .idea/
@@ -120,22 +124,9 @@ iOSInjectionProject/
 
 # own
 .urls
-
+memory-bank
 # Looks unsuspicious, only the script github_publish_prepare has to go (and is no longer needed)
 devops
-# Can we open source our Match certificate repo?
-fastlane/Matchfile
-# Looks outdated ~ 3 years old
-doc/security_review
-# No concerns here (but nothing official as well). Archive/ Remove when migrating
-doc/architecture
-
-# Solution needed for private key part
-Tests/IntegrationTests/Resources/Certificates.bundle
-# Solution needed for private key part 
-Tests/IDPTests/Resources/Certificates.bundle
-# Has a reference to BSI-eRp-ePA": "https://path-to-gematik-gitlab/api/v4/projects/833/repository/files/security_review%2Frequirements%2F2024.html/raw?ref=main
-fastlane/audit_afos.json
 
 # will go away with public fastlane plugin
 Gemfile.internal
@@ -144,6 +135,3 @@ fastlane/Pluginfile.internal
 .bundle
 # will go away automatically
 jenkinsfiles
-
-# Should be no problem(?)
-Templates/Sourcery/Generic/errors.stencil

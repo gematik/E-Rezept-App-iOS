@@ -1,0 +1,49 @@
+{
+    "fetchEuCountriesRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        [
+            {
+                "id": "PL",
+                "countryCode": "PL",
+                "name": "Poland",
+                "telematikId": "010110"
+            },
+            {
+                "id": "FR",
+                "countryCode": "FR",
+                "name": "France",
+                "telematikId": "010111"
+            },
+            {
+                "id": "IT",
+                "countryCode": "IT",
+                "name": "Italy",
+                "telematikId": "010112"
+            }
+        ]
+    },
+    "fetchPharmacyRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        {
+            "created": 742827752.591564,
+            "name": "EU Apotheke Muster",
+            "countUsage": 0,
+            "isFavorite": false,
+            "telematikID": "3-01.2.2023001.16.999",
+            "id": "40000000-0000-0000-0000-000000000001",
+            "types":
+            [
+                "pharm"
+            ],
+            "hoursOfOperation": [],
+            "specialClosingHours": [],
+            "emergencyServiceHours": [],
+            "physicalFeatures": [],
+            "specialities": []
+        }
+    }
+}

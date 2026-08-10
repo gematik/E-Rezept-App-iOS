@@ -1,3 +1,36 @@
+# Release 1.38.0
+
+### Features (3 changes)
+
+- [Push Notification Registration View]
+- [Add suport for T-Prescriptons]
+- [Add Push-Notification feature flag and first channel ui to user profile settings]
+
+### Bug fixes (2 changes)
+
+- [Add scrolling to allow for all font sizes be shown correctly]
+- [Fix snapshot tests for pharmacy search flaky for empty results.]
+
+### Internal changes (8 changes)
+
+- [Add communication payload v3]
+- [Removed CardWallExtAuthConfirmation and moved selection and error handling to...]
+- [Fix UIKitTextView size calculation to not need extra render passes]
+- [Add UI tests for EU redeem flow]
+- [Add UI tests for EU redeem flow]
+- [Add error handling to scenario parsing and fix uitests]
+- [Upgrade SDK to 26.4]
+- [Add profile IDs to remote calls]
+
+### removed (2 changes)
+
+- [Remove extra check for openURL]
+- [Remove AVSSession residuals]
+
+### changed (1 change)
+
+- [Rework EditProfileView “My Area" section]
+
 # Release 1.37.0
 
 ### Features (3 changes)

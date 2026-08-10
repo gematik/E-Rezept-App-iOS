@@ -41,6 +41,8 @@ screens:
     name: "prescriptionDetail:organization"
   prescriptionDetail_accidentInfo:
     name: "prescriptionDetail:accidentInfo"
+  prescriptionDetail_teratogenicInfo:
+    name: "prescriptionDetail:teratogenicInfo"
   prescriptionDetail_technicalInfo:
     name: "prescriptionDetail:technicalInfo"
   prescriptionDetail_sharePrescription:
@@ -231,6 +233,8 @@ screens:
     name: "profile:registeredDevices"
   profile_auditEvents:
     name: "profile:auditEvents"
+  profile_notificationChannels:
+    name: "profile:notificationChannels"
   profile_insuranceDrawer:
     name: "profile:insuranceDrawer"
   chargeItemList:

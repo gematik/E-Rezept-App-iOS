@@ -46,7 +46,8 @@ struct ServiceOptionView: View {
                     style: .supplyLarge,
                     isActive: store.selectedOption == .onPremise
                 ))
-                .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
+                .disabled(!store.validOptions.contains(.onPremise))
+                .opacity(store.prescriptions.isEmpty || !store.validOptions.contains(.onPremise) ? 0.25 : 1)
                 .accessibility(identifier: store.redeemOptionProvider?.reservationService
                     .hasServiceAfterLogin == true
                     ? A11y.pharmacyDetail.phaDetailBtnPickupViaLogin
@@ -69,7 +70,8 @@ struct ServiceOptionView: View {
                     style: .supplyLarge,
                     isActive: store.selectedOption == .delivery
                 ))
-                .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
+                .disabled(!store.validOptions.contains(.delivery))
+                .opacity(store.prescriptions.isEmpty || !store.validOptions.contains(.delivery) ? 0.25 : 1)
                 .accessibility(identifier: store.redeemOptionProvider?.deliveryService
                     .hasServiceAfterLogin == true
                     ? A11y.pharmacyDetail.phaDetailBtnDeliveryViaLogin
@@ -92,7 +94,8 @@ struct ServiceOptionView: View {
                     style: .supplyLarge,
                     isActive: store.selectedOption == .shipment
                 ))
-                .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
+                .disabled(!store.validOptions.contains(.shipment))
+                .opacity(store.prescriptions.isEmpty || !store.validOptions.contains(.shipment) ? 0.25 : 1)
                 .accessibility(identifier: store.redeemOptionProvider?.shipmentService
                     .hasServiceAfterLogin == true
                     ? A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin

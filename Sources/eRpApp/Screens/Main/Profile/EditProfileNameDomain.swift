@@ -52,25 +52,27 @@ struct EditProfileNameDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case let .setProfileName(profileName):
-            state.profileName = profileName
-            return .none
-        case .saveButtonTapped:
-            return Effect.send(.saveEditedProfileName(name: state.profileName))
-        case let .saveEditedProfileName(name):
-            let name = name.trimmed()
-            if name.lengthOfBytes(using: .utf8) > 0 {
-                return updateProfile(with: state.profileId, name: state.profileName)
+    var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case let .setProfileName(profileName):
+                state.profileName = profileName
+                return .none
+            case .saveButtonTapped:
+                return Effect.send(.saveEditedProfileName(name: state.profileName))
+            case let .saveEditedProfileName(name):
+                let name = name.trimmed()
+                if name.lengthOfBytes(using: .utf8) > 0 {
+                    return updateProfile(with: state.profileId, name: state.profileName)
+                }
+                return .send(.delegate(.close))
+            case .saveEditedProfileNameReceived(.success):
+                return .send(.delegate(.close))
+            case let .saveEditedProfileNameReceived(.failure(error)):
+                return .send(.delegate(.failure(error)))
+            case .delegate:
+                return .none
             }
-            return .send(.delegate(.close))
-        case .saveEditedProfileNameReceived(.success):
-            return .send(.delegate(.close))
-        case let .saveEditedProfileNameReceived(.failure(error)):
-            return .send(.delegate(.failure(error)))
-        case .delegate:
-            return .none
         }
     }
 }

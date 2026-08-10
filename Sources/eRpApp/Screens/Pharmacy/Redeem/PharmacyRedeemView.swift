@@ -369,6 +369,20 @@ extension PharmacyRedeemView {
     struct PrescriptionView: View {
         @Bindable var store: StoreOf<PharmacyRedeemDomain>
 
+        var borderColor: Color {
+            if store.prescriptions.isEmpty {
+                return Color.red
+            }
+
+            if store.showTPrescriptionShipmentWarning {
+                return Colors.yellow800
+            } else if store.showTPrescriptionShipmentInfo {
+                return Colors.primary
+            }
+
+            return Color.gray.opacity(0.3)
+        }
+
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 Button {
@@ -389,13 +403,24 @@ extension PharmacyRedeemView {
                                 } else {
                                     Text(L10n.phaRedeemTxtPrescription)
                                         .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(Colors.systemLabelSecondary)
                                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
                                     // Show selected prescriptions
                                     ForEach(store.selectedPrescriptions, id: \.id) { prescription in
-                                        Text(prescription.title)
-                                            .font(.body)
-                                            .foregroundColor(.primary)
+                                        HStack {
+                                            if prescription.erxTask.isTPrescription, store.pharmacy != nil {
+                                                if store.showTPrescriptionShipmentWarning {
+                                                    Image(systemName: SFSymbolName.exclamationMark)
+                                                        .foregroundColor(Colors.yellow800)
+                                                } else if store.showTPrescriptionShipmentInfo {
+                                                    Image(systemName: SFSymbolName.info)
+                                                        .foregroundColor(Colors.primary)
+                                                }
+                                            }
+                                            Text(prescription.title)
+                                                .font(.body)
+                                                .foregroundColor(.primary)
+                                        }
                                     }
                                 }
                             }
@@ -407,18 +432,18 @@ extension PharmacyRedeemView {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(
-                                store.prescriptions.isEmpty
-                                    ? Color.red : Color.gray.opacity(0.3),
-                                lineWidth: 1
-                            )
-                    )
+                    .background(RoundedRectangle(cornerRadius: 16).stroke(borderColor, lineWidth: 1))
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(PlainButtonStyle())
                 .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription)
+
+                if store.showTPrescriptionShipmentWarning || store.showTPrescriptionShipmentInfo {
+                    Text(L10n.phaRedeemTxtSelectPrescriptionTprescriptionNotice)
+                        .font(.caption)
+                        .foregroundColor(borderColor)
+                        .padding(.leading)
+                }
 
                 if store.prescriptions.isEmpty {
                     Text(L10n.phaRedeemTxtSelectPrescription2)
@@ -440,6 +465,17 @@ extension PharmacyRedeemView {
 
                 SelfPayerWarningView(erxTasks: store.selectedPrescriptions.map(\.erxTask))
                     .padding()
+
+                if store.showTPrescriptionShipmentWarning {
+                    Label(L10n.phaRedeemTxtTprescriptionWarning, systemImage: SFSymbolName.exclamationMark)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(Colors.yellow800)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(8)
+                        .background(Colors.yellow100)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .padding(.horizontal, 16)
+                }
 
                 if !store.readyToRedeem {
                     Button {

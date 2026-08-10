@@ -535,451 +535,463 @@ public class ErxRemoteDataStoreMock: ErxRemoteDataStore {
 
     //MARK: - fetchTask
 
-    public var fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorCallsCount = 0
-    public var fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorCalled: Bool {
-        return fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorCallsCount > 0
+    public var fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCallsCount = 0
+    public var fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCalled: Bool {
+        return fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCallsCount > 0
     }
-    public var fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorReceivedArguments: (id: ErxTask.ID, accessCode: String?)?
-    public var fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations: [(id: ErxTask.ID, accessCode: String?)] = []
-    public var fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorReturnValue: AnyPublisher<ErxTask?, RemoteStoreError>!
-    public var fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorClosure: ((ErxTask.ID, String?) -> AnyPublisher<ErxTask?, RemoteStoreError>)?
+    public var fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedArguments: (id: ErxTask.ID, accessCode: String?, profileId: UUID)?
+    public var fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations: [(id: ErxTask.ID, accessCode: String?, profileId: UUID)] = []
+    public var fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReturnValue: AnyPublisher<ErxTask?, RemoteStoreError>!
+    public var fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure: ((ErxTask.ID, String?, UUID) -> AnyPublisher<ErxTask?, RemoteStoreError>)?
 
-    public func fetchTask(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, RemoteStoreError> {
-        fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorCallsCount += 1
-        fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorReceivedArguments = (id: id, accessCode: accessCode)
-        fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations.append((id: id, accessCode: accessCode))
-        if let fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorClosure = fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorClosure {
-            return fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorClosure(id, accessCode)
+    public func fetchTask(by id: ErxTask.ID, accessCode: String?, profileId: UUID) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCallsCount += 1
+        fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedArguments = (id: id, accessCode: accessCode, profileId: profileId)
+        fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations.append((id: id, accessCode: accessCode, profileId: profileId))
+        if let fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure = fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure {
+            return fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure(id, accessCode, profileId)
         } else {
-            return fetchTaskByIdErxTaskIDAccessCodeStringAnyPublisherErxTaskRemoteStoreErrorReturnValue
+            return fetchTaskByIdErxTaskIDAccessCodeStringProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listAllTasks
 
-    public var listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount = 0
-    public var listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorCalled: Bool {
-        return listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount > 0
+    public var listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount = 0
+    public var listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCalled: Bool {
+        return listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount > 0
     }
-    public var listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedReferenceDate: (String)?
-    public var listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations: [(String)?] = []
-    public var listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
-    public var listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure: ((String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+    public var listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedArguments: (referenceDate: String?, profileId: UUID)?
+    public var listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations: [(referenceDate: String?, profileId: UUID)] = []
+    public var listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    public var listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure: ((String?, UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
 
-    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount += 1
-        listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedReferenceDate = referenceDate
-        listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations.append(referenceDate)
-        if let listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure {
-            return listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure(referenceDate)
+    public func listAllTasks(after referenceDate: String?, profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount += 1
+        listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedArguments = (referenceDate: referenceDate, profileId: profileId)
+        listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations.append((referenceDate: referenceDate, profileId: profileId))
+        if let listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure {
+            return listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure(referenceDate, profileId)
         } else {
-            return listAllTasksAfterReferenceDateStringAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue
+            return listAllTasksAfterReferenceDateStringProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listTasksNextPage
 
-    public var listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount = 0
-    public var listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCalled: Bool {
-        return listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount > 0
+    public var listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount = 0
+    public var listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCalled: Bool {
+        return listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount > 0
     }
-    public var listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedPreviousPage: (PagedContent<[ErxTask]>)?
-    public var listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations: [(PagedContent<[ErxTask]>)] = []
-    public var listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
-    public var listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure: ((PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+    public var listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedArguments: (previousPage: PagedContent<[ErxTask]>, profileId: UUID)?
+    public var listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations: [(previousPage: PagedContent<[ErxTask]>, profileId: UUID)] = []
+    public var listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    public var listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure: ((PagedContent<[ErxTask]>, UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
 
-    public func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount += 1
-        listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedPreviousPage = previousPage
-        listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations.append(previousPage)
-        if let listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure {
-            return listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure(previousPage)
+    public func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>, profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount += 1
+        listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedArguments = (previousPage: previousPage, profileId: profileId)
+        listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations.append((previousPage: previousPage, profileId: profileId))
+        if let listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure {
+            return listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure(previousPage, profileId)
         } else {
-            return listTasksNextPageOfPreviousPagePagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue
+            return listTasksNextPageOfPreviousPagePagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listDetailedTasks
 
-    public var listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount = 0
-    public var listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCalled: Bool {
-        return listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount > 0
+    public var listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount = 0
+    public var listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCalled: Bool {
+        return listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount > 0
     }
-    public var listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedTasks: (PagedContent<[ErxTask]>)?
-    public var listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations: [(PagedContent<[ErxTask]>)] = []
-    public var listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
-    public var listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure: ((PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+    public var listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedArguments: (tasks: PagedContent<[ErxTask]>, profileId: UUID)?
+    public var listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations: [(tasks: PagedContent<[ErxTask]>, profileId: UUID)] = []
+    public var listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    public var listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure: ((PagedContent<[ErxTask]>, UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
 
-    public func listDetailedTasks(for tasks: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount += 1
-        listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedTasks = tasks
-        listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations.append(tasks)
-        if let listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure {
-            return listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure(tasks)
+    public func listDetailedTasks(for tasks: PagedContent<[ErxTask]>, profileId: UUID) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorCallsCount += 1
+        listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedArguments = (tasks: tasks, profileId: profileId)
+        listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReceivedInvocations.append((tasks: tasks, profileId: profileId))
+        if let listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure = listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure {
+            return listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorClosure(tasks, profileId)
         } else {
-            return listDetailedTasksForTasksPagedContentErxTaskAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue
+            return listDetailedTasksForTasksPagedContentErxTaskProfileIdUUIDAnyPublisherPagedContentErxTaskRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - delete
 
-    public var deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorCallsCount = 0
-    public var deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorCalled: Bool {
-        return deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorCallsCount > 0
+    public var deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount = 0
+    public var deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCalled: Bool {
+        return deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount > 0
     }
-    public var deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorReceivedTasks: ([ErxTask])?
-    public var deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [([ErxTask])] = []
-    public var deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
-    public var deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorClosure: (([ErxTask]) -> AnyPublisher<Bool, RemoteStoreError>)?
+    public var deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedArguments: (tasks: [ErxTask], profileId: UUID)?
+    public var deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [(tasks: [ErxTask], profileId: UUID)] = []
+    public var deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    public var deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure: (([ErxTask], UUID) -> AnyPublisher<Bool, RemoteStoreError>)?
 
-    public func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError> {
-        deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorCallsCount += 1
-        deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorReceivedTasks = tasks
-        deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append(tasks)
-        if let deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorClosure = deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorClosure {
-            return deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorClosure(tasks)
+    public func delete(tasks: [ErxTask], profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount += 1
+        deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedArguments = (tasks: tasks, profileId: profileId)
+        deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append((tasks: tasks, profileId: profileId))
+        if let deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure = deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure {
+            return deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure(tasks, profileId)
         } else {
-            return deleteTasksErxTaskAnyPublisherBoolRemoteStoreErrorReturnValue
+            return deleteTasksErxTaskProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - markEURedeemable
 
-    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorCallsCount = 0
-    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorCalled: Bool {
-        return markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorCallsCount > 0
+    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCallsCount = 0
+    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCalled: Bool {
+        return markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCallsCount > 0
     }
-    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorReceivedArguments: (id: ErxTask.ID, byPatientAuthorization: Bool)?
-    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations: [(id: ErxTask.ID, byPatientAuthorization: Bool)] = []
-    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorReturnValue: AnyPublisher<ErxTask?, RemoteStoreError>!
-    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorClosure: ((ErxTask.ID, Bool) -> AnyPublisher<ErxTask?, RemoteStoreError>)?
+    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedArguments: (id: ErxTask.ID, byPatientAuthorization: Bool, profileId: UUID)?
+    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations: [(id: ErxTask.ID, byPatientAuthorization: Bool, profileId: UUID)] = []
+    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReturnValue: AnyPublisher<ErxTask?, RemoteStoreError>!
+    public var markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure: ((ErxTask.ID, Bool, UUID) -> AnyPublisher<ErxTask?, RemoteStoreError>)?
 
-    public func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool) -> AnyPublisher<ErxTask?, RemoteStoreError> {
-        markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorCallsCount += 1
-        markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorReceivedArguments = (id: id, byPatientAuthorization: byPatientAuthorization)
-        markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations.append((id: id, byPatientAuthorization: byPatientAuthorization))
-        if let markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorClosure = markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorClosure {
-            return markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorClosure(id, byPatientAuthorization)
+    public func markEURedeemable(for id: ErxTask.ID, byPatientAuthorization: Bool, profileId: UUID) -> AnyPublisher<ErxTask?, RemoteStoreError> {
+        markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorCallsCount += 1
+        markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedArguments = (id: id, byPatientAuthorization: byPatientAuthorization, profileId: profileId)
+        markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReceivedInvocations.append((id: id, byPatientAuthorization: byPatientAuthorization, profileId: profileId))
+        if let markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure = markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure {
+            return markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorClosure(id, byPatientAuthorization, profileId)
         } else {
-            return markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolAnyPublisherErxTaskRemoteStoreErrorReturnValue
+            return markEURedeemableForIdErxTaskIDByPatientAuthorizationBoolProfileIdUUIDAnyPublisherErxTaskRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - redeem
 
-    public var redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorCallsCount = 0
-    public var redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorCalled: Bool {
-        return redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorCallsCount > 0
+    public var redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorCallsCount = 0
+    public var redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorCalled: Bool {
+        return redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorCallsCount > 0
     }
-    public var redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorReceivedOrder: (ErxTaskOrder)?
-    public var redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorReceivedInvocations: [(ErxTaskOrder)] = []
-    public var redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorReturnValue: AnyPublisher<ErxTaskOrder, RemoteStoreError>!
-    public var redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorClosure: ((ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>)?
+    public var redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorReceivedArguments: (order: ErxTaskOrder, profileId: UUID)?
+    public var redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorReceivedInvocations: [(order: ErxTaskOrder, profileId: UUID)] = []
+    public var redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorReturnValue: AnyPublisher<ErxTaskOrder, RemoteStoreError>!
+    public var redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorClosure: ((ErxTaskOrder, UUID) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>)?
 
-    public func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
-        redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorCallsCount += 1
-        redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorReceivedOrder = order
-        redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorReceivedInvocations.append(order)
-        if let redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorClosure = redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorClosure {
-            return redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorClosure(order)
+    public func redeem(order: ErxTaskOrder, profileId: UUID) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
+        redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorCallsCount += 1
+        redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorReceivedArguments = (order: order, profileId: profileId)
+        redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorReceivedInvocations.append((order: order, profileId: profileId))
+        if let redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorClosure = redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorClosure {
+            return redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorClosure(order, profileId)
         } else {
-            return redeemOrderErxTaskOrderAnyPublisherErxTaskOrderRemoteStoreErrorReturnValue
+            return redeemOrderErxTaskOrderProfileIdUUIDAnyPublisherErxTaskOrderRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listAllCommunications
 
-    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorCallsCount = 0
-    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorCalled: Bool {
-        return listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorCallsCount > 0
+    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorCallsCount = 0
+    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorCalled: Bool {
+        return listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorCallsCount > 0
     }
-    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedArguments: (referenceDate: String?, profile: ErxTask.Communication.Profile)?
-    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedInvocations: [(referenceDate: String?, profile: ErxTask.Communication.Profile)] = []
-    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorReturnValue: AnyPublisher<[ErxTask.Communication], RemoteStoreError>!
-    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure: ((String?, ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError>)?
+    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedArguments: (referenceDate: String?, profile: ErxTask.Communication.Profile, profileId: UUID)?
+    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedInvocations: [(referenceDate: String?, profile: ErxTask.Communication.Profile, profileId: UUID)] = []
+    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorReturnValue: AnyPublisher<[ErxTask.Communication], RemoteStoreError>!
+    public var listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure: ((String?, ErxTask.Communication.Profile, UUID) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError>)?
 
-    public func listAllCommunications(after referenceDate: String?, for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
-        listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorCallsCount += 1
-        listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedArguments = (referenceDate: referenceDate, profile: profile)
-        listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedInvocations.append((referenceDate: referenceDate, profile: profile))
-        if let listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure = listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure {
-            return listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure(referenceDate, profile)
+    public func listAllCommunications(after referenceDate: String?, for profile: ErxTask.Communication.Profile, profileId: UUID) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
+        listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorCallsCount += 1
+        listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedArguments = (referenceDate: referenceDate, profile: profile, profileId: profileId)
+        listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorReceivedInvocations.append((referenceDate: referenceDate, profile: profile, profileId: profileId))
+        if let listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure = listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure {
+            return listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorClosure(referenceDate, profile, profileId)
         } else {
-            return listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileAnyPublisherErxTaskCommunicationRemoteStoreErrorReturnValue
+            return listAllCommunicationsAfterReferenceDateStringForProfileErxTaskCommunicationProfileProfileIdUUIDAnyPublisherErxTaskCommunicationRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - fetchAuditEvent
 
-    public var fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorCallsCount = 0
-    public var fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorCalled: Bool {
-        return fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorCallsCount > 0
+    public var fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorCallsCount = 0
+    public var fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorCalled: Bool {
+        return fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorCallsCount > 0
     }
-    public var fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedId: (ErxAuditEvent.ID)?
-    public var fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedInvocations: [(ErxAuditEvent.ID)] = []
-    public var fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorReturnValue: AnyPublisher<ErxAuditEvent?, RemoteStoreError>!
-    public var fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorClosure: ((ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError>)?
+    public var fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedArguments: (id: ErxAuditEvent.ID, profileId: UUID)?
+    public var fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedInvocations: [(id: ErxAuditEvent.ID, profileId: UUID)] = []
+    public var fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorReturnValue: AnyPublisher<ErxAuditEvent?, RemoteStoreError>!
+    public var fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorClosure: ((ErxAuditEvent.ID, UUID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError>)?
 
-    public func fetchAuditEvent(by id: ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
-        fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorCallsCount += 1
-        fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedId = id
-        fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedInvocations.append(id)
-        if let fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorClosure = fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorClosure {
-            return fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorClosure(id)
+    public func fetchAuditEvent(by id: ErxAuditEvent.ID, profileId: UUID) -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
+        fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorCallsCount += 1
+        fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedArguments = (id: id, profileId: profileId)
+        fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorReceivedInvocations.append((id: id, profileId: profileId))
+        if let fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorClosure = fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorClosure {
+            return fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorClosure(id, profileId)
         } else {
-            return fetchAuditEventByIdErxAuditEventIDAnyPublisherErxAuditEventRemoteStoreErrorReturnValue
+            return fetchAuditEventByIdErxAuditEventIDProfileIdUUIDAnyPublisherErxAuditEventRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listAllAuditEvents
 
-    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount = 0
-    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCalled: Bool {
-        return listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount > 0
+    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount = 0
+    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCalled: Bool {
+        return listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount > 0
     }
-    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments: (referenceDate: String?, locale: String?)?
-    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations: [(referenceDate: String?, locale: String?)] = []
-    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
-    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure: ((String?, String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
+    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments: (referenceDate: String?, locale: String?, profileId: UUID)?
+    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations: [(referenceDate: String?, locale: String?, profileId: UUID)] = []
+    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
+    public var listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure: ((String?, String?, UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
 
-    public func listAllAuditEvents(after referenceDate: String?, for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
-        listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount += 1
-        listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments = (referenceDate: referenceDate, locale: locale)
-        listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations.append((referenceDate: referenceDate, locale: locale))
-        if let listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure = listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure {
-            return listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure(referenceDate, locale)
+    public func listAllAuditEvents(after referenceDate: String?, for locale: String?, profileId: UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount += 1
+        listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments = (referenceDate: referenceDate, locale: locale, profileId: profileId)
+        listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations.append((referenceDate: referenceDate, locale: locale, profileId: profileId))
+        if let listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure = listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure {
+            return listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure(referenceDate, locale, profileId)
         } else {
-            return listAllAuditEventsAfterReferenceDateStringForLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue
+            return listAllAuditEventsAfterReferenceDateStringForLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listAuditEventsNextPage
 
-    public var listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount = 0
-    public var listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCalled: Bool {
-        return listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount > 0
+    public var listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount = 0
+    public var listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCalled: Bool {
+        return listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount > 0
     }
-    public var listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments: (url: URL, locale: String?)?
-    public var listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations: [(url: URL, locale: String?)] = []
-    public var listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
-    public var listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure: ((URL, String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
+    public var listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments: (url: URL, locale: String?, profileId: UUID)?
+    public var listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations: [(url: URL, locale: String?, profileId: UUID)] = []
+    public var listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
+    public var listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure: ((URL, String?, UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
 
-    public func listAuditEventsNextPage(from url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
-        listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount += 1
-        listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments = (url: url, locale: locale)
-        listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations.append((url: url, locale: locale))
-        if let listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure = listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure {
-            return listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure(url, locale)
+    public func listAuditEventsNextPage(from url: URL, locale: String?, profileId: UUID) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorCallsCount += 1
+        listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedArguments = (url: url, locale: locale, profileId: profileId)
+        listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReceivedInvocations.append((url: url, locale: locale, profileId: profileId))
+        if let listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure = listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure {
+            return listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorClosure(url, locale, profileId)
         } else {
-            return listAuditEventsNextPageFromUrlURLLocaleStringAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue
+            return listAuditEventsNextPageFromUrlURLLocaleStringProfileIdUUIDAnyPublisherPagedContentErxAuditEventRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listMedicationDispenses
 
-    public var listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCallsCount = 0
-    public var listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCalled: Bool {
-        return listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCallsCount > 0
+    public var listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCallsCount = 0
+    public var listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCalled: Bool {
+        return listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCallsCount > 0
     }
-    public var listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedId: (ErxTask.ID)?
-    public var listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedInvocations: [(ErxTask.ID)] = []
-    public var listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReturnValue: AnyPublisher<[ErxMedicationDispense], RemoteStoreError>!
-    public var listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure: ((ErxTask.ID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError>)?
+    public var listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedArguments: (id: ErxTask.ID, profileId: UUID)?
+    public var listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedInvocations: [(id: ErxTask.ID, profileId: UUID)] = []
+    public var listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReturnValue: AnyPublisher<[ErxMedicationDispense], RemoteStoreError>!
+    public var listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure: ((ErxTask.ID, UUID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError>)?
 
-    public func listMedicationDispenses(for id: ErxTask.ID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
-        listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCallsCount += 1
-        listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedId = id
-        listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedInvocations.append(id)
-        if let listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure = listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure {
-            return listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure(id)
+    public func listMedicationDispenses(for id: ErxTask.ID, profileId: UUID) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
+        listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorCallsCount += 1
+        listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedArguments = (id: id, profileId: profileId)
+        listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReceivedInvocations.append((id: id, profileId: profileId))
+        if let listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure = listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure {
+            return listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorClosure(id, profileId)
         } else {
-            return listMedicationDispensesForIdErxTaskIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReturnValue
+            return listMedicationDispensesForIdErxTaskIDProfileIdUUIDAnyPublisherErxMedicationDispenseRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - fetchChargeItem
 
-    public var fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount = 0
-    public var fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorCalled: Bool {
-        return fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount > 0
+    public var fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount = 0
+    public var fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCalled: Bool {
+        return fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount > 0
     }
-    public var fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedId: (ErxChargeItem.ID)?
-    public var fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations: [(ErxChargeItem.ID)] = []
-    public var fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorReturnValue: AnyPublisher<ErxChargeItem?, RemoteStoreError>!
-    public var fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorClosure: ((ErxChargeItem.ID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError>)?
+    public var fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedArguments: (id: ErxChargeItem.ID, profileId: UUID)?
+    public var fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations: [(id: ErxChargeItem.ID, profileId: UUID)] = []
+    public var fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReturnValue: AnyPublisher<ErxChargeItem?, RemoteStoreError>!
+    public var fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure: ((ErxChargeItem.ID, UUID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError>)?
 
-    public func fetchChargeItem(by id: ErxChargeItem.ID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
-        fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount += 1
-        fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedId = id
-        fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations.append(id)
-        if let fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorClosure = fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorClosure {
-            return fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorClosure(id)
+    public func fetchChargeItem(by id: ErxChargeItem.ID, profileId: UUID) -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
+        fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount += 1
+        fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedArguments = (id: id, profileId: profileId)
+        fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations.append((id: id, profileId: profileId))
+        if let fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure = fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure {
+            return fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure(id, profileId)
         } else {
-            return fetchChargeItemByIdErxChargeItemIDAnyPublisherErxChargeItemRemoteStoreErrorReturnValue
+            return fetchChargeItemByIdErxChargeItemIDProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - listAllChargeItems
 
-    public var listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorCallsCount = 0
-    public var listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorCalled: Bool {
-        return listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorCallsCount > 0
+    public var listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount = 0
+    public var listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCalled: Bool {
+        return listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount > 0
     }
-    public var listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorReceivedReferenceDate: (String)?
-    public var listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations: [(String)?] = []
-    public var listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorReturnValue: AnyPublisher<[ErxChargeItem], RemoteStoreError>!
-    public var listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorClosure: ((String?) -> AnyPublisher<[ErxChargeItem], RemoteStoreError>)?
+    public var listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedArguments: (referenceDate: String?, profileId: UUID)?
+    public var listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations: [(referenceDate: String?, profileId: UUID)] = []
+    public var listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReturnValue: AnyPublisher<[ErxChargeItem], RemoteStoreError>!
+    public var listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure: ((String?, UUID) -> AnyPublisher<[ErxChargeItem], RemoteStoreError>)?
 
-    public func listAllChargeItems(after referenceDate: String?) -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
-        listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorCallsCount += 1
-        listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorReceivedReferenceDate = referenceDate
-        listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations.append(referenceDate)
-        if let listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorClosure = listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorClosure {
-            return listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorClosure(referenceDate)
+    public func listAllChargeItems(after referenceDate: String?, profileId: UUID) -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
+        listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorCallsCount += 1
+        listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedArguments = (referenceDate: referenceDate, profileId: profileId)
+        listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReceivedInvocations.append((referenceDate: referenceDate, profileId: profileId))
+        if let listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure = listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure {
+            return listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorClosure(referenceDate, profileId)
         } else {
-            return listAllChargeItemsAfterReferenceDateStringAnyPublisherErxChargeItemRemoteStoreErrorReturnValue
+            return listAllChargeItemsAfterReferenceDateStringProfileIdUUIDAnyPublisherErxChargeItemRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - delete
 
-    public var deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorCallsCount = 0
-    public var deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorCalled: Bool {
-        return deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorCallsCount > 0
+    public var deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount = 0
+    public var deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCalled: Bool {
+        return deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount > 0
     }
-    public var deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorReceivedChargeItems: ([ErxChargeItem])?
-    public var deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [([ErxChargeItem])] = []
-    public var deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
-    public var deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorClosure: (([ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>)?
+    public var deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedArguments: (chargeItems: [ErxChargeItem], profileId: UUID)?
+    public var deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [(chargeItems: [ErxChargeItem], profileId: UUID)] = []
+    public var deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    public var deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure: (([ErxChargeItem], UUID) -> AnyPublisher<Bool, RemoteStoreError>)?
 
-    public func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
-        deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorCallsCount += 1
-        deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorReceivedChargeItems = chargeItems
-        deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append(chargeItems)
-        if let deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorClosure = deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorClosure {
-            return deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorClosure(chargeItems)
+    public func delete(chargeItems: [ErxChargeItem], profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount += 1
+        deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedArguments = (chargeItems: chargeItems, profileId: profileId)
+        deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append((chargeItems: chargeItems, profileId: profileId))
+        if let deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure = deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure {
+            return deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure(chargeItems, profileId)
         } else {
-            return deleteChargeItemsErxChargeItemAnyPublisherBoolRemoteStoreErrorReturnValue
+            return deleteChargeItemsErxChargeItemProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - fetchConsents
 
-    public var fetchConsentsAnyPublisherErxConsentRemoteStoreErrorCallsCount = 0
-    public var fetchConsentsAnyPublisherErxConsentRemoteStoreErrorCalled: Bool {
-        return fetchConsentsAnyPublisherErxConsentRemoteStoreErrorCallsCount > 0
+    public var fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCallsCount = 0
+    public var fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCalled: Bool {
+        return fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCallsCount > 0
     }
-    public var fetchConsentsAnyPublisherErxConsentRemoteStoreErrorReturnValue: AnyPublisher<[ErxConsent], RemoteStoreError>!
-    public var fetchConsentsAnyPublisherErxConsentRemoteStoreErrorClosure: (() -> AnyPublisher<[ErxConsent], RemoteStoreError>)?
+    public var fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedProfileId: (UUID)?
+    public var fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedInvocations: [(UUID)] = []
+    public var fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReturnValue: AnyPublisher<[ErxConsent], RemoteStoreError>!
+    public var fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure: ((UUID) -> AnyPublisher<[ErxConsent], RemoteStoreError>)?
 
-    public func fetchConsents() -> AnyPublisher<[ErxConsent], RemoteStoreError> {
-        fetchConsentsAnyPublisherErxConsentRemoteStoreErrorCallsCount += 1
-        if let fetchConsentsAnyPublisherErxConsentRemoteStoreErrorClosure = fetchConsentsAnyPublisherErxConsentRemoteStoreErrorClosure {
-            return fetchConsentsAnyPublisherErxConsentRemoteStoreErrorClosure()
+    public func fetchConsents(profileId: UUID) -> AnyPublisher<[ErxConsent], RemoteStoreError> {
+        fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCallsCount += 1
+        fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedProfileId = profileId
+        fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedInvocations.append(profileId)
+        if let fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure = fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure {
+            return fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure(profileId)
         } else {
-            return fetchConsentsAnyPublisherErxConsentRemoteStoreErrorReturnValue
+            return fetchConsentsProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - grantConsent
 
-    public var grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorCallsCount = 0
-    public var grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorCalled: Bool {
-        return grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorCallsCount > 0
+    public var grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCallsCount = 0
+    public var grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCalled: Bool {
+        return grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCallsCount > 0
     }
-    public var grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorReceivedConsent: (ErxConsent)?
-    public var grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorReceivedInvocations: [(ErxConsent)] = []
-    public var grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorReturnValue: AnyPublisher<ErxConsent?, RemoteStoreError>!
-    public var grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorClosure: ((ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError>)?
+    public var grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedArguments: (consent: ErxConsent, profileId: UUID)?
+    public var grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedInvocations: [(consent: ErxConsent, profileId: UUID)] = []
+    public var grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReturnValue: AnyPublisher<ErxConsent?, RemoteStoreError>!
+    public var grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure: ((ErxConsent, UUID) -> AnyPublisher<ErxConsent?, RemoteStoreError>)?
 
-    public func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
-        grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorCallsCount += 1
-        grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorReceivedConsent = consent
-        grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorReceivedInvocations.append(consent)
-        if let grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorClosure = grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorClosure {
-            return grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorClosure(consent)
+    public func grantConsent(_ consent: ErxConsent, profileId: UUID) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
+        grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorCallsCount += 1
+        grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedArguments = (consent: consent, profileId: profileId)
+        grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReceivedInvocations.append((consent: consent, profileId: profileId))
+        if let grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure = grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure {
+            return grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorClosure(consent, profileId)
         } else {
-            return grantConsentConsentErxConsentAnyPublisherErxConsentRemoteStoreErrorReturnValue
+            return grantConsentConsentErxConsentProfileIdUUIDAnyPublisherErxConsentRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - revokeConsent
 
-    public var revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorCallsCount = 0
-    public var revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorCalled: Bool {
-        return revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorCallsCount > 0
+    public var revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount = 0
+    public var revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCalled: Bool {
+        return revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount > 0
     }
-    public var revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorReceivedCategory: (ErxConsent.Category)?
-    public var revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [(ErxConsent.Category)] = []
-    public var revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
-    public var revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorClosure: ((ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError>)?
+    public var revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedArguments: (category: ErxConsent.Category, profileId: UUID)?
+    public var revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [(category: ErxConsent.Category, profileId: UUID)] = []
+    public var revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    public var revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure: ((ErxConsent.Category, UUID) -> AnyPublisher<Bool, RemoteStoreError>)?
 
-    public func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError> {
-        revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorCallsCount += 1
-        revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorReceivedCategory = category
-        revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append(category)
-        if let revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorClosure = revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorClosure {
-            return revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorClosure(category)
+    public func revokeConsent(_ category: ErxConsent.Category, profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount += 1
+        revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedArguments = (category: category, profileId: profileId)
+        revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append((category: category, profileId: profileId))
+        if let revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure = revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure {
+            return revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure(category, profileId)
         } else {
-            return revokeConsentCategoryErxConsentCategoryAnyPublisherBoolRemoteStoreErrorReturnValue
+            return revokeConsentCategoryErxConsentCategoryProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - loadRemoteEuAccessCode
 
-    public var loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount = 0
-    public var loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCalled: Bool {
-        return loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount > 0
+    public var loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount = 0
+    public var loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCalled: Bool {
+        return loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount > 0
     }
-    public var loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue: AnyPublisher<EuAccessCode?, RemoteStoreError>!
-    public var loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure: (() -> AnyPublisher<EuAccessCode?, RemoteStoreError>)?
+    public var loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedProfileId: (UUID)?
+    public var loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedInvocations: [(UUID)] = []
+    public var loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue: AnyPublisher<EuAccessCode?, RemoteStoreError>!
+    public var loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure: ((UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError>)?
 
-    public func loadRemoteEuAccessCode() -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
-        loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount += 1
-        if let loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure = loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure {
-            return loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure()
+    public func loadRemoteEuAccessCode(profileId: UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount += 1
+        loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedProfileId = profileId
+        loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedInvocations.append(profileId)
+        if let loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure = loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure {
+            return loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure(profileId)
         } else {
-            return loadRemoteEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue
+            return loadRemoteEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - grantEuAccessPermission
 
-    public var grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount = 0
-    public var grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCalled: Bool {
-        return grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount > 0
+    public var grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount = 0
+    public var grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCalled: Bool {
+        return grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount > 0
     }
-    public var grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReceivedAccessCode: (EuAccessCode)?
-    public var grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReceivedInvocations: [(EuAccessCode)] = []
-    public var grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue: AnyPublisher<EuAccessCode?, RemoteStoreError>!
-    public var grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure: ((EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError>)?
+    public var grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedArguments: (accessCode: EuAccessCode, profileId: UUID)?
+    public var grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedInvocations: [(accessCode: EuAccessCode, profileId: UUID)] = []
+    public var grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue: AnyPublisher<EuAccessCode?, RemoteStoreError>!
+    public var grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure: ((EuAccessCode, UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError>)?
 
-    public func grantEuAccessPermission(accessCode: EuAccessCode) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
-        grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount += 1
-        grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReceivedAccessCode = accessCode
-        grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReceivedInvocations.append(accessCode)
-        if let grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure = grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure {
-            return grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorClosure(accessCode)
+    public func grantEuAccessPermission(accessCode: EuAccessCode, profileId: UUID) -> AnyPublisher<EuAccessCode?, RemoteStoreError> {
+        grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorCallsCount += 1
+        grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedArguments = (accessCode: accessCode, profileId: profileId)
+        grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReceivedInvocations.append((accessCode: accessCode, profileId: profileId))
+        if let grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure = grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure {
+            return grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorClosure(accessCode, profileId)
         } else {
-            return grantEuAccessPermissionAccessCodeEuAccessCodeAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue
+            return grantEuAccessPermissionAccessCodeEuAccessCodeProfileIdUUIDAnyPublisherEuAccessCodeRemoteStoreErrorReturnValue
         }
     }
 
     //MARK: - deleteEuAccessCode
 
-    public var deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorCallsCount = 0
-    public var deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorCalled: Bool {
-        return deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorCallsCount > 0
+    public var deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount = 0
+    public var deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCalled: Bool {
+        return deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount > 0
     }
-    public var deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
-    public var deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorClosure: (() -> AnyPublisher<Bool, RemoteStoreError>)?
+    public var deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedProfileId: (UUID)?
+    public var deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations: [(UUID)] = []
+    public var deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    public var deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure: ((UUID) -> AnyPublisher<Bool, RemoteStoreError>)?
 
-    public func deleteEuAccessCode() -> AnyPublisher<Bool, RemoteStoreError> {
-        deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorCallsCount += 1
-        if let deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorClosure = deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorClosure {
-            return deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorClosure()
+    public func deleteEuAccessCode(profileId: UUID) -> AnyPublisher<Bool, RemoteStoreError> {
+        deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorCallsCount += 1
+        deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedProfileId = profileId
+        deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReceivedInvocations.append(profileId)
+        if let deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure = deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure {
+            return deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorClosure(profileId)
         } else {
-            return deleteEuAccessCodeAnyPublisherBoolRemoteStoreErrorReturnValue
+            return deleteEuAccessCodeProfileIdUUIDAnyPublisherBoolRemoteStoreErrorReturnValue
         }
     }
 

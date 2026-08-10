@@ -185,6 +185,7 @@ final class OrderDetailDomainTests: XCTestCase {
         ) { dependencies in
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
         }
 
@@ -212,6 +213,7 @@ final class OrderDetailDomainTests: XCTestCase {
         ) { dependencies in
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
         }
 
@@ -270,6 +272,7 @@ final class OrderDetailDomainTests: XCTestCase {
         ) { dependencies in
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
             dependencies.openURLHandler.canOpenURL = { _ in true }
         }
@@ -291,7 +294,7 @@ final class OrderDetailDomainTests: XCTestCase {
         let store = testStore(
             for: .init(orderId: orderId, communications: input, chargeItems: [])
         ) { dependencies in
-            dependencies.openURLHandler.canOpenURL = { _ in false }
+            dependencies.openURLHandler.open = { _ in false }
         }
 
         await store.send(.showOpenUrlSheet(url: expectedUrl)) { state in
@@ -342,6 +345,7 @@ final class OrderDetailDomainTests: XCTestCase {
             dependencies.openURLHandler.canOpenURL = { _ in true }
             dependencies.openURLHandler.open = { url in
                 openedURL.withLock { $0 = url }
+                return true
             }
         }
         await store.send(.openMail(message: "wrong payload format"))

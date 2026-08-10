@@ -61,17 +61,30 @@ public struct ErxTaskOrder: Equatable, Codable {
 
     public struct Payload: Codable, Equatable {
         public let version: Int
-        public let supplyOptionsType: RedeemOption
-        public let name: String
+        public let supplyOptionsType: RedeemOption?
+        // V1 fields
+        public let name: String?
         public let address: [String]
-        public var hint: String
-        public var phone: String
+        public var hint: String?
+        public var phone: String?
+        // V3 fields
+        public let communicationType: DispReqCommunicationType?
+        public let firstname: String?
+        public let lastname: String?
+        public let addressLine: String?
+        public let postcode: String?
+        public let city: String?
+        public let country: String?
+        public var text: String?
+        public let email: String?
+        public let transactionID: String?
 
+        /// V1 initializer — backward compatible
         public init(
             version: Int = 1,
             supplyOptionsType: RedeemOption,
             name: String,
-            address: [String],
+            address: [String] = [],
             hint: String,
             phone: String
         ) {
@@ -81,6 +94,134 @@ public struct ErxTaskOrder: Equatable, Codable {
             self.address = address
             self.hint = hint
             self.phone = phone
+            communicationType = nil
+            firstname = nil
+            lastname = nil
+            addressLine = nil
+            postcode = nil
+            city = nil
+            country = nil
+            text = nil
+            email = nil
+            transactionID = nil
+        }
+
+        /// V3 initializer
+        public init(
+            version: Int = 3,
+            communicationType: DispReqCommunicationType,
+            supplyOptionsType: RedeemOption? = nil,
+            firstname: String? = nil,
+            lastname: String? = nil,
+            addressLine: String? = nil,
+            postcode: String? = nil,
+            city: String? = nil,
+            country: String? = nil,
+            phone: String? = nil,
+            hint: String? = nil,
+            text: String? = nil,
+            email: String? = nil,
+            transactionID: String? = nil
+        ) {
+            self.version = version
+            self.communicationType = communicationType
+            self.supplyOptionsType = supplyOptionsType
+            self.firstname = firstname
+            self.lastname = lastname
+            self.addressLine = addressLine
+            self.postcode = postcode
+            self.city = city
+            self.country = country
+            self.phone = phone
+            self.hint = hint
+            self.text = text
+            self.email = email
+            self.transactionID = transactionID
+            name = nil
+            address = []
+        }
+
+        public enum DispReqCommunicationType: String, Codable, Equatable {
+            case order
+            case text
+        }
+
+        // MARK: - Custom Coding
+
+        private enum CodingKeys: String, CodingKey {
+            case version, supplyOptionsType, name, address, hint, phone
+            case communicationType, firstname, lastname, postcode, city, country
+            case text, email, transactionID
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            if let intVersion = try? container.decode(Int.self, forKey: .version) {
+                version = intVersion
+            } else if let stringVersion = try? container.decode(String.self, forKey: .version),
+                      let intVersion = Int(stringVersion) {
+                version = intVersion
+            } else {
+                version = try container.decode(Int.self, forKey: .version)
+            }
+
+            supplyOptionsType = try container.decodeIfPresent(RedeemOption.self, forKey: .supplyOptionsType)
+            communicationType = try container.decodeIfPresent(DispReqCommunicationType.self,
+                                                              forKey: .communicationType)
+            hint = try container.decodeIfPresent(String.self, forKey: .hint)
+            phone = try container.decodeIfPresent(String.self, forKey: .phone)
+            text = try container.decodeIfPresent(String.self, forKey: .text)
+            email = try container.decodeIfPresent(String.self, forKey: .email)
+            transactionID = try container.decodeIfPresent(String.self, forKey: .transactionID)
+
+            if version >= 3 {
+                // V3: address is a single string, name is split into firstname/lastname
+                firstname = try container.decodeIfPresent(String.self, forKey: .firstname)
+                lastname = try container.decodeIfPresent(String.self, forKey: .lastname)
+                addressLine = try container.decodeIfPresent(String.self, forKey: .address)
+                postcode = try container.decodeIfPresent(String.self, forKey: .postcode)
+                city = try container.decodeIfPresent(String.self, forKey: .city)
+                country = try container.decodeIfPresent(String.self, forKey: .country)
+                name = nil
+                address = []
+            } else {
+                // V1: address is an array, name is a single string
+                name = try container.decodeIfPresent(String.self, forKey: .name)
+                address = try container.decodeIfPresent([String].self, forKey: .address) ?? []
+                firstname = nil
+                lastname = nil
+                addressLine = nil
+                postcode = nil
+                city = nil
+                country = nil
+            }
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(version, forKey: .version)
+            try container.encodeIfPresent(supplyOptionsType, forKey: .supplyOptionsType)
+            try container.encodeIfPresent(hint, forKey: .hint)
+            try container.encodeIfPresent(phone, forKey: .phone)
+
+            if version >= 3 {
+                // V3: encode v3-specific fields
+                try container.encodeIfPresent(communicationType, forKey: .communicationType)
+                try container.encodeIfPresent(firstname, forKey: .firstname)
+                try container.encodeIfPresent(lastname, forKey: .lastname)
+                try container.encodeIfPresent(addressLine, forKey: .address)
+                try container.encodeIfPresent(postcode, forKey: .postcode)
+                try container.encodeIfPresent(city, forKey: .city)
+                try container.encodeIfPresent(country, forKey: .country)
+                try container.encodeIfPresent(text, forKey: .text)
+                try container.encodeIfPresent(email, forKey: .email)
+                try container.encodeIfPresent(transactionID, forKey: .transactionID)
+            } else {
+                // V1: encode v1-specific fields
+                try container.encodeIfPresent(name, forKey: .name)
+                try container.encodeIfPresent(address, forKey: .address)
+            }
         }
     }
 }

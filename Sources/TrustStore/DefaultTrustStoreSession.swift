@@ -164,7 +164,8 @@ extension DefaultTrustStoreSession {
             let ocspUncheckedTrustStore = try? X509TrustStore(
                 trustAnchor: trustAnchor,
                 pkiCertificates: localPkiCertificates,
-                vauCertData: localVauCertData
+                vauCertData: localVauCertData,
+                validationTime: time()
             ) {
             let vauCertOCSPResponse = try await loadCurrentVauCertificateOcspResponse(
                 issuerCn: vauCertIssuerCN,
@@ -203,7 +204,8 @@ extension DefaultTrustStoreSession {
         guard let ocspUncheckedTrustStore = try? X509TrustStore(
             trustAnchor: trustAnchor,
             pkiCertificates: remotePkiCertificates,
-            vauCertData: remoteVauCertData
+            vauCertData: remoteVauCertData,
+            validationTime: time()
         )
         else {
             throw TrustStoreError.internal(error: .trustAnchorUnexpectedFormat)

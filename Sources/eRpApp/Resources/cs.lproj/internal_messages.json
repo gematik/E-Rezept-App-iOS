@@ -64,5 +64,11 @@
         "text": "**🏥 Vylepšené podrobnosti o lékárnách** \nLékárny nyní mohou přidávat služby, jako je očkování, a funkce na místě, jako je bezbariérový přístup. Lékárny lze filtrovat na základě těchto nových informací. \n \n **✨ Vylepšené vyhledávání lékáren** \nNaposledy použité lékárny a oblíbené lékárny jsou nyní jasněji odděleny. Filtry byly vylepšeny. \n \n **✅ Zdravotní průkaz pro osoby s alternativním pojištěním** \nOsoby, které nejsou kryty zákonným ani soukromým zdravotním pojištěním, se nyní mohou také přihlásit pomocí svého zdravotního průkazu. \n \n **♿ Přístupnost** \nFiltry mají nyní vyšší kontrast a jejich stav je snáze identifikovatelný. Prohlášení o přístupnosti bylo aktualizováno a rozšířeno o část dokumentující historii změn. Některá tlačítka byla upravena pro lepší viditelnost.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ K dispozici jsou léky na předpis T**\nLéky na předpis T-Prespections lze nyní správně přijímat a zobrazovat. Léky na předpis T-Prespections se používají pro určité léky se zvláštními bezpečnostními požadavky.\n\n**⚙️ Vyčištění nastavení**\nNastavení profilu bylo přepracováno a zpřehledněno.\n\n**🔐 Přihlášení vylepšeno**\nRegistrace v aplikaci pojišťovny je nyní rychlejší.\n\n**🛡 Sledování odstraněno**\nZ aplikace jsme odstranili nástroj pro sledování. Žádná data o používání aplikace se již neshromažďují.\n\n**♿ Větší přístupnost**\nTexty s vysvětlivkami lze nyní číst v plném rozsahu i se zvětšeným písmem.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

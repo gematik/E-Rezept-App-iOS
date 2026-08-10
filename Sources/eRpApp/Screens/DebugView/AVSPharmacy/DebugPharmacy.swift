@@ -146,16 +146,7 @@ extension DebugPharmacy {
                 telematikID: "telematik-id",
                 name: name,
                 types: [],
-                hoursOfOperation: [],
-                avsEndpoints: PharmacyLocation.AVSEndpoints(
-                    onPremiseUrl: onPremiseUrl.url,
-                    onPremiseUrlAdditionalHeaders: onPremiseUrl.additionalHeadersDict,
-                    shipmentUrl: shipmentUrl.url,
-                    shipmentUrlAdditionalHeaders: shipmentUrl.additionalHeadersDict,
-                    deliveryUrl: deliveryUrl.url,
-                    deliveryUrlAdditionalHeaders: deliveryUrl.additionalHeadersDict
-                ),
-                avsCertificates: certificates.compactMap(\.x509)
+                hoursOfOperation: []
             )
         )
     }

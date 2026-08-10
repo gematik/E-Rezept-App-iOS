@@ -64,5 +64,11 @@
         "text": "**🏥 Ulepszone szczegóły apteki** \nApteki mogą teraz dodawać usługi takie jak szczepienia i funkcje na miejscu, takie jak dostęp bez barier. Apteki można filtrować na podstawie tych nowych informacji. \n \n **✨ Ulepszone wyszukiwanie aptek** \nOstatnio używane apteki i ulubione apteki są teraz wyraźniej oddzielone. Filtry zostały ulepszone. \n \n **✅ Identyfikator zdrowotny dla osób z ubezpieczeniem alternatywnym** \nOsoby, które nie są objęte ustawowym lub prywatnym ubezpieczeniem zdrowotnym, mogą teraz również logować się za pomocą swojego identyfikatora zdrowotnego. \n \n **♿ Dostępność** \nFiltry mają teraz wyższy kontrast, a ich status jest łatwiejszy do zidentyfikowania. Oświadczenie o dostępności zostało zaktualizowane i rozszerzone o sekcję dokumentującą historię zmian. Niektóre przyciski zostały dostosowane w celu poprawy widoczności.",
         "timestamp": "2026-04-14T08:00:00.000Z",
         "version": "1.37.0"
+    },
+    {
+        "id": "13",
+        "text": "**✅ Dostępne recepty T**\nRecepty T mogą być teraz odbierane i wyświetlane poprawnie. Recepty T są wykorzystywane w przypadku niektórych leków, które wymagają spełnienia specjalnych wymogów bezpieczeństwa.\n\n**⚙️ Ustawienia zostały wyczyszczone**\nUstawienia profilu zostały zmienione i są teraz bardziej przejrzyste.\n\n**🔐 Logowanie poprawione**\nRejestracja za pomocą aplikacji ubezpieczeniowej jest teraz szybsza.\n\n**🛡 Śledzenie usunięte**\nUsunęliśmy narzędzie śledzące z aplikacji. Dane dotyczące korzystania z aplikacji nie będą już gromadzone.\n\n**♿ Większa dostępność**\nTeksty z objaśnieniami można teraz czytać w całości, nawet przy powiększonej czcionce.",
+        "timestamp": "2026-07-20T08:00:00.000Z",
+        "version": "1.38.0"
     }
 ]

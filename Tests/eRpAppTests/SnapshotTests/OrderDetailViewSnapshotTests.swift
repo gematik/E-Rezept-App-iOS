@@ -286,4 +286,52 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
+
+    func testEuRevokeView_Valid() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationDispRequest],
+            chargeItems: []
+        )
+        let sut = NavigationStack {
+            EuRevokeView(
+                store: StoreOf<OrderDetailDomain>(
+                    initialState: .init(
+                        communicationMessage: Shared(value: CommunicationMessage.order(order)),
+                        erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testEuRevokeView_Deleted() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationDispRequest],
+            chargeItems: []
+        )
+        var state = OrderDetailDomain.State(
+            communicationMessage: Shared(value: CommunicationMessage.order(order)),
+            erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
+        )
+        state.isDeleted = true
+        let sut = NavigationStack {
+            EuRevokeView(
+                store: StoreOf<OrderDetailDomain>(
+                    initialState: state
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
 }

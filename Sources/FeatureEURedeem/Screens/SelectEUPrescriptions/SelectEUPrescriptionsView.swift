@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpResources
 import eRpStyleKit
 import SwiftUI
 
@@ -60,6 +61,7 @@ public struct SelectEUPrescriptionsView: View {
 
             Text(store.profile?.displayName ?? "")
                 .font(.headline)
+                .accessibilityIdentifier(A11y.redeem.eu.prescriptionSelection.eurdmTxtPrscPatientName)
 
             Spacer()
         }

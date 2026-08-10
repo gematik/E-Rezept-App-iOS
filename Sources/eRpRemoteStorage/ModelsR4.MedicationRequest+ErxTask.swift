@@ -189,6 +189,43 @@ extension ModelsR4.MedicationRequest {
         }
     }
 
+    var teratogenicRelatedInformation: TeratogenicRelatedInformation? {
+        guard let teratogenicInfo = `extension`?.first(where: {
+            $0.url.value?.url.absoluteString == ErpPrescription.Key.MedicationRequest.teratogenicKey
+        }) else {
+            return nil
+        }
+
+        func boolValue(for key: String) -> Bool {
+            teratogenicInfo.extension?.first {
+                $0.url.value?.url.absoluteString == key
+            }
+            .map {
+                if let valueX = $0.value,
+                   case Extension.ValueX.boolean(true) = valueX {
+                    return true
+                }
+                return false
+            } ?? false
+        }
+
+        return TeratogenicRelatedInformation(
+            offLabelUse: boolValue(for: ErpPrescription.Key.MedicationRequest.teratogenicOffLabel),
+            womanOfChildbearingAge: boolValue(
+                for: ErpPrescription.Key.MedicationRequest.teratogenicWomanOfChildbearingAge
+            ),
+            safetyMeasuresCompliance: boolValue(
+                for: ErpPrescription.Key.MedicationRequest.teratogenicSafetyMeasuresCompliance
+            ),
+            informationMaterialProvided: boolValue(
+                for: ErpPrescription.Key.MedicationRequest.teratogenicInformationMaterialProvided
+            ),
+            expertKnowledgeDeclaration: boolValue(
+                for: ErpPrescription.Key.MedicationRequest.teratogenicExpertKnowledgeDeclaration
+            )
+        )
+    }
+
     var substitutionAllowed: Bool {
         if case .boolean(booleanLiteral: true) = substitution?.allowed {
             return true

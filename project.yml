@@ -4,6 +4,7 @@ options:
   createIntermediateGroups: true
   developmentLanguage: en-GB
   useBaseInternationalization: false
+  xcodeVersion: 26.4
   deploymentTarget:
     macOS: 13.0
     iOS: 17.0
@@ -53,7 +54,6 @@ schemes:
       targets:
         - eRpAppTests
         - eRpAppStoreScreenshots
-        - package: eRpKit/AVSTests
         - package: eRpKit/eRpFeaturesTests
         - package: eRpKit/eRpKitTests
         - package: eRpKit/eRpLocalStorageTests
@@ -65,11 +65,13 @@ schemes:
         - package: eRpKit/IDPLiveTests
         - package: eRpKit/IDPTests
         - package: eRpKit/PharmacyTests
+        - package: eRpKit/PushNotificationCryptoTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
         - package: eRpKit/AsyncHelpersTests
         - package: eRpKit/FeatureCardWallTests
         - package: eRpKit/FeatureEURedeemTests
+        - package: eRpKit/FeatureCommunicationTests
   AllTests_macOS:
     build:
       targets:
@@ -79,7 +81,6 @@ schemes:
       region: DE
       gatherCoverageData: true
       targets:
-        - package: eRpKit/AVSTests
         - package: eRpKit/eRpKitTests
         - package: eRpKit/eRpLocalStorageTests
         - package: eRpKit/eRpRemoteStorageTests
@@ -89,6 +90,7 @@ schemes:
         - package: eRpKit/IDPLiveTests
         - package: eRpKit/IDPTests
         - package: eRpKit/PharmacyTests
+        - package: eRpKit/PushNotificationCryptoTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
         - package: eRpKit/AsyncHelpersTests
@@ -116,7 +118,8 @@ schemes:
         - eRpAppStoreScreenshots
 packages:
   eRpKit:
-    path: ./
+    path: .
+    group: "Packages"
   Nimble:
     url: https://github.com/Quick/Nimble
     majorVersion: 14.0.0
@@ -161,12 +164,39 @@ targets:
     dependencies:
       - package: eRpKit
         product: eRpFeatures
+      - target: PushNotificationService
+        embed: true
     scheme:
       language: de
       region: DE
       testTargets:
         - eRpAppTests
       gatherCoverageData: false
+  PushNotificationService:
+    type: app-extension
+    platform: iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}.notify
+        TARGETED_DEVICE_FAMILY: 1
+        INFOPLIST_FILE: Sources/PushNotificationService/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/PushNotificationService/PushNotificationService.entitlements
+        DEVELOPMENT_TEAM: A9FL89PFFL
+        PRODUCT_NAME: E-Rezept App Notifications
+      configs:
+        Release:
+          GEM_PROVISIONING_PROFILE_SPECIFIER: ${GEM_NOTIFY_PROVISIONING_PROFILE_SPECIFIER}
+    configFiles:
+      Debug: App/Sources/Resources/debug.xcconfig
+      Release: App/Sources/Resources/release.xcconfig
+    sources:
+      - path: Sources/PushNotificationService
+        excludes:
+          - "Info.plist"
+          - "PushNotificationService.entitlements"
+    dependencies:
+      - package: eRpKit
+        product: PushNotificationCrypto
   EUPrescriptionPreview:
     type: application
     platform: iOS
@@ -253,4 +283,3 @@ targets:
       - package: eRpKit
         product: TestUtils
       - package: Nimble
-buildImplicitDependencies: true

@@ -24,6 +24,7 @@ import Combine
 @testable import eRpFeatures
 @testable import IDP
 import Nimble
+import OpenSSL
 import TestUtils
 import XCTest
 
@@ -192,5 +193,27 @@ final class KeychainStorageTests: XCTestCase {
         expect(receivedKeys[1]).to(equal(expected))
 
         cancellable.cancel()
+    }
+}
+
+extension DiscoveryDocument: Equatable {
+    public static func ==(lhs: DiscoveryDocument, rhs: DiscoveryDocument) -> Bool {
+        lhs.createdOn == rhs.createdOn &&
+            lhs.backing == rhs.backing &&
+            lhs.discKey.derBytes == rhs.discKey.derBytes &&
+            lhs.signingCert.derBytes == rhs.signingCert.derBytes &&
+            lhs.encryptionPublicKey == rhs.encryptionPublicKey &&
+            lhs.payload == rhs.payload
+    }
+}
+
+extension BrainpoolP256r1.KeyExchange.PublicKey: @retroactive Equatable {
+    public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
+                          rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
+        guard let lhsValue = try? lhs.rawValue(),
+              let rhsValue = try? rhs.rawValue() else {
+            return false
+        }
+        return lhsValue == rhsValue
     }
 }

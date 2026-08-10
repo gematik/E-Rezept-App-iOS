@@ -34,7 +34,8 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
         let initialState = PharmacyPrescriptionSelectionDomain.State(
             prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
             selectedPrescriptions: Shared(value: Prescription.Fixtures.prescriptions),
-            profile: UserProfile.Fixtures.theo.profile
+            profile: UserProfile.Fixtures.theo.profile,
+            selectedOption: nil
         )
         let sut = NavigationStack {
             PharmacyPrescriptionSelectionView(store: StoreOf<PharmacyPrescriptionSelectionDomain>(
@@ -55,7 +56,8 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
         let initialState = PharmacyPrescriptionSelectionDomain.State(
             prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
             selectedPrescriptions: Shared(value: []),
-            profile: UserProfile.Fixtures.theo.profile
+            profile: UserProfile.Fixtures.theo.profile,
+            selectedOption: nil
         )
         let sut = NavigationStack {
             PharmacyPrescriptionSelectionView(store: StoreOf<PharmacyPrescriptionSelectionDomain>(

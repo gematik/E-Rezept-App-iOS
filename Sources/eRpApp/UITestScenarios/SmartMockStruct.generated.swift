@@ -44,9 +44,16 @@ extension BfArMSession: SmartMock {
 
     static var mocks: Mocks = Mocks()
 
-    struct Mocks: Codable {
+    struct Mocks: VerifiableMock {
         var fetchBfArMInfoRecordings: MockAnswer<BfArMDiGaDetails?>? = .delegate
         var fetchCachedImageRecordings: MockAnswer<Data?>? = .delegate
+
+        static var expectedKeys: Set<String> {
+            [
+                "fetchBfArMInfoRecordings",
+                "fetchCachedImageRecordings",
+            ]
+        }
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -123,12 +130,22 @@ extension PharmacyRemoteDataStore: SmartMock {
 
     static var mocks: Mocks = Mocks()
 
-    struct Mocks: Codable {
+    struct Mocks: VerifiableMock {
         var searchPharmaciesRecordings: MockAnswer<[PharmacyLocation]>? = .delegate
         var fetchPharmacyRecordings: MockAnswer<PharmacyLocation?>? = .delegate
         var fetchInsuranceRecordings: MockAnswer<Insurance?>? = .delegate
         var fetchAllInsurancesRecordings: MockAnswer<[Insurance]>? = .delegate
         var fetchEuCountriesRecordings: MockAnswer<[Country]>? = .delegate
+
+        static var expectedKeys: Set<String> {
+            [
+                "searchPharmaciesRecordings",
+                "fetchPharmacyRecordings",
+                "fetchInsuranceRecordings",
+                "fetchAllInsurancesRecordings",
+                "fetchEuCountriesRecordings",
+            ]
+        }
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
