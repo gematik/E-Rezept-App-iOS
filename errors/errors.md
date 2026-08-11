@@ -1,12 +1,12 @@
 # Swift Error Documentation
 
-Generated on: 2026-04-16 16:40:34
+Generated on: 2026-08-11 13:55:58
 
 ## Summary
 
-- **Total Files**: 75
-- **Total Error Enums**: 88
-- **Total Error Cases**: 360
+- **Total Files**: 81
+- **Total Error Enums**: 93
+- **Total Error Cases**: 378
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Generated on: 2026-04-16 16:40:34
 - [FHIRClientError](#fhirclienterror)
 - [FHIRVZDError](#fhirvzderror)
 - [HealthcareServiceBundleParsingError](#healthcareservicebundleparsingerror)
-- [CardWallExtAuthConfirmationDomainError](#cardwallextauthconfirmationdomainerror)
+- [CardWallExtAuthSelectionDomainError](#cardwallextauthselectiondomainerror)
 - [CardWallIntroductionDomainError](#cardwallintroductiondomainerror)
 - [StateError](#stateerror)
 - [InputError](#inputerror)
@@ -25,6 +25,8 @@ Generated on: 2026-04-16 16:40:34
 - [NFCSignatureProviderError](#nfcsignatureprovidererror)
 - [SigningError](#signingerror)
 - [VerifyPINError](#verifypinerror)
+- [OrdersRepositoryError](#ordersrepositoryerror)
+- [InternalCommunicationError](#internalcommunicationerror)
 - [EuCodeGenerationError](#eucodegenerationerror)
 - [EuRedeemServiceError](#euredeemserviceerror)
 - [HTTPClientError](#httpclienterror)
@@ -35,16 +37,18 @@ Generated on: 2026-04-16 16:40:34
 - [JWEError](#jweerror)
 - [JWTError](#jwterror)
 - [TokenPayloadError](#tokenpayloaderror)
-- [KeyVerifierError](#keyverifiererror)
 - [BiometricsSHA256SignerError](#biometricssha256signererror)
 - [ConversionError](#conversionerror)
+- [KeyVerifierError](#keyverifiererror)
 - [PharmacyRepositoryError](#pharmacyrepositoryerror)
 - [IDTokenValidatorError](#idtokenvalidatorerror)
 - [KeychainAccessHelperError](#keychainaccesshelpererror)
+- [PushNotificationCryptoError](#pushnotificationcryptoerror)
 - [TrustAnchorError](#trustanchorerror)
 - [TrustStoreError](#truststoreerror)
 - [InternalError](#internalerror)
 - [VAUError](#vauerror)
+- [APNSRegistrationError](#apnsregistrationerror)
 - [ZXingMatrixCodeGeneratorError](#zxingmatrixcodegeneratorerror)
 - [PrescriptionRepositoryError](#prescriptionrepositoryerror)
 - [AuthenticationChallengeProviderError](#authenticationchallengeprovidererror)
@@ -69,6 +73,7 @@ Generated on: 2026-04-16 16:40:34
 - [ChargeItemListDomainServiceRevokeResultError](#chargeitemlistdomainservicerevokeresulterror)
 - [ChargeItemDomainServiceDeleteResultError](#chargeitemdomainservicedeleteresulterror)
 - [ChargeItemPDFServiceError](#chargeitempdfserviceerror)
+- [PushNotificationRegistrationError](#pushnotificationregistrationerror)
 - [AuditEventsServiceError](#auditeventsserviceerror)
 - [RegisteredDevicesDomainError](#registereddevicesdomainerror)
 - [RegisteredDevicesServiceError](#registereddevicesserviceerror)
@@ -240,11 +245,11 @@ Error cases when using the `FHIRClient`
 
 ---
 
-## CardWallExtAuthConfirmationDomainError
+## CardWallExtAuthSelectionDomainError
 
 **Error Code**: `012`
-**Qualified Name**: `CardWallExtAuthConfirmationDomain.Error`
-**File**: `./Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift`
+**Qualified Name**: `CardWallExtAuthSelectionDomain.Error`
+**File**: `./Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift`
 
 ### Error Cases
 
@@ -408,6 +413,51 @@ User input error
 | `00605` | `passwordNotUsable` | Password is transport protected |
 | `00606` | `passwordNotFound` | Referenced password could not be found |
 | `00607` | `unknownFailure` | Any (unexpected) error not specified in gemSpec_COS 14.6.6.2 |
+
+---
+
+## OrdersRepositoryError
+
+**Error Code**: `037`
+**Qualified Name**: `OrdersRepositoryError`
+**File**: `./Sources/FeatureCommunication/MessagesList/CommunicationsRepository.swift`
+
+**Description**:
+MARK: - Error
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `03701` | `erxRepository` | No description |
+| `03702` | `pharmacyRepository` | No description |
+| `03703` | `unspecified` | No description |
+
+### Related Errors
+
+- Case `erxRepository` → [ErxRepositoryError](#erxrepositoryerror)
+- Case `pharmacyRepository` → [PharmacyRepositoryError](#pharmacyrepositoryerror)
+
+---
+
+## InternalCommunicationError
+
+**Error Code**: `038`
+**Qualified Name**: `InternalCommunicationError`
+**File**: `./Sources/FeatureCommunication/MessagesList/InternalCommunicationClient.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `03801` | `decodingError` | No description |
+| `03802` | `invalidURL` | No description |
+| `03803` | `emptyOnboardingDate` | No description |
+| `03804` | `unknownError` | No description |
+
+### Related Errors
+
+- Case `decodingError` → [ConsentServiceError](#consentserviceerror)
 
 ---
 
@@ -654,20 +704,6 @@ User input error
 
 ---
 
-## KeyVerifierError
-
-**Error Code**: `105`
-**Qualified Name**: `KeyVerifier.Error`
-**File**: `./Sources/IDP/internal/TokenPayload.swift`
-
-### Error Cases
-
-| ID | Case | Description |
-|---|---|---|
-| `10501` | `stringConversion` | No description |
-
----
-
 ## BiometricsSHA256SignerError
 
 **Error Code**: `102`
@@ -694,6 +730,20 @@ User input error
 | ID | Case | Description |
 |---|---|---|
 | `10701` | `generic` | No description |
+
+---
+
+## KeyVerifierError
+
+**Error Code**: `105`
+**Qualified Name**: `KeyVerifier.Error`
+**File**: `./Sources/IDPLive/KeyVerifier.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `10501` | `stringConversion` | No description |
 
 ---
 
@@ -746,6 +796,28 @@ User input error
 | `02001` | `illegalArgument` | No description |
 | `02002` | `keyChainError` | No description |
 | `02003` | `decodingError` | No description |
+
+---
+
+## PushNotificationCryptoError
+
+**Error Code**: `700`
+**Qualified Name**: `PushNotificationCryptoError`
+**File**: `./Sources/PushNotificationCrypto/PushNotificationCrypto.swift`
+
+**Description**:
+MARK: - Errors
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `70001` | `noKeyAvailable` | No description |
+| `70002` | `keyNotFoundForMonth` | No description |
+| `70003` | `invalidPayloadTooShort` | No description |
+| `70004` | `invalidPNM1Prefix` | No description |
+| `70005` | `invalidPayloadLength` | No description |
+| `70006` | `storageError` | A keychain operation failed with the given OSStatus code and message. |
 
 ---
 
@@ -832,6 +904,22 @@ User input error
 ### Related Errors
 
 - Case `network` → [HTTPClientError](#httpclienterror)
+
+---
+
+## APNSRegistrationError
+
+**Error Code**: `701`
+**Qualified Name**: `APNSRegistrationError`
+**File**: `./Sources/eRpApp/Common/APNSRegistrationService.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `70101` | `permissionDenied` | No description |
+| `70102` | `registrationFailed` | No description |
+| `70103` | `missingToken` | No description |
 
 ---
 
@@ -1099,7 +1187,6 @@ User input error
 | ID | Case | Description |
 |---|---|---|
 | `02401` | `eRxRepository` | When redeeming a task via Fachdienst |
-| `02402` | `avs` | When redeeming a task via AVS |
 | `02403` | `internalError` | When an internal error occurs which most likely is a programming error |
 | `02404` | `unspecified` | When error conversion into `RedeemServiceError` fails |
 | `02405` | `noTokenAvailable` | When the user has no valid token available while trying to redeem via Fachdienst |
@@ -1109,7 +1196,6 @@ User input error
 ### Related Errors
 
 - Case `eRxRepository` → [ErxRepositoryError](#erxrepositoryerror)
-- Case `avs` → [AVSError](#avserror)
 - Case `internalError` → [InternalError](#internalerror)
 - Case `loginHandler` → [LoginHandlerError](#loginhandlererror)
 
@@ -1317,6 +1403,22 @@ User input error
 
 - Case `parsingError` → [ConsentServiceError](#consentserviceerror)
 - Case `failedToCreateAttachment` → [ConsentServiceError](#consentserviceerror)
+
+---
+
+## PushNotificationRegistrationError
+
+**Error Code**: `702`
+**Qualified Name**: `PushNotificationRegistrationError`
+**File**: `./Sources/eRpApp/Screens/Settings/Profiles/Notifications/PushNotificationRegistrationService.swift`
+
+### Error Cases
+
+| ID | Case | Description |
+|---|---|---|
+| `70201` | `missingPushGatewayURL` | No description |
+| `70202` | `missingAppId` | No description |
+| `70203` | `notRegistered` | No description |
 
 ---
 
@@ -1810,7 +1912,7 @@ This section shows how errors are related to each other through associated types
 - `ConsentServiceError.loginHandler` → `LoginHandlerError`
 - `ConsentServiceError.erxRepository` → `ErxRepositoryError`
 - `FHIRVZDError.network` → `HTTPClientError`
-- `CardWallExtAuthConfirmationDomainError.idpError` → `IDPError`
+- `CardWallExtAuthSelectionDomainError.idpError` → `IDPError`
 - `CardWallIntroductionDomainError.idpError` → `IDPError`
 - `StateError.idpError` → `IDPError`
 - `StateError.inputError` → `InputError`
@@ -1820,6 +1922,9 @@ This section shows how errors are related to each other through associated types
 - `NFCSignatureProviderError.verifyCardError` → `VerifyPINError`
 - `NFCSignatureProviderError.signingFailure` → `SigningError`
 - `NFCSignatureProviderError.secureEnclaveError` → `SecureEnclaveSignatureProviderError`
+- `OrdersRepositoryError.erxRepository` → `ErxRepositoryError`
+- `OrdersRepositoryError.pharmacyRepository` → `PharmacyRepositoryError`
+- `InternalCommunicationError.decodingError` → `ConsentServiceError`
 - `EuRedeemServiceError.eRxRepository` → `ErxRepositoryError`
 - `EuRedeemServiceError.localStoreError` → `LocalStoreError`
 - `EuRedeemServiceError.euCodeGeneration` → `EuCodeGenerationError`
@@ -1845,7 +1950,6 @@ This section shows how errors are related to each other through associated types
 - `RedeemOrderServiceError.pharmacy` → `PharmacyRepositoryError`
 - `RedeemOrderServiceError.redeem` → `RedeemServiceError`
 - `RedeemServiceError.eRxRepository` → `ErxRepositoryError`
-- `RedeemServiceError.avs` → `AVSError`
 - `RedeemServiceError.internalError` → `InternalError`
 - `RedeemServiceError.loginHandler` → `LoginHandlerError`
 - `InternalError.localStoreError` → `LocalStoreError`

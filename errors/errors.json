@@ -1,9 +1,9 @@
 {
   "summary": {
-    "total_files": 75,
-    "total_enums": 88,
-    "total_cases": 360,
-    "generated_at": "2026-04-16T16:40:28+02:00"
+    "total_files": 81,
+    "total_enums": 93,
+    "total_cases": 378,
+    "generated_at": "2026-08-11T13:55:57+02:00"
   },
   "errors": [
     {
@@ -254,22 +254,22 @@
     {
       "code": "012",
       "name": "Error",
-      "qualified_name": "CardWallExtAuthConfirmationDomain.Error",
+      "qualified_name": "CardWallExtAuthSelectionDomain.Error",
       "documentation": "",
-      "file": "FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift",
+      "file": "FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift",
       "cases": [
         {
           "code": "01",
           "full_id": "01201",
           "name": "idpError",
-          "qualified_name": "CardWallExtAuthConfirmationDomain.Error.idpError",
+          "qualified_name": "CardWallExtAuthSelectionDomain.Error.idpError",
           "documentation": ""
         },
         {
           "code": "02",
           "full_id": "01202",
           "name": "universalLinkFailed",
-          "qualified_name": "CardWallExtAuthConfirmationDomain.Error.universalLinkFailed",
+          "qualified_name": "CardWallExtAuthSelectionDomain.Error.universalLinkFailed",
           "documentation": ""
         }
       ]
@@ -593,6 +593,73 @@
           "name": "unknownFailure",
           "qualified_name": "NFCSignatureProviderError.VerifyPINError.unknownFailure",
           "documentation": "Any (unexpected) error not specified in gemSpec_COS 14.6.6.2"
+        }
+      ]
+    },
+    {
+      "code": "037",
+      "name": "OrdersRepositoryError",
+      "qualified_name": "OrdersRepositoryError",
+      "documentation": "MARK: - Error",
+      "file": "FeatureCommunication/MessagesList/CommunicationsRepository.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03701",
+          "name": "erxRepository",
+          "qualified_name": "OrdersRepositoryError.erxRepository",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03702",
+          "name": "pharmacyRepository",
+          "qualified_name": "OrdersRepositoryError.pharmacyRepository",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03703",
+          "name": "unspecified",
+          "qualified_name": "OrdersRepositoryError.unspecified",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "038",
+      "name": "InternalCommunicationError",
+      "qualified_name": "InternalCommunicationError",
+      "documentation": "",
+      "file": "FeatureCommunication/MessagesList/InternalCommunicationClient.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "03801",
+          "name": "decodingError",
+          "qualified_name": "InternalCommunicationError.decodingError",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "03802",
+          "name": "invalidURL",
+          "qualified_name": "InternalCommunicationError.invalidURL",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "03803",
+          "name": "emptyOnboardingDate",
+          "qualified_name": "InternalCommunicationError.emptyOnboardingDate",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "03804",
+          "name": "unknownError",
+          "qualified_name": "InternalCommunicationError.unknownError",
+          "documentation": ""
         }
       ]
     },
@@ -1394,22 +1461,6 @@
       ]
     },
     {
-      "code": "105",
-      "name": "Error",
-      "qualified_name": "KeyVerifier.Error",
-      "documentation": "",
-      "file": "IDP/internal/TokenPayload.swift",
-      "cases": [
-        {
-          "code": "01",
-          "full_id": "10501",
-          "name": "stringConversion",
-          "qualified_name": "KeyVerifier.Error.stringConversion",
-          "documentation": ""
-        }
-      ]
-    },
-    {
       "code": "102",
       "name": "Error",
       "qualified_name": "BiometricsSHA256Signer.Error",
@@ -1444,6 +1495,22 @@
           "full_id": "10701",
           "name": "generic",
           "qualified_name": "ConversionError.generic",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "105",
+      "name": "Error",
+      "qualified_name": "KeyVerifier.Error",
+      "documentation": "",
+      "file": "IDPLive/KeyVerifier.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "10501",
+          "name": "stringConversion",
+          "qualified_name": "KeyVerifier.Error.stringConversion",
           "documentation": ""
         }
       ]
@@ -1535,6 +1602,57 @@
           "name": "decodingError",
           "qualified_name": "KeychainAccessHelperError.decodingError",
           "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "700",
+      "name": "PushNotificationCryptoError",
+      "qualified_name": "PushNotificationCryptoError",
+      "documentation": "MARK: - Errors",
+      "file": "PushNotificationCrypto/PushNotificationCrypto.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "70001",
+          "name": "noKeyAvailable",
+          "qualified_name": "PushNotificationCryptoError.noKeyAvailable",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "70002",
+          "name": "keyNotFoundForMonth",
+          "qualified_name": "PushNotificationCryptoError.keyNotFoundForMonth",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "70003",
+          "name": "invalidPayloadTooShort",
+          "qualified_name": "PushNotificationCryptoError.invalidPayloadTooShort",
+          "documentation": ""
+        },
+        {
+          "code": "04",
+          "full_id": "70004",
+          "name": "invalidPNM1Prefix",
+          "qualified_name": "PushNotificationCryptoError.invalidPNM1Prefix",
+          "documentation": ""
+        },
+        {
+          "code": "05",
+          "full_id": "70005",
+          "name": "invalidPayloadLength",
+          "qualified_name": "PushNotificationCryptoError.invalidPayloadLength",
+          "documentation": ""
+        },
+        {
+          "code": "06",
+          "full_id": "70006",
+          "name": "storageError",
+          "qualified_name": "PushNotificationCryptoError.storageError",
+          "documentation": "A keychain operation failed with the given OSStatus code and message."
         }
       ]
     },
@@ -1746,6 +1864,36 @@
           "name": "internalError",
           "qualified_name": "VAUError.internalError",
           "documentation": "Internal error"
+        }
+      ]
+    },
+    {
+      "code": "701",
+      "name": "APNSRegistrationError",
+      "qualified_name": "APNSRegistrationError",
+      "documentation": "",
+      "file": "eRpApp/Common/APNSRegistrationService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "70101",
+          "name": "permissionDenied",
+          "qualified_name": "APNSRegistrationError.permissionDenied",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "70102",
+          "name": "registrationFailed",
+          "qualified_name": "APNSRegistrationError.registrationFailed",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "70103",
+          "name": "missingToken",
+          "qualified_name": "APNSRegistrationError.missingToken",
+          "documentation": ""
         }
       ]
     },
@@ -2119,13 +2267,6 @@
           "name": "eRxRepository",
           "qualified_name": "RedeemServiceError.eRxRepository",
           "documentation": "When redeeming a task via Fachdienst"
-        },
-        {
-          "code": "02",
-          "full_id": "02402",
-          "name": "avs",
-          "qualified_name": "RedeemServiceError.avs",
-          "documentation": "When redeeming a task via AVS"
         },
         {
           "code": "03",
@@ -2577,6 +2718,36 @@
           "full_id": "03508",
           "name": "dataMissingInvoice",
           "qualified_name": "ChargeItemPDFServiceError.dataMissingInvoice",
+          "documentation": ""
+        }
+      ]
+    },
+    {
+      "code": "702",
+      "name": "PushNotificationRegistrationError",
+      "qualified_name": "PushNotificationRegistrationError",
+      "documentation": "",
+      "file": "eRpApp/Screens/Settings/Profiles/Notifications/PushNotificationRegistrationService.swift",
+      "cases": [
+        {
+          "code": "01",
+          "full_id": "70201",
+          "name": "missingPushGatewayURL",
+          "qualified_name": "PushNotificationRegistrationError.missingPushGatewayURL",
+          "documentation": ""
+        },
+        {
+          "code": "02",
+          "full_id": "70202",
+          "name": "missingAppId",
+          "qualified_name": "PushNotificationRegistrationError.missingAppId",
+          "documentation": ""
+        },
+        {
+          "code": "03",
+          "full_id": "70203",
+          "name": "notRegistered",
+          "qualified_name": "PushNotificationRegistrationError.notRegistered",
           "documentation": ""
         }
       ]
