@@ -17,7 +17,7 @@
         </div>
 
         <div class="header">
-            <h1>E-Rezept iOS - Error Details<br /><sub>Generated on 2026-04-16 16:40:34</sub></h1>
+            <h1>E-Rezept iOS - Error Details<br /><sub>Generated on 2026-08-11 13:55:58</sub></h1>
             <p>This documentation provides detailed information about all error enums and their cases defined in the Swift codebase.</p>
             <p>It is meant to assist support and development teams in understanding and handling errors effectively.</p>
             <p>For any questions or contributions, please contact the development team.</p>
@@ -25,9 +25,9 @@
 
         <div class="summary">
             <h2>Summary</h2>
-            <p><strong>Total Files:</strong> 75</p>
-            <p><strong>Total Error Enums:</strong> 88</p>
-            <p><strong>Total Error Cases:</strong> 360</p>
+            <p><strong>Total Files:</strong> 81</p>
+            <p><strong>Total Error Enums:</strong> 93</p>
+            <p><strong>Total Error Cases:</strong> 378</p>
         </div>
 
         <div class="search-box">
@@ -399,13 +399,13 @@ E.g. no task(s) found in a Fetch response where we normally would have expected 
 
 
             </div>
-            <div class="error-card" id="cardwallextauthconfirmationdomainerror" data-searchable="CardWallExtAuthConfirmationDomainError 012 CardWallExtAuthConfirmationDomain.Error ">
+            <div class="error-card" id="cardwallextauthselectiondomainerror" data-searchable="CardWallExtAuthSelectionDomainError 012 CardWallExtAuthSelectionDomain.Error ">
                 <div class="error-header">
-                    <h2 class="error-title">CardWallExtAuthConfirmationDomainError</h2>
+                    <h2 class="error-title">CardWallExtAuthSelectionDomainError</h2>
                     <div class="error-meta">
                         <span class="error-code">012</span>
-                        <span> • Qualified Name: <code>CardWallExtAuthConfirmationDomain.Error</code></span>
-                        <span> • File: <code>./Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift</code></span>
+                        <span> • Qualified Name: <code>CardWallExtAuthSelectionDomain.Error</code></span>
+                        <span> • File: <code>./Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift</code></span>
                     </div>
                 </div>
                 
@@ -864,6 +864,115 @@ or sending/receiving data (operation execution)</td>
                     </table>
                 </div>
 
+
+            </div>
+            <div class="error-card" id="ordersrepositoryerror" data-searchable="OrdersRepositoryError 037 OrdersRepositoryError MARK: - Error">
+                <div class="error-header">
+                    <h2 class="error-title">OrdersRepositoryError</h2>
+                    <div class="error-meta">
+                        <span class="error-code">037</span>
+                        <span> • Qualified Name: <code>OrdersRepositoryError</code></span>
+                        <span> • File: <code>./Sources/FeatureCommunication/MessagesList/CommunicationsRepository.swift</code></span>
+                    </div>
+                </div>
+                
+                <div class="documentation">
+MARK: - Error
+                </div>
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="case-id">i-03701</span></td>
+                                <td><span class="case-name">erxRepository</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-03702</span></td>
+                                <td><span class="case-name">pharmacyRepository</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-03703</span></td>
+                                <td><span class="case-name">unspecified</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="related-errors">
+                    <h3>Related Errors</h3>
+                    <ul>
+                        <li>Case <code>erxRepository</code> → <a href="#erxrepositoryerror" class="related-link">ErxRepositoryError</a></li>
+                        <li>Case <code>pharmacyRepository</code> → <a href="#pharmacyrepositoryerror" class="related-link">PharmacyRepositoryError</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="error-card" id="internalcommunicationerror" data-searchable="InternalCommunicationError 038 InternalCommunicationError ">
+                <div class="error-header">
+                    <h2 class="error-title">InternalCommunicationError</h2>
+                    <div class="error-meta">
+                        <span class="error-code">038</span>
+                        <span> • Qualified Name: <code>InternalCommunicationError</code></span>
+                        <span> • File: <code>./Sources/FeatureCommunication/MessagesList/InternalCommunicationClient.swift</code></span>
+                    </div>
+                </div>
+                
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="case-id">i-03801</span></td>
+                                <td><span class="case-name">decodingError</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-03802</span></td>
+                                <td><span class="case-name">invalidURL</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-03803</span></td>
+                                <td><span class="case-name">emptyOnboardingDate</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-03804</span></td>
+                                <td><span class="case-name">unknownError</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="related-errors">
+                    <h3>Related Errors</h3>
+                    <ul>
+                        <li>Case <code>decodingError</code> → <a href="#consentserviceerror" class="related-link">ConsentServiceError</a></li>
+                    </ul>
+                </div>
 
             </div>
             <div class="error-card" id="eucodegenerationerror" data-searchable="EuCodeGenerationError 046 EuCodeGenerationError ">
@@ -1677,40 +1786,6 @@ or sending/receiving data (operation execution)</td>
 
 
             </div>
-            <div class="error-card" id="keyverifiererror" data-searchable="KeyVerifierError 105 KeyVerifier.Error ">
-                <div class="error-header">
-                    <h2 class="error-title">KeyVerifierError</h2>
-                    <div class="error-meta">
-                        <span class="error-code">105</span>
-                        <span> • Qualified Name: <code>KeyVerifier.Error</code></span>
-                        <span> • File: <code>./Sources/IDP/internal/TokenPayload.swift</code></span>
-                    </div>
-                </div>
-                
-
-                <div class="cases-section">
-                    <h3>Error Cases</h3>
-                    
-                    <table class="cases-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Case Name</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="case-id">i-10501</span></td>
-                                <td><span class="case-name">stringConversion</span></td>
-                                <td><em>No description</em></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-
-            </div>
             <div class="error-card" id="biometricssha256signererror" data-searchable="BiometricsSHA256SignerError 102 BiometricsSHA256Signer.Error ">
                 <div class="error-header">
                     <h2 class="error-title">BiometricsSHA256SignerError</h2>
@@ -1776,6 +1851,40 @@ or sending/receiving data (operation execution)</td>
                             <tr>
                                 <td><span class="case-id">i-10701</span></td>
                                 <td><span class="case-name">generic</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="error-card" id="keyverifiererror" data-searchable="KeyVerifierError 105 KeyVerifier.Error ">
+                <div class="error-header">
+                    <h2 class="error-title">KeyVerifierError</h2>
+                    <div class="error-meta">
+                        <span class="error-code">105</span>
+                        <span> • Qualified Name: <code>KeyVerifier.Error</code></span>
+                        <span> • File: <code>./Sources/IDPLive/KeyVerifier.swift</code></span>
+                    </div>
+                </div>
+                
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="case-id">i-10501</span></td>
+                                <td><span class="case-name">stringConversion</span></td>
                                 <td><em>No description</em></td>
                             </tr>
                         </tbody>
@@ -1915,6 +2024,68 @@ or sending/receiving data (operation execution)</td>
                                 <td><span class="case-id">i-02003</span></td>
                                 <td><span class="case-name">decodingError</span></td>
                                 <td><em>No description</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="error-card" id="pushnotificationcryptoerror" data-searchable="PushNotificationCryptoError 700 PushNotificationCryptoError MARK: - Errors">
+                <div class="error-header">
+                    <h2 class="error-title">PushNotificationCryptoError</h2>
+                    <div class="error-meta">
+                        <span class="error-code">700</span>
+                        <span> • Qualified Name: <code>PushNotificationCryptoError</code></span>
+                        <span> • File: <code>./Sources/PushNotificationCrypto/PushNotificationCrypto.swift</code></span>
+                    </div>
+                </div>
+                
+                <div class="documentation">
+MARK: - Errors
+                </div>
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="case-id">i-70001</span></td>
+                                <td><span class="case-name">noKeyAvailable</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70002</span></td>
+                                <td><span class="case-name">keyNotFoundForMonth</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70003</span></td>
+                                <td><span class="case-name">invalidPayloadTooShort</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70004</span></td>
+                                <td><span class="case-name">invalidPNM1Prefix</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70005</span></td>
+                                <td><span class="case-name">invalidPayloadLength</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70006</span></td>
+                                <td><span class="case-name">storageError</span></td>
+                                <td>A keychain operation failed with the given OSStatus code and message.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2174,6 +2345,50 @@ or sending/receiving data (operation execution)</td>
                         <li>Case <code>network</code> → <a href="#httpclienterror" class="related-link">HTTPClientError</a></li>
                     </ul>
                 </div>
+
+            </div>
+            <div class="error-card" id="apnsregistrationerror" data-searchable="APNSRegistrationError 701 APNSRegistrationError ">
+                <div class="error-header">
+                    <h2 class="error-title">APNSRegistrationError</h2>
+                    <div class="error-meta">
+                        <span class="error-code">701</span>
+                        <span> • Qualified Name: <code>APNSRegistrationError</code></span>
+                        <span> • File: <code>./Sources/eRpApp/Common/APNSRegistrationService.swift</code></span>
+                    </div>
+                </div>
+                
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="case-id">i-70101</span></td>
+                                <td><span class="case-name">permissionDenied</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70102</span></td>
+                                <td><span class="case-name">registrationFailed</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70103</span></td>
+                                <td><span class="case-name">missingToken</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
 
             </div>
             <div class="error-card" id="zxingmatrixcodegeneratorerror" data-searchable="ZXingMatrixCodeGeneratorError 009 ZXingMatrixCodeGenerator.Error ">
@@ -2829,11 +3044,6 @@ Error is produces within the `IDPError.unspecified` error before saving the IDPT
                                 <td>When redeeming a task via Fachdienst</td>
                             </tr>
                             <tr>
-                                <td><span class="case-id">i-02402</span></td>
-                                <td><span class="case-name">avs</span></td>
-                                <td>When redeeming a task via AVS</td>
-                            </tr>
-                            <tr>
                                 <td><span class="case-id">i-02403</span></td>
                                 <td><span class="case-name">internalError</span></td>
                                 <td>When an internal error occurs which most likely is a programming error</td>
@@ -2866,7 +3076,6 @@ Error is produces within the `IDPError.unspecified` error before saving the IDPT
                     <h3>Related Errors</h3>
                     <ul>
                         <li>Case <code>eRxRepository</code> → <a href="#erxrepositoryerror" class="related-link">ErxRepositoryError</a></li>
-                        <li>Case <code>avs</code> → <a href="#avserror" class="related-link">AVSError</a></li>
                         <li>Case <code>internalError</code> → <a href="#internalerror" class="related-link">InternalError</a></li>
                         <li>Case <code>loginHandler</code> → <a href="#loginhandlererror" class="related-link">LoginHandlerError</a></li>
                     </ul>
@@ -3427,6 +3636,50 @@ or sending/receiving data (operation execution)</td>
                         <li>Case <code>failedToCreateAttachment</code> → <a href="#consentserviceerror" class="related-link">ConsentServiceError</a></li>
                     </ul>
                 </div>
+
+            </div>
+            <div class="error-card" id="pushnotificationregistrationerror" data-searchable="PushNotificationRegistrationError 702 PushNotificationRegistrationError ">
+                <div class="error-header">
+                    <h2 class="error-title">PushNotificationRegistrationError</h2>
+                    <div class="error-meta">
+                        <span class="error-code">702</span>
+                        <span> • Qualified Name: <code>PushNotificationRegistrationError</code></span>
+                        <span> • File: <code>./Sources/eRpApp/Screens/Settings/Profiles/Notifications/PushNotificationRegistrationService.swift</code></span>
+                    </div>
+                </div>
+                
+
+                <div class="cases-section">
+                    <h3>Error Cases</h3>
+                    
+                    <table class="cases-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Case Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="case-id">i-70201</span></td>
+                                <td><span class="case-name">missingPushGatewayURL</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70202</span></td>
+                                <td><span class="case-name">missingAppId</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                            <tr>
+                                <td><span class="case-id">i-70203</span></td>
+                                <td><span class="case-name">notRegistered</span></td>
+                                <td><em>No description</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
 
             </div>
             <div class="error-card" id="auditeventsserviceerror" data-searchable="AuditEventsServiceError 028 AuditEventsServiceError ">

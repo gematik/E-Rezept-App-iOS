@@ -206,12 +206,12 @@ digraph G {
         href="errors.html#healthcareservicebundleparsingerror"
     ];
 
-    "CardWallExtAuthConfirmationDomainError" [
+    "CardWallExtAuthSelectionDomainError" [
         label=
     <
 <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
   <TR>
-    <TD BGCOLOR="lightgray" PORT="CardWallExtAuthConfirmationDomainError" width="200" COLSPAN="2" ID="CardWallExtAuthConfirmationDomainError"><FONT POINT-SIZE="16.0">CardWallExtAuthConfirmationDomainError</FONT></TD>
+    <TD BGCOLOR="lightgray" PORT="CardWallExtAuthSelectionDomainError" width="200" COLSPAN="2" ID="CardWallExtAuthSelectionDomainError"><FONT POINT-SIZE="16.0">CardWallExtAuthSelectionDomainError</FONT></TD>
   </TR>
 <TR>
     <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-01201</FONT></TD>
@@ -223,7 +223,7 @@ digraph G {
 </TR>
 </TABLE>
 >
-        id="CardWallExtAuthConfirmationDomainError"
+        id="CardWallExtAuthSelectionDomainError"
         fontsize="10pt"
         href="errors.html#error"
     ];
@@ -472,6 +472,62 @@ digraph G {
         id="VerifyPINError"
         fontsize="10pt"
         href="errors.html#verifypinerror"
+    ];
+
+    "OrdersRepositoryError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="OrdersRepositoryError" width="200" COLSPAN="2" ID="OrdersRepositoryError"><FONT POINT-SIZE="16.0">OrdersRepositoryError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03701</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="erxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">erxRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03702</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="pharmacyRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">pharmacyRepository</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03703</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unspecified" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unspecified</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="OrdersRepositoryError"
+        fontsize="10pt"
+        href="errors.html#ordersrepositoryerror"
+    ];
+
+    "InternalCommunicationError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="InternalCommunicationError" width="200" COLSPAN="2" ID="InternalCommunicationError"><FONT POINT-SIZE="16.0">InternalCommunicationError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03801</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="decodingError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">decodingError</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03802</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidURL" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidURL</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03803</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="emptyOnboardingDate" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">emptyOnboardingDate</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-03804</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="unknownError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">unknownError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="InternalCommunicationError"
+        fontsize="10pt"
+        href="errors.html#internalcommunicationerror"
     ];
 
     "EuCodeGenerationError" [
@@ -1018,24 +1074,6 @@ digraph G {
         href="errors.html#error"
     ];
 
-    "KeyVerifierError" [
-        label=
-    <
-<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-  <TR>
-    <TD BGCOLOR="lightgray" PORT="KeyVerifierError" width="200" COLSPAN="2" ID="KeyVerifierError"><FONT POINT-SIZE="16.0">KeyVerifierError</FONT></TD>
-  </TR>
-<TR>
-    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10501</FONT></TD>
-    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="stringConversion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">stringConversion</FONT></TD>
-</TR>
-</TABLE>
->
-        id="KeyVerifierError"
-        fontsize="10pt"
-        href="errors.html#error"
-    ];
-
     "BiometricsSHA256SignerError" [
         label=
     <
@@ -1074,6 +1112,24 @@ digraph G {
         id="ConversionError"
         fontsize="10pt"
         href="errors.html#conversionerror"
+    ];
+
+    "KeyVerifierError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="KeyVerifierError" width="200" COLSPAN="2" ID="KeyVerifierError"><FONT POINT-SIZE="16.0">KeyVerifierError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-10501</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="stringConversion" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">stringConversion</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="KeyVerifierError"
+        fontsize="10pt"
+        href="errors.html#error"
     ];
 
     "PharmacyRepositoryError" [
@@ -1152,6 +1208,44 @@ digraph G {
         id="KeychainAccessHelperError"
         fontsize="10pt"
         href="errors.html#keychainaccesshelpererror"
+    ];
+
+    "PushNotificationCryptoError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="PushNotificationCryptoError" width="200" COLSPAN="2" ID="PushNotificationCryptoError"><FONT POINT-SIZE="16.0">PushNotificationCryptoError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70001</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="noKeyAvailable" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">noKeyAvailable</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70002</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="keyNotFoundForMonth" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">keyNotFoundForMonth</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70003</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidPayloadTooShort" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidPayloadTooShort</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70004</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidPNM1Prefix" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidPNM1Prefix</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70005</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="invalidPayloadLength" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">invalidPayloadLength</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70006</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="storageError" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">storageError</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="PushNotificationCryptoError"
+        fontsize="10pt"
+        href="errors.html#pushnotificationcryptoerror"
     ];
 
     "TrustAnchorError" [
@@ -1308,6 +1402,32 @@ digraph G {
         id="VAUError"
         fontsize="10pt"
         href="errors.html#vauerror"
+    ];
+
+    "APNSRegistrationError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="APNSRegistrationError" width="200" COLSPAN="2" ID="APNSRegistrationError"><FONT POINT-SIZE="16.0">APNSRegistrationError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70101</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="permissionDenied" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">permissionDenied</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70102</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="registrationFailed" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">registrationFailed</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70103</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingToken" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingToken</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="APNSRegistrationError"
+        fontsize="10pt"
+        href="errors.html#apnsregistrationerror"
     ];
 
     "ZXingMatrixCodeGeneratorError" [
@@ -1648,10 +1768,6 @@ digraph G {
 <TR>
     <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02401</FONT></TD>
     <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="eRxRepository" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">eRxRepository</FONT></TD>
-</TR>
-<TR>
-    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02402</FONT></TD>
-    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="avs" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">avs</FONT></TD>
 </TR>
 <TR>
     <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-02403</FONT></TD>
@@ -1996,6 +2112,32 @@ digraph G {
         id="ChargeItemPDFServiceError"
         fontsize="10pt"
         href="errors.html#chargeitempdfserviceerror"
+    ];
+
+    "PushNotificationRegistrationError" [
+        label=
+    <
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="PushNotificationRegistrationError" width="200" COLSPAN="2" ID="PushNotificationRegistrationError"><FONT POINT-SIZE="16.0">PushNotificationRegistrationError</FONT></TD>
+  </TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70201</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingPushGatewayURL" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingPushGatewayURL</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70202</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="missingAppId" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">missingAppId</FONT></TD>
+</TR>
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-70203</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="notRegistered" HREF="#" TOOLTIP=""><FONT POINT-SIZE="10">notRegistered</FONT></TD>
+</TR>
+</TABLE>
+>
+        id="PushNotificationRegistrationError"
+        fontsize="10pt"
+        href="errors.html#pushnotificationregistrationerror"
     ];
 
     "AuditEventsServiceError" [
@@ -2683,7 +2825,7 @@ digraph G {
   "ConsentServiceError":loginHandler -> "LoginHandlerError";
   "ConsentServiceError":erxRepository -> "ErxRepositoryError";
   "FHIRVZDError":network -> "HTTPClientError";
-  "CardWallExtAuthConfirmationDomainError":idpError -> "IDPError";
+  "CardWallExtAuthSelectionDomainError":idpError -> "IDPError";
   "CardWallIntroductionDomainError":idpError -> "IDPError";
   "StateError":idpError -> "IDPError";
   "StateError":inputError -> "InputError";
@@ -2693,6 +2835,9 @@ digraph G {
   "NFCSignatureProviderError":verifyCardError -> "VerifyPINError";
   "NFCSignatureProviderError":signingFailure -> "SigningError";
   "NFCSignatureProviderError":secureEnclaveError -> "SecureEnclaveSignatureProviderError";
+  "OrdersRepositoryError":erxRepository -> "ErxRepositoryError";
+  "OrdersRepositoryError":pharmacyRepository -> "PharmacyRepositoryError";
+  "InternalCommunicationError":decodingError -> "ConsentServiceError";
   "EuRedeemServiceError":eRxRepository -> "ErxRepositoryError";
   "EuRedeemServiceError":localStoreError -> "LocalStoreError";
   "EuRedeemServiceError":euCodeGeneration -> "EuCodeGenerationError";
@@ -2718,7 +2863,6 @@ digraph G {
   "RedeemOrderServiceError":pharmacy -> "PharmacyRepositoryError";
   "RedeemOrderServiceError":redeem -> "RedeemServiceError";
   "RedeemServiceError":eRxRepository -> "ErxRepositoryError";
-  "RedeemServiceError":avs -> "AVSError";
   "RedeemServiceError":internalError -> "InternalError";
   "RedeemServiceError":loginHandler -> "LoginHandlerError";
   "InternalError":localStoreError -> "LocalStoreError";

@@ -426,6 +426,7 @@ window.addEventListener( 'afterprint', () => {
 
 
 
+
 <li><a href="#gemSpec_IDP_Frontend" id="toc-gemSpec_IDP_Frontend">gemSpec_IDP_Frontend</a>
 	<ul>
 
@@ -658,9 +659,6 @@ window.addEventListener( 'afterprint', () => {
 	<li><a href="#GS-A_4389" id="toc-GS-A_4389">GS-A_4389</a></li>
 
 
-	<li><a href="#GS-A_4390" id="toc-GS-A_4390">GS-A_4390</a></li>
-
-
 
 
 
@@ -786,7 +784,7 @@ window.addEventListener( 'afterprint', () => {
 
 <h1 id="missing_requirements">Known Missing Requirements References:</h1>
 
-["A_27113", "A_21332-02", "A_25416"]
+["A_27113", "A_21332-02", "GS-A_4390", "A_25416"]
 
 <h1 id="requirements">Requirements</h1>
 
@@ -1746,7 +1744,7 @@ return .run { [updateChecked = state.updateChecked] send in
 
 <p><p>Implementation of eGK connection</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ReadCard/CardWallReadCardDomain.swift#L210">Sources/FeatureCardWall/ReadCard/CardWallReadCardDomain.swift:L210</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ReadCard/CardWallReadCardDomain.swift#L211">Sources/FeatureCardWall/ReadCard/CardWallReadCardDomain.swift:L211</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
 case .signChallenge,
 </code>
@@ -1865,11 +1863,11 @@ Button(action: {
 
 <p><p>Business logic of user selecting the insurance company</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L149">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L149</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L191">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L191</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
 // [REQ:gemSpec_IDP_Frontend:A_22294-01] Select KK
-// [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen
-state.destination = .confirmation(.init(profileId: state.profileId, selectedKK: entry))
+// [REQ:BSI-eRp-ePA:O.Auth_4#7,O.Auth_4#8] Directly start login via gID
+state.selectLoading = true
 </code>
 
 
@@ -1878,13 +1876,13 @@ state.destination = .confirmation(.init(profileId: state.profileId, selectedKK: 
 
 
 
-<p><p>Proceed to confirmation screen</p>
+<p><p>Directly start login via gID</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L151">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L151</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L193">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L193</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
 // [REQ:gemSpec_IDP_Frontend:A_22294-01] Select KK
-// [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen
-state.destination = .confirmation(.init(profileId: state.profileId, selectedKK: entry))
+// [REQ:BSI-eRp-ePA:O.Auth_4#7,O.Auth_4#8] Directly start login via gID
+state.selectLoading = true
 </code>
 
 
@@ -1893,24 +1891,13 @@ state.destination = .confirmation(.init(profileId: state.profileId, selectedKK: 
 
 
 
-<p><p>Confirmation Dialog with brief explanation</p>
+<p><p>Directly start login via gID</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationView.swift#L28">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationView.swift:L28</a>
-<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_4#8] Confirmation Dialog with brief explanation
-struct CardWallExtAuthConfirmationView: View {
-</code>
-
-
-
-
-
-
-
-<p><p>User confirms the insurance company</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationView.swift#L90">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationView.swift:L90</a>
-<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_4#8] User confirms the insurance company
-Button {
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L193">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L193</a>
+<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
+// [REQ:gemSpec_IDP_Frontend:A_22294-01] Select KK
+// [REQ:BSI-eRp-ePA:O.Auth_4#7,O.Auth_4#8] Directly start login via gID
+state.selectLoading = true
 </code>
 
 
@@ -1921,7 +1908,7 @@ Button {
 
 <p><p>Start login via gID</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift#L109">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:L109</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L198">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L198</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22294-01] Start login via gID
 // [REQ:BSI-eRp-ePA:O.Auth_4#9,O.Plat_10#2] Start login via gID
 return .publisher(
@@ -2054,7 +2041,7 @@ return .publisher(
 
 <p><p>Actual Button to open the audit events</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift#L563">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:L563</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift#L392">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:L392</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19177#2,A_19185#3] Actual Button to open the audit events
 // [REQ:BSI-eRp-ePA:O.Auth_6#2] Actual Button to open the audit events
 Button {
@@ -2435,7 +2422,7 @@ reducer: AppStartDomain().analytics().notifyUserInteraction().prepareUITestsDepe
 
 <p><p>The application is also checking for Access-Token expiration</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L815">Sources/IDPLive/DefaultIDPSession.swift:L815</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L828">Sources/IDPLive/DefaultIDPSession.swift:L828</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_10#2] The application is also checking for Access-Token expiration
 guard token.expires > time() else {
 </code>
@@ -2698,7 +2685,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
 <p><p>The user may use the logout button within each profile</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift#L279-L283">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:L279-L283</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift#L262-L266">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:L262-L266</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_14#2|5] The user may use the logout button within each profile
 Button {
 Button {
@@ -2714,7 +2701,7 @@ Button {
 
 <p><p>The domain accepts the intent and wipes tokens and other login related data</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift#L417-L422">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift:L417-L422</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift#L395-L400">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift:L395-L400</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Auth_14#3|6] The domain accepts the intent and wipes tokens and other login related data
 case .delegate(.logout):
 case .delegate(.logout):
@@ -2895,10 +2882,10 @@ func wipe() {
 
 <p><p>Signature via ecdh ephemeral-static</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L856">Sources/IDPLive/DefaultIDPSession.swift:L856</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L869">Sources/IDPLive/DefaultIDPSession.swift:L869</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#2] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#5] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -2909,10 +2896,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>Signature via ecdh ephemeral-static</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L893">Sources/IDPLive/DefaultIDPSession.swift:L893</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L907">Sources/IDPLive/DefaultIDPSession.swift:L907</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#3] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#4] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -2923,10 +2910,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>Signature via ecdh ephemeral-static</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L934">Sources/IDPLive/DefaultIDPSession.swift:L934</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L949">Sources/IDPLive/DefaultIDPSession.swift:L949</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#4] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#3] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -2937,10 +2924,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>Signature via ecdh ephemeral-static</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/JWT/JWE+Encryption.swift#L43">Sources/IDP/internal/JWT/JWE+Encryption.swift:L43</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/internal/JWT/JWE+Nesting.swift#L44">Sources/IDPLive/internal/JWT/JWE+Nesting.swift:L44</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#5] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#6] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -2951,10 +2938,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>Signature via ecdh ephemeral-static</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/TokenPayload.swift#L222">Sources/IDP/internal/TokenPayload.swift:L222</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/KeyVerifier.swift#L69">Sources/IDPLive/KeyVerifier.swift:L69</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#6] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#2] one time usage for JWE ECDH-ES Encryption
-guard let jweHeader = try? JWE.Header(algorithm: JWE.Algorithm.ecdh_es(keyExchangeContext),
+guard let jweHeader = try? JWE.Header(algorithm: JWE.EncryptionContext.Algorithm.ecdh_es(keyExchangeContext),
 </code>
 
 
@@ -3097,7 +3084,7 @@ try BrainpoolP256r1.KeyExchange.generateKey()
 
 <p><p>Brainpool key generator</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/JWT/JWE+KDF.swift#L54">Sources/IDP/internal/JWT/JWE+KDF.swift:L54</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/internal/JWT/JWE.EncryptionContext.swift#L50">Sources/IDPLive/internal/JWT/JWE.EncryptionContext.swift:L50</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_3#4] Brainpool key generator
 // [REQ:gemSpec_eRp_FdV:A_19179#4] Key pair generation delegated to OpenSSL
 = { try BrainpoolP256r1.KeyExchange.generateKey() })
@@ -3179,10 +3166,10 @@ let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
 
 <p><p>one time usage for JWE ECDH-ES Encryption</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/TokenPayload.swift#L223">Sources/IDP/internal/TokenPayload.swift:L223</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/KeyVerifier.swift#L70">Sources/IDPLive/KeyVerifier.swift:L70</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#6] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#2] one time usage for JWE ECDH-ES Encryption
-guard let jweHeader = try? JWE.Header(algorithm: JWE.Algorithm.ecdh_es(keyExchangeContext),
+guard let jweHeader = try? JWE.Header(algorithm: JWE.EncryptionContext.Algorithm.ecdh_es(keyExchangeContext),
 </code>
 
 
@@ -3193,10 +3180,10 @@ guard let jweHeader = try? JWE.Header(algorithm: JWE.Algorithm.ecdh_es(keyExchan
 
 <p><p>one time usage for JWE ECDH-ES Encryption</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L935">Sources/IDPLive/DefaultIDPSession.swift:L935</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L950">Sources/IDPLive/DefaultIDPSession.swift:L950</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#4] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#3] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -3207,10 +3194,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>one time usage for JWE ECDH-ES Encryption</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L894">Sources/IDPLive/DefaultIDPSession.swift:L894</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L908">Sources/IDPLive/DefaultIDPSession.swift:L908</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#3] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#4] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -3221,10 +3208,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>one time usage for JWE ECDH-ES Encryption</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L857">Sources/IDPLive/DefaultIDPSession.swift:L857</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L870">Sources/IDPLive/DefaultIDPSession.swift:L870</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#2] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#5] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -3235,10 +3222,10 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p><p>one time usage for JWE ECDH-ES Encryption</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/JWT/JWE+Encryption.swift#L44">Sources/IDP/internal/JWT/JWE+Encryption.swift:L44</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/internal/JWT/JWE+Nesting.swift#L45">Sources/IDPLive/internal/JWT/JWE+Nesting.swift:L45</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Cryp_1#5] Signature via ecdh ephemeral-static
 // [REQ:BSI-eRp-ePA:O.Cryp_4#6] one time usage for JWE ECDH-ES Encryption
-let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+let algorithm = JWE.EncryptionContext.Algorithm
 </code>
 
 
@@ -4105,7 +4092,7 @@ guard let data = tempImage.jpegData(compressionQuality: 0.3) else {
 
 <p><p>Keyboard extensions are disallowed</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/App/Sources/AppDelegate.swift#L53-L62">App/Sources/AppDelegate.swift:L53-L62</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/App/Sources/AppDelegate.swift#L71-L80">App/Sources/AppDelegate.swift:L71-L80</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Data_10#2|10] Keyboard extensions are disallowed
 func application(
 func application(
@@ -4715,7 +4702,7 @@ h. ein absichtliches, sicheres Überschreiben von Nutzerdaten im Gerät auf Anwe
 
 <p><p>URLSession is used as Network Framework</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L51">Sources/HTTPClientLive/DefaultHTTPClient.swift:L51</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L53">Sources/HTTPClientLive/DefaultHTTPClient.swift:L53</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
 // [REQ:gemSpec_IDP_Frontend:A_20606#2] Setup of minimum TLS Version to use.
 // [REQ:gemSpec_eRp_FdV:A_20206]
@@ -4783,7 +4770,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 
 <p><p>URLSession is used as Network Framework</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L51">Sources/HTTPClientLive/DefaultHTTPClient.swift:L51</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L53">Sources/HTTPClientLive/DefaultHTTPClient.swift:L53</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
 // [REQ:gemSpec_IDP_Frontend:A_20606#2] Setup of minimum TLS Version to use.
 // [REQ:gemSpec_eRp_FdV:A_20206]
@@ -4851,7 +4838,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 
 <p><p>Gematik Root CA 3 as a trust anchor has to be set in the program code</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L153-L168">Sources/Settings/AppConfiguration.swift:L153-L168</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L159-L174">Sources/Settings/AppConfiguration.swift:L159-L174</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // [REQ:gemSpec_Krypt:A_24469] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // [REQ:BSI-eRp-ePA:O.Ntwk_4#2|16] Gematik Root CA 3 as a trust anchor has to be set in the program code
@@ -5086,7 +5073,7 @@ func decrypt(data: Data) throws -> String {
 
 <p><p>URLSession is used as Network Framework</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L51">Sources/HTTPClientLive/DefaultHTTPClient.swift:L51</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L53">Sources/HTTPClientLive/DefaultHTTPClient.swift:L53</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
 // [REQ:gemSpec_IDP_Frontend:A_20606#2] Setup of minimum TLS Version to use.
 // [REQ:gemSpec_eRp_FdV:A_20206]
@@ -6675,7 +6662,7 @@ removeBlurOverlayFromWindow()
 
 <p><p>Start login via gID</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift#L109">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:L109</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L198">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L198</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22294-01] Start login via gID
 // [REQ:BSI-eRp-ePA:O.Auth_4#9,O.Plat_10#2] Start login via gID
 return .publisher(
@@ -6700,23 +6687,9 @@ class DataPrivacyTermsOfUseNavigationDelegate: NSObject, WKNavigationDelegate {
 
 
 
-<p><p>Usage of the delegate</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/DataPrivacy/DataPrivacyView.swift#L40">Sources/eRpApp/Screens/Settings/DataPrivacy/DataPrivacyView.swift:L40</a>
-<code class="language-swift">// swiftlint:disable:next weak_delegate
-// [REQ:BSI-eRp-ePA:O.Plat_10#3] Usage of the delegate
-let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
-</code>
-
-
-
-
-
-
-
 <p><p>Follow redirect</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift#L124">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:L124</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L213">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L213</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22299-01] Follow redirect
 // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
 guard await openURLHandler.canOpenURL(url) else {
@@ -6733,7 +6706,22 @@ guard await openURLHandler.canOpenURL(url) else {
 <a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/Introduction/CardWallIntroductionDomain.swift#L266">Sources/FeatureCardWall/Introduction/CardWallIntroductionDomain.swift:L266</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
 // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
-guard await openURLHandler.canOpenURL(url) else {
+// [REQ:gemSpec_IDP_Sek:A_22313-01] Remember State parameter for later verification
+let result = await openURLHandler.open(url)
+</code>
+
+
+
+
+
+
+
+<p><p>Usage of the delegate</p>
+</p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/DataPrivacy/DataPrivacyView.swift#L40">Sources/eRpApp/Screens/Settings/DataPrivacy/DataPrivacyView.swift:L40</a>
+<code class="language-swift">// swiftlint:disable:next weak_delegate
+// [REQ:BSI-eRp-ePA:O.Plat_10#3] Usage of the delegate
+let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 </code>
 
 
@@ -7252,6 +7240,13 @@ struct PharmacyContactView: View {
 
 
 
+<p><p>Terms of Use acceptance is required as part of the Onboarding.</p>
+</p>
+
+
+
+
+
 
 <p><p>Terms of Use display is part of the onboarding</p>
 </p>
@@ -7265,13 +7260,6 @@ struct PharmacyContactView: View {
 
 
 
-<p><p>Terms of Use acceptance is required as part of the Onboarding.</p>
-</p>
-
-
-
-
-
 
 <p><p>Actual view for the Terms of Use display</p>
 </p>
@@ -7279,6 +7267,32 @@ struct PharmacyContactView: View {
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Purp_3#2] Actual view for the Terms of Use display
 // [REQ:BSI-eRp-ePA:O.Arch_8#1] Webview containing local html without javascript
 struct TermsOfUseView: View {
+</code>
+
+
+
+
+
+
+
+<p><p>Button allows tracking</p>
+</p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift#L70">Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift:L70</a>
+<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Purp_3#4] Button allows tracking
+Button(action: {
+</code>
+
+
+
+
+
+
+
+<p><p>Button denies tracking</p>
+</p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift#L84">Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift:L84</a>
+<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
+Button(action: {
 </code>
 
 
@@ -7313,35 +7327,9 @@ Button(action: {
 
 
 
-<p><p>Button denies tracking</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift#L88">Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift:L88</a>
-<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
-Button(action: {
-</code>
-
-
-
-
-
-
-
-<p><p>Button allows tracking</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift#L74">Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsDetailView.swift:L74</a>
-<code class="language-swift">// [REQ:BSI-eRp-ePA:O.Purp_3#4] Button allows tracking
-Button(action: {
-</code>
-
-
-
-
-
-
-
 <p><p>Show comply route to display analytics usage within onboarding</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L129">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L129</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L131">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L131</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19088,A_19091-01#1,A_19092-01#2] Show comply route to display analytics usage within
 // onboarding
 // [REQ:BSI-eRp-ePA:O.Purp_3#5] Show comply route to display analytics usage within onboarding
@@ -7357,7 +7345,7 @@ case .showAnalytics:
 
 <p><p>Accept usage analytics</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L135">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L135</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L137">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L137</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19090-01,A_19091-01#2] User confirms the opt in within settings
 // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
 case .allowTracking:
@@ -7371,7 +7359,7 @@ case .allowTracking:
 
 <p><p>Deny usage analytics</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L140">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L140</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L142">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L142</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19092-01#3] User may choose to not accept analytics, onboarding will still continue
 // [REQ:BSI-eRp-ePA:O.Purp_3#7] Deny usage analytics
 case .denyTracking:
@@ -8334,7 +8322,7 @@ struct DeviceSecurityRootedDeviceView: View {
 
 <p><p>Implementation of loading the discovery document for fetching signature and</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L281">Sources/IDPLive/DefaultIDPSession.swift:L281</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L283">Sources/IDPLive/DefaultIDPSession.swift:L283</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Resi_6#2] Implementation of loading the discovery document for fetching signature and
 // encryption keys.
 // [REQ:gemSpec_Krypt:A_21222#3] DiscoveryDocument is validated with the active trustStoreSession
@@ -8349,11 +8337,11 @@ private func loadDiscoveryDocument() -> AnyPublisher<DiscoveryDocument, IDPError
 
 <p><p>Discovery Document signature verification</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L445">Sources/IDPLive/DefaultIDPSession.swift:L445</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L449">Sources/IDPLive/DefaultIDPSession.swift:L449</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22296-01] Signature verification
 // [REQ:gemSpec_IDP_Frontend:A_23082#3] Signature verification
 // [REQ:BSI-eRp-ePA:O.Resi_6#3] Discovery Document signature verification
-guard try jwtContainer.verify(with: document.discKey) == true else {
+guard let discKeyX509Data = document.discKey.derBytes,
 </code>
 
 
@@ -8364,13 +8352,13 @@ guard try jwtContainer.verify(with: document.discKey) == true else {
 
 <p><p>Discovery Document signature verification</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L308">Sources/IDPLive/DefaultIDPSession.swift:L308</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L310">Sources/IDPLive/DefaultIDPSession.swift:L310</a>
 <code class="language-swift">// Validate JWT/DiscoveryDocument signature
 // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 // [REQ:gemSpec_Krypt:GS-A_4361-02] Assure that brainpoolP256r1 is used
 // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
-guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+guard let discKeyX509Data = fetchedDocument.discKey.derBytes,
 </code>
 
 
@@ -8381,14 +8369,14 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 
 <p><p>Discovery Document signature verification</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L788-L793">Sources/IDPLive/DefaultIDPSession.swift:L788-L793</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L796-L801">Sources/IDPLive/DefaultIDPSession.swift:L796-L801</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Resi_6#5|6] Discovery Document signature verification
-guard try await self.validate(eeCertificate: discoveryDocument.discKey)
-guard try await self.validate(eeCertificate: discoveryDocument.discKey)
+guard let discKeyX509Data = discoveryDocument.discKey.derBytes,
+guard let discKeyX509Data = discoveryDocument.discKey.derBytes,
+      let discKeyX509 = try? X509(der: discKeyX509Data),
+      try await self.validate(eeCertificate: discKeyX509)
 else { return false }
-// [REQ:gemSpec_IDP_Frontend:A_20625#3|4] `C.FD.SIG`-Certificate verification
-return try await self.validate(eeCertificate: discoveryDocument.signingCert)
-}</code>
+// [REQ:gemSpec_IDP_Frontend:A_20625#3|4] `C.FD.SIG`-Certificate verification</code>
 
 
 
@@ -8650,6 +8638,13 @@ return try await self.validate(eeCertificate: discoveryDocument.signingCert)
 
 
 
+<p><p>We have two potential unknown inputs, one being the scanner, that scanns QR Codes or Data Matrix Codes. External interactions are managed through Universal Linking, with thorough validation of URL parameters to ensure only predefined variables are accepted.</p>
+</p>
+
+
+
+
+
 
 <p><p>Scanning tasks starts with scanner callback</p>
 </p>
@@ -8659,13 +8654,6 @@ return try await self.validate(eeCertificate: discoveryDocument.signingCert)
 store.send(.analyse(scanOutput: $0))
 </code>
 
-
-
-
-
-
-<p><p>We have two potential unknown inputs, one being the scanner, that scanns QR Codes or Data Matrix Codes. External interactions are managed through Universal Linking, with thorough validation of URL parameters to ensure only predefined variables are accepted.</p>
-</p>
 
 
 
@@ -8727,7 +8715,7 @@ func scene(_: UIScene, continue userActivity: NSUserActivity) {
 
 <p><p>External application calls via Universal Linking</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/AppStartDomain.swift#L246">Sources/eRpApp/Screens/AppStartDomain.swift:L246</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/AppStartDomain.swift#L249">Sources/eRpApp/Screens/AppStartDomain.swift:L249</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
 case let .universalLink(url):
 </code>
@@ -9875,6 +9863,49 @@ Software, bzw. Funktionen aus Drittanbieter- Software DARF bei bekannten Schwach
 
 
 
+<h2 id="gemF_PushNotification">gemF_PushNotification</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <h2 id="gemSpec_FD_eRp">gemSpec_FD_eRp</h2>
 
 
@@ -10021,7 +10052,7 @@ guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
 
 <p><p>Usage</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L245">Sources/IDPLive/DefaultIDPSession.swift:L245</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L247">Sources/IDPLive/DefaultIDPSession.swift:L247</a>
 <code class="language-swift">idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01#4] Usage
 ssoToken: exchange.sso,
 </code>
@@ -10150,7 +10181,7 @@ Das Anwendungsfrontend MUSS das <span style="font-family: 'Courier New', Courier
 
 <p><p>Usage</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L243">Sources/IDPLive/DefaultIDPSession.swift:L243</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L245">Sources/IDPLive/DefaultIDPSession.swift:L245</a>
 <code class="language-swift">accessToken: decrypted.accessToken, // [REQ:gemSpec_IDP_Frontend:A_20283-01] Usage
 expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
 </code>
@@ -10196,7 +10227,7 @@ guard let encoded = try randomGenerator(verifierLength).encodeBase64UrlSafe() el
 
 <p><p>generation and hashing for codeChallenge</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L630">Sources/IDPLive/DefaultIDPSession.swift:L630</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L636">Sources/IDPLive/DefaultIDPSession.swift:L636</a>
 <code class="language-swift">// Generate a verifierCode
 // [REQ:gemSpec_IDP_Frontend:A_20309] generation and hashing for codeChallenge
 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
@@ -10226,7 +10257,7 @@ guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
 
 <p><p>Requesting the challange for the session</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L640-L647">Sources/IDPLive/DefaultIDPSession.swift:L640-L647</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L646-L653">Sources/IDPLive/DefaultIDPSession.swift:L646-L653</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20483#2|8] Requesting the challange for the session
 return self.client.requestChallenge(
 return self.client.requestChallenge(
@@ -10296,7 +10327,7 @@ let queryItems = [
 
 <p><p>Validation by expiration date checking + maximum of 24h window</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/Models/DiscoveryDocument.swift#L198-L202">Sources/IDP/Models/DiscoveryDocument.swift:L198-L202</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/Models/DiscoveryDocument.swift#L150-L154">Sources/IDP/Models/DiscoveryDocument.swift:L150-L154</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20512#2|5] Validation by expiration date checking + maximum of 24h window
 /// Check if the discovery document is valid on the given date
 /// - Parameter date: Date to check validity against
@@ -10315,7 +10346,7 @@ public func isValid(on date: Date) -> Bool {</code>
 
 <p><p>Reset expired documents before loading a new one</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L299">Sources/IDPLive/DefaultIDPSession.swift:L299</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L301">Sources/IDPLive/DefaultIDPSession.swift:L301</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20512#3] Reset expired documents before loading a new one
 self.storage.set(discovery: nil)
 </code>
@@ -10332,7 +10363,7 @@ self.storage.set(discovery: nil)
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
 // [REQ:gemSpec_IDP_Frontend:A_20623]
 // [REQ:gemSpec_IDP_Frontend:A_20512#10] Testing the implementation
-@MainActor func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async throws {
+func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async throws {
 </code>
 
 
@@ -10377,7 +10408,7 @@ func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreThrows() thro
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
 // [REQ:gemSpec_IDP_Frontend:A_20623]
 // [REQ:gemSpec_IDP_Frontend:A_20512#13] Testing the implementation
-@MainActor func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async throws {
+func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async throws {
 </code>
 
 
@@ -10407,7 +10438,7 @@ func testLoadDiscoveryDocumentFromStorageOnInit() throws {
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
 // [REQ:gemSpec_IDP_Frontend:A_20623]
 // [REQ:gemSpec_IDP_Frontend:A_20512#15] Testing the implementation
-@MainActor func testLoadDiscoveryDocumentFromRemoteOnInit() async throws {
+func testLoadDiscoveryDocumentFromRemoteOnInit() async throws {
 </code>
 
 
@@ -10680,7 +10711,7 @@ private static func responseError(for body: Data) -> IDPError {
 
 <p><p>Setup of minimum TLS Version to use.</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L49">Sources/HTTPClientLive/DefaultHTTPClient.swift:L49</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/HTTPClientLive/DefaultHTTPClient.swift#L51">Sources/HTTPClientLive/DefaultHTTPClient.swift:L51</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
 // [REQ:gemSpec_IDP_Frontend:A_20606#2] Setup of minimum TLS Version to use.
 // [REQ:gemSpec_eRp_FdV:A_20206]
@@ -10727,11 +10758,9 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 
 <p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Tests/IDPLiveTests/DefaultIDPSessionTests.swift#L262">Tests/IDPLiveTests/DefaultIDPSessionTests.swift:L262</a>
-<code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
-// [REQ:gemSpec_IDP_Frontend:A_20623]
-// [REQ:gemSpec_IDP_Frontend:A_20512#15] Testing the implementation
-@MainActor func testLoadDiscoveryDocumentFromRemoteOnInit() async throws {
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L289">Sources/IDPLive/DefaultIDPSession.swift:L289</a>
+<code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
+.validateOrNil(with: trustStoreSession, timeProvider: time)
 </code>
 
 
@@ -10742,7 +10771,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 
 <p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L320">Sources/IDPLive/DefaultIDPSession.swift:L320</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L324">Sources/IDPLive/DefaultIDPSession.swift:L324</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code>
@@ -10755,7 +10784,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 
 <p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L719">Sources/IDPLive/DefaultIDPSession.swift:L719</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L727">Sources/IDPLive/DefaultIDPSession.swift:L727</a>
 <code class="language-swift">/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -10776,7 +10805,7 @@ func validate(with trustStoreSession: TrustStoreSession,
 
 <p><p>Validation call</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L730">Sources/IDPLive/DefaultIDPSession.swift:L730</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L738">Sources/IDPLive/DefaultIDPSession.swift:L738</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20623] Validation call
 return trustStoreSession.validate(discoveryDocument: document)
 </code>
@@ -10789,7 +10818,7 @@ return trustStoreSession.validate(discoveryDocument: document)
 
 <p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L750">Sources/IDPLive/DefaultIDPSession.swift:L750</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L758">Sources/IDPLive/DefaultIDPSession.swift:L758</a>
 <code class="language-swift">/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -10810,7 +10839,7 @@ func validateOrNil(with trustStoreSession: TrustStoreSession,
 
 <p><p>Validation</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L781">Sources/IDPLive/DefaultIDPSession.swift:L781</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L789">Sources/IDPLive/DefaultIDPSession.swift:L789</a>
 <code class="language-swift">/// Returns a publisher that checks a discoveryDocument against the trust store. The Stream contains an output
 /// boolean for the plain check or an TrustStoreError in case the TrustStoreSession sub streams failed.
 ///
@@ -10830,7 +10859,7 @@ func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustS
 
 <p><p>oid check</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L285">Sources/TrustStore/X509TrustStore.swift:L285</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L288">Sources/TrustStore/X509TrustStore.swift:L288</a>
 <code class="language-swift">} else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623,A_20625#4] oid check
     return (vauCerts, idpCerts + [eeCert])
 </code>
@@ -10843,7 +10872,7 @@ func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustS
 
 <p><p>IDP oid</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L297">Sources/TrustStore/X509TrustStore.swift:L297</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L300">Sources/TrustStore/X509TrustStore.swift:L300</a>
 <code class="language-swift">case oidErpVau // 1.2.276.0.76.4.258 == 0x06082A8214004C048202
 // [REQ:gemSpec_IDP_Frontend:A_20623] IDP oid
 case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
@@ -10862,7 +10891,7 @@ case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
 // [REQ:gemSpec_IDP_Frontend:A_20623]
 // [REQ:gemSpec_IDP_Frontend:A_20512#10] Testing the implementation
-@MainActor func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async throws {
+func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() async throws {
 </code>
 
 
@@ -10907,7 +10936,7 @@ func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreThrows() thro
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
 // [REQ:gemSpec_IDP_Frontend:A_20623]
 // [REQ:gemSpec_IDP_Frontend:A_20512#13] Testing the implementation
-@MainActor func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async throws {
+func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() async throws {
 </code>
 
 
@@ -10933,9 +10962,11 @@ func testLoadDiscoveryDocumentFromStorageOnInit() throws {
 
 <p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L287">Sources/IDPLive/DefaultIDPSession.swift:L287</a>
-<code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
-.validateOrNil(with: trustStoreSession, timeProvider: time)
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Tests/IDPLiveTests/DefaultIDPSessionTests.swift#L262">Tests/IDPLiveTests/DefaultIDPSessionTests.swift:L262</a>
+<code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20617-01]
+// [REQ:gemSpec_IDP_Frontend:A_20623]
+// [REQ:gemSpec_IDP_Frontend:A_20512#15] Testing the implementation
+func testLoadDiscoveryDocumentFromRemoteOnInit() async throws {
 </code>
 
 
@@ -10974,10 +11005,10 @@ func testLoadDiscoveryDocumentFromStorageOnInit() throws {
 </p>
 <a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L229-L232">Sources/IDPLive/DefaultIDPSession.swift:L229-L232</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20625#2|4] Validate `ID_TOKEN` signature with `C.FD.SIG`.
-guard let jwt = try? JWT(from: decrypted.idToken),
-guard let jwt = try? JWT(from: decrypted.idToken),
-      (try? jwt.verify(with: document.signingCert)) ?? false else {
-    return Fail(error: IDPError.invalidSignature("ID_TOKEN")).eraseToAnyPublisher()</code>
+guard let signingCertX509Data = document.signingCert.derBytes,
+guard let signingCertX509Data = document.signingCert.derBytes,
+      let signingCertX509 = try? X509(der: signingCertX509Data),
+      let jwt = try? JWT(from: decrypted.idToken),</code>
 
 
 
@@ -10987,12 +11018,12 @@ guard let jwt = try? JWT(from: decrypted.idToken),
 
 <p><p><code>C.FD.SIG</code>-Certificate verification</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L791-L794">Sources/IDPLive/DefaultIDPSession.swift:L791-L794</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L801-L804">Sources/IDPLive/DefaultIDPSession.swift:L801-L804</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20625#3|4] `C.FD.SIG`-Certificate verification
-return try await self.validate(eeCertificate: discoveryDocument.signingCert)
-return try await self.validate(eeCertificate: discoveryDocument.signingCert)
-}
-.mapError { $0.asTrustStoreError() }</code>
+guard let signingCertX509Data = discoveryDocument.signingCert.derBytes,
+guard let signingCertX509Data = discoveryDocument.signingCert.derBytes,
+      let signingCertX509 = try? X509(der: signingCertX509Data)
+else { return false }</code>
 
 
 
@@ -11002,7 +11033,7 @@ return try await self.validate(eeCertificate: discoveryDocument.signingCert)
 
 <p><p>oid check</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L285">Sources/TrustStore/X509TrustStore.swift:L285</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L288">Sources/TrustStore/X509TrustStore.swift:L288</a>
 <code class="language-swift">} else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623,A_20625#4] oid check
     return (vauCerts, idpCerts + [eeCert])
 </code>
@@ -11064,9 +11095,11 @@ name: "redirect_uri",
 
 <p><p>Actual redirect uri</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L110">Sources/Settings/AppConfiguration.swift:L110</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L115">Sources/Settings/AppConfiguration.swift:L115</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_20740] Actual redirect uri
-public let redirectUri =
+public let redirectUri = URL(string: "https://redirect.gematik.de/erezept")!
+public let extAuthRedirectUri = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth")!
+
 </code>
 
 
@@ -11142,7 +11175,7 @@ guard let encryptedKeyVerifier = try? KeyVerifier(
 
 <p><p>Encode into JSON object</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/TokenPayload.swift#L211">Sources/IDP/internal/TokenPayload.swift:L211</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/KeyVerifier.swift#L58">Sources/IDPLive/KeyVerifier.swift:L58</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21323#2] Encode into JSON object
 // [REQ:gemSpec_IDP_Frontend:A_21324#3] Encode into JSON object
 guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
@@ -11218,7 +11251,7 @@ guard let encryptedKeyVerifier = try? KeyVerifier(
 
 <p><p>Token-key and code-verifier are encoded into KeyVerifier.</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/TokenPayload.swift#L182">Sources/IDP/internal/TokenPayload.swift:L182</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/KeyVerifier.swift#L29">Sources/IDPLive/KeyVerifier.swift:L29</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21324#2] Token-key and code-verifier are encoded into KeyVerifier.
 public struct KeyVerifier: Codable {
 </code>
@@ -11231,7 +11264,7 @@ public struct KeyVerifier: Codable {
 
 <p><p>Encode into JSON object</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/TokenPayload.swift#L212">Sources/IDP/internal/TokenPayload.swift:L212</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/KeyVerifier.swift#L59">Sources/IDPLive/KeyVerifier.swift:L59</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21323#2] Encode into JSON object
 // [REQ:gemSpec_IDP_Frontend:A_21324#3] Encode into JSON object
 guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
@@ -11301,7 +11334,7 @@ autoRefreshedToken.map { token in
 
 <p><p>Triggered at every app start, profile change, pull to refresh</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L806">Sources/IDPLive/DefaultIDPSession.swift:L806</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L819">Sources/IDPLive/DefaultIDPSession.swift:L819</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
 func refreshIfExpired(session: DefaultIDPSession,
 </code>
@@ -11314,7 +11347,7 @@ func refreshIfExpired(session: DefaultIDPSession,
 
 <p><p>Either return a refreshed IDPToken</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L817">Sources/IDPLive/DefaultIDPSession.swift:L817</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L830">Sources/IDPLive/DefaultIDPSession.swift:L830</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21326#5,A_21327#5] Either return a refreshed IDPToken
 //  (or nil in case of error) to overwrite the current one
 guard let session else {
@@ -11382,7 +11415,7 @@ autoRefreshedToken.map { token in
 
 <p><p>Triggered at every app start, profile change, pull to refresh</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L806">Sources/IDPLive/DefaultIDPSession.swift:L806</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L819">Sources/IDPLive/DefaultIDPSession.swift:L819</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
 func refreshIfExpired(session: DefaultIDPSession,
 </code>
@@ -11395,7 +11428,7 @@ func refreshIfExpired(session: DefaultIDPSession,
 
 <p><p>Either return a refreshed IDPToken</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L817">Sources/IDPLive/DefaultIDPSession.swift:L817</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L830">Sources/IDPLive/DefaultIDPSession.swift:L830</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21326#5,A_21327#5] Either return a refreshed IDPToken
 //  (or nil in case of error) to overwrite the current one
 guard let session else {
@@ -11435,7 +11468,7 @@ guard let session else {
 
 <p><p>Keychain storage encrypts session tokens</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Dependencies+FhirClient.swift#L131">Sources/eRpApp/Dependencies+FhirClient.swift:L131</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Dependencies+FhirClient.swift#L130">Sources/eRpApp/Dependencies+FhirClient.swift:L130</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21328#2] Keychain storage encrypts session tokens
 // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
 storage: secureUserStore,
@@ -11449,7 +11482,7 @@ storage: secureUserStore,
 
 <p><p>Keychain storage encrypts session tokens</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Session/StandardSessionContainer.swift#L104">Sources/eRpApp/Session/StandardSessionContainer.swift:L104</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Session/StandardSessionContainer.swift#L103">Sources/eRpApp/Session/StandardSessionContainer.swift:L103</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_21328#2] Keychain storage encrypts session tokens
 // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
 storage: secureUserStore,
@@ -11640,7 +11673,7 @@ routeTo(.universalLink(url))
 
 <p><p>App2App gID will trigger this case</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/AppStartDomain.swift#L249">Sources/eRpApp/Screens/AppStartDomain.swift:L249</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/AppStartDomain.swift#L252">Sources/eRpApp/Screens/AppStartDomain.swift:L252</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22301-01#4] App2App gID will trigger this case
 case "/extauth":
 </code>
@@ -11653,7 +11686,7 @@ case "/extauth":
 
 <p><p>set actual destination in main tab</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/AppStartDomain.swift#L259">Sources/eRpApp/Screens/AppStartDomain.swift:L259</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/AppStartDomain.swift#L262">Sources/eRpApp/Screens/AppStartDomain.swift:L262</a>
 <code class="language-swift">// // [REQ:gemSpec_IDP_Frontend:A_22301-01#5] set actual destination in main tab
 await send(.destination(.app(.main(action: .externalLogin(url)))))
 </code>
@@ -11711,7 +11744,7 @@ idpSession
 
 <p><p>Extract the components.</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L506-L512">Sources/IDPLive/DefaultIDPSession.swift:L506-L512</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L512-L518">Sources/IDPLive/DefaultIDPSession.swift:L512-L518</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22301-01#9|7] Extract the components.
 guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
 guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
@@ -11729,7 +11762,7 @@ guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
 
 <p><p>Send authorization request</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L517">Sources/IDPLive/DefaultIDPSession.swift:L517</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L523">Sources/IDPLive/DefaultIDPSession.swift:L523</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22301-01#10] Send authorization request
 return extAuthVerify(verify)
 </code>
@@ -11742,7 +11775,7 @@ return extAuthVerify(verify)
 
 <p><p>Check for existing challenge session</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L526">Sources/IDPLive/DefaultIDPSession.swift:L526</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L532">Sources/IDPLive/DefaultIDPSession.swift:L532</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22301-01#11] Check for existing challenge session
 guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state) else {
 </code>
@@ -11755,7 +11788,7 @@ guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.
 
 <p><p>The challenge session has been set here.</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L491">Sources/IDPLive/DefaultIDPSession.swift:L491</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L497">Sources/IDPLive/DefaultIDPSession.swift:L497</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22301-01#12] The challenge session has been set here.
 self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: storageIdentifier)
 </code>
@@ -11851,7 +11884,7 @@ iOS: .universalLinksOnly:false<span id="polarion-comment:879"></span> <b>[&lt;=]
 
 <p><p>Universal link options</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift#L129">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:L129</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L218">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L218</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22313-01] Universal link options
 await openURLHandler.openWithOptions(url, [.universalLinksOnly: false])
 </code>
@@ -11883,7 +11916,7 @@ await openURLHandler.openWithOptions(url, [.universalLinksOnly: false])
 
 <p><p>Load available apps</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L124">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L124</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift#L166">Sources/FeatureCardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:L166</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22296-01] Load available apps
 // [REQ:gemSpec_IDP_Frontend:A_23082#2] Load available apps
 return .publisher(
@@ -11897,11 +11930,11 @@ return .publisher(
 
 <p><p>Signature verification</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L444">Sources/IDPLive/DefaultIDPSession.swift:L444</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L448">Sources/IDPLive/DefaultIDPSession.swift:L448</a>
 <code class="language-swift">// [REQ:gemSpec_IDP_Frontend:A_22296-01] Signature verification
 // [REQ:gemSpec_IDP_Frontend:A_23082#3] Signature verification
 // [REQ:BSI-eRp-ePA:O.Resi_6#3] Discovery Document signature verification
-guard try jwtContainer.verify(with: document.discKey) == true else {
+guard let discKeyX509Data = document.discKey.derBytes,
 </code>
 
 
@@ -11969,9 +12002,11 @@ iOS: .universalLinksOnly:false<span id="polarion-comment:879"></span> <b>[&lt;=]
 
 <p><p>Remember State parameter for later verification</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/Introduction/CardWallIntroductionDomain.swift#L272">Sources/FeatureCardWall/Introduction/CardWallIntroductionDomain.swift:L272</a>
-<code class="language-swift">// [REQ:gemSpec_IDP_Sek:A_22313-01] Remember State parameter for later verification
-await openURLHandler.open(url)
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/FeatureCardWall/Introduction/CardWallIntroductionDomain.swift#L267">Sources/FeatureCardWall/Introduction/CardWallIntroductionDomain.swift:L267</a>
+<code class="language-swift">// [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
+// [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
+// [REQ:gemSpec_IDP_Sek:A_22313-01] Remember State parameter for later verification
+let result = await openURLHandler.open(url)
 </code>
 
 
@@ -12029,15 +12064,8 @@ await openURLHandler.open(url)
 
 
 
-
-<p>
+<p><p>BrainpoolP256r1 parameter spec is used for creating/verifying key for signature usage; exception: Biometric use case uses secp256r1 (This is considered in its respective specification.)</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/IDPDirectoryKKApps+JWTSignatureVerifier.swift#L49">Sources/IDPLive/IDPDirectoryKKApps+JWTSignatureVerifier.swift:L49</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:A_17207]
-// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02]
-public func verify(signature raw: Data, message: Data) throws -> Bool {
-</code>
-
 
 
 
@@ -12088,13 +12116,13 @@ guard let alg = autCertificateResponse.info.algorithm.alg
 
 <p><p>Only implemented for brainpoolP256r1</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L305">Sources/IDPLive/DefaultIDPSession.swift:L305</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L307">Sources/IDPLive/DefaultIDPSession.swift:L307</a>
 <code class="language-swift">// Validate JWT/DiscoveryDocument signature
 // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 // [REQ:gemSpec_Krypt:GS-A_4361-02] Assure that brainpoolP256r1 is used
 // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
-guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+guard let discKeyX509Data = fetchedDocument.discKey.derBytes,
 </code>
 
 
@@ -12105,11 +12133,11 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 
 <p><p>Only implemented for brainpoolP256r1</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L650">Sources/IDPLive/DefaultIDPSession.swift:L650</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L656">Sources/IDPLive/DefaultIDPSession.swift:L656</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
-guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
+guard let authenticationCertX509Data = document.authentication.cert.derBytes,
 </code>
 
 
@@ -12131,8 +12159,15 @@ guard let key = brainpoolP256r1VerifyPublicKey() else {
 
 
 
-<p><p>BrainpoolP256r1 parameter spec is used for creating/verifying key for signature usage; exception: Biometric use case uses secp256r1 (This is considered in its respective specification.)</p>
+
+<p>
 </p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/IDPDirectoryKKApps+JWTSignatureVerifier.swift#L49">Sources/IDPLive/IDPDirectoryKKApps+JWTSignatureVerifier.swift:L49</a>
+<code class="language-swift">// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02]
+public func verify(signature raw: Data, message: Data) throws -> Bool {
+</code>
+
 
 
 
@@ -12541,7 +12576,7 @@ public class FileVAUStorage: VAUStorage {</code>
 
 <p><p>Initialization of the VAUStorage at a predefined location in the filesystem</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Session/StandardSessionContainer.swift#L139-L148">Sources/eRpApp/Session/StandardSessionContainer.swift:L139-L148</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Session/StandardSessionContainer.swift#L142-L151">Sources/eRpApp/Session/StandardSessionContainer.swift:L142-L151</a>
 <code class="language-swift">// Local VAU storage configuration
 // [REQ:gemSpec_Krypt:A_20175#3|10] Initialization of the VAUStorage at a predefined location in the filesystem
 lazy var vauStorage: VAUStorage = {
@@ -12585,14 +12620,8 @@ lazy var vauStorage: VAUStorage = {
 
 
 
-
-<p><p>OCSP responder certificates must be verifiable by the trust store</p>
+<p><p>Note: grace period for OCSP responses is 12h</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Tests/TrustStoreTests/X509TrustStoreTests.swift#L376">Tests/TrustStoreTests/X509TrustStoreTests.swift:L376</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the trust store
-func testCheckEeCertificatesStatus_failWhenResponsesCannotBeVerifiedByTrustStore() throws {
-</code>
-
 
 
 
@@ -12601,7 +12630,7 @@ func testCheckEeCertificatesStatus_failWhenResponsesCannotBeVerifiedByTrustStore
 
 <p><p>Gematik Root CA 3 as a trust anchor has to be set in the program code</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L151">Sources/Settings/AppConfiguration.swift:L151</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L157">Sources/Settings/AppConfiguration.swift:L157</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // [REQ:gemSpec_Krypt:A_24469] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // [REQ:BSI-eRp-ePA:O.Ntwk_4#2|16] Gematik Root CA 3 as a trust anchor has to be set in the program code
@@ -12630,7 +12659,7 @@ extension DefaultTrustStoreSession: TrustStoreSession {
 
 <p><p>If only OCSP responses &gt;12h available, we must request new ones</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L288">Sources/TrustStore/DefaultTrustStoreSession.swift:L288</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L290">Sources/TrustStore/DefaultTrustStoreSession.swift:L290</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses >12h available, we must request new ones
 func allSatisfyNotProducedBefore(date: Date) -> Bool {
 </code>
@@ -12707,8 +12736,14 @@ func testCheckCertificateStatus_failWhenOneResponseHasNoMatchingEeCert() throws 
 
 
 
-<p><p>Note: grace period for OCSP responses is 12h</p>
+
+<p><p>OCSP responder certificates must be verifiable by the trust store</p>
 </p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Tests/TrustStoreTests/X509TrustStoreTests.swift#L376">Tests/TrustStoreTests/X509TrustStoreTests.swift:L376</a>
+<code class="language-swift">// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the trust store
+func testCheckEeCertificatesStatus_failWhenResponsesCannotBeVerifiedByTrustStore() throws {
+</code>
+
 
 
 
@@ -12771,7 +12806,7 @@ extension DefaultTrustStoreSession: TrustStoreSession {
 
 <p><p>DiscoveryDocument is validated with the active trustStoreSession</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L283">Sources/IDPLive/DefaultIDPSession.swift:L283</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L285">Sources/IDPLive/DefaultIDPSession.swift:L285</a>
 <code class="language-swift">// [REQ:BSI-eRp-ePA:O.Resi_6#2] Implementation of loading the discovery document for fetching signature and
 // encryption keys.
 // [REQ:gemSpec_Krypt:A_21222#3] DiscoveryDocument is validated with the active trustStoreSession
@@ -12820,7 +12855,7 @@ func loadAndVerifyVauCertificate() -> AnyPublisher<VAUCertificate, VAUError> {
 
 <p><p>Gematik Root CA 3 as a trust anchor has to be set in the program code</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L152">Sources/Settings/AppConfiguration.swift:L152</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/Settings/AppConfiguration.swift#L158">Sources/Settings/AppConfiguration.swift:L158</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // [REQ:gemSpec_Krypt:A_24469] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // [REQ:BSI-eRp-ePA:O.Ntwk_4#2|16] Gematik Root CA 3 as a trust anchor has to be set in the program code
@@ -12891,7 +12926,7 @@ let rootCa: X509
 
 <p><p>Initial TrustStore creation</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L186">Sources/TrustStore/DefaultTrustStoreSession.swift:L186</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L187">Sources/TrustStore/DefaultTrustStoreSession.swift:L187</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25058] Initial TrustStore creation
 // [REQ:gemSpec_Krypt:A_25063] Re-init TrustStore if certificate validation has failed, then validate it again
 // Reset all locally saved data
@@ -12922,7 +12957,7 @@ reset()
 
 <p><p>OCSPResponse not older than OCSP-Graceperiod=12h else decline</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L273">Sources/TrustStore/DefaultTrustStoreSession.swift:L273</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L275">Sources/TrustStore/DefaultTrustStoreSession.swift:L275</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_21216#3] OCSPResponse not older than OCSP-Graceperiod=12h else decline
 // [REQ:gemSpec_Krypt:A_25059] OCSPResponse not older than OCSP-Graceperiod=12h else decline
 ocspResponse.notProducedBefore(date: time().addingTimeInterval(-Self.ocspResponseExpiration))
@@ -12952,7 +12987,7 @@ ocspResponse.notProducedBefore(date: time().addingTimeInterval(-Self.ocspRespons
 
 <p><p>OCSPResponse must be validated by current TrustStore (“Kategorie (B)”)</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L174">Sources/TrustStore/DefaultTrustStoreSession.swift:L174</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L175">Sources/TrustStore/DefaultTrustStoreSession.swift:L175</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25060#1] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
 // [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
 if let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
@@ -12966,7 +13001,7 @@ if let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: 
 
 <p><p>OCSPResponse must be validated by current TrustStore (“Kategorie (B)”)</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L216">Sources/TrustStore/DefaultTrustStoreSession.swift:L216</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L218">Sources/TrustStore/DefaultTrustStoreSession.swift:L218</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25060#2] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
 // [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
 guard let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
@@ -12980,7 +13015,7 @@ guard let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(wit
 
 <p><p>OCSP responder certificates must be verifiable by the TrustStore</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L143">Sources/TrustStore/X509TrustStore.swift:L143</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L146">Sources/TrustStore/X509TrustStore.swift:L146</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
 // 1) Response must be successful
 guard ocspResponse.status() == .successful else { return false }
@@ -12994,7 +13029,7 @@ guard ocspResponse.status() == .successful else { return false }
 
 <p><p>OCSP responder certificates must be verifiable by the TrustStore</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L180">Sources/TrustStore/X509TrustStore.swift:L180</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L183">Sources/TrustStore/X509TrustStore.swift:L183</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063] OCSP responder certificates must be verifiable by the TrustStore
 // [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
 let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
@@ -13008,7 +13043,7 @@ let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
 
 <p><p>OCSP responder certificates must be verifiable by the TrustStore</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L212">Sources/TrustStore/X509TrustStore.swift:L212</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L215">Sources/TrustStore/X509TrustStore.swift:L215</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063] OCSP responder certificates must be verifiable by the TrustStore
 // [REQ:gemSpec_Krypt:A_25060#4] OCSP responder certificates must be verifiable by the TrustStore
 private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -> [OCSPResponse] {
@@ -13038,7 +13073,7 @@ private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -> [OCSPResponse] 
 
 <p><p>Check VAU Certificate (“Kategorie (C)”) with OCSPResponse</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L175">Sources/TrustStore/DefaultTrustStoreSession.swift:L175</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L176">Sources/TrustStore/DefaultTrustStoreSession.swift:L176</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25060#1] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
 // [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
 if let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
@@ -13052,7 +13087,7 @@ if let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: 
 
 <p><p>Check VAU Certificate (“Kategorie (C)”) with OCSPResponse</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L217">Sources/TrustStore/DefaultTrustStoreSession.swift:L217</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L219">Sources/TrustStore/DefaultTrustStoreSession.swift:L219</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25060#2] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
 // [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
 guard let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
@@ -13102,13 +13137,14 @@ guard let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(wit
 
 
 
-<h5>(4) </h5>
-<p><p>Check ee_certs against category A+B certificates</p>
+
+<p><p>Re-init TrustStore if certificate validation has failed, then validate it again</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L266">Sources/TrustStore/X509TrustStore.swift:L266</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:A_25063:(4)] Check ee_certs against category A+B certificates
-// [REQ:gemSpec_Krypt:A_A_25061] Check ee_certs against category A+B certificates
-typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L188">Sources/TrustStore/DefaultTrustStoreSession.swift:L188</a>
+<code class="language-swift">// [REQ:gemSpec_Krypt:A_25058] Initial TrustStore creation
+// [REQ:gemSpec_Krypt:A_25063] Re-init TrustStore if certificate validation has failed, then validate it again
+// Reset all locally saved data
+reset()
 </code>
 
 
@@ -13119,7 +13155,7 @@ typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
 
 <p><p>Check add_roots against category A certificates</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L56">Sources/TrustStore/X509TrustStore.swift:L56</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L59">Sources/TrustStore/X509TrustStore.swift:L59</a>
 <code class="language-swift">// Category A:
 // Before adding an addRoot we check if it can be validated by the currently potential trust store.
 // We expect the incoming addRoots to be chronically ordered (i.e. ["RCA3->RCA4", "RCA4->RCA5", ...])
@@ -13136,7 +13172,7 @@ var validatedAddRoots: [X509] = []
 
 <p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L172">Sources/TrustStore/X509TrustStore.swift:L172</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L175">Sources/TrustStore/X509TrustStore.swift:L175</a>
 <code class="language-swift">/// Match a collection of `OCSPResponse`s with the end entity certificates of this `X509TrustStore`.
 /// Checks response status, revocation status for each certificate and validates the signer certificates of
 ///   the responses itself.
@@ -13158,7 +13194,7 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -> Boo
 
 <p><p>OCSP responder certificates must be verifiable by the TrustStore</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L179">Sources/TrustStore/X509TrustStore.swift:L179</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L182">Sources/TrustStore/X509TrustStore.swift:L182</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063] OCSP responder certificates must be verifiable by the TrustStore
 // [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
 let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
@@ -13172,7 +13208,7 @@ let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
 
 <p><p>For every EE certificate there must be a matching OCSP response</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L191">Sources/TrustStore/X509TrustStore.swift:L191</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L194">Sources/TrustStore/X509TrustStore.swift:L194</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063] For every EE certificate there must be a matching OCSP response
 let matchedResponses = try eeCertAndSignerTuple.map { eeCertificate, signer in
 </code>
@@ -13185,7 +13221,7 @@ let matchedResponses = try eeCertAndSignerTuple.map { eeCertificate, signer in
 
 <p><p>For every OCSP response there must be a matching EE certificate</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L200">Sources/TrustStore/X509TrustStore.swift:L200</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L203">Sources/TrustStore/X509TrustStore.swift:L203</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063] For every OCSP response there must be a matching EE certificate
 let matchedEeCerts = try ocspResponses.map { response in
 </code>
@@ -13198,7 +13234,7 @@ let matchedEeCerts = try ocspResponses.map { response in
 
 <p><p>OCSP responder certificates must be verifiable by the TrustStore</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L211">Sources/TrustStore/X509TrustStore.swift:L211</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L214">Sources/TrustStore/X509TrustStore.swift:L214</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063] OCSP responder certificates must be verifiable by the TrustStore
 // [REQ:gemSpec_Krypt:A_25060#4] OCSP responder certificates must be verifiable by the TrustStore
 private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -> [OCSPResponse] {
@@ -13212,7 +13248,7 @@ private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -> [OCSPResponse] 
 <h5>(2) </h5>
 <p><p>Check add_roots against category A certificates</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L235">Sources/TrustStore/X509TrustStore.swift:L235</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L238">Sources/TrustStore/X509TrustStore.swift:L238</a>
 <code class="language-swift">try! NSRegularExpression(pattern: "CN=GEM\\.RCA\\d+") // swiftlint:disable:this force_try
 // [REQ:gemSpec_Krypt:A_25063:(2)] Check add_roots against category A certificates
 static func checkRcaRegex(certificate: X509) -> Bool {
@@ -13226,7 +13262,7 @@ static func checkRcaRegex(certificate: X509) -> Bool {
 <h5>(3) </h5>
 <p><p>Check ca_certs against category A certificates</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L246">Sources/TrustStore/X509TrustStore.swift:L246</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L249">Sources/TrustStore/X509TrustStore.swift:L249</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_25063:(3)] Check ca_certs against category A certificates
 private static let caCertRegex =
 </code>
@@ -13236,14 +13272,13 @@ private static let caCertRegex =
 
 
 
-
-<p><p>Re-init TrustStore if certificate validation has failed, then validate it again</p>
+<h5>(4) </h5>
+<p><p>Check ee_certs against category A+B certificates</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/DefaultTrustStoreSession.swift#L187">Sources/TrustStore/DefaultTrustStoreSession.swift:L187</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:A_25058] Initial TrustStore creation
-// [REQ:gemSpec_Krypt:A_25063] Re-init TrustStore if certificate validation has failed, then validate it again
-// Reset all locally saved data
-reset()
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/TrustStore/X509TrustStore.swift#L269">Sources/TrustStore/X509TrustStore.swift:L269</a>
+<code class="language-swift">// [REQ:gemSpec_Krypt:A_25063:(4)] Check ee_certs against category A+B certificates
+// [REQ:gemSpec_Krypt:A_A_25061] Check ee_certs against category A+B certificates
+typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
 </code>
 
 
@@ -13323,13 +13358,13 @@ guard let alg = autCertificateResponse.info.algorithm.alg
 
 <p><p>Assure that brainpoolP256r1 is used</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L306">Sources/IDPLive/DefaultIDPSession.swift:L306</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L308">Sources/IDPLive/DefaultIDPSession.swift:L308</a>
 <code class="language-swift">// Validate JWT/DiscoveryDocument signature
 // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 // [REQ:gemSpec_Krypt:GS-A_4361-02] Assure that brainpoolP256r1 is used
 // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
-guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+guard let discKeyX509Data = fetchedDocument.discKey.derBytes,
 </code>
 
 
@@ -13340,11 +13375,11 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 
 <p><p>Assure that brainpoolP256r1 is used</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L652">Sources/IDPLive/DefaultIDPSession.swift:L652</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L658">Sources/IDPLive/DefaultIDPSession.swift:L658</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
-guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
+guard let authenticationCertX509Data = document.authentication.cert.derBytes,
 </code>
 
 
@@ -13444,13 +13479,13 @@ guard let alg = autCertificateResponse.info.algorithm.alg
 
 <p><p>Assure that brainpoolP256r1 is used</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L307">Sources/IDPLive/DefaultIDPSession.swift:L307</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L309">Sources/IDPLive/DefaultIDPSession.swift:L309</a>
 <code class="language-swift">// Validate JWT/DiscoveryDocument signature
 // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 // [REQ:gemSpec_Krypt:GS-A_4361-02] Assure that brainpoolP256r1 is used
 // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
-guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+guard let discKeyX509Data = fetchedDocument.discKey.derBytes,
 </code>
 
 
@@ -13461,11 +13496,11 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 
 <p><p>Assure that brainpoolP256r1 is used</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L652">Sources/IDPLive/DefaultIDPSession.swift:L652</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/DefaultIDPSession.swift#L658">Sources/IDPLive/DefaultIDPSession.swift:L658</a>
 <code class="language-swift">// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
-guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
+guard let authenticationCertX509Data = document.authentication.cert.derBytes,
 </code>
 
 
@@ -13536,21 +13571,6 @@ public typealias BrainpoolKeyGenerator = () throws -> BrainpoolP256r1.KeyExchang
 
 
 
-<p><p>Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/JWT/JWE+KDF.swift#L50">Sources/IDP/internal/JWT/JWE+KDF.swift:L50</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
-// [REQ:gemSpec_Krypt:GS-A_4367] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
-/// BrainpoolP256r1 key exchange context
-case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
-</code>
-
-
-
-
-
-
-
 <p>
 </p>
 <a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDP/internal/SecKeyRandom.swift#L28">Sources/IDP/internal/SecKeyRandom.swift:L28</a>
@@ -13565,6 +13585,21 @@ case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
 /// - Returns: the random initialized Data
 /// - Throws: `IDPError`
 public func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRandomDefault) throws -> Data {
+</code>
+
+
+
+
+
+
+
+<p><p>Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters</p>
+</p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/IDPLive/internal/JWT/JWE.EncryptionContext.swift#L46">Sources/IDPLive/internal/JWT/JWE.EncryptionContext.swift:L46</a>
+<code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
+// [REQ:gemSpec_Krypt:GS-A_4367] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
+/// BrainpoolP256r1 key exchange context
+case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
 </code>
 
 
@@ -13764,48 +13799,6 @@ let sealedBox = try AES.GCM.seal(payload, using: cek, nonce: nonce)
 
 
 
-<h3 id="GS-A_4390">GS-A_4390</h3>
-
-
-<h4>Requirement <a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#GS-A_4390">Gemspec Pages</a>:</h4>
-
-<div id="GS-A_4390" severity="MUSS" class="target-element">
-<p><b>GS-A_4390 - Asymmetrischer Anteil der hybriden Verschlüsselung binärer Daten</b></p>
-<p>Produkttypen, die die hybride Verschlüsselung binärer Daten durchführen, MÜSSEN für den asymmetrischen Anteil der Verschlüsselung die folgenden Vorgaben berücksichtigen:<br> 
-</p>
-<ul> 
-<li>Als asymmetrisches Verschlüsselungsverfahren MUSS RSAES-OAEP gemäß [PKCS#1, Kapitel 7.1] verwendet werden.<br> </li> 
-<li>Als Mask-Generation-Function für die Verwendung in RSAES-OAEP MUSS MGF 1 mit SHA-256 als Hash-Funktion gemäß [PKCS#1, Anhang B.2.1] verwendet werden.<br> </li> 
-</ul> <b>[&lt;=]</b>
-</div>
-
-
-<h4>Notes and Code:</h4>
-
-
-
-
-
-<p><p>RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/AVS/AVSCmsEncrypter.swift#L33">Sources/AVS/AVSCmsEncrypter.swift:L33</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4390] RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift
-// [REQ:gemSpec_eRp_FdV:A_22778-01#3] Encryption of message to the Pharmacy is done with all provided
-// certificates
-// [REQ:gemSpec_eRp_FdV:A_22779-01#3] Encrypted message is of form of a PKCS#7 container (CMS)
-// https://github.com/gematik/OpenSSL-Swift/blob/3c1ea91ba5abfefecfe3588815cb928d777e29ad/Sources/OpenSSL/CMS/CMSContentInfo.swift#L88
-// swiftlint:disable:previous line_length
-let cms = try CMSContentInfo.encryptPartial(data: data)
-</code>
-
-
-
-
-
-
-
-
-
 
 
 
@@ -13894,7 +13887,7 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 
 <p><p>Show comply route to display analytics usage within onboarding</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L130">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L130</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L132">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L132</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19088,A_19091-01#1,A_19092-01#2] Show comply route to display analytics usage within
 // onboarding
 // [REQ:BSI-eRp-ePA:O.Purp_3#5] Show comply route to display analytics usage within onboarding
@@ -13970,7 +13963,7 @@ tracker.stopTracking()
 
 <p><p>User confirms the opt in within settings</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L134">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L134</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L136">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L136</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19090-01,A_19091-01#2] User confirms the opt in within settings
 // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
 case .allowTracking:
@@ -14031,7 +14024,7 @@ case .confirmedOptInTracking:
 
 <p><p>Show comply route to display analytics usage within</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L127">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L127</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L129">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L129</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19088,A_19091-01#1,A_19092-01#2] Show comply route to display analytics usage within
 // onboarding
 // [REQ:BSI-eRp-ePA:O.Purp_3#5] Show comply route to display analytics usage within onboarding
@@ -14047,7 +14040,7 @@ case .showAnalytics:
 
 <p><p>User confirms the opt in within settings</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L134">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L134</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L136">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L136</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19090-01,A_19091-01#2] User confirms the opt in within settings
 // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
 case .allowTracking:
@@ -14114,7 +14107,7 @@ case .confirmedOptInTracking:
 
 <p><p>Show comply route to display analytics usage within</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L127">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L127</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L129">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L129</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19088,A_19091-01#1,A_19092-01#2] Show comply route to display analytics usage within
 // onboarding
 // [REQ:BSI-eRp-ePA:O.Purp_3#5] Show comply route to display analytics usage within onboarding
@@ -14130,7 +14123,7 @@ case .showAnalytics:
 
 <p><p>User may choose to not accept analytics, onboarding will still continue</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L139">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L139</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift#L141">Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:L141</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19092-01#3] User may choose to not accept analytics, onboarding will still continue
 // [REQ:BSI-eRp-ePA:O.Purp_3#7] Deny usage analytics
 case .denyTracking:
@@ -14320,7 +14313,7 @@ struct AuditEventsView: View {
 
 <p><p>Actual Button to open the audit events</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift#L562">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:L562</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift#L391">Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:L391</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_19177#2,A_19185#3] Actual Button to open the audit events
 // [REQ:BSI-eRp-ePA:O.Auth_6#2] Actual Button to open the audit events
 Button {
@@ -14509,7 +14502,7 @@ if Result.success(false) == isAuthenticated {
 
 <p><p>no token/not authorized, show authenticator module</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift#L192">Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:L192</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift#L66">Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:L66</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_20167-02#3,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == authenticated {
 </code>
@@ -14522,7 +14515,7 @@ if Result.success(false) == authenticated {
 
 <p><p>no token/not authorized, show authenticator module</p>
 </p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift#L213">Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:L213</a>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift#L87">Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:L87</a>
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_20167-02#3,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == authenticated {
 </code>
@@ -14718,37 +14711,6 @@ state.pharmacies = pharmacies.map {
 
 
 
-<p><p>Encryption of message to the Pharmacy is done for all provided recipients</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/AVS/AVSCmsEncrypter.swift#L27">Sources/AVS/AVSCmsEncrypter.swift:L27</a>
-<code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_22778-01#2] Encryption of message to the Pharmacy is done for all provided recipients
-func cmsEncrypt(_ data: Data, recipients: [X509]) throws -> Data
-</code>
-
-
-
-
-
-
-
-<p><p>Encryption of message to the Pharmacy is done with all provided</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/AVS/AVSCmsEncrypter.swift#L34">Sources/AVS/AVSCmsEncrypter.swift:L34</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4390] RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift
-// [REQ:gemSpec_eRp_FdV:A_22778-01#3] Encryption of message to the Pharmacy is done with all provided
-// certificates
-// [REQ:gemSpec_eRp_FdV:A_22779-01#3] Encrypted message is of form of a PKCS#7 container (CMS)
-// https://github.com/gematik/OpenSSL-Swift/blob/3c1ea91ba5abfefecfe3588815cb928d777e29ad/Sources/OpenSSL/CMS/CMSContentInfo.swift#L88
-// swiftlint:disable:previous line_length
-let cms = try CMSContentInfo.encryptPartial(data: data)
-</code>
-
-
-
-
-
-
-
 
 
 <h3 id="A_22779-01">A_22779-01</h3>
@@ -14778,24 +14740,6 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 <code class="language-swift">// [REQ:gemSpec_eRp_FdV:A_22779-01#2] Encrypted message is of form of a PKCS#7 container (CMS)
 // 1. Create a CMS AuthenticatedEnvelopedData structure with help from OpenSSL-swift
 let cmsAuthEnvelopedData = try avsCmsEncrypter.cmsEncrypt(data, recipients: recipients)
-</code>
-
-
-
-
-
-
-
-<p><p>Encrypted message is of form of a PKCS#7 container (CMS)</p>
-</p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/Sources/AVS/AVSCmsEncrypter.swift#L36">Sources/AVS/AVSCmsEncrypter.swift:L36</a>
-<code class="language-swift">// [REQ:gemSpec_Krypt:GS-A_4390] RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift
-// [REQ:gemSpec_eRp_FdV:A_22778-01#3] Encryption of message to the Pharmacy is done with all provided
-// certificates
-// [REQ:gemSpec_eRp_FdV:A_22779-01#3] Encrypted message is of form of a PKCS#7 container (CMS)
-// https://github.com/gematik/OpenSSL-Swift/blob/3c1ea91ba5abfefecfe3588815cb928d777e29ad/Sources/OpenSSL/CMS/CMSContentInfo.swift#L88
-// swiftlint:disable:previous line_length
-let cms = try CMSContentInfo.encryptPartial(data: data)
 </code>
 
 
